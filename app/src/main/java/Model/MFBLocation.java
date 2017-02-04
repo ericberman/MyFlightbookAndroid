@@ -118,14 +118,18 @@ public class MFBLocation extends Object implements LocationListener {
 
 			try
 			{
-			LocationManager lm = (LocationManager) m_Context.getSystemService(Context.LOCATION_SERVICE);
-			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-					0,
-					0, this);
-			Log.w("MFBAndroid", String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
-			IsListening = true;	
-			if (m_lastSeenLoc == null)
-				m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				LocationManager lm = (LocationManager) m_Context.getSystemService(Context.LOCATION_SERVICE);
+				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+						0,
+						0, this);
+				Log.w("MFBAndroid", String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
+				IsListening = true;
+				if (m_lastSeenLoc == null)
+					m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				if (m_lastSeenLoc == null)
+					m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+				if (m_lastSeenLoc != null)
+					InformListenerOfStatus(m_lastSeenLoc);
 			}
 			catch (IllegalArgumentException ex)
 			{
