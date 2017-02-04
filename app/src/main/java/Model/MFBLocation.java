@@ -18,10 +18,6 @@
  */
 package Model;
 
-import com.myflightbook.android.ActNewFlight;
-import com.myflightbook.android.MFBMain;
-import com.myflightbook.android.R;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -35,6 +31,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.myflightbook.android.ActNewFlight;
+import com.myflightbook.android.MFBMain;
+import com.myflightbook.android.R;
 
 public class MFBLocation extends Object implements LocationListener {
 	public enum GPSQuality {Unknown, Poor, Good, Excellent};
@@ -106,6 +106,8 @@ public class MFBLocation extends Object implements LocationListener {
 	    }
 	    return false;
 	}
+
+
 	
 	public void startListening()
 	{
@@ -129,6 +131,7 @@ public class MFBLocation extends Object implements LocationListener {
 			{
 				MFBUtil.Alert(m_Context, m_Context.getString(R.string.errNoGPSTitle), m_Context.getString(R.string.errCantUseGPS) + ex.getMessage());
 			}
+			catch (SecurityException ex) { }
 		}
 	}
 
@@ -139,9 +142,12 @@ public class MFBLocation extends Object implements LocationListener {
 
 			LocationManager lm = (LocationManager) m_Context
 					.getSystemService(Context.LOCATION_SERVICE);
-			lm.removeUpdates(this);
-			Log.w("MFBAndroid", "Stop Listening");
-			IsListening = false;
+			try {
+				lm.removeUpdates(this);
+				Log.w("MFBAndroid", "Stop Listening");
+				IsListening = false;
+			}
+			catch (SecurityException ex) { }
 		}
 	}
 
