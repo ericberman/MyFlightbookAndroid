@@ -36,9 +36,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MenuItem;
@@ -88,6 +88,7 @@ public class ActMFBForm extends Fragment {
 	protected static final int SELECT_IMAGE_ACTIVITY_REQUEST_CODE = 1849;
 	protected static final int CAMERA_PERMISSION_IMAGE = 83;
 	protected static final int CAMERA_PERMISSION_VIDEO = 84;
+	protected static final int GALLERY_PERMISSION = 85;
 	protected static final String TEMP_IMG_FILE_NAME = "takenpicture";
 	protected String m_TempFilePath = "";
 	
@@ -98,12 +99,14 @@ public class ActMFBForm extends Fragment {
 		public Boolean fDeleteFileWhenDone = false;
 		public Boolean fAddToGallery = false;
 		public Boolean m_fVideo = false;
+		ContentResolver m_cr = null;
 		
-		public AddCameraTask(int ActivityRequestCode, Boolean fVideo)
+		public AddCameraTask(int ActivityRequestCode, Boolean fVideo, ContentResolver cr)
 		{
 			m_fVideo = fVideo;
 			fAddToGallery = fDeleteFileWhenDone =  (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE || ActivityRequestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
 			fGeoTag = (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+			m_cr = cr;
 		}
 		
 		@Override
@@ -117,45 +120,9 @@ public class ActMFBForm extends Fragment {
 
 			// Add the image/video to the gallery if necessary (i.e., if from the camera)
 			if (fAddToGallery) {
-//				try {
-//					if (m_fVideo) {
-//						// Because Android is fucked up, there's no analog to insertImage below
-//						// So this is taken from http://stackoverflow.com/questions/2114168/android-mediastore-insertvideo
-//						// Save the name and description of a video in a ContentValues map.
-//						ContentValues values = new ContentValues(2);
-//						values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-//						// values.put(MediaStore.Video.Media.DATA, f.getAbsolutePath());
-//
-//						// Add a new record (identified by uri) without the video, but with the values just set.
-//						ContentResolver cr = ActMFBForm.this.getActivity().getContentResolver();
-//						Uri uri = cr.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
-//
-//						// Now get a handle to the file for that record, and save the data into it.
-//						InputStream is = null;
-//						OutputStream os = null;
-//						try {
-//							is = new java.io.FileInputStream(szFilename);
-//							os = cr.openOutputStream(uri);
-//							byte[] buffer = new byte[4096];
-//							int len;
-//							while ((len = is.read(buffer)) != -1)
-//								os.write(buffer, 0, len);
-//							is.close();
-//							os.flush();
-//							os.close();
-//						} catch (Exception e) {
-//							Log.e("MFBAndroid", "exception while writing video: ", e);
-//						}
-//
-//						ActMFBForm.this.getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE));
-//					} else
-//						MediaStore.Images.Media.insertImage(ActMFBForm.this.getActivity().getContentResolver(), szFilename, "", "");
-//				} catch (FileNotFoundException e) {
-//					e.printStackTrace();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-				ActMFBForm.this.getActivity().getApplicationContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(szFilename))));
+				File f = new File(szFilename);
+				Uri uriSource = FileProvider.getUriForFile(ActMFBForm.this.getContext(), "com.example.android.fileprovider", f);
+				ActMFBForm.this.getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
 			}
 			
 			GallerySource gs = (GallerySource) ActMFBForm.this;
@@ -181,7 +148,7 @@ public class ActMFBForm extends Fragment {
 	
 	protected void AddCameraImage(final String szFilename, Boolean fVideo)
 	{
-		AddCameraTask act = new AddCameraTask(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, fVideo);
+		AddCameraTask act = new AddCameraTask(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, fVideo, this.getActivity().getContentResolver());
 		act.execute(szFilename);
 	}
 	
@@ -204,7 +171,7 @@ public class ActMFBForm extends Fragment {
         Boolean fIsVideo = szMimeType.toLowerCase(Locale.getDefault()).startsWith("video");
         cursor.close();
 
-		AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo);
+		AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo, cr);
 		act.execute(szFilename);
 	}
 	
@@ -215,7 +182,8 @@ public class ActMFBForm extends Fragment {
 		SharedPreferences mPrefs = getActivity().getPreferences(Activity.MODE_PRIVATE);
 		m_TempFilePath = mPrefs.getString(keyTempFileInProgress, "");				
 	}
-	
+
+	//region binding data to forms
 	protected void AddListener(int id)
 	{
 		Button b = (Button)findViewById(id);
@@ -293,7 +261,8 @@ public class ActMFBForm extends Fragment {
 		RadioButton rb = (RadioButton) findViewById(id);
 		rb.setChecked(true);
 	}
-	
+	//endregion
+
 	protected void setUpImageGallery(int idGallery, MFBImageInfo[] rgMfbii)
 	{
 		// Set up the gallery for any pictures
@@ -366,30 +335,67 @@ public class ActMFBForm extends Fragment {
 		}
 		return true;
 	}
-	
-	public void ChoosePicture(GallerySource gs)
+
+	//region Image/video permissions
+	private Boolean fCheckImagePermissions(int permission) {
+		switch (permission) {
+			case CAMERA_PERMISSION_IMAGE:
+			case CAMERA_PERMISSION_VIDEO:
+				if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+						ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+						ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+					return true;
+				else
+					requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
+				break;
+			case GALLERY_PERMISSION:
+				if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+						ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+					return true;
+				else
+					requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
+				break;
+		}
+	    return false;
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		Boolean fAllGranted = true;
+		for (int i : grantResults)
+			if (i != PackageManager.PERMISSION_GRANTED)
+				fAllGranted = false;
+
+		switch (requestCode) {
+			case CAMERA_PERMISSION_IMAGE:
+				if (fAllGranted && grantResults.length == 3)
+					TakePicture();
+				break;
+			case CAMERA_PERMISSION_VIDEO:
+				if (fAllGranted && grantResults.length == 3)
+					TakeVideo();
+				break;
+			case GALLERY_PERMISSION:
+				if (fAllGranted && grantResults.length == 2)
+					ChoosePicture();
+				break;
+		}
+	}
+	//endregion
+
+	//region image/video selection
+	public void ChoosePicture()
 	{
 		Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		i.setType("image/* video/*");
-		startActivityForResult(i, SELECT_IMAGE_ACTIVITY_REQUEST_CODE); 
-	}
-	
-	private Boolean fCheckImagePermissions(int permission) {	
-		if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-			return true;
-		
-	    // Should we show an explanation?
-	    if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA)) {
-	        // No explanation needed, we can request the permission.
-	        ActivityCompat.requestPermissions(getActivity(),
-	                new String[]{Manifest.permission.CAMERA}, permission);
-	    }
-	    return false;
+		startActivityForResult(i, SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
 	}
 
 	public void TakePicture()
 	{
 		File fTemp = null;
+		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 		if (MFBConstants.fFakePix)
 		{
 			String[] rgSamples = {"sampleimg.jpg", "sampleimg2.jpg", "sampleimg3.jpg"};
@@ -399,7 +405,7 @@ public class ActMFBForm extends Fragment {
 				try {
 					InputStream is = getActivity().getAssets().open(szAsset);
 
-					fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg");
+					fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir);
 					fTemp.deleteOnExit();
 					m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
 					
@@ -436,7 +442,8 @@ public class ActMFBForm extends Fragment {
 		try {
 			if (!fCheckImagePermissions(CAMERA_PERMISSION_IMAGE))
 				return;
-			fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", Environment.getExternalStorageDirectory());
+
+			fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir);
 			fTemp.deleteOnExit();
 			m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
 
@@ -446,7 +453,8 @@ public class ActMFBForm extends Fragment {
 	    	ed.commit();
 
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fTemp));
+			Uri uriImage = FileProvider.getUriForFile(this.getContext(), "com.example.android.fileprovider", fTemp);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
 			intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
 			startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 		} catch (IOException e) {
@@ -458,11 +466,12 @@ public class ActMFBForm extends Fragment {
 	public void TakeVideo()
 	{
 		File fTemp = null;
+		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 		try {
 			if (!fCheckImagePermissions(CAMERA_PERMISSION_VIDEO))
 				return;
-			fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", Environment.getExternalStorageDirectory());
+			fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", storageDir);
 			fTemp.deleteOnExit();
 			m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
 
@@ -471,8 +480,10 @@ public class ActMFBForm extends Fragment {
 	    	ed.putString(keyTempFileInProgress, m_TempFilePath);
 	    	ed.commit();
 
+			Uri uriImage = FileProvider.getUriForFile(this.getContext(), "com.example.android.fileprovider", fTemp);
+
 			Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fTemp));
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
 			intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
 			startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
 		} catch (IOException e) {
@@ -480,4 +491,5 @@ public class ActMFBForm extends Fragment {
 			MFBUtil.Alert(getActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
 		}
 	}
+	//endregion
 }

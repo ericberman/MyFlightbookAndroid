@@ -758,7 +758,7 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 	public void choosePictureClicked()
 	{
 		saveCurrentFlight();
-		ChoosePicture(this);
+		ChoosePicture();
 	}
 	
 	public void onClick(View v)
