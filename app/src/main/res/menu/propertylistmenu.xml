@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menuRefreshProperties" android:titleCondensed="@string/menuRefresh" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_refresh" android:title="@string/menuRefresh"></item>
+    <item android:titleCondensed="@string/menuReturnToFlightShort" android:title="@string/menuReturnToFlight" android:id="@+id/menuBackToFlight"></item>
+</menu>

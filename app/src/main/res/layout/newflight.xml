@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mfb="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/ScrollView01" android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+	<LinearLayout
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:orientation="vertical">
+		
+		<!-- General Flight Info -->
+		<TextView android:id="@+id/TextView01" android:text="@string/lblCatOverall"
+			style="@style/DividerBar">
+		</TextView>
+		<LinearLayout android:id="@+id/LinearLayout01"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:layout_gravity="center_horizontal"
+			android:padding="5dp">		
+			<LinearLayout android:id="@+id/LinearLayoutAircraft" android:layout_width="fill_parent"
+			    android:layout_height="wrap_content" android:orientation="horizontal" android:padding="5dp">
+				<Button android:id="@+id/btnFlightSet" android:layout_width="wrap_content"
+					android:focusable="true" android:focusableInTouchMode="true"
+					android:layout_height="wrap_content" android:nextFocusDown="@+id/spnAircraft">
+				</Button>
+   				<Spinner android:layout_height="wrap_content" android:id="@+id/spnAircraft" android:paddingTop="2sp" android:paddingBottom="2sp"
+					android:layout_width="fill_parent" android:nextFocusDown="@+id/txtComments">
+				</Spinner>
+			</LinearLayout>
+
+	        <LinearLayout
+	            android:id="@+id/LinearLayoutComments"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center_horizontal"
+	            android:orientation="vertical"
+	            android:padding="5dp" >
+	
+                <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical" >
+	            <EditText
+	                android:id="@+id/txtComments"
+	                android:layout_width="0dp"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="0.8"
+	                android:hint="@string/lblComments"
+	                android:inputType="text|textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine"
+	                android:minLines="2"
+	                android:nextFocusDown="@+id/txtRoute"
+	                android:nextFocusUp="@+id/spnAircraft"
+	                android:text="" />
+	            <ImageButton
+	                android:id="@+id/btnAddApproach"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:src="@drawable/ic_action_new_light"
+	                android:padding="2dp"
+	                android:contentDescription="@string/lblAddApproaches"
+	                android:text="" />
+	            </LinearLayout>
+	            <LinearLayout
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:gravity="center_vertical" >
+	
+	                <EditText
+	                    android:id="@+id/txtRoute"
+	                    android:layout_width="0dp"
+	                    android:layout_height="wrap_content"
+	                    android:layout_weight="0.8"
+	                    android:hint="@string/lblRoute"
+	                    android:inputType="textCapCharacters|textNoSuggestions|textMultiLine"
+	                    android:minLines="2"
+	                    android:text="" />
+	
+	                <Button
+	                    android:id="@+id/btnAppendNearest"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:longClickable="true"
+	                    android:text="@string/lblAppendNearest" />
+	
+	                <ImageButton
+	                    android:id="@+id/btnViewOnMap"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:src="@drawable/ic_action_map"
+	                    android:padding="2dp"
+	                    android:contentDescription="@string/lblViewOnMap"
+	                    android:text="" />
+	            </LinearLayout>
+            </LinearLayout>
+		</LinearLayout>
+				
+		<!-- Landings -->
+		<TextView android:id="@+id/TextView02" android:text="@string/lblCatApproachesAndLandings"
+			style="@style/DividerBar">
+		</TextView>
+		<LinearLayout android:id="@+id/LinearLayout02"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:gravity="center_horizontal" android:padding="5dp">
+			<LinearLayout android:id="@+id/LinearLayout03"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical"
+				android:layout_gravity="bottom">
+				<TextView android:id="@+id/lblLandings" android:text="@string/lblLandings"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:width="90dip" android:layout_gravity="bottom"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="INTEGER" android:id="@+id/txtLandings"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:nextFocusDown="@+id/txtHobbsStart">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout04"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical"
+				android:layout_gravity="bottom">
+				<TextView android:id="@+id/lblFSDayLandings"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_gravity="bottom" android:width="90dip"
+					android:text="@string/lblFSDayLandings" android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="INTEGER" android:id="@+id/txtDayLandings"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_gravity="top"
+					android:nextFocusDown="@id/txtHobbsStart">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout05"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical"
+				android:layout_gravity="bottom">
+				<TextView android:id="@+id/lblFSNightLandings"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_gravity="bottom" android:width="90dip"
+					android:text="@string/lblFSNightLandings" android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="INTEGER" android:id="@+id/txtFSNightLandings"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_gravity="top"
+					android:nextFocusDown="@id/txtHobbsStart">
+				</Model.DecimalEdit>
+			</LinearLayout>
+		</LinearLayout>
+		<!-- Approaches and hold -->
+		<LinearLayout android:id="@+id/LinearLayout06"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:gravity="center_horizontal" android:padding="5dp">
+			<LinearLayout android:id="@+id/LinearLayout07"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical"
+				android:layout_gravity="bottom">
+				<TextView android:text="@string/lblApproaches" android:id="@+id/lblApproaches"
+					android:layout_height="wrap_content" android:width="100dip"
+					android:layout_width="wrap_content" android:layout_gravity="center_vertical"></TextView>
+				<Model.DecimalEdit
+				    android:text="" android:id="@+id/txtApproaches"
+					android:layout_width="wrap_content"
+					android:width="90dip" android:layout_height="wrap_content"
+					android:nextFocusDown="@+id/txtLandings"
+					mfb:EditMode="INTEGER">
+				</Model.DecimalEdit>
+			</LinearLayout>			
+			<CheckBox android:text="@string/lblHold" android:id="@+id/ckHold"
+				android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom"></CheckBox>
+		</LinearLayout>
+		
+		<!-- In the Cockpit -->
+		<TextView android:id="@+id/TextView03" android:text="@string/lblCatCockpit"
+		style="@style/DividerBar"></TextView>
+
+		<!-- GPS Quality -->
+		<TableLayout android:layout_width="fill_parent" android:id="@+id/sectGPS"
+		    android:stretchColumns="1,2,3"
+		    android:shrinkColumns="0,4"
+			android:layout_height="wrap_content" android:padding="3dip">
+			<TableRow android:layout_width="fill_parent"
+			    android:layout_height="wrap_content" android:gravity="center_horizontal|center_vertical">
+				<ImageView android:layout_width="wrap_content"
+				    android:contentDescription="@string/cdRecording"
+					android:layout_height="wrap_content" android:src="@drawable/recording"
+					android:id="@+id/imgRecording" android:visibility="invisible"
+					android:layout_gravity="center_horizontal|center_vertical" android:gravity="center_horizontal|center_vertical">
+				</ImageView>
+				<LinearLayout  android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:orientation="vertical">
+					<TextView android:id="@+id/TextView04"
+					    android:textSize="12sp"
+						android:layout_height="wrap_content" android:layout_width="wrap_content"
+						
+						android:text="@string/lblElapsedTime">
+					</TextView>
+					<TextView android:id="@+id/txtElapsedTime"
+						android:layout_height="wrap_content" android:layout_width="wrap_content"
+						android:text="@string/lblStartingTime" android:textStyle="bold">
+					</TextView>
+				</LinearLayout>
+				<LinearLayout  android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:orientation="vertical">
+					<TextView android:id="@+id/TextView06"
+						android:layout_height="wrap_content" android:text="@string/lblFlightStatus"
+						android:layout_gravity="center_horizontal" android:gravity="center_horizontal"
+						android:layout_width="wrap_content" android:textSize="12sp">
+					</TextView>
+					<TextView android:id="@+id/txtFlightStatus"
+						android:layout_height="wrap_content" android:text="@string/lblUnknown"
+						android:layout_gravity="center_horizontal" android:gravity="center_horizontal"
+						android:layout_width="wrap_content" android:textStyle="bold">
+					</TextView>
+				</LinearLayout>
+				<LinearLayout  android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:orientation="vertical">
+					<TextView android:id="@+id/TextView08"
+						android:layout_height="wrap_content" android:text="@string/lblFlightGPSQuality"
+						android:textSize="12sp" android:layout_width="wrap_content" >
+					</TextView>
+					<TextView android:id="@+id/txtFlightGPSQuality"
+						android:layout_height="wrap_content" android:text="@string/lblUnknown" 
+						android:textStyle="bold" android:layout_width="wrap_content" >
+					</TextView>
+				</LinearLayout>
+   				<ImageButton android:src="@drawable/pause"
+				    android:background="?android:attr/selectableItemBackground"
+				    android:contentDescription="@string/cdPauseFlight" android:paddingEnd="5dip" android:paddingStart="2dip"
+				    android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/btnPausePlay"></ImageButton>
+		    </TableRow>
+			<TableRow android:layout_width="fill_parent" android:padding="2dip"
+				android:layout_height="wrap_content" android:gravity="center_horizontal|center_vertical">
+				<ImageView android:layout_width="wrap_content"
+				    android:contentDescription="@string/lblSunrise"
+					android:layout_height="wrap_content" android:src="@drawable/sunrise"
+					android:id="@+id/imgSunrise"
+					android:padding="2dip"
+					android:layout_gravity="start|center_vertical">
+				</ImageView>
+				<TextView android:id="@+id/txtSunrise" android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" android:text="@string/lblSunrise">
+				</TextView>
+  					<TextView android:id="@+id/txtFlightSpeed" android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="@string/lblNoSpeed" 
+					android:layout_gravity="center_horizontal" android:gravity="center_horizontal"
+					android:textStyle="bold">
+				</TextView>
+				<TextView android:id="@+id/txtLatitude" android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" android:text="@string/lblLatitude">
+				</TextView>
+				<TextView android:id="@+id/txtSpacer1" android:layout_width="wrap_content"
+					android:layout_height="wrap_content">
+				</TextView>
+			</TableRow>
+			<TableRow android:layout_width="fill_parent" android:padding="2dip"
+				android:layout_height="wrap_content" android:gravity="center_horizontal|center_vertical">
+				<ImageView android:layout_width="wrap_content"
+				    android:contentDescription="@string/cdRecording"
+					android:layout_height="wrap_content" android:src="@drawable/sunset"
+					android:id="@+id/imgSunset"
+					android:padding="2dip"
+					android:layout_gravity="start|center_vertical">
+				</ImageView>
+				<TextView android:id="@+id/txtSunset" android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="@string/lblSunset">
+				</TextView>
+  					<TextView android:id="@+id/txtFlightAltitude" android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="@string/lblNoAltitude" 
+					android:layout_gravity="center_horizontal" android:gravity="center_horizontal"
+					android:textStyle="bold">
+				</TextView>
+  					<TextView android:id="@+id/txtLongitude" android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="@string/lblLongitude">
+				</TextView>
+				<TextView android:id="@+id/txtSpacer2" android:layout_width="wrap_content"
+					android:layout_height="wrap_content">
+				</TextView>
+			</TableRow>
+		</TableLayout>
+
+
+		<!-- Remainder of "In the Cockpit" -->
+		<TableLayout android:id="@+id/TableLayout02" android:layout_gravity="center_horizontal"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="5dp">
+			<TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content">
+				<TextView android:text="@string/lblHobbsStart" android:id="@+id/lblHobbsStart"
+					android:layout_height="wrap_content" android:width="100dip"
+					android:layout_width="wrap_content" android:layout_gravity="center_vertical"></TextView>
+				<Model.DecimalEdit android:text="" android:id="@+id/txtHobbsStart"
+					android:width="90dip" 
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+					mfb:EditMode="DECIMAL">
+				</Model.DecimalEdit>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow02" android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+				<TextView android:text="@string/lblEngineStart"
+					android:layout_height="wrap_content" android:width="100dip"
+					android:layout_width="wrap_content" android:layout_gravity="center_vertical">
+				</TextView>
+				<Button android:text="@string/lblTouchForNow" android:id="@+id/btnEngineStartSet"
+					android:layout_width="wrap_content" android:layout_height="wrap_content">
+				</Button>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow03" android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+				<TextView android:text="@string/lblFlightStart"
+					android:layout_height="wrap_content" android:width="100dip"
+					android:layout_width="wrap_content" android:layout_gravity="center_vertical">
+				</TextView>
+				<Button android:text="@string/lblTouchForNow" android:id="@+id/btnFlightStartSet"
+					android:layout_width="wrap_content" android:layout_height="wrap_content">
+				</Button>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow04" android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+				<TextView android:text="@string/lblFlightEnd"
+					android:layout_height="wrap_content" android:width="100dip"
+					android:layout_width="wrap_content" android:layout_gravity="center_vertical">
+				</TextView>
+				<Button android:text="@string/lblTouchForNow"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/btnFlightEndSet">
+				</Button>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow05" android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+				<TextView android:text="@string/lblEngineEnd"
+					android:layout_height="wrap_content" android:width="100dip"
+					android:layout_width="wrap_content" android:layout_gravity="center_vertical">
+				</TextView>
+				<Button android:text="@string/lblTouchForNow" android:id="@+id/btnEngineEndSet"
+					android:layout_width="wrap_content" android:layout_height="wrap_content">
+				</Button>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow06" android:layout_width="fill_parent"
+				android:layout_height="wrap_content">
+				<TextView android:text="@string/lblHobbsEnd" android:id="@+id/lblHobbsEnd"
+					android:layout_height="wrap_content" android:width="100dip"
+					android:layout_width="wrap_content" android:layout_gravity="center_vertical"></TextView>
+				<Model.DecimalEdit
+				    android:text="" android:id="@+id/txtHobbsEnd"
+					android:width="90dip"
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+					android:nextFocusDown="@+id/txtNight"
+					mfb:EditMode="DECIMAL">
+				</Model.DecimalEdit>
+			</TableRow>
+		</TableLayout>
+				
+		<!-- Times and properties -->
+		<TextView android:id="@+id/TextView09" android:text="@string/lblCatTimes"
+			style="@style/DividerBar">
+		</TextView>
+		<LinearLayout android:id="@+id/LinearLayout09"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:padding="5dp" android:gravity="bottom|center_horizontal">
+			<LinearLayout android:id="@+id/LinearLayout10"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblNight" android:text="@string/lblNight"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:width="90dip" android:layout_gravity="bottom"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit
+				    android:id="@+id/txtNight" android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top"
+					android:nextFocusLeft="@id/txtHobbsEnd"
+					mfb:EditMode="HHMM"
+					>
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout11"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblSimIMC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_gravity="bottom"
+					android:width="90dip" android:text="@string/lblSimIMC"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtSimIMC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:layout_gravity="top">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout12"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblIMC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_gravity="bottom"
+					android:width="90dip" android:text="@string/lblIMC"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtIMC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:layout_gravity="top"
+					android:nextFocusRight="@+id/txtXC">
+				</Model.DecimalEdit>
+			</LinearLayout>
+		</LinearLayout>
+		<LinearLayout android:id="@+id/LinearLayout13"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:padding="5dp" android:gravity="bottom|center_horizontal">
+			<LinearLayout android:id="@+id/LinearLayout14"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblXC" android:text="@string/lblXC"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:width="90dip" android:layout_gravity="bottom"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtXC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top" 
+					android:nextFocusLeft="@id/txtIMC">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout45"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblDual" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_gravity="bottom"
+					android:width="90dip" android:text="@string/lblDual"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtDual" android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout16"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblGround" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_gravity="bottom"
+					android:width="90dip" android:text="@string/lblGround"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtGround" android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top" 
+					android:nextFocusRight="@+id/txtCFI">
+				</Model.DecimalEdit>
+			</LinearLayout>
+		</LinearLayout>
+		<LinearLayout android:id="@+id/LinearLayout17"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:padding="5dp" android:gravity="bottom|center_horizontal">
+			<LinearLayout android:id="@+id/LinearLayout18"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblCFI" android:text="@string/lblCFI"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:width="90dip" android:layout_gravity="bottom"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtCFI" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:layout_gravity="top" 
+					android:nextFocusDown="@+id/txtTotal" android:nextFocusLeft="@+id/txtGround">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout19"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblSIC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_gravity="bottom"
+					android:width="90dip" android:text="@string/lblSIC"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtSIC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top"
+					android:nextFocusDown="@+id/txtTotal">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<LinearLayout android:id="@+id/LinearLayout20"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblPIC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_gravity="bottom"
+					android:width="90dip" android:text="@string/lblPIC"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtPIC" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:layout_gravity="top" 
+					android:nextFocusDown="@+id/txtTotal" android:nextFocusRight="@+id/txtTotal">
+				</Model.DecimalEdit>
+			</LinearLayout>
+		</LinearLayout>
+		<LinearLayout android:id="@+id/LinearLayout21"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:gravity="center_horizontal" android:layout_gravity="center_horizontal" android:padding="5dp">
+			<LinearLayout android:id="@+id/LinearLayout22"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:width="90dip" android:orientation="vertical">
+				<TextView android:id="@+id/lblTotal" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:layout_gravity="bottom"
+					android:width="90dip" android:text="@string/lblTotal"
+					android:gravity="center_horizontal">
+				</TextView>
+				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtTotal" android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top" 
+					android:nextFocusLeft="@id/txtPIC">
+				</Model.DecimalEdit>
+			</LinearLayout>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/lblProperties"
+				android:layout_gravity="bottom" android:id="@+id/btnProps"
+				android:gravity="center_vertical"></Button>
+		</LinearLayout>
+		<LinearLayout android:layout_width="fill_parent" android:padding="5dip"
+		android:layout_height="wrap_content" android:orientation="vertical">
+			<TextView android:text="@string/lblCurrentProps" android:id="@+id/lblCurPropsPrompt"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"></TextView>
+			<TextView  android:text="" android:id="@+id/lblCurrentPropsValue"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"></TextView>
+		</LinearLayout>
+		
+		<!--  Images and Sharing -->
+		<TextView android:id="@+id/TextView12" android:text="@string/lblCatSharing"
+			style="@style/DividerBar">
+		</TextView>
+		<Gallery android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="4dip" 
+		android:id="@+id/galImages" android:spacing="4dip" >
+		</Gallery>
+		
+		<!-- Sharing -->
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center_horizontal" android:padding="5dp">
+			<TextView android:id="@+id/txtSocialNetworkHint" android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="@string/lblSetUpFacebook">
+			</TextView>
+			<CheckBox android:text="@string/lblFacebook" android:id="@+id/ckFacebook" android:drawableStart="@drawable/fb_f_logo" android:drawablePadding="20dip"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"></CheckBox>
+			<CheckBox android:text="@string/lblTwitter" android:id="@+id/ckTwitter" android:drawableStart="@drawable/twitter_logo_blue" android:drawablePadding="20dip"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"></CheckBox>
+			<CheckBox android:text="@string/lblMyFlightbook" android:id="@+id/ckMyFlightbook" android:drawableStart="@drawable/icon" android:drawablePadding="4dip"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"></CheckBox>
+		</LinearLayout>
+	</LinearLayout>
+</ScrollView>
+

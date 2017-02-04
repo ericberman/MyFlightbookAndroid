@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"  android:gravity="center_horizontal" android:layout_gravity="center_horizontal" android:layout_width="300dip">
+	<TextView android:text="" android:id="@+id/txtLabel"
+		android:layout_width="280dip" android:layout_height="wrap_content"></TextView>
+	<AutoCompleteTextView
+	   android:id="@+id/txtStringVal"
+	   android:layout_width="280dip"
+	   android:layout_height="wrap_content">
+   </AutoCompleteTextView>
+	<Model.DecimalEdit android:text="" android:id="@+id/txtEditProp"
+		android:layout_height="wrap_content" android:layout_width="280dip"></Model.DecimalEdit>
+	<CheckBox android:text="" android:id="@+id/ckBoolValue"
+	    android:textColor="#000000"
+		android:layout_width="280dip" android:layout_height="wrap_content"></CheckBox>
+	<LinearLayout android:layout_width="fill_parent"
+		android:gravity="center_horizontal" android:layout_height="wrap_content">
+		<Button android:text="@string/lblCancel" android:id="@+id/btnCancel" style="?android:attr/borderlessButtonStyle"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+		<Button android:text="@string/lblOK" android:id="@+id/btnOK" style="?android:attr/borderlessButtonStyle"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:textStyle="bold"></Button>
+	</LinearLayout>
+	<TextView android:text="" android:id="@+id/txtDescription"
+		android:layout_width="280dip" android:layout_height="wrap_content"></TextView>
+</LinearLayout>

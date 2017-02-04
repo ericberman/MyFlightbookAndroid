@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:titleCondensed="@string/menuDeleteFlightShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_discard"
+		android:title="@string/menuDeleteFlight" android:id="@+id/btnDeleteFlight"></item>
+	<item android:title="@string/menuAddFlight" android:titleCondensed="@string/menuAddFlightShort" android:showAsAction="ifRoom" android:id="@+id/btnSubmitFlight"></item>
+	<item android:title="@string/menuSaveFlight" android:titleCondensed="@string/menuSaveFlightShort" android:showAsAction="ifRoom" android:id="@+id/menuUploadLater"></item>
+	<item android:id="@+id/menuTakePicture" android:titleCondensed="@string/menuTakePictureShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_camera" android:title="@string/menuTakePicture"></item>
+	<item android:id="@+id/menuTakeVideo" android:titleCondensed="@string/menuTakeVideoShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_video"  android:title="@string/menuTakeVideo"></item>
+	<item android:id="@+id/menuChoosePicture" android:titleCondensed="@string/menuChoosePictureShort" android:title="@string/menuChoosePicture" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_picture"></item>
+</menu>

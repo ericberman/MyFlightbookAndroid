@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="vertical" android:gravity="center_horizontal" android:layout_gravity="center_horizontal">
+	<DatePicker android:layout_width="wrap_content" android:calendarViewShown="false"
+		android:layout_height="wrap_content" android:id="@+id/datePicker"></DatePicker>
+	<TimePicker android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/timePicker"></TimePicker>
+	<LinearLayout android:layout_width="fill_parent" android:gravity="center_horizontal"
+		android:layout_height="wrap_content" style="?android:attr/buttonBarButtonStyle">
+		<Button android:layout_width="wrap_content" style="?android:attr/buttonBarButtonStyle"
+			android:layout_height="wrap_content" android:text="@string/lblNone"
+			android:id="@+id/btnDateNone" >
+		</Button>
+		<Button android:layout_width="wrap_content" style="?android:attr/buttonBarButtonStyle"
+			android:layout_height="wrap_content" android:text="@string/lblNow"
+			android:id="@+id/btnDateNow" >
+		</Button>
+		<Button android:layout_width="wrap_content" style="?android:attr/buttonBarButtonStyle"
+			android:layout_height="wrap_content" android:text="@string/lblOK"
+			android:id="@+id/btnOK" >
+		</Button>
+	</LinearLayout>
+</LinearLayout>

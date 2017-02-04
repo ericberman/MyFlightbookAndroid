@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_margin="4dip"
+    android:layout_height="fill_parent" >
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical">
+   	    <TableLayout android:id="@+id/TableLayout01"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="5dp">
+	 		<TableRow android:id="@+id/tableRowText" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	 		    <TextView android:text="@string/fqTextContains" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+	 		    <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+	 		        android:id="@+id/fqGeneralText"
+	 		        android:hint="@string/fqTextContainsPrompt" />
+			</TableRow>
+	 		<TableRow android:id="@+id/tableRowAirports" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	 		    <TextView android:text="@string/fqAirportsVisited" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+	 		    <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+	 		        android:id="@+id/fqAirports" android:inputType="textCapCharacters|textNoSuggestions"
+	 		        android:hint="@string/fqAirportsContainsPrompt" />
+			</TableRow>
+   	        <RadioGroup android:id="@+id/rbDistanceTypeGroup" android:layout_width="wrap_content" android:layout_height="wrap_content">
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				    android:id="@+id/rbDistanceAny" android:text="@string/FlightQueryDistanceAllFlights"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				    android:id="@+id/rbDistanceLocal" android:text="@string/FlightQueryDistanceLocalFlights"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				    android:id="@+id/rbDistanceNonlocal" android:text="@string/FlightQueryDistanceNonLocalFlights"></RadioButton>
+	        </RadioGroup>
+		</TableLayout>
+		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightDate" style="@style/DividerBar"></TextView>
+		<LinearLayout android:layout_margin="4dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+ 		    <TextView android:text="@string/fqDateStartDate" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+			<Button android:id="@+id/btnfqDateStart" android:layout_width="wrap_content"
+				android:focusable="false" 
+				android:layout_height="wrap_content">
+			</Button>
+			<TextView android:text="@string/fqDateEndDate" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView> 		    		    
+			<Button android:id="@+id/btnfqDateEnd" android:layout_width="wrap_content"
+				android:focusable="false" 
+				android:layout_height="wrap_content">
+			</Button>
+		</LinearLayout>
+		<RadioGroup android:id="@+id/rbCommonTimeGroup" android:layout_width="wrap_content" android:layout_height="wrap_content">
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbAlltime" android:text="@string/fqDateAllTime"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbYTD" android:text="@string/fqDateYTD"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbPreviousYear" android:text="@string/fqDatePreviousYear"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbThisMonth" android:text="@string/fqDateThisMonth"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbPreviousMonth" android:text="@string/fqDatePreviousMonth"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbTrailing30" android:text="@string/fqDate30Days"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbTrailing90" android:text="@string/fqDate90Days"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbTrailing6" android:text="@string/fqDate6Months"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbTrailing12" android:text="@string/fqDate12Months"></RadioButton>
+			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+			    android:id="@+id/rbCustom" android:text="@string/fqDateCustom"></RadioButton>
+		</RadioGroup>
+										
+		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightAircraft" style="@style/DividerBar"></TextView>
+	    <com.myflightbook.android.MultiSpinner android:layout_margin="4dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+			android:id="@+id/multispinnerAircraft"></com.myflightbook.android.MultiSpinner>
+		
+	    <!-- Aircraft Features -->
+		<TextView android:text="@string/fqAircraftFeatures" style="@style/DividerBar"></TextView>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+	        <CheckBox android:id="@+id/ckIsTailwheel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afTailwheel" >
+	        </CheckBox>
+		    <CheckBox android:id="@+id/ckIsHighPerf" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afHighPerf" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckisGlass" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afGlass" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckIsComplex" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afComplex">
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckIsRetract" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afRetract" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckIsConstantProp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afCSProp" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasFlaps" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afFlaps" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckIsMotorGlider" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afMotorglider" >
+	        </CheckBox>
+            <CheckBox android:id="@+id/ckIsMultiEngineHeli" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afMultiEngineHeli" />
+	        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+		        <RadioGroup android:id="@+id/rbEngineTypeGroup" android:layout_width="wrap_content" android:layout_height="wrap_content">
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbAllEngines" android:text="@string/afEngineAny"></RadioButton>
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbEnginePiston" android:text="@string/afEnginePiston"></RadioButton>
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbEngineTurboprop" android:text="@string/afEngineTurboProp"></RadioButton>
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbEngineJet" android:text="@string/afEngineJet"></RadioButton>
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbEngineTurbine" android:text="@string/afEngineTurbineAny"></RadioButton>
+		            <RadioButton android:id="@+id/rbEngineElectric" android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" android:text="@string/afEngineElectric" />
+				</RadioGroup>
+		        <RadioGroup android:id="@+id/rbInstanceTypeGroup" android:layout_width="wrap_content" android:layout_height="wrap_content">
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbInstanceAny" android:text="@string/afInstanceAny"></RadioButton>
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbInstanceReal" android:text="@string/afInstanceReal"></RadioButton>
+					<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					    android:id="@+id/rbInstanceTraining" android:text="@string/afInstanceTraining"></RadioButton>
+		        </RadioGroup>
+   	        </LinearLayout>
+   		</LinearLayout>
+		
+		<!-- Make/models -->
+		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightModel" style="@style/DividerBar"></TextView>
+	    <com.myflightbook.android.MultiSpinner android:layout_margin="4dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+			android:id="@+id/multispinnerModels"></com.myflightbook.android.MultiSpinner>
+	    <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
+	        android:id="@+id/fqModelName"
+	        android:hint="@string/fqFlightModelNamePrompt" />
+	    
+		<!-- Categories/Classes -->
+		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/ccHeader" style="@style/DividerBar"></TextView>
+	    <com.myflightbook.android.MultiSpinner android:layout_margin="4dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+			android:id="@+id/multispinnerCategoryClasses"></com.myflightbook.android.MultiSpinner>
+	    
+   		<!-- Flight Features -->
+	   	<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightFeatures" style="@style/DividerBar"></TextView>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+	        <CheckBox android:id="@+id/ckHasFSLandings" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffFSLanding" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasFSNightLandings" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffFSNightLanding" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasApproaches" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffApproaches" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasHolds" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffHold">
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasTelemetry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffTelemetry" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasXC" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffXC" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasSimIMC" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffSimIMC" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasIMC" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffIMC" >
+	        </CheckBox>
+   	        <CheckBox android:id="@+id/ckHasNight" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffNight" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckIsPublic" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffIsPublic" >
+	        </CheckBox>
+			<CheckBox android:id="@+id/ckIsSigned" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffIsSigned" />
+  	        <CheckBox android:id="@+id/ckHasDual" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffDual" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasCFI" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffCFI" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasSIC" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffSIC" >
+	        </CheckBox>
+	        <CheckBox android:id="@+id/ckHasPIC" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffPIC" >
+	        </CheckBox>
+		</LinearLayout>
+		
+		<!--  Properties -->
+		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqProperties" style="@style/DividerBar"></TextView>
+	    <com.myflightbook.android.MultiSpinner android:layout_margin="4dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+			android:id="@+id/multispinnerProps">
+	    </com.myflightbook.android.MultiSpinner>
+			    
+	</LinearLayout>
+</ScrollView>

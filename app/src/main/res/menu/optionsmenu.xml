@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:titleCondensed="@string/menuContactShort" android:showAsAction="ifRoom" android:title="@string/menuContact" android:id="@+id/menuContact"></item>
+    <item android:titleCondensed="@string/menuFollowFBShort" android:showAsAction="ifRoom" android:icon="@drawable/fb_f_logo" android:title="@string/menuFollowFB" android:id="@+id/menuFacebook"></item>
+    <item android:titleCondensed="@string/menuFollowTWShort" android:showAsAction="ifRoom" android:icon="@drawable/twitter_logo_blue" android:title="@string/menuFollowTW" android:id="@+id/menuTwitter"></item>
+</menu>

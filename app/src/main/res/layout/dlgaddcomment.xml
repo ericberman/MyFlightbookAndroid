@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:layout_gravity="center_horizontal"
+	android:gravity="center_horizontal">
+	<TextView android:id="@+id/textView1" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/lblAddComment"></TextView>
+	<EditText android:text="" android:layout_height="wrap_content"
+		android:id="@+id/txtComment" android:hint="@string/lblAddCommentWM"
+		android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+		android:layout_width="250dp"></EditText>
+	<ImageView android:layout_height="wrap_content" android:contentDescription="@string/cdImagesForFlight"
+		android:layout_width="wrap_content" android:id="@+id/imgPreview"></ImageView>
+	<LinearLayout android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:id="@+id/linearLayout1"
+		android:gravity="center_horizontal">
+		<Button android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/btnCancel"
+			android:text="@string/lblCancel" android:width="120dp"></Button>
+		<Button android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/btnOK"
+			android:text="@string/lblOK" android:width="120dp" android:textStyle="bold"></Button>
+	</LinearLayout>
+</LinearLayout>

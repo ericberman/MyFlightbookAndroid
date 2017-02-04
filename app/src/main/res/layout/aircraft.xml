@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/flightItem" android:layout_width="fill_parent"
+	android:orientation="horizontal" android:layout_height="wrap_content"
+	android:padding="10dp">
+	<ImageView android:padding="4dip" android:contentDescription="@string/cdTakePicture"
+	android:layout_width="120dip" android:layout_height="90dip" android:id="@+id/imgCamera" android:layout_gravity="center" />
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="vertical">
+		<TextView android:text="" android:id="@+id/txtTail"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:textStyle="bold">
+		</TextView>
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<TextView android:text="" android:id="@+id/txtModel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content">
+			</TextView>
+			<TextView android:text="" android:id="@+id/txtCommonName"
+				android:layout_width="wrap_content" android:layout_height="wrap_content">
+			</TextView>
+		</LinearLayout>
+		<!-- 
+		<Gallery android:layout_width="fill_parent" android:layout_height="wrap_content" 
+		android:id="@+id/galImages" android:spacing="4dip" >
+		</Gallery>
+		 -->
+	</LinearLayout>
+</LinearLayout>

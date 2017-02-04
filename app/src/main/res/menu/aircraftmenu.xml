@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menuRefreshAircraft" android:titleCondensed="@string/menuRefreshAircraftShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_refresh" android:title="@string/menuRefreshAircraft"></item>
+    <item android:id="@+id/menuNewAircraft" android:icon="@drawable/ic_action_new" android:titleCondensed="@string/menuAddAircraftShort" android:showAsAction="withText|always" android:title="@string/menuAddAircraft"></item>
+</menu>

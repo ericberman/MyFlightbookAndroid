@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:map="http://schemas.android.com/apk/res-auto"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+
+		<ToggleButton
+		    android:id="@+id/ckShowAllAirports"
+		    android:layout_width="24dip"
+		    android:layout_height="24dip"
+		    android:padding="3dip"
+		    android:layout_marginStart="3dip"
+		    android:layout_gravity="center_vertical|center_horizontal"
+		    android:background="@drawable/ic_toggle_airport_bg"
+		    style="@style/toggleAirportButton"
+		    android:textOff=""
+		    android:textOn="" />
+
+		<LinearLayout android:layout_width="fill_parent" android:id="@+id/llMapToolbar" android:layout_height="wrap_content" android:orientation="horizontal">
+			<EditText 
+				android:layout_width="0dip"
+				android:hint="@string/emptyWaterMarkRoute"
+				android:layout_height="wrap_content" 
+                android:inputType="textCapCharacters|textNoSuggestions|textMultiLine"
+				android:layout_weight=".7"
+				android:id="@+id/txtMapRoute">
+			</EditText>
+			<ImageButton android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text=""
+			    android:src="@drawable/ic_action_save"
+			    android:contentDescription="@string/txtShareKML"
+			    android:id="@+id/btnExportKML">
+	  		</ImageButton>
+			<ImageButton android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text=""
+				android:src="@drawable/ic_action_refresh_dk" 
+				android:contentDescription="@string/txtUpdateRouteOnMap"
+				android:id="@+id/btnUpdateMapRoute">
+			</ImageButton>
+		</LinearLayout>
+	</LinearLayout>
+	<fragment
+          android:id="@+id/mfbMap"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:name="com.google.android.gms.maps.MapFragment"
+     />
+</LinearLayout>

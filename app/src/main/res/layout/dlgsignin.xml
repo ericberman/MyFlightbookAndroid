@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:padding="5dp">
+	<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+		android:text="@string/UserName" android:editable="false"
+		android:layout_height="wrap_content">
+	</TextView>
+	<EditText android:editable="true" android:text=""
+		android:layout_width="fill_parent" android:inputType="textEmailAddress"
+		android:hint="@string/lblEmail" android:id="@+id/editEmail"
+		android:layout_height="wrap_content" android:singleLine="false"></EditText>
+
+	<TextView android:id="@+id/TextView02" android:layout_width="wrap_content"
+		android:text="@string/Password" android:editable="false"
+		android:layout_height="wrap_content">
+	</TextView>
+	<EditText android:editable="true" android:text=""
+		android:hint="" android:layout_width="fill_parent" android:id="@+id/editPass"
+		android:layout_height="wrap_content" android:inputType="textPassword"
+		android:singleLine="true"></EditText>
+	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:gravity="center_horizontal">
+		<Button android:id="@+id/btnSubmit" android:text="@string/signin"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+		<Button android:id="@+id/btnCancel" android:text="@string/lblCancel"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+	</LinearLayout>
+</LinearLayout>

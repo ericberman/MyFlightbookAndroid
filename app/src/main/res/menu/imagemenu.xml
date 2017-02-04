@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:titleCondensed="@string/menuDeleteImageShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_discard" android:title="@string/menuDeleteImage" android:id="@+id/menuDeleteImage"></item>
+    <item android:titleCondensed="@string/menuEditCommentShort" android:showAsAction="ifRoom" android:id="@+id/menuAddComment" android:title="@string/menuEditComment"></item>
+    <item android:titleCondensed="@string/menuViewImageShort" android:showAsAction="ifRoom" android:id="@+id/menuViewImage" android:title="@string/menuViewImage"></item>
+</menu>

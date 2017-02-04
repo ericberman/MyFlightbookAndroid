@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/ScrollView01" android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+	<LinearLayout
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:orientation="vertical">
+		<TextView android:text="@string/lblNewUser" android:id="@+id/TextView01"
+			style="@style/DividerBar"></TextView>
+		<TableLayout android:id="@+id/TableLayout01"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="5dp">
+			<TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView02"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblEmail"></TextView>
+				<EditText android:id="@+id/txtEmail" android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:hint="@string/lblEmailHint"
+					android:inputType="textEmailAddress" android:nextFocusDown="@+id/txtEmail2" android:width="170dip"></EditText>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow02" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView03"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblEmail2"></TextView>
+				<EditText android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/txtEmail2"
+					android:hint="@string/lblEmailConfirmHint" android:inputType="textEmailAddress" android:nextFocusDown="@+id/txtPass" android:width="170dip"></EditText>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow03" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView04"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblPass"></TextView>
+				<EditText android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/txtPass"
+					android:inputType="textPassword" android:nextFocusDown="@+id/txtPass2" android:width="170dip"></EditText>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow04" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView05"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblPass2"></TextView>
+				<EditText android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/txtPass2"
+					android:inputType="textPassword" android:nextFocusDown="@+id/txtFirstName" android:nextFocusUp="@+id/txtPass2" android:width="170dip"></EditText>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow05" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:gravity="center_vertical">
+				<LinearLayout android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:orientation="vertical">
+					<TextView android:id="@+id/TextView06"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="@string/lblFirstName"></TextView>
+					<TextView android:id="@+id/TextView07"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="@string/lblOptional" android:textSize="10sp"></TextView>
+				</LinearLayout>
+				<EditText android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/txtFirstName"
+					android:hint="@string/lblFirstName" android:inputType="textPersonName" android:nextFocusDown="@+id/txtLastName" android:nextFocusUp="@+id/txtFirstName" android:width="170dip"></EditText>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow07" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:gravity="center_vertical">
+				<LinearLayout android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:orientation="vertical">
+					<TextView android:id="@+id/TextView08"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="@string/lblLastName"></TextView>
+					<TextView android:id="@+id/TextView09"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="@string/lblOptional" android:textSize="10sp"></TextView>
+				</LinearLayout>
+				<EditText android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/txtLastName"
+					android:hint="@string/lblLastName" android:inputType="textPersonName" android:nextFocusDown="@+id/txtQuestion" android:nextFocusUp="@+id/txtFirstName" android:width="170dip"></EditText>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow09" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView10"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblQuestionDescription"
+					android:layout_span="2">
+				</TextView>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow11" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView11"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblQuestion"></TextView><LinearLayout
+                    android:id="@+id/llQuestions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                    <EditText
+                        android:id="@+id/txtQuestion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/lblQuestionHint"
+                        android:nextFocusDown="@+id/txtAnswer"
+                        android:nextFocusUp="@+id/txtLastName"
+                        android:width="170dip" >
+                    </EditText>
+                    <Spinner
+                        android:id="@+id/spnSampleQuestions"
+                        android:layout_width="40dip"
+                        android:layout_height="40dip"
+                        android:spinnerMode="dialog"
+                        android:drawSelectorOnTop="true" />
+                </LinearLayout>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow12" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView12"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblAnswer"></TextView>
+				<EditText android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/txtAnswer"
+					android:hint="@string/lblAnswerHint" android:nextFocusUp="@+id/txtQuestion" android:width="170dip"></EditText>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow13" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView13"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblPrivacy"></TextView>
+				<Button android:text="@string/lblViewWebContent" android:id="@+id/btnViewPrivacy"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+			</TableRow>
+			<TableRow android:id="@+id/TableRow14" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/TextView14"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/lblTandC"></TextView>
+				<Button android:text="@string/lblViewWebContent" android:id="@+id/btnViewTandC"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+			</TableRow>
+		</TableLayout>
+		<CheckBox android:text="@string/lblOver14" android:layout_height="wrap_content" android:id="@+id/ckOver14" android:layout_width="wrap_content"></CheckBox>
+		<TextView android:id="@+id/TextView15" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/lblDisclaimer" android:textStyle="bold" android:padding="5dp"></TextView>
+		<LinearLayout android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:layout_gravity="center_horizontal">
+			<Button android:id="@+id/btnCreateUser" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/lblCreateAccount"
+				android:layout_gravity="center_horizontal" android:textStyle="bold"></Button>
+			<Button android:id="@+id/btnCancel" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/lblCancel"
+				android:layout_gravity="center_horizontal"></Button>
+		</LinearLayout>
+	</LinearLayout>
+</ScrollView>

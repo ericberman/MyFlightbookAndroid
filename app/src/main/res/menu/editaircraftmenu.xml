@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menuUpdateAircraft" android:titleCondensed="@string/menuUpdateAircraftShort" android:title="@string/menuUpdateAircraft" android:showAsAction="ifRoom"></item>
+	<item android:id="@+id/menuTakePicture" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_camera" android:titleCondensed="@string/menuTakePictureShort" android:title="@string/menuTakePicture"></item>
+	<item android:id="@+id/menuChoosePicture" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_picture" android:titleCondensed="@string/menuChoosePictureShort" android:title="@string/menuChoosePicture"></item>
+    <item android:title="@string/menuFlightSearch" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_search" android:id="@+id/findFlights"></item>
+	<item android:id="@+id/menuDeleteAircraft" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_discard" android:titleCondensed="@string/menuDeleteAircraftShort" android:title="@string/menuDeleteAircraft"></item>
+	<item android:id="@+id/menuViewSchedule" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_go_to_today" android:title="@string/lblSchedule" android:titleCondensed="@string/lblSchedule"></item>
+</menu>
