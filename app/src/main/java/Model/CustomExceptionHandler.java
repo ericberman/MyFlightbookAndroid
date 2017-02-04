@@ -21,10 +21,15 @@ package Model;
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.WebServices.AuthToken;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -77,10 +82,6 @@ public class CustomExceptionHandler  implements UncaughtExceptionHandler {
         if (localPath != null) {
             writeToFile(stacktrace, filename);
         }
-        if (url != null) {
-        	(new Runnable() { public void run() { sendToServer(stacktrace, filename); } }).run();
-            
-        }
 
         defaultUEH.uncaughtException(t, e);
     }
@@ -97,6 +98,38 @@ public class CustomExceptionHandler  implements UncaughtExceptionHandler {
         }
     }
 
+	public void sendPendingReports() {
+		if (localPath == null || localPath.length() == 0)
+			return;
+
+		new Thread(new Runnable() {
+			public void run() {
+				File dir = new File(localPath);
+				File[] files = dir.listFiles();
+				StringBuilder sb = new StringBuilder();
+				for (File f : files) {
+					if (!f.getName().endsWith(".stacktrace"))
+						continue;;
+					try {
+						BufferedReader br = new BufferedReader(new FileReader(f));
+						String line;
+						while ((line = br.readLine()) != null) {
+							sb.append(line);
+							sb.append('\n');
+						}
+						br.close() ;
+
+						sendToServer(sb.toString(), f.getName());
+						f.delete();
+					}
+					catch (IOException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		}).start();
+	}
+
     private void sendToServer(String stacktrace, String filename) {
         if (MFBConstants.fIsDebug)
         	return;
@@ -106,7 +139,8 @@ public class CustomExceptionHandler  implements UncaughtExceptionHandler {
 		
 		HttpURLConnection urlConnection = null;
 		
-	   OutputStream out = null;
+	    OutputStream out = null;
+		InputStream in = null;
 	   try
 	   {
 		   urlConnection = (HttpURLConnection) (new URL(url)).openConnection();
@@ -128,6 +162,18 @@ public class CustomExceptionHandler  implements UncaughtExceptionHandler {
 		   out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes("UTF8"));
 		   
 		   out.flush();
+
+		   in = new BufferedInputStream(urlConnection.getInputStream());
+		   int status = urlConnection.getResponseCode();
+		   if (status != HttpURLConnection.HTTP_OK)
+			   throw new Exception(String.format("Bad response - status = %d", status));
+
+		   byte[] rgResponse = new byte[1024];
+		   in.read(rgResponse);
+
+		   String sz = new String(rgResponse, "UTF8");
+		   if (!sz.contains("OK"))
+			   throw new Exception(sz);
 	   }
 	   catch (Exception ex)
 	   {
@@ -142,7 +188,11 @@ public class CustomExceptionHandler  implements UncaughtExceptionHandler {
 				e.printStackTrace();
 			}
 			if (urlConnection != null)
-				urlConnection.disconnect();	
+				try {
+					urlConnection.disconnect();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 	   }
     }
 }

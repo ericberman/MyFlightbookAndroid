@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.myflightbook.android;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -261,7 +262,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 			e.printStackTrace();
 		}
 
-		// TODO: do we need permissions to do this?
 		initDB(true);
 
 		// get cached auth credentials; restore state prior to restoring location.
@@ -277,8 +277,10 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 			m_Location.SetContext(this);
 		}
 
-		Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler(
-				null, String.format(MFBConstants.urlCrashReport, MFBConstants.szIP)));
+		CustomExceptionHandler ceh = new CustomExceptionHandler(getCacheDir().getAbsolutePath(), String.format(MFBConstants.urlCrashReport, MFBConstants.szIP));
+		Thread.setDefaultUncaughtExceptionHandler(ceh);
+
+		ceh.sendPendingReports();
 
 		// Set up the tabs
 		mTabHost = (TabHost) findViewById(android.R.id.tabhost);
