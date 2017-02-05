@@ -319,6 +319,8 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 	            return true;
 	        }
 	    });
+
+		findViewById(R.id.txtViewInTheCockpit).setOnClickListener(this);
 		
 		enableCrossFill(R.id.txtNight);
 		enableCrossFill(R.id.txtSimIMC);
@@ -871,6 +873,12 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 			break;
 		case R.id.btnPausePlay:
 			toggleFlightPause();
+			break;
+		case R.id.txtViewInTheCockpit:
+		{
+			View target = findViewById(R.id.sectInTheCockpit);
+			setExpandedState((TextView) v, target, target.getVisibility() == View.VISIBLE);
+		}
 			break;
 		default:
 			break;

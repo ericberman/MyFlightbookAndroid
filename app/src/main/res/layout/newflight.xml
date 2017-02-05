@@ -6,7 +6,7 @@
 	<LinearLayout
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:orientation="vertical">
-		
+
 		<!-- General Flight Info -->
 		<TextView android:id="@+id/TextView01" android:text="@string/lblCatOverall"
 			style="@style/DividerBar">
@@ -15,7 +15,7 @@
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:orientation="vertical"
 			android:layout_gravity="center_horizontal"
-			android:padding="5dp">		
+			android:padding="5dp">
 			<LinearLayout android:id="@+id/LinearLayoutAircraft" android:layout_width="fill_parent"
 			    android:layout_height="wrap_content" android:orientation="horizontal" android:padding="5dp">
 				<Button android:id="@+id/btnFlightSet" android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
 	            android:layout_gravity="center_horizontal"
 	            android:orientation="vertical"
 	            android:padding="5dp" >
-	
+
                 <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:gravity="center_vertical" >
-	
+
 	                <EditText
 	                    android:id="@+id/txtRoute"
 	                    android:layout_width="0dp"
@@ -74,14 +74,14 @@
 	                    android:inputType="textCapCharacters|textNoSuggestions|textMultiLine"
 	                    android:minLines="2"
 	                    android:text="" />
-	
+
 	                <Button
 	                    android:id="@+id/btnAppendNearest"
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
 	                    android:longClickable="true"
 	                    android:text="@string/lblAppendNearest" />
-	
+
 	                <ImageButton
 	                    android:id="@+id/btnViewOnMap"
 	                    android:layout_width="wrap_content"
@@ -93,7 +93,7 @@
 	            </LinearLayout>
             </LinearLayout>
 		</LinearLayout>
-				
+
 		<!-- Landings -->
 		<TextView android:id="@+id/TextView02" android:text="@string/lblCatApproachesAndLandings"
 			style="@style/DividerBar">
@@ -164,14 +164,19 @@
 					android:nextFocusDown="@+id/txtLandings"
 					mfb:EditMode="INTEGER">
 				</Model.DecimalEdit>
-			</LinearLayout>			
+			</LinearLayout>
 			<CheckBox android:text="@string/lblHold" android:id="@+id/ckHold"
 				android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom"></CheckBox>
 		</LinearLayout>
-		
+
 		<!-- In the Cockpit -->
-		<TextView android:id="@+id/TextView03" android:text="@string/lblCatCockpit"
-		style="@style/DividerBar"></TextView>
+		<TextView android:id="@+id/txtViewInTheCockpit" android:text="@string/lblCatCockpit" android:drawableStart="@drawable/collapse_light" android:clickable="true"
+		style="@style/DividerBar" />
+
+		<LinearLayout
+			android:layout_width="match_parent" android:orientation="vertical"
+			android:id="@+id/sectInTheCockpit"
+			android:layout_height="wrap_content">
 
 		<!-- GPS Quality -->
 		<TableLayout android:layout_width="fill_parent" android:id="@+id/sectGPS"
@@ -191,7 +196,7 @@
 					<TextView android:id="@+id/TextView04"
 					    android:textSize="12sp"
 						android:layout_height="wrap_content" android:layout_width="wrap_content"
-						
+
 						android:text="@string/lblElapsedTime">
 					</TextView>
 					<TextView android:id="@+id/txtElapsedTime"
@@ -219,7 +224,7 @@
 						android:textSize="12sp" android:layout_width="wrap_content" >
 					</TextView>
 					<TextView android:id="@+id/txtFlightGPSQuality"
-						android:layout_height="wrap_content" android:text="@string/lblUnknown" 
+						android:layout_height="wrap_content" android:text="@string/lblUnknown"
 						android:textStyle="bold" android:layout_width="wrap_content" >
 					</TextView>
 				</LinearLayout>
@@ -237,15 +242,15 @@
 					android:padding="2dip"
 					android:layout_gravity="start|center_vertical">
 				</ImageView>
-				<TextView android:id="@+id/txtSunrise" android:layout_width="wrap_content" 
+				<TextView android:id="@+id/txtSunrise" android:layout_width="wrap_content"
 					android:layout_height="wrap_content" android:text="@string/lblSunrise">
 				</TextView>
   					<TextView android:id="@+id/txtFlightSpeed" android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:text="@string/lblNoSpeed" 
+					android:layout_height="wrap_content" android:text="@string/lblNoSpeed"
 					android:layout_gravity="center_horizontal" android:gravity="center_horizontal"
 					android:textStyle="bold">
 				</TextView>
-				<TextView android:id="@+id/txtLatitude" android:layout_width="wrap_content" 
+				<TextView android:id="@+id/txtLatitude" android:layout_width="wrap_content"
 					android:layout_height="wrap_content" android:text="@string/lblLatitude">
 				</TextView>
 				<TextView android:id="@+id/txtSpacer1" android:layout_width="wrap_content"
@@ -265,7 +270,7 @@
 					android:layout_height="wrap_content" android:text="@string/lblSunset">
 				</TextView>
   					<TextView android:id="@+id/txtFlightAltitude" android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:text="@string/lblNoAltitude" 
+					android:layout_height="wrap_content" android:text="@string/lblNoAltitude"
 					android:layout_gravity="center_horizontal" android:gravity="center_horizontal"
 					android:textStyle="bold">
 				</TextView>
@@ -282,13 +287,13 @@
 		<!-- Remainder of "In the Cockpit" -->
 		<TableLayout android:id="@+id/TableLayout02" android:layout_gravity="center_horizontal"
 			android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="5dp">
-			<TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" 
+			<TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content"
 				android:layout_height="wrap_content">
 				<TextView android:text="@string/lblHobbsStart" android:id="@+id/lblHobbsStart"
 					android:layout_height="wrap_content" android:width="100dip"
 					android:layout_width="wrap_content" android:layout_gravity="center_vertical"></TextView>
 				<Model.DecimalEdit android:text="" android:id="@+id/txtHobbsStart"
-					android:width="90dip" 
+					android:width="90dip"
 					android:layout_height="wrap_content" android:layout_width="wrap_content"
 					mfb:EditMode="DECIMAL">
 				</Model.DecimalEdit>
@@ -348,7 +353,10 @@
 				</Model.DecimalEdit>
 			</TableRow>
 		</TableLayout>
-				
+
+
+		</LinearLayout>
+
 		<!-- Times and properties -->
 		<TextView android:id="@+id/TextView09" android:text="@string/lblCatTimes"
 			style="@style/DividerBar">
@@ -382,7 +390,7 @@
 					android:gravity="center_horizontal">
 				</TextView>
 				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtSimIMC" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
+					android:layout_height="wrap_content"
 					android:layout_gravity="top">
 				</Model.DecimalEdit>
 			</LinearLayout>
@@ -395,7 +403,7 @@
 					android:gravity="center_horizontal">
 				</TextView>
 				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtIMC" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
+					android:layout_height="wrap_content"
 					android:layout_gravity="top"
 					android:nextFocusRight="@+id/txtXC">
 				</Model.DecimalEdit>
@@ -414,7 +422,7 @@
 				</TextView>
 				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtXC" android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="top" 
+					android:layout_gravity="top"
 					android:nextFocusLeft="@id/txtIMC">
 				</Model.DecimalEdit>
 			</LinearLayout>
@@ -441,7 +449,7 @@
 				</TextView>
 				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtGround" android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="top" 
+					android:layout_gravity="top"
 					android:nextFocusRight="@+id/txtCFI">
 				</Model.DecimalEdit>
 			</LinearLayout>
@@ -458,8 +466,8 @@
 					android:gravity="center_horizontal">
 				</TextView>
 				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtCFI" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:layout_gravity="top" 
+					android:layout_height="wrap_content"
+					android:layout_gravity="top"
 					android:nextFocusDown="@+id/txtTotal" android:nextFocusLeft="@+id/txtGround">
 				</Model.DecimalEdit>
 			</LinearLayout>
@@ -486,8 +494,8 @@
 					android:gravity="center_horizontal">
 				</TextView>
 				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtPIC" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:layout_gravity="top" 
+					android:layout_height="wrap_content"
+					android:layout_gravity="top"
 					android:nextFocusDown="@+id/txtTotal" android:nextFocusRight="@+id/txtTotal">
 				</Model.DecimalEdit>
 			</LinearLayout>
@@ -505,7 +513,7 @@
 				</TextView>
 				<Model.DecimalEdit mfb:EditMode="HHMM" android:id="@+id/txtTotal" android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="top" 
+					android:layout_gravity="top"
 					android:nextFocusLeft="@id/txtPIC">
 				</Model.DecimalEdit>
 			</LinearLayout>
@@ -523,15 +531,15 @@
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"></TextView>
 		</LinearLayout>
-		
+
 		<!--  Images and Sharing -->
 		<TextView android:id="@+id/TextView12" android:text="@string/lblCatSharing"
 			style="@style/DividerBar">
 		</TextView>
-		<Gallery android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="4dip" 
+		<Gallery android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="4dip"
 		android:id="@+id/galImages" android:spacing="4dip" >
 		</Gallery>
-		
+
 		<!-- Sharing -->
 		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center_horizontal" android:padding="5dp">
 			<TextView android:id="@+id/txtSocialNetworkHint" android:layout_width="wrap_content" android:layout_height="wrap_content"

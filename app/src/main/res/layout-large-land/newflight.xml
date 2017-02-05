@@ -241,10 +241,13 @@
 
         <!-- In the Cockpit -->
 
-        <TextView
-            android:id="@+id/TextView03"
-            style="@style/DividerBar"
-            android:text="@string/lblCatCockpit" />
+        <TextView android:id="@+id/txtViewInTheCockpit" android:text="@string/lblCatCockpit" android:drawableStart="@drawable/collapse_light" android:clickable="true"
+            style="@style/DividerBar" />
+
+        <LinearLayout
+            android:layout_width="match_parent" android:orientation="vertical"
+            android:id="@+id/sectInTheCockpit"
+            android:layout_height="wrap_content">
 
         <!-- GPS Quality -->
 
@@ -541,6 +544,7 @@
             </TableLayout>
         </LinearLayout>
 
+        </LinearLayout>
         <!-- Remainder of "In the Cockpit" -->
 
 

@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,12 +44,16 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Gallery;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate;
 import com.myflightbook.android.WebServices.AuthToken;
@@ -490,6 +495,72 @@ public class ActMFBForm extends Fragment {
 			e.printStackTrace();
 			MFBUtil.Alert(getActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
 		}
+	}
+	//endregion
+
+	//region expand/collapse
+	// next two methods are adapted from http://stackoverflow.com/questions/19263312/how-to-achieve-smooth-expand-collapse-animation
+	public void expandView(final View v) {
+		v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		final int targtetHeight = v.getMeasuredHeight();
+
+		v.getLayoutParams().height = 0;
+		v.setVisibility(View.VISIBLE);
+		Animation a = new Animation()
+		{
+			@Override
+			protected void applyTransformation(float interpolatedTime, Transformation t) {
+				v.getLayoutParams().height = interpolatedTime == 1
+						? LinearLayout.LayoutParams.WRAP_CONTENT
+						: (int)(targtetHeight * interpolatedTime);
+				v.requestLayout();
+			}
+
+			@Override
+			public boolean willChangeBounds() {
+				return true;
+			}
+		};
+
+		a.setDuration((int)(targtetHeight / v.getContext().getResources().getDisplayMetrics().density));
+		v.startAnimation(a);
+	}
+
+	public void collapseView(final View v) {
+		final int initialHeight = v.getMeasuredHeight();
+
+		Animation a = new Animation()
+		{
+			@Override
+			protected void applyTransformation(float interpolatedTime, Transformation t) {
+				if(interpolatedTime == 1){
+					v.setVisibility(View.GONE);
+				}else{
+					v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+					v.requestLayout();
+				}
+			}
+
+			@Override
+			public boolean willChangeBounds() {
+				return true;
+			}
+		};
+
+		a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+		v.startAnimation(a);
+	}
+
+	public void setExpandedState(TextView v, View target, Boolean fExpanded) {
+		Drawable d = null;
+		if (fExpanded) {
+			collapseView(target);
+			d = ContextCompat.getDrawable(getActivity(), R.drawable.expand_light);
+		} else {
+			expandView(target);
+			d = ContextCompat.getDrawable(getActivity(), R.drawable.collapse_light);
+		}
+		v.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
 	}
 	//endregion
 }
