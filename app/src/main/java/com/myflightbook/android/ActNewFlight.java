@@ -23,11 +23,13 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -717,24 +719,54 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 		}
 		return true;
 	}
-	
+	private final int PERMISSION_REQUEST_NEAREST = 10683;
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case PERMISSION_REQUEST_NEAREST:
+				if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					AppendNearest();
+				}
+				return;
+		}
+
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
+
+	protected Boolean checkGPSPermissions(int req) {
+		if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+			return true;
+
+		// Should we show an explanation?
+		requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, req);
+		return false;
+	}
+
+
 	// NOTE: I had been doing this with an AsyncTask, but it 
 	// wasn't thread safe with the database.  DB is pretty fast, 
 	// so we can just make sure we do all DB stuff on the main thread.
 	private void AppendNearest()
 	{
 		Assert.assertNotNull("No location object in AppendNearest", MFBMain.GetMainLocation());
-		
-		TextView txtRoute = (TextView)findViewById(R.id.txtRoute);
-		m_le.szRoute = Airport.AppendNearestToRoute(txtRoute.getText().toString(), MFBMain.GetMainLocation().CurrentLoc());
-		txtRoute.setText(m_le.szRoute);
+
+		if (checkGPSPermissions(PERMISSION_REQUEST_NEAREST)) {
+			TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
+			m_le.szRoute = Airport.AppendNearestToRoute(txtRoute.getText().toString(), MFBMain.GetMainLocation().CurrentLoc());
+			txtRoute.setText(m_le.szRoute);
+		}
 	}
 	
 	private void AppendAdHoc()
 	{
 		Assert.assertNotNull("No location object in AppendNearest", MFBMain.GetMainLocation());
 		MFBLocation loc = MFBMain.GetMainLocation();
-		
+
+		if (!checkGPSPermissions(PERMISSION_REQUEST_NEAREST))
+			return;
+
 		if (loc == null || loc.CurrentLoc() == null)
 			return;
 		String szAdHoc = new LatLong(loc.CurrentLoc()).toAdHocLocString();
@@ -758,7 +790,7 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 	public void choosePictureClicked()
 	{
 		saveCurrentFlight();
-		ChoosePicture(this);
+		ChoosePicture();
 	}
 	
 	public void onClick(View v)

@@ -409,7 +409,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	    case R.id.menuChoosePicture:
-	    	ChoosePicture(this);
+	    	ChoosePicture();
 	    	return true;
 	    case R.id.menuTakePicture:
 	    	TakePicture();

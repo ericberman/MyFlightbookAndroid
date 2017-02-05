@@ -25,7 +25,7 @@ public class MFBConstants {
 	public static final Boolean fDebugLocal = false;
 	public static final Boolean fFakePix = false;
 
-	private static String szIPDebug = "192.168.1.28";
+	private static String szIPDebug = "developer.myflightbook.com";
 	private static String szIPDebugRoam = "webmail.hothpark.com";
 	private static String szIPRelease = "myflightbook.com";
 	
