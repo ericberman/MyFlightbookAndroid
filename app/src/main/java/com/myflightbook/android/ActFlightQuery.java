@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.myflightbook.android.MultiSpinner.MultiSpinnerListener;
 import com.myflightbook.android.WebServices.AircraftSvc;
@@ -139,7 +140,22 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         AddListener(R.id.rbDistanceAny);
         AddListener(R.id.rbDistanceLocal);
         AddListener(R.id.rbDistanceNonlocal);
+
+		// Expand/collapse
+		AddListener(R.id.txtFQDatesHeader);
+		AddListener(R.id.txtFQACFeatures);
+		AddListener(R.id.txtFQFlightFeatures);
+
+		setExpandCollapseState();
     }
+
+	protected void setExpandCollapseState()
+	{
+		setExpandedState((TextView)findViewById(R.id.txtFQDatesHeader), findViewById(R.id.sectFQDates), CurrentQuery.DateRange != DateRanges.AllTime);
+		setExpandedState((TextView)findViewById(R.id.txtFQACFeatures), findViewById(R.id.sectFQAircraftFeatures), CurrentQuery.HasAircraftCriteria());
+		setExpandedState((TextView)findViewById(R.id.txtFQFlightFeatures), findViewById(R.id.sectFQFlightFeatures), CurrentQuery.HasFlightCriteria());
+
+	}
        
     @Override
 	public void onPause()
@@ -561,6 +577,21 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 			break;
 		case R.id.rbDistanceNonlocal:
 			CurrentQuery.Distance = FlightQuery.FlightDistance.NonLocalOnly;
+			break;
+		case R.id.txtFQACFeatures: {
+			View target = findViewById(R.id.sectFQAircraftFeatures);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+		}
+			break;
+		case R.id.txtFQDatesHeader: {
+			View target = findViewById(R.id.sectFQDates);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+		}
+			break;
+		case R.id.txtFQFlightFeatures: {
+			View target = findViewById(R.id.sectFQFlightFeatures);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+		}
 			break;
 		}
 		

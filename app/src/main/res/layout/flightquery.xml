@@ -27,50 +27,56 @@
 				    android:id="@+id/rbDistanceNonlocal" android:text="@string/FlightQueryDistanceNonLocalFlights"></RadioButton>
 	        </RadioGroup>
 		</TableLayout>
-		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightDate" style="@style/DividerBar"></TextView>
-		<LinearLayout android:layout_margin="4dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
- 		    <TextView android:text="@string/fqDateStartDate" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-			<Button android:id="@+id/btnfqDateStart" android:layout_width="wrap_content"
-				android:focusable="false" 
-				android:layout_height="wrap_content">
-			</Button>
-			<TextView android:text="@string/fqDateEndDate" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView> 		    		    
-			<Button android:id="@+id/btnfqDateEnd" android:layout_width="wrap_content"
-				android:focusable="false" 
-				android:layout_height="wrap_content">
-			</Button>
+
+		<!-- Dates -->
+		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/txtFQDatesHeader" android:clickable="true" android:drawableStart="@drawable/collapse_light" android:text="@string/fqFlightDate" style="@style/DividerBar"></TextView>
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:id="@+id/sectFQDates" android:orientation="vertical">
+			<LinearLayout android:layout_margin="4dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+				<TextView android:text="@string/fqDateStartDate" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+				<Button android:id="@+id/btnfqDateStart" android:layout_width="wrap_content"
+					android:focusable="false"
+					android:layout_height="wrap_content">
+				</Button>
+				<TextView android:text="@string/fqDateEndDate" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+				<Button android:id="@+id/btnfqDateEnd" android:layout_width="wrap_content"
+					android:focusable="false"
+					android:layout_height="wrap_content">
+				</Button>
+			</LinearLayout>
+			<RadioGroup android:id="@+id/rbCommonTimeGroup" android:layout_width="wrap_content" android:layout_height="wrap_content">
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbAlltime" android:text="@string/fqDateAllTime"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbYTD" android:text="@string/fqDateYTD"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbPreviousYear" android:text="@string/fqDatePreviousYear"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbThisMonth" android:text="@string/fqDateThisMonth"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbPreviousMonth" android:text="@string/fqDatePreviousMonth"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbTrailing30" android:text="@string/fqDate30Days"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbTrailing90" android:text="@string/fqDate90Days"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbTrailing6" android:text="@string/fqDate6Months"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbTrailing12" android:text="@string/fqDate12Months"></RadioButton>
+				<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:id="@+id/rbCustom" android:text="@string/fqDateCustom"></RadioButton>
+			</RadioGroup>
 		</LinearLayout>
-		<RadioGroup android:id="@+id/rbCommonTimeGroup" android:layout_width="wrap_content" android:layout_height="wrap_content">
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbAlltime" android:text="@string/fqDateAllTime"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbYTD" android:text="@string/fqDateYTD"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbPreviousYear" android:text="@string/fqDatePreviousYear"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbThisMonth" android:text="@string/fqDateThisMonth"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbPreviousMonth" android:text="@string/fqDatePreviousMonth"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbTrailing30" android:text="@string/fqDate30Days"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbTrailing90" android:text="@string/fqDate90Days"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbTrailing6" android:text="@string/fqDate6Months"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbTrailing12" android:text="@string/fqDate12Months"></RadioButton>
-			<RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-			    android:id="@+id/rbCustom" android:text="@string/fqDateCustom"></RadioButton>
-		</RadioGroup>
-										
+
 		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightAircraft" style="@style/DividerBar"></TextView>
 	    <com.myflightbook.android.MultiSpinner android:layout_margin="4dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
 			android:id="@+id/multispinnerAircraft"></com.myflightbook.android.MultiSpinner>
 		
 	    <!-- Aircraft Features -->
-		<TextView android:text="@string/fqAircraftFeatures" style="@style/DividerBar"></TextView>
-		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+		<TextView android:text="@string/fqAircraftFeatures" style="@style/DividerBar" android:id="@+id/txtFQACFeatures" android:clickable="true" android:drawableStart="@drawable/collapse_light"></TextView>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/sectFQAircraftFeatures">
 	        <CheckBox android:id="@+id/ckIsTailwheel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afTailwheel" >
 	        </CheckBox>
 		    <CheckBox android:id="@+id/ckIsHighPerf" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/afHighPerf" >
@@ -130,8 +136,11 @@
 			android:id="@+id/multispinnerCategoryClasses"></com.myflightbook.android.MultiSpinner>
 	    
    		<!-- Flight Features -->
-	   	<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightFeatures" style="@style/DividerBar"></TextView>
-		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+	   	<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqFlightFeatures" style="@style/DividerBar"
+			android:id="@+id/txtFQFlightFeatures" android:drawableStart="@drawable/collapse_light"
+			android:clickable="true"
+			></TextView>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/sectFQFlightFeatures">
 	        <CheckBox android:id="@+id/ckHasFSLandings" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffFSLanding" >
 	        </CheckBox>
 	        <CheckBox android:id="@+id/ckHasFSNightLandings" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ffFSNightLanding" >

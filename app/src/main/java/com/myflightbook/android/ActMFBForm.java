@@ -191,8 +191,7 @@ public class ActMFBForm extends Fragment {
 	//region binding data to forms
 	protected void AddListener(int id)
 	{
-		Button b = (Button)findViewById(id);
-		b.setOnClickListener((View.OnClickListener) this);   
+		findViewById(id).setOnClickListener((View.OnClickListener) this);
 	}
 	
 	protected void SetDateTime(int id, Date d, DateTimeUpdate delegate, DlgDatePicker.datePickMode dpm)
@@ -554,11 +553,11 @@ public class ActMFBForm extends Fragment {
 	public void setExpandedState(TextView v, View target, Boolean fExpanded) {
 		Drawable d = null;
 		if (fExpanded) {
-			collapseView(target);
-			d = ContextCompat.getDrawable(getActivity(), R.drawable.expand_light);
-		} else {
 			expandView(target);
 			d = ContextCompat.getDrawable(getActivity(), R.drawable.collapse_light);
+		} else {
+			collapseView(target);
+			d = ContextCompat.getDrawable(getActivity(), R.drawable.expand_light);
 		}
 		v.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
 	}

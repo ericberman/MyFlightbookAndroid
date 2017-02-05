@@ -81,12 +81,10 @@
             </RadioGroup>
         </TableLayout>
 
-        <TextView
-            style="@style/DividerBar"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/fqFlightDate" >
-        </TextView>
+    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/txtFQDatesHeader" android:clickable="true" android:drawableStart="@drawable/collapse_light" android:text="@string/fqFlightDate" style="@style/DividerBar"></TextView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:id="@+id/sectFQDates" android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -187,6 +185,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/fqDateCustom" />
         </RadioGroup>
+        </LinearLayout>
 
         <TextView
             style="@style/DividerBar"
@@ -205,15 +204,8 @@
 
         <!-- Aircraft Features -->
 
-        <TextView
-            style="@style/DividerBar"
-            android:text="@string/fqAircraftFeatures" >
-        </TextView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+        <TextView android:text="@string/fqAircraftFeatures" style="@style/DividerBar" android:id="@+id/txtFQACFeatures" android:clickable="true" android:drawableStart="@drawable/collapse_light"></TextView>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/sectFQAircraftFeatures">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -383,10 +375,14 @@
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:id="@+id/txtFQFlightFeatures"
+            android:drawableStart="@drawable/collapse_light"
             android:text="@string/fqFlightFeatures" >
         </TextView>
 
         <LinearLayout
+            android:id="@+id/sectFQFlightFeatures"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 

@@ -877,7 +877,7 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 		case R.id.txtViewInTheCockpit:
 		{
 			View target = findViewById(R.id.sectInTheCockpit);
-			setExpandedState((TextView) v, target, target.getVisibility() == View.VISIBLE);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
 		}
 			break;
 		default:

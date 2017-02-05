@@ -49,3 +49,4 @@ captures/
 /app/src/main/res/values/apikeys.xml
 /build/
 /app/build/
+/.idea/libraries/

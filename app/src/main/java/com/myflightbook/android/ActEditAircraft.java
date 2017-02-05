@@ -174,7 +174,12 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 		AddListener(R.id.rbRoleCFI);
 		AddListener(R.id.rbRolePIC);
 		AddListener(R.id.rbRoleSIC);
-		
+
+		// Expand/collapse
+		AddListener(R.id.acPrefsHeader);
+		AddListener(R.id.acNotesHeader);
+		AddListener(R.id.txtACMaintenance);
+
 		Intent i = getActivity().getIntent();
 		int idAircraft = i.getIntExtra(AIRCRAFTID, 0);
 		if (idAircraft > 0)
@@ -343,6 +348,21 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 		case R.id.rbRoleCFI:
 			m_ac.RoleForPilot = PilotRole.CFI;
 			break;
+		case R.id.acNotesHeader: {
+			View target = findViewById(R.id.sectACNotes);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+			break;
+		}
+		case R.id.acPrefsHeader: {
+			View target = findViewById(R.id.rbgPilotRole);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+			break;
+		}
+		case R.id.txtACMaintenance: {
+			View target = findViewById(R.id.sectACMaintenance);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+			break;
+		}
 		}
 		toView();
 	}
