@@ -21,7 +21,9 @@ package com.myflightbook.android;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -308,6 +310,38 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 		}
 	}
 
+	private final int PERMISSION_REQUEST_AUTODETECT = 50382;
+	private final int PERMISSION_REQUEST_RECORD = 58325;
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case PERMISSION_REQUEST_AUTODETECT:
+				if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					CheckBox c = (CheckBox) findViewById(R.id.ckAutodetect);
+					c.setChecked(MFBLocation.fPrefAutoDetect = true);
+				}
+				return;
+			case PERMISSION_REQUEST_RECORD:
+				if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					CheckBox c = (CheckBox) findViewById(R.id.ckRecord);
+					c.setChecked(MFBLocation.fPrefRecordFlight = true);
+				}
+				return;
+		}
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
+
+	protected Boolean checkGPSPermissions(int req) {
+		if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+			return true;
+
+		// Should we show an explanation?
+		requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, req);
+		return false;
+	}
+
 	public void onClick(View v) 
 	{
     	switch (v.getId())
@@ -331,11 +365,23 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 			startActivityForResult(i, 0);
 		}
 			break;
-		case R.id.ckAutodetect:
-			MFBLocation.fPrefAutoDetect = ((CheckBox) v).isChecked();
+		case R.id.ckAutodetect: {
+			CheckBox ck = (CheckBox) v;
+			Boolean newState =  ck.isChecked();
+			if (!newState || checkGPSPermissions(PERMISSION_REQUEST_AUTODETECT))
+				MFBLocation.fPrefAutoDetect = newState;
+			else
+				ck.setChecked(MFBLocation.fPrefAutoDetect = false);
+		}
 			break;
-		case R.id.ckRecord:
-			MFBLocation.fPrefRecordFlight = ((CheckBox) v).isChecked();
+		case R.id.ckRecord: {
+			CheckBox ck = (CheckBox) v;
+			Boolean newState = ck.isChecked();
+			if (!newState || checkGPSPermissions(PERMISSION_REQUEST_RECORD))
+				MFBLocation.fPrefRecordFlight = newState;
+			else
+				ck.setChecked(MFBLocation.fPrefRecordFlight = false);
+		}
 			break;
 		case R.id.ckHeliports:
     		Airport.fPrefIncludeHeliports = ((CheckBox)v).isChecked();

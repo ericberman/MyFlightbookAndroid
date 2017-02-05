@@ -19,7 +19,6 @@
 package Model;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -28,7 +27,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -93,18 +91,7 @@ public class MFBLocation extends Object implements LocationListener {
 		if (m_Context == null)
 			return false;
 	
-		int gpsPermission = ContextCompat.checkSelfPermission(m_Context, Manifest.permission.ACCESS_FINE_LOCATION);
-		if (gpsPermission == PackageManager.PERMISSION_GRANTED)
-			return true;
-		
-	    // Should we show an explanation?
-	    if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) m_Context, Manifest.permission.ACCESS_FINE_LOCATION)) {
-	        // No explanation needed, we can request the permission.
-	        ActivityCompat.requestPermissions((Activity) m_Context,
-	                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-	                FINE_LOCATION_PERMISSION);
-	    }
-	    return false;
+		return ContextCompat.checkSelfPermission(m_Context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 	}
 
 
@@ -116,9 +103,13 @@ public class MFBLocation extends Object implements LocationListener {
 			if (!fCheckPermissions())
 				return;
 
+
 			try
 			{
 				LocationManager lm = (LocationManager) m_Context.getSystemService(Context.LOCATION_SERVICE);
+				if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+					return;
+
 				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 						0,
 						0, this);
@@ -126,7 +117,7 @@ public class MFBLocation extends Object implements LocationListener {
 				IsListening = true;
 				if (m_lastSeenLoc == null)
 					m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-				if (m_lastSeenLoc == null)
+				if (m_lastSeenLoc == null && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
 					m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 				if (m_lastSeenLoc != null)
 					InformListenerOfStatus(m_lastSeenLoc);
