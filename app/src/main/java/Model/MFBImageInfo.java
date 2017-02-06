@@ -51,7 +51,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.myflightbook.android.ActLocalVideo;
@@ -84,27 +83,27 @@ import java.util.Locale;
 public class MFBImageInfo extends SoapableObject implements KvmSerializable, Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	public static final int TH_WIDTH = 150;
-	public static final int TH_HEIGHT = 120;
-	public static final String EXTENSION_IMG = ".jpg";
-	public static final String EXTENSION_VID = ".3gp";
+	private static final int TH_WIDTH = 150;
+	private static final int TH_HEIGHT = 120;
+	private static final String EXTENSION_IMG = ".jpg";
+	private static final String EXTENSION_VID = ".3gp";
 	
 	public static final int idImageGalleryIdBase = -2000;
 	
 	// for serialization
-	public enum FPProp {pidComment, pidVirtualPath, pidThumbnailFile, pidURLFullImage, pidWidth, pidHeight, pidTHWidth, pidTHHeight, pidLocation, pidImageType}
-	public enum ImageFileType {  JPEG, PDF, S3PDF, S3VideoMP4 }
-	
-	public int Width;
-	public int Height;
-	public int WidthThumbnail;
-	public int HeightThumbnail;
+	private enum FPProp {pidComment, pidVirtualPath, pidThumbnailFile, pidURLFullImage, pidWidth, pidHeight, pidTHWidth, pidTHHeight, pidLocation, pidImageType}
+	private enum ImageFileType {  JPEG, PDF, S3PDF, S3VideoMP4 }
+
+	private int Width;
+	private int Height;
+	private int WidthThumbnail;
+	private int HeightThumbnail;
 	public String Comment = "";
-	public String VirtualPath = "";
+	private String VirtualPath = "";
 	public String ThumbnailFile = "";
-	public String URLFullImage = "";
+	private String URLFullImage = "";
 	public LatLong Location;
-	public ImageFileType ImageType = ImageFileType.JPEG;
+	private ImageFileType ImageType = ImageFileType.JPEG;
 	
 	public static final String TABLENAME = "PicturesToPost";
 	
@@ -112,11 +111,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 	
 	private byte[] m_imgData = null;
 	private byte[] m_imgThumb = null;
-	private int m_orientation = ExifInterface.ORIENTATION_NORMAL;
 	private long m_id = -1;
 	private long m_idTarget = -1;
 	
-	public enum PictureDestination {FlightImage, AircraftImage};
+	public enum PictureDestination {FlightImage, AircraftImage}
 	
 	private String m_szURL = MFBConstants.szURL_FlightPicture;
 	private String m_keyName = MFBConstants.szIMG_KEY_Flight;
@@ -155,7 +153,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             ImageView i = (ImageView) v.findViewById(R.id.imgMFBIIImage);
             TextView t = (TextView) v.findViewById(R.id.txtMFBIIComment);
 
-            ((LinearLayout)v).setLayoutParams(new Gallery.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            v.setLayoutParams(new Gallery.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
             MFBImageInfo mfbii = m_rgmfbii[position];
             mfbii.LoadImageForImageView(true, i);
@@ -174,10 +172,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
 	private class AsyncLoadURL extends AsyncTask<Void, Void, Drawable>
 	{
-		public String m_URL = "";
-		public ImageView imgView = null;
-		public Boolean mFIsThumbnail = true;
-		public ImageCacheCompleted m_icc = null;
+		String m_URL = "";
+		ImageView imgView = null;
+		Boolean mFIsThumbnail = true;
+		ImageCacheCompleted m_icc = null;
 		
 		@Override
 		protected Drawable doInBackground(Void... params) {
@@ -187,7 +185,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 				InputStream is = (InputStream) new URL(m_URL).getContent();
 				d = Drawable.createFromStream(is, "src name");
 			}
-			catch (Exception e) {}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 			return d;
 		}
 		
@@ -265,20 +265,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 	
 	public void setKey(int key)
 	{
-		m_key = String.format("%d", key);
+		m_key = String.format(Locale.US, "%d", key);
 	}
 	
-	public void setKey(String sz)
-	{
-		m_key = sz;
-	}
-	
-	public String getKey()
-	{
-		return m_key;
-	}
-	
-	public void setID(long id)
+	private void setID(long id)
 	{
 		m_id = id;
 	}
@@ -293,7 +283,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		m_idTarget = id;
 	}
 	
-	public long getTargetID()
+	private long getTargetID()
 	{
 		return m_idTarget;
 	}
@@ -314,11 +304,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		}
 	}
 	
-	public PictureDestination getPictureDestination()
-	{
-		return m_pd;
-	}
-	
 	public void DeletePendingImages(long id)
 	{
 		SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
@@ -329,7 +314,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		try
 		{
 			// Get each one individually so that the associated image file gets deleted too.
-			c = db.query(TABLENAME, new String[] {"_id"}, szId + " = ?", new String[] {String.format("%d", id)}, null, null, null);
+			c = db.query(TABLENAME, new String[] {"_id"}, szId + " = ?", new String[] {String.format(Locale.US, "%d", id)}, null, null, null);
 			if (c != null)
 			{
 				rgIds = new long[c.getCount()];
@@ -367,7 +352,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		
 		try
 		{
-			c = db.query(MFBImageInfo.TABLENAME, null, szId + " = ?", new String[] {String.format("%d", id)},null, null, null);
+			c = db.query(MFBImageInfo.TABLENAME, null, szId + " = ?", new String[] {String.format(Locale.US, "%d", id)},null, null, null);
 			if (c != null)
 			{
 				
@@ -431,7 +416,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 	
 	public static MFBImageInfo[] getAircraftImagesForId(int idAircraft, MFBImageInfo[] rgAircraftImages)
 	{
-		ArrayList<MFBImageInfo> al = new ArrayList<MFBImageInfo>();
+		ArrayList<MFBImageInfo> al = new ArrayList<>();
 		
 		for (MFBImageInfo mfbii : rgAircraftImages)
 		{
@@ -441,12 +426,12 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		return al.toArray(new MFBImageInfo[0]);
 	}
 	
-	public String getImagePrefix()
+	private String getImagePrefix()
 	{
 		return String.format("mfb%s", m_pd.toString());
 	}
 	
-	public String getImageSuffix()
+	private String getImageSuffix()
 	{
 		return IsVideo() ? EXTENSION_VID : EXTENSION_IMG;
 	}
@@ -504,7 +489,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 			if (m_id < 0)
 				m_id = db.insert(MFBImageInfo.TABLENAME, null, cv);
 			else
-				db.update(MFBImageInfo.TABLENAME, cv, "_id = ?", new String[] {String.format("%d", m_id)});
+				db.update(MFBImageInfo.TABLENAME, cv, "_id = ?", new String[] {String.format(Locale.US, "%d", m_id)});
 			
 			// now need to save the image data, if present
 			if (m_imgData != null && m_imgData.length > 0)
@@ -527,9 +512,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		{
 			Log.e("MFBAndroid", "Error adding image: " + e.getMessage());
 		}
-		finally
-		{
-		}		
 	}
 	
 	public void deleteFromDB()
@@ -537,7 +519,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		SQLiteDatabase db = MFBMain.mDBHelper.getReadableDatabase();
 		try
 		{
-			db.delete(TABLENAME, "_id = ?", new String[] {String.format("%d", m_id)});
+			db.delete(TABLENAME, "_id = ?", new String[] {String.format(Locale.US, "%d", m_id)});
 			MFBMain.GetMainContext().deleteFile(getImageFile());
 
 			Log.v("MFBImageInfo", String.format("deleting img %d, file %s", m_id, getImageFile()));
@@ -546,12 +528,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		{
 			Log.e("MFBAndroid", String.format("Unable to delete image %d: %s", m_id, ex.getMessage()));
 		}
-		finally
-		{
-		}
 	}
 	
-	public void fromCursor(Cursor c, Boolean fGetThumb, Boolean fGetFullImage)
+	private void fromCursor(Cursor c, Boolean fGetThumb, Boolean fGetFullImage)
 	{
 		Comment = c.getString(c.getColumnIndex("szComment"));
 		if (fGetThumb)
@@ -590,7 +569,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		ImageType = ImageFileType.values()[c.getInt(c.getColumnIndex("ImageType"))];
 	}
 	
-	public void fromDB(Boolean fGetThumb, Boolean fGetFullImage)
+	private void fromDB(Boolean fGetThumb, Boolean fGetFullImage)
 	{
 		m_imgData = new byte[0];
 		m_imgThumb = null;
@@ -603,7 +582,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		Cursor c = null;
 		try
 		{
-			ArrayList<String> alColumns = new ArrayList<String>();
+			ArrayList<String> alColumns = new ArrayList<>();
 			alColumns.add("szComment");
 			alColumns.add("idFlight");
 			alColumns.add("idAircraft");
@@ -625,7 +604,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 			String[] rgszColumns = new String[alColumns.size()];
 			alColumns.toArray(rgszColumns);
 			
-			c = db.query(TABLENAME, rgszColumns, "_id = ?", new String[] {String.format("%d", m_id)}, null, null, null);
+			c = db.query(TABLENAME, rgszColumns, "_id = ?", new String[] {String.format(Locale.US, "%d", m_id)}, null, null, null);
 			if (c != null && c.getCount() > 0)
 			{
 				c.moveToNext();
@@ -668,7 +647,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		// Convert it to a Jpeg and geotag it.
 		FileInputStream fis = null;
 		Boolean fResult = false;
-		m_orientation = ExifInterface.ORIENTATION_NORMAL;
+		int orientation = ExifInterface.ORIENTATION_NORMAL;
 		m_imgData = m_imgThumb = null;
 		
 		if (szFile == null || szFile.length() == 0)
@@ -695,10 +674,12 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		{
 			ExifInterface ei = null;
 			try { ei = new ExifInterface(fTemp.getAbsolutePath());}
-			catch (IOException e1) {}
+			catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			
 			// Geotag it, if necessary, and get rotation.
-			if (ei != null && !fVideo)
+			if (ei != null )
 			{
 				try
 				{
@@ -718,16 +699,18 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 					}
 			
 					// get the orientation
-					m_orientation = Integer.parseInt(ei.getAttribute(ExifInterface.TAG_ORIENTATION));
+					orientation = Integer.parseInt(ei.getAttribute(ExifInterface.TAG_ORIENTATION));
 				}
-				catch (Exception e) {}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			
 			// get or make a thumbnail, BEFORE we load all the bytes of the image into memory
 			// if (ei != null)
 			//	m_imgThumb = ei.getThumbnail();
 			Matrix m = new Matrix();
-			Bitmap bSrc = null;
+			Bitmap bSrc;
 			
 			// create the thumbnail
 			bSrc = (m_imgThumb == null) ? BitmapFactory.decodeFile(szFile) : BitmapFactory.decodeByteArray(m_imgThumb, 0, m_imgThumb.length);
@@ -737,7 +720,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 			int wOrig = bSrc.getWidth();
 			m.preScale(((float) TH_WIDTH / (float) wOrig), ((float) TH_HEIGHT / (float) hOrig));
 			
-			setMatrixOrientation(m, m_orientation);
+			setMatrixOrientation(m, orientation);
 			
 			Bitmap bThumb = Bitmap.createBitmap(bSrc, 0, 0, wOrig, hOrig, m, true);
 			bSrc.recycle();
@@ -759,7 +742,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 			fis.read(m_imgData);
 			fResult = true;
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		finally
 		{
 			if (fis != null)
@@ -773,7 +758,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 					e.printStackTrace();
 				}
 			}
-			if (fDeleteFileWhenDone != false)
+			if (fDeleteFileWhenDone)
 			{
 				fTemp.delete();  // delete the temp file.
 			}
@@ -790,19 +775,14 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		return BitmapFactory.decodeByteArray(m_imgThumb, 0, m_imgThumb.length);
 	}
 	
-	public Bitmap bitmapFromImage()
+	private Bitmap bitmapFromImage()
 	{
 		if (m_imgData == null || m_imgData.length == 0)
 			return null;
 		
 		return BitmapFactory.decodeByteArray(m_imgData, 0, m_imgData.length);
 	}
-	
-	public byte[] getImageData()
-	{
-		return m_imgData;
-	}
-	
+
 	public byte[] getThumbnail()
 	{
 		return m_imgThumb;
@@ -823,15 +803,14 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		} catch (FileNotFoundException e1) {
 			return false;
 		} 
-		finally {}
-		
+
 		Boolean fResult = false;
 		
 		String szBase = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? "http://" : "https://") + MFBConstants.szIP;
 		String szBoundary = "IMAGEBOUNDARY";
 		String szBoundaryDivider = String.format("--%s\r\n", szBoundary);
 		
-		URL url = null;
+		URL url;
 		HttpURLConnection urlConnection = null;
 		
 	   OutputStream out = null;
@@ -876,7 +855,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		   in = new BufferedInputStream(urlConnection.getInputStream());
 		   int status = urlConnection.getResponseCode();
 		   if (status != HttpURLConnection.HTTP_OK)
-			   throw new Exception(String.format("Bad response - status = %d", status));
+			   throw new Exception(String.format(Locale.US, "Bad response - status = %d", status));
 		   
 		   byte[] rgResponse = new byte[1024];
 		   in.read(rgResponse);
@@ -1084,14 +1063,14 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 			ImageType = ImageFileType.valueOf(so.getProperty("ImageType").toString());
 	}
 	
-	public String getURLFullImage()
+	private String getURLFullImage()
 	{
-		return  String.format("http://%s%s", MFBConstants.szIP, this.URLFullImage);
+		return  String.format(Locale.US, "http://%s%s", MFBConstants.szIP, this.URLFullImage);
 	}
 	
-	public String getURLThumbnail()
+	private String getURLThumbnail()
 	{
-		return String.format("http://%s%s%s", MFBConstants.szIP, this.VirtualPath, this.ThumbnailFile);
+		return String.format(Locale.US, "http://%s%s%s", MFBConstants.szIP, this.VirtualPath, this.ThumbnailFile);
 	}
 
 	public void LoadImageAsync(Boolean fThumbnail, ImageCacheCompleted delegate)
@@ -1138,7 +1117,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 		alu.execute();
 	}
 	
-    public static float ResizeRatio(int maxHeight, int maxWidth, int Height, int Width)
+    private static float ResizeRatio(int maxHeight, int maxWidth, int Height, int Width)
     {
         float ratioX = ((float)maxWidth / (float)Width);
         float ratioY = ((float)maxHeight / (float)Height);

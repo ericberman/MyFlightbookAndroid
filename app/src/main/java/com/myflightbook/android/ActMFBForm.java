@@ -159,7 +159,7 @@ public class ActMFBForm extends Fragment {
 	}
 	
 	// Activity pseudo support.
-	protected View findViewById(int id)	{ View v = getView(); return v == null ? v : v.findViewById(id); }
+	protected View findViewById(int id)	{ View v = getView(); return v == null ? null : v.findViewById(id); }
 	protected void finish() { getActivity().finish();}
 	
 	protected void AddGalleryImage(final Intent i)

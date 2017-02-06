@@ -23,6 +23,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -124,21 +125,21 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     		};
     	
     	Spinner sp = (Spinner)findViewById(R.id.spnAutoHobbs);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.mfbsimpletextitem, rgAutoHobbs);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoHobbs);
 		sp.setAdapter(adapter);
 		sp.setSelection(MFBLocation.fPrefAutoFillHobbs.ordinal());
 		sp.setOnItemSelectedListener(this);
 		sp.setPromptId(R.string.lblAutoFillOptions);
 
         sp = (Spinner)findViewById(R.id.spnAutoTime);
-		adapter = new ArrayAdapter<String>(getActivity(), R.layout.mfbsimpletextitem, rgAutoTotals);
+		adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoTotals);
 		sp.setAdapter(adapter);
 		sp.setSelection(MFBLocation.fPrefAutoFillTime.ordinal());
 		sp.setOnItemSelectedListener(this);
 		sp.setPromptId(R.string.lblAutoFillOptions);
 		
 		sp = (Spinner) findViewById(R.id.spnTOSpeed);
-		adapter = new ArrayAdapter<String>(getActivity(), R.layout.mfbsimpletextitem, MFBTakeoffSpeed.GetDisplaySpeeds().toArray(new String[0]));
+		adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, MFBTakeoffSpeed.GetDisplaySpeeds().toArray(new String[0]));
 		sp.setAdapter(adapter);
 		sp.setSelection(MFBTakeoffSpeed.getTakeOffSpeedIndex());
 		sp.setOnItemSelectedListener(this);
@@ -148,7 +149,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 		{
 			String s = String.format("%s - DEBUG (%s)", 
 					t.getText().toString(), 
-					String.format("%s %d %d", MFBConstants.szIP, MFBTakeoffSpeed.getLandingSpeed(), MFBTakeoffSpeed.getTakeOffspeed()));
+					String.format(Locale.getDefault(), "%s %d %d", MFBConstants.szIP, MFBTakeoffSpeed.getLandingSpeed(), MFBTakeoffSpeed.getTakeOffspeed()));
 			t.setText(s);
 		}
 	}
@@ -184,10 +185,10 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     	switch (sp.getId())
     	{
     	case R.id.spnAutoHobbs:
-    		MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[i];;
+    		MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[i];
     		break;
     	case R.id.spnAutoTime:
-    		MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[i];;
+    		MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[i];
     		break;
     	case R.id.spnTOSpeed:
     		MFBTakeoffSpeed.setTakeOffSpeedIndex(i);
@@ -240,7 +241,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
 		// Now look for orphaned flight image files.  Start with the known flight images
 		LogbookEntry[] rgLeAll = LogbookEntry.mergeFlightLists(rgLeNew, LogbookEntry.getPendingFlights());
-		ArrayList<String> alImages = new ArrayList<String>();
+		ArrayList<String> alImages = new ArrayList<>();
 		for (LogbookEntry le : rgLeAll)
 		{
 			le.getImagesForFlight();
@@ -261,7 +262,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 				mfbii.deleteFromDB();
 		
 		// now delete any remaining aircraft images that might be in our files.
-		MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<String>(), getActivity());
+		MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<>(), getActivity());
 		
 		MFBUtil.Alert(this, getString(R.string.lblCleanup), getString(fOrphansFound ? R.string.errCleanupOrphansFound : R.string.txtCleanupComplete));
     }
@@ -307,6 +308,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 			szURL = String.format(Locale.US, szTemplate, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"));
 			ActWebView.ViewURL(getActivity(), szURL);
 		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -315,7 +317,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode,
-										   String permissions[], int[] grantResults) {
+										   @NonNull String permissions[], @NonNull int[] grantResults) {
 		switch (requestCode) {
 			case PERMISSION_REQUEST_AUTODETECT:
 				if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

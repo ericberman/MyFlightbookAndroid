@@ -3,55 +3,51 @@
     xmlns:mfb="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:layout_gravity="center_horizontal"
-        android:text="@string/ahApproachHelper" >
-    </TextView>
+        android:text="@string/ahApproachHelper"
+        android:textStyle="bold" />
 
     <TableLayout
         android:id="@+id/tblAddApproach"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp" >
+        android:padding="5dp">
 
         <TableRow
             android:id="@+id/TableRow01"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/ahNumApproaches" >
-            </TextView>
+                android:text="@string/ahNumApproaches" />
 
             <Model.DecimalEdit
                 android:id="@+id/txtApproachCount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_span="2"
                 android:nextFocusDown="@+id/spnApproachType"
-			    android:layout_span="2"
-                mfb:EditMode="INTEGER" >
-            </Model.DecimalEdit>
+                mfb:EditMode="INTEGER" />
         </TableRow>
 
         <TableRow
             android:id="@+id/TableRow02"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/ahApproachType" >
-            </TextView>
+                android:text="@string/ahApproachType" />
 
             <Spinner
                 android:id="@+id/spnApproachType"
@@ -59,8 +55,7 @@
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/spnApproachRunway"
                 android:paddingBottom="2sp"
-                android:paddingTop="2sp" >
-            </Spinner>
+                android:paddingTop="2sp" />
 
             <Spinner
                 android:id="@+id/spnApproachSuffix"
@@ -68,50 +63,45 @@
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/spnApproachRunway"
                 android:paddingBottom="2sp"
-                android:paddingTop="2sp" >
-            </Spinner>
+                android:paddingTop="2sp" />
         </TableRow>
 
         <TableRow
             android:id="@+id/TableRow03"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/ahApproachRunway" >
-            </TextView>
+                android:text="@string/ahApproachRunway" />
 
             <Spinner
                 android:id="@+id/spnApproachRunway"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="2sp"
-                android:paddingTop="2sp" >
-            </Spinner>
+                android:paddingTop="2sp" />
 
             <Spinner
                 android:id="@+id/spnApproachRunwaySuffix"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="2sp"
-                android:paddingTop="2sp" >
-            </Spinner>
+                android:paddingTop="2sp" />
         </TableRow>
 
         <TableRow
             android:id="@+id/TableRow04"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/ahApproachAirport" >
-            </TextView>
+                android:text="@string/ahApproachAirport" />
 
             <EditText
                 android:id="@+id/txtAirport"
@@ -129,19 +119,20 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="2sp"
                 android:paddingTop="2sp"
-                android:visibility="gone" >
-            </Spinner>
+                android:visibility="gone" />
         </TableRow>
+
         <TableRow
             android:id="@+id/TableRow05"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
-		<CheckBox
-		    android:id="@+id/ckAddToApproachTotals"
-		    android:layout_span="3"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:text="@string/ahAddToTotals" />
+
+            <CheckBox
+                android:id="@+id/ckAddToApproachTotals"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_span="3"
+                android:text="@string/ahAddToTotals" />
         </TableRow>
     </TableLayout>
 

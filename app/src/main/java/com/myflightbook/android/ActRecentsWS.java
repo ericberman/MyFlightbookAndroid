@@ -25,6 +25,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -60,7 +62,7 @@ import Model.MFBUtil;
 public class ActRecentsWS extends ListFragment implements OnItemSelectedListener, ImageCacheCompleted, MFBMain.Invalidatable {
 	
 	private LogbookEntry[] m_rgLe = new LogbookEntry[0];
-	protected ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<LogbookEntry>();
+	protected ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<>();
 
 	protected final int cFlightsPageSize = 15;
 	protected boolean fCouldBeMore = true;
@@ -74,13 +76,13 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 	
 	private class FlightAdapter extends ArrayAdapter<LogbookEntry>
 	{		
-		public FlightAdapter(Context c, int rid,
+		FlightAdapter(Context c, int rid,
 				LogbookEntry[] rgpp) {
 			super(c, rid, rgpp);
 		}
 
 		@Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public @NonNull View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View v = convertView;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -174,7 +176,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 	private class RefreshFlightsTask extends AsyncTask<Void, Void, Boolean>
 	{
 		private RecentFlightsSvc m_rfSvc = null;
-		public Boolean fClearCache = false;
+		Boolean fClearCache = false;
 		
 		@Override
 		protected Boolean doInBackground(Void... params) {

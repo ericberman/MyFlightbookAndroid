@@ -78,7 +78,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 		if (m_rgmm == null)
 		{
 			Aircraft[] rgac = GetCurrentAircraft();
-			Map<String, MakeModel> htmm = new HashMap<String, MakeModel>();
+			Map<String, MakeModel> htmm = new HashMap<>();
 			for (Aircraft ac : rgac)
 			{
 				if (!htmm.containsKey(ac.ModelDescription))
@@ -90,7 +90,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 				}
 			}
 			
-			ArrayList<MakeModel> almm = new ArrayList<MakeModel>();
+			ArrayList<MakeModel> almm = new ArrayList<>();
 			for (String key : htmm.keySet())
 				almm.add(htmm.get(key));
 			
@@ -440,7 +440,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 		switch (sender.getId())
 		{
 		case R.id.multispinnerAircraft:
-			ArrayList<Aircraft> alAc = new ArrayList<Aircraft>();
+			ArrayList<Aircraft> alAc = new ArrayList<>();
 			Aircraft[] rgac = GetCurrentAircraft();
 			for (int i = 0; i < selected.length; i++)
 				if (selected[i])
@@ -448,7 +448,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 			CurrentQuery.AircraftList = alAc.toArray(new Aircraft[0]);
 			break;
 		case R.id.multispinnerModels:
-			ArrayList<MakeModel> alMm = new ArrayList<MakeModel>();
+			ArrayList<MakeModel> alMm = new ArrayList<>();
 			MakeModel[] rgmm = GetActiveMakes();
 			for (int i = 0; i < selected.length; i++)
 				if (selected[i])
@@ -456,7 +456,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 			CurrentQuery.MakeList = alMm.toArray(new MakeModel[0]);
 			break;
 		case R.id.multispinnerCategoryClasses:
-			ArrayList<CategoryClass> alcc = new ArrayList<CategoryClass>();
+			ArrayList<CategoryClass> alcc = new ArrayList<>();
 			CategoryClass[] rgcc = CategoryClass.AllCatClasses();
 			for (int i = 0; i < selected.length; i++)
 				if (selected[i])
@@ -464,7 +464,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 			CurrentQuery.CatClassList = alcc.toArray(new CategoryClass[0]);
 			break;
 		case R.id.multispinnerProps:
-			ArrayList<CustomPropertyType> alcpt = new ArrayList<CustomPropertyType>();
+			ArrayList<CustomPropertyType> alcpt = new ArrayList<>();
 			CustomPropertyType[] rgcpt = CustomPropertyTypesSvc.getSearchableProperties();
 			for (int i = 0; i< selected.length; i++)
 				if (selected[i])

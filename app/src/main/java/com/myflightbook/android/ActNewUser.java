@@ -47,11 +47,10 @@ public class ActNewUser extends Activity implements
 	private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
 		private Context m_Context = null;
 		private ProgressDialog m_pd = null;
-		public Object m_Result = null;
-		@SuppressWarnings("unused")
-		public MFBSoap m_Svc = null;
+		private Object m_Result = null;
+		MFBSoap m_Svc = null;
 
-		public SoapTask(Context c) {
+		SoapTask(Context c) {
 			super();
 			m_Context = c;
 		}
@@ -60,7 +59,7 @@ public class ActNewUser extends Activity implements
 		protected MFBSoap doInBackground(String... params) {
 			CreateUserSvc cus = new CreateUserSvc();
 			m_Result = cus.FCreateUser(params[0], params[1], params[2], params[3], params[4], params[5]);
-			return m_Svc = (MFBSoap) cus;
+			return m_Svc = cus;
 		}
 
 		protected void onPreExecute() {
@@ -79,7 +78,9 @@ public class ActNewUser extends Activity implements
 				MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
 			}
 
-			try { m_pd.dismiss();} catch (Exception e) {}
+			try { m_pd.dismiss();} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -109,7 +110,7 @@ public class ActNewUser extends Activity implements
 		final String[] rgSampleQuestions = getResources().getStringArray(R.array.defaultSecurityQuestions);
 		Spinner spinner = (Spinner) findViewById(R.id.spnSampleQuestions);
 		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, rgSampleQuestions);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rgSampleQuestions);
 		adapter.setDropDownViewResource(R.layout.samplequestion);
 		spinner.setAdapter(adapter);
 		
@@ -122,8 +123,7 @@ public class ActNewUser extends Activity implements
 		    public void onNothingSelected(AdapterView<?> adapterView) {
 		        TextView txtQ = (TextView) findViewById(R.id.txtQuestion);
 		        txtQ.setText("");
-		        return;
-		    } 
+		    }
 		}); 
 	}
 

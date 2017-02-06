@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="fill_parent" 
-android:layout_height="fill_parent">
-	<LinearLayout  android:layout_width="fill_parent"
-		    android:layout_height="wrap_content" android:orientation="vertical">
-		<TextView android:id="@+id/lnkCurrencyDisclaimer" android:layout_width="fill_parent"
-		    android:layout_margin="4dp"
-	    	android:gravity="center"
-			android:clickable="true"
-			android:text="@string/CurrencyDisclaimer"
-	    	android:textStyle="bold"
-	    	android:padding="5dip"
-	    	android:background="@color/table_background" 
-		    android:layout_height="wrap_content" />
-		<TableLayout
-		android:id="@+id/tblCurrency" 
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content" 
-		android:stretchColumns="0,1" android:background="@color/table_background" android:padding="4dp">
-		</TableLayout>
-	</LinearLayout>
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lnkCurrencyDisclaimer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/table_background"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="5dip"
+            android:text="@string/CurrencyDisclaimer"
+            android:textStyle="bold" />
+
+        <TableLayout
+            android:id="@+id/tblCurrency"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/table_background"
+            android:padding="4dp"
+            android:stretchColumns="0,1" />
+    </LinearLayout>
 </ScrollView> 
