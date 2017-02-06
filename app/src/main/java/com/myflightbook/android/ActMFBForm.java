@@ -37,6 +37,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -79,12 +80,12 @@ import Model.MFBUtil;
 public class ActMFBForm extends Fragment {
 	public interface GallerySource
 	{
-		public int getGalleryID();
-		public MFBImageInfo[] getImages();
-		public void setImages(MFBImageInfo[] rgmfbii);
-		public void newImage(MFBImageInfo mfbii);
-		public MFBImageInfo.PictureDestination getDestination();
-		public void refreshGallery();
+		int getGalleryID();
+		MFBImageInfo[] getImages();
+		void setImages(MFBImageInfo[] rgmfbii);
+		void newImage(MFBImageInfo mfbii);
+		MFBImageInfo.PictureDestination getDestination();
+		void refreshGallery();
 	}
 	
 	protected static final String keyTempFileInProgress = "uriFileInProgress";
@@ -100,13 +101,13 @@ public class ActMFBForm extends Fragment {
 	private class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate
 	{
 		MFBImageInfo mfbii = null;
-		public Boolean fGeoTag = true;
-		public Boolean fDeleteFileWhenDone = false;
-		public Boolean fAddToGallery = false;
-		public Boolean m_fVideo = false;
+		Boolean fGeoTag = true;
+		Boolean fDeleteFileWhenDone = false;
+		Boolean fAddToGallery = false;
+		Boolean m_fVideo = false;
 		ContentResolver m_cr = null;
 		
-		public AddCameraTask(int ActivityRequestCode, Boolean fVideo, ContentResolver cr)
+		AddCameraTask(int ActivityRequestCode, Boolean fVideo, ContentResolver cr)
 		{
 			m_fVideo = fVideo;
 			fAddToGallery = fDeleteFileWhenDone =  (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE || ActivityRequestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
@@ -169,15 +170,17 @@ public class ActMFBForm extends Fragment {
         ContentResolver cr = getActivity().getContentResolver();
         Cursor cursor = cr.query(
                            selectedImage, filePathColumn, null, null, null);
-        cursor.moveToFirst();
+		if (cursor != null) {
+			cursor.moveToFirst();
 
-        String szFilename = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
-        String szMimeType = cursor.getString(cursor.getColumnIndex(filePathColumn[1]));
-        Boolean fIsVideo = szMimeType.toLowerCase(Locale.getDefault()).startsWith("video");
-        cursor.close();
+			String szFilename = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+			String szMimeType = cursor.getString(cursor.getColumnIndex(filePathColumn[1]));
+			Boolean fIsVideo = szMimeType.toLowerCase(Locale.getDefault()).startsWith("video");
+			cursor.close();
 
-		AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo, cr);
-		act.execute(szFilename);
+			AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo, cr);
+			act.execute(szFilename);
+		}
 	}
 	
 	@Override
@@ -365,7 +368,7 @@ public class ActMFBForm extends Fragment {
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode,
-										   String permissions[], int[] grantResults) {
+										   @NonNull String permissions[], @NonNull int[] grantResults) {
 		Boolean fAllGranted = true;
 		for (int i : grantResults)
 			if (i != PackageManager.PERMISSION_GRANTED)
@@ -398,7 +401,7 @@ public class ActMFBForm extends Fragment {
 
 	public void TakePicture()
 	{
-		File fTemp = null;
+		File fTemp;
 		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 		if (MFBConstants.fFakePix)
 		{
@@ -454,7 +457,7 @@ public class ActMFBForm extends Fragment {
 			SharedPreferences mPrefs = getActivity().getPreferences(Activity.MODE_PRIVATE);
 	    	SharedPreferences.Editor ed = mPrefs.edit();
 	    	ed.putString(keyTempFileInProgress, m_TempFilePath);
-	    	ed.commit();
+	    	ed.apply();
 
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			Uri uriImage = FileProvider.getUriForFile(this.getContext(), "com.example.android.fileprovider", fTemp);
@@ -469,7 +472,7 @@ public class ActMFBForm extends Fragment {
 	
 	public void TakeVideo()
 	{
-		File fTemp = null;
+		File fTemp;
 		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 		try {
@@ -482,7 +485,7 @@ public class ActMFBForm extends Fragment {
 			SharedPreferences mPrefs = getActivity().getPreferences(Activity.MODE_PRIVATE);
 	    	SharedPreferences.Editor ed = mPrefs.edit();
 	    	ed.putString(keyTempFileInProgress, m_TempFilePath);
-	    	ed.commit();
+	    	ed.apply();
 
 			Uri uriImage = FileProvider.getUriForFile(this.getContext(), "com.example.android.fileprovider", fTemp);
 
@@ -551,7 +554,7 @@ public class ActMFBForm extends Fragment {
 	}
 
 	public void setExpandedState(TextView v, View target, Boolean fExpanded) {
-		Drawable d = null;
+		Drawable d;
 		if (fExpanded) {
 			expandView(target);
 			d = ContextCompat.getDrawable(getActivity(), R.drawable.collapse_light);
