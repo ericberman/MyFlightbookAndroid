@@ -23,9 +23,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,7 +41,7 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import Model.CurrencyStatusItem;
 import Model.MFBUtil;
 
-public class ActCurrency extends Fragment implements MFBMain.Invalidatable {
+public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 	private static boolean fNeedsRefresh = true;
 	public static void SetNeedsRefresh(boolean f)
 	{
@@ -57,9 +54,9 @@ public class ActCurrency extends Fragment implements MFBMain.Invalidatable {
 	{
 		private Context m_Context = null;
 		private ProgressDialog m_pd = null;
-		public Object m_Result = null;
+		Object m_Result = null;
 		
-		public SoapTask(Context c)
+		SoapTask(Context c)
 		{
 			super();
 			m_Context = c;
@@ -68,8 +65,7 @@ public class ActCurrency extends Fragment implements MFBMain.Invalidatable {
 		@Override
 		protected MFBSoap doInBackground(Void... params) {
     		CurrencySvc cs = new CurrencySvc();
-    		CurrencyStatusItem[] rgcsi = cs.CurrencyForUser(AuthToken.m_szAuthToken);
-    		m_Result = rgcsi;
+    		m_Result = cs.CurrencyForUser(AuthToken.m_szAuthToken);
     		return cs;
 		}
 		
@@ -95,7 +91,10 @@ public class ActCurrency extends Fragment implements MFBMain.Invalidatable {
     			BindTable();
     		}
     		
-			try { m_pd.dismiss();} catch (Exception e) {}
+			try { m_pd.dismiss();}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -109,10 +108,13 @@ public class ActCurrency extends Fragment implements MFBMain.Invalidatable {
 	{
 		super.onActivityCreated(savedInstanceState);
         TextView tvDisclaimer = (TextView)getView().findViewById(R.id.lnkCurrencyDisclaimer);
-        String szDisclaimerURL = "http://myflightbook.com/logbook/public/CurrencyDisclaimer.aspx";
-        String szDisclaimerText = getString(R.string.CurrencyDisclaimer);
-        tvDisclaimer.setText(Html.fromHtml(String.format("<a href=\"%s\">%s</a>", szDisclaimerURL, szDisclaimerText)));
-        tvDisclaimer.setMovementMethod(LinkMovementMethod.getInstance());
+		if (tvDisclaimer != null) {    // should never happen
+			tvDisclaimer.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					ActWebView.ViewURL(getActivity(), "http://myflightbook.com/logbook/public/CurrencyDisclaimer.aspx?naked=1");
+				}
+			});
+		}
         
         Refresh(fNeedsRefresh);
         MFBMain.registerNotifyDataChange(this);
@@ -122,38 +124,43 @@ public class ActCurrency extends Fragment implements MFBMain.Invalidatable {
 	void BindTable()
 	{
         TableLayout tl = (TableLayout) getView().findViewById(R.id.tblCurrency);
-		tl.removeAllViews();
+		if (tl != null)
+			tl.removeAllViews();
 		LayoutInflater l = getActivity().getLayoutInflater();
 
 		if (m_rgcsi == null)
 			return;
 		
-		for (int i = 0; i < m_rgcsi.length; i++)
+		for (CurrencyStatusItem csi : m_rgcsi)
 		{
-			CurrencyStatusItem csi = m_rgcsi[i];
-			// TableRow tr = new TableRow(this);
-			
-			TableRow tr = (TableRow) l.inflate(R.layout.currencyrow, tl, false);
-			TextView tvAttribute = (TextView) tr.findViewById(R.id.txtCsiAttribute);
-			TextView tvValue = (TextView)tr.findViewById(R.id.txtCsiValue);
-			TextView tvDiscrepancy = (TextView)tr.findViewById(R.id.txtCsiDiscrepancy);
-			
-			tvAttribute.setText(csi.Attribute);
-			tvValue.setText(csi.Value);
-			tvDiscrepancy.setText(csi.Discrepancy);
-			if (csi.Discrepancy.length() == 0)
-				tvDiscrepancy.setVisibility(View.GONE);
-			
-			tvAttribute.setTextColor(Color.BLACK);
-			tvDiscrepancy.setTextColor(Color.BLACK);
-			if (csi.Status.compareTo("NotCurrent") == 0)
-				tvValue.setTextColor(Color.RED);
-			else if (csi.Status.compareTo("GettingClose") == 0)
-				tvValue.setTextColor(Color.BLUE);
-			else
-				tvValue.setTextColor(Color.argb(255, 0, 128, 0));			    			
-			
-			tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+			try {
+				// TableRow tr = new TableRow(this);
+
+				TableRow tr = (TableRow) l.inflate(R.layout.currencyrow, tl, false);
+				TextView tvAttribute = (TextView) tr.findViewById(R.id.txtCsiAttribute);
+				TextView tvValue = (TextView) tr.findViewById(R.id.txtCsiValue);
+				TextView tvDiscrepancy = (TextView) tr.findViewById(R.id.txtCsiDiscrepancy);
+
+				tvAttribute.setText(csi.Attribute);
+				tvValue.setText(csi.Value);
+				tvDiscrepancy.setText(csi.Discrepancy);
+				if (csi.Discrepancy.length() == 0)
+					tvDiscrepancy.setVisibility(View.GONE);
+
+				tvAttribute.setTextColor(Color.BLACK);
+				tvDiscrepancy.setTextColor(Color.BLACK);
+				if (csi.Status.compareTo("NotCurrent") == 0)
+					tvValue.setTextColor(Color.RED);
+				else if (csi.Status.compareTo("GettingClose") == 0)
+					tvValue.setTextColor(Color.BLUE);
+				else
+					tvValue.setTextColor(Color.argb(255, 0, 128, 0));
+
+				tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+			}
+			catch (NullPointerException ex) { // should never happen.
+				ex.printStackTrace();
+			}
 		}
 	}
 	

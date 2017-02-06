@@ -25,6 +25,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -62,12 +64,12 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 		String title = null;
 		RowType rowType = RowType.DATA_ITEM;
 		
-		public AircraftRowItem(Aircraft obj)
+		AircraftRowItem(Aircraft obj)
 		{
 			aircraftItem = obj;
 		}
 		
-		public AircraftRowItem(String szTitle)
+		AircraftRowItem(String szTitle)
 		{
 			rowType = RowType.HEADER_ITEM;
 			title = szTitle;
@@ -81,9 +83,9 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 	private class SoapTask extends AsyncTask<Void, Void, MFBSoap>
 	{
 		private ProgressDialog m_pd = null;
-		public Object m_Result = null;
+		Object m_Result = null;
 		
-		public SoapTask(ActAircraft frag)
+		SoapTask()
 		{
 			super();
 		}
@@ -91,8 +93,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 		@Override
 		protected MFBSoap doInBackground(Void... params) {
 			AircraftSvc as = new AircraftSvc();
-			Aircraft[] rgac = as.AircraftForUser(AuthToken.m_szAuthToken);
-    		m_Result = rgac;
+    		m_Result = as.AircraftForUser(AuthToken.m_szAuthToken);
     		return as;
 		}
 		
@@ -136,18 +137,21 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 				for (Aircraft ac : lstArchived)
 					arRows.add(new AircraftRowItem(ac));
 				
-				m_aircraftRows = (AircraftRowItem[]) arRows.toArray(new AircraftRowItem[arRows.size()]);
+				m_aircraftRows = arRows.toArray(new AircraftRowItem[arRows.size()]);
 				
 				populateList();
 			}
 			
-			try { m_pd.dismiss();} catch (Exception e) {}
+			try { m_pd.dismiss();}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	private class AircraftAdapter extends ArrayAdapter<AircraftRowItem>
 	{		
-		public AircraftAdapter(Context c, int rid, AircraftRowItem[] rgac) {
+		AircraftAdapter(Context c, int rid, AircraftRowItem[] rgac) {
 			super(c, rid, rgac == null ? new AircraftRowItem[0] : rgac);
 		}
 		
@@ -163,18 +167,17 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 	    	
 	    	return m_aircraftRows[position].rowType.ordinal();
 	    }
-	    
+
 		@Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public @NonNull View getView(int position, @Nullable View v, @NonNull ViewGroup parent) {
 			RowType rt = RowType.values()[getItemViewType(position)];
 
-			View v = convertView;
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.aircraft;
-                v = vi.inflate(layoutID, parent, false);
-            }
-            
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.aircraft;
+				v = vi.inflate(layoutID, parent, false);
+			}
+
             if (m_aircraftRows == null || m_aircraftRows.length == 0)
             	return v;
 
@@ -243,7 +246,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 	{
 		super.onResume();
 		if (AuthToken.FIsValid() && m_aircraftRows == null) {
-			SoapTask st = new SoapTask(this);
+			SoapTask st = new SoapTask();
 			st.execute();
 		}
 		else
@@ -298,7 +301,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 	    {
 	    	AircraftSvc ac = new AircraftSvc();
 	    	ac.FlushCache();
-			SoapTask st = new SoapTask(this);
+			SoapTask st = new SoapTask();
 			st.execute();
 	    }
 	    	return true;
