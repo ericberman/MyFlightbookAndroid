@@ -46,14 +46,12 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -75,7 +73,7 @@ import Model.MFBImageInfo.ImageCacheCompleted;
 import Model.MFBLocation;
 import Model.MFBUtil;
 
-public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCameraChangeListener, OnCheckedChangeListener, OnMapLongClickListener {
+public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCheckedChangeListener, OnMapLongClickListener {
 
 	private LatLngBounds m_llb = null;
 	private LogbookEntry m_le = null;
@@ -104,8 +102,8 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
 	@SuppressLint("InflateParams")
 	public boolean onMarkerClick(Marker marker) {
-		Airport ap = null;
-		MFBImageInfo mfbii = null;
+		Airport ap;
+		MFBImageInfo mfbii;
 
 		if ((ap = m_hmAirports.get(marker.getId())) != null) {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -190,13 +188,17 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 	private void addImageMarker(MFBImageInfo mfbii, LatLngBounds.Builder llb) {
 		Bitmap bmap = MFBImageInfo.getRoundedCornerBitmap(mfbii.bitmapFromThumb(), Color.LTGRAY, RadiusImage, BorderImage, DimensionImageOverlay, DimensionImageOverlay, ActFlightMap.this);
 
-		Marker m = getMap().addMarker(new MarkerOptions()
+		Marker m;
+
+		GoogleMap map = getMap();
+		if (map != null && (m = map.addMarker(new MarkerOptions()
 				.position(mfbii.Location.getLatLng())
 				.title(mfbii.Comment)
-				.icon(BitmapDescriptorFactory.fromBitmap(bmap)));
-		m_hmImages.put(m.getId(), mfbii);
-		if (llb != null)
-			llb.include(mfbii.Location.getLatLng());
+				.icon(BitmapDescriptorFactory.fromBitmap(bmap)))) != null) {
+			m_hmImages.put(m.getId(), mfbii);
+			if (llb != null)
+				llb.include(mfbii.Location.getLatLng());
+		}
 	}
 
 	private void updateMapElements() {
@@ -240,16 +242,14 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 			// Add the airport route; we'll draw the airports on top of them.
 			// Note that we don't do this if m_le is null because then we would connect the dots.
 			if (m_le != null && !m_fShowAllAirports) {
-				if (m_rgapRoute != null) {
-					PolylineOptions po = new PolylineOptions().geodesic(true).color(Color.BLUE).width(4);
+				PolylineOptions po = new PolylineOptions().geodesic(true).color(Color.BLUE).width(4);
 
-					for (Airport ap : m_rgapRoute) {
-						LatLong ll = ap.getLatLong();
-						llb.include(ll.getLatLng());
-						po.add(ll.getLatLng());
-					}
-					map.addPolyline(po);
+				for (Airport ap : m_rgapRoute) {
+					LatLong ll = ap.getLatLong();
+					llb.include(ll.getLatLng());
+					po.add(ll.getLatLng());
 				}
+				map.addPolyline(po);
 			}
 
 			// Then add the flight path, if available
@@ -272,7 +272,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 		for (Airport ap : m_rgapRoute) {
 			LatLong ll = ap.getLatLong();
 			String szNM = getString(R.string.abbrevNauticalMiles);
-			String szContent = String.format("%s (%s) %s", ap.FacilityName, ap.AirportID, (ap.Distance > 0) ? String.format(" (%.1f%s)", ap.Distance, szNM) : "");
+			String szContent = String.format("%s (%s) %s", ap.FacilityName, ap.AirportID, (ap.Distance > 0) ? String.format(Locale.getDefault(), " (%.1f%s)", ap.Distance, szNM) : "");
 			llb.include(ll.getLatLng());
 
 			Marker m = map.addMarker(new MarkerOptions().position(ll.getLatLng()).icon(BitmapDescriptorFactory.fromResource(ap.IsPort() ? R.drawable.airport : R.drawable.tower)).title(szContent));
@@ -334,12 +334,11 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 			settings.setZoomGesturesEnabled(true);
 
 			View mapView = getFragmentManager().findFragmentById(R.id.mfbMap).getView();
-			if (mapView.getViewTreeObserver().isAlive()) {
+			if (mapView != null && mapView.getViewTreeObserver() != null && mapView.getViewTreeObserver().isAlive()) {
 				mapView.getViewTreeObserver().addOnGlobalLayoutListener(this);
 			}
 
 			map.setOnMarkerClickListener(this);
-			map.setOnCameraChangeListener(this);
 			if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 				map.setMyLocationEnabled(true);
 			}
@@ -430,7 +429,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         }
         else if (idExisting > 0)
         {
-        	m_le = RecentFlightsSvc.GetCachedFlightByID((int) idExisting);
+        	m_le = RecentFlightsSvc.GetCachedFlightByID(idExisting);
         	FetchFlightPathTask ffpt = new FetchFlightPathTask();
 			new Thread(ffpt).start();
         }
@@ -446,11 +445,6 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         }
     }
 
-	public void onCameraChange(CameraPosition cp) {
-		if (m_fShowAllAirports)	// show nearby airports
-			updateMapElements(true);
-	}
-	
 	private void setShowAllAirports(Boolean f)
 	{
 		m_fShowAllAirports = f;
@@ -488,7 +482,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 	public void onCheckedChanged(CompoundButton v, boolean isChecked) {
 		switch (v.getId()) {
 		case R.id.ckShowAllAirports:
-			setShowAllAirports(((ToggleButton) v).isChecked());
+			setShowAllAirports(v.isChecked());
 			break;
 		default:
 			break;

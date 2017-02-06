@@ -86,12 +86,12 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 					MakeModel mm = new MakeModel();
 					mm.MakeModelId = ac.ModelID;
 					mm.Description = ac.ModelDescription;
-					htmm.put(String.format("%d", mm.MakeModelId), mm);
+					htmm.put(String.format(Locale.US, "%d", mm.MakeModelId), mm);
 				}
 			}
 			
 			ArrayList<MakeModel> almm = new ArrayList<MakeModel>();
-			for (Object key : htmm.keySet())
+			for (String key : htmm.keySet())
 				almm.add(htmm.get(key));
 			
 			Collections.sort(almm);
@@ -445,7 +445,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 			for (int i = 0; i < selected.length; i++)
 				if (selected[i])
 					alAc.add(rgac[i]);
-			CurrentQuery.AircraftList = (Aircraft[]) alAc.toArray(new Aircraft[0]);
+			CurrentQuery.AircraftList = alAc.toArray(new Aircraft[0]);
 			break;
 		case R.id.multispinnerModels:
 			ArrayList<MakeModel> alMm = new ArrayList<MakeModel>();
@@ -453,7 +453,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 			for (int i = 0; i < selected.length; i++)
 				if (selected[i])
 					alMm.add(rgmm[i]);
-			CurrentQuery.MakeList = (MakeModel[])alMm.toArray(new MakeModel[0]);
+			CurrentQuery.MakeList = alMm.toArray(new MakeModel[0]);
 			break;
 		case R.id.multispinnerCategoryClasses:
 			ArrayList<CategoryClass> alcc = new ArrayList<CategoryClass>();
@@ -461,7 +461,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 			for (int i = 0; i < selected.length; i++)
 				if (selected[i])
 					alcc.add(rgcc[i]);
-			CurrentQuery.CatClassList = (CategoryClass[])alcc.toArray(new CategoryClass[0]);
+			CurrentQuery.CatClassList = alcc.toArray(new CategoryClass[0]);
 			break;
 		case R.id.multispinnerProps:
 			ArrayList<CustomPropertyType> alcpt = new ArrayList<CustomPropertyType>();

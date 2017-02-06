@@ -94,7 +94,9 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 				}
 			}
 
-			try { m_pd.dismiss();} catch (Exception e) {}
+			try { m_pd.dismiss();} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		protected void onProgressUpdate(String... msg)
@@ -103,7 +105,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 		}
 
 		public void NotifyProgress(int percentageComplete, String szMsg) {
-			this.publishProgress(new String[] {szMsg});
+			this.publishProgress(szMsg);
 		}
 	}
 
@@ -140,7 +142,9 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 				}
 			}
 
-			try { m_pd.dismiss();} catch (Exception e) {}
+			try { m_pd.dismiss();} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		protected void onProgressUpdate(String... msg)
@@ -149,7 +153,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 		}
 
 		public void NotifyProgress(int percentageComplete, String szMsg) {
-			this.publishProgress(new String[] {szMsg});
+			this.publishProgress(szMsg);
 		}
 	}
 	
@@ -446,6 +450,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 				szURL = String.format(Locale.US, MFBConstants.urlAircraftSchedule, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), m_ac.AircraftID);
 				ActWebView.ViewURL(getActivity(), szURL);
 			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
 			}
 	    	return true;
 	    case R.id.findFlights:
