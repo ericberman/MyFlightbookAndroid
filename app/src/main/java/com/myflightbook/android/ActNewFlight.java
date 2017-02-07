@@ -311,7 +311,7 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 		AddListener(R.id.btnEngineEndSet);
 		AddListener(R.id.btnProps);
 		AddListener(R.id.btnAppendNearest);
-		
+
 		Button btnAppend = (Button) findViewById(R.id.btnAppendNearest);
 		btnAppend.setOnLongClickListener(new OnLongClickListener() { 
 	        public boolean onLongClick(View v) {
@@ -320,8 +320,10 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 	        }
 	    });
 
-		findViewById(R.id.txtViewInTheCockpit).setOnClickListener(this);
-		
+		// Expand/collapse
+		AddListener(R.id.txtViewInTheCockpit);
+		AddListener(R.id.txtImageHeader);
+
 		enableCrossFill(R.id.txtNight);
 		enableCrossFill(R.id.txtSimIMC);
 		enableCrossFill(R.id.txtIMC);
@@ -545,7 +547,7 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 	{
     	if (m_le.rgFlightImages == null)
     		m_le.getImagesForFlight();
-    	setUpImageGallery(R.id.galImages, m_le.rgFlightImages);
+    	setUpImageGallery(getGalleryID(), m_le.rgFlightImages);
 	}
 	
 	public void onPause()
@@ -880,6 +882,12 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
 		}
 			break;
+		case R.id.txtImageHeader:
+		{
+			View target = findViewById(R.id.tblImageTable);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+		}
+		break;
 		default:
 			break;
 		}
@@ -1610,7 +1618,7 @@ DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMa
 	 * GallerySource protocol
 	 */
 	public int getGalleryID() {
-		return R.id.galImages;
+		return R.id.tblImageTable;
 	}
 
 	public MFBImageInfo[] getImages() {

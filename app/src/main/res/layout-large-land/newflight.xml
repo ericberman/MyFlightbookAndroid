@@ -786,18 +786,21 @@
         </LinearLayout>
 
         <!-- Images and Sharing -->
+        <TextView android:id="@+id/txtImageHeader" android:text="@string/cdImagesForFlight" android:drawableStart="@drawable/collapse_light" android:clickable="true"
+            style="@style/DividerBar" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/table_background"
+            android:padding="4dp"
+            android:stretchColumns="0,1"
+            android:id="@+id/tblImageTable"/>
 
         <TextView
             android:id="@+id/TextView12"
             style="@style/DividerBar"
             android:text="@string/lblCatSharing" />
-
-        <Gallery
-            android:id="@+id/galImages"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="4dip"
-            android:spacing="4dip" />
 
         <!-- Sharing -->
 

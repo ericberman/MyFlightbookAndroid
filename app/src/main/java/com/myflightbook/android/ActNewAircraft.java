@@ -394,7 +394,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 	 * @see com.myflightbook.android.ActMFBForm.GallerySource#getGalleryID()
 	 */
 	public int getGalleryID() {
-		return R.id.galImages;
+		return R.id.tblImageTable;
 	}
 
 	public MFBImageInfo[] getImages() {

@@ -22,7 +22,6 @@ package com.myflightbook.android;
  */
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -43,17 +42,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Gallery;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate;
@@ -225,7 +226,6 @@ public class ActMFBForm extends Fragment {
 		v.setDoubleValue(d);
 	}
 
-	@SuppressLint("SimpleDateFormat")
 	protected void SetUTCDateForField(int id, Date d) {
 		Button b = (Button) findViewById(id);
 		if (d == null || UTCDate.IsNullDate(d))
@@ -270,17 +270,51 @@ public class ActMFBForm extends Fragment {
 	}
 	//endregion
 
+	protected MFBImageInfo mfbiiLastClicked;
+
 	protected void setUpImageGallery(int idGallery, MFBImageInfo[] rgMfbii)
 	{
 		// Set up the gallery for any pictures
-		Gallery g = (Gallery) findViewById(idGallery);
-		if (g == null)
+		if (rgMfbii == null)
 			return;
 
-		MFBImageInfo.ImageAdapter ia = new MFBImageInfo.ImageAdapter(rgMfbii, getActivity());
-		g.setAdapter(ia);
-		ia.notifyDataSetChanged();
-		registerForContextMenu(g);
+		LayoutInflater l = getActivity().getLayoutInflater();
+		TableLayout tl = (TableLayout)findViewById(idGallery);
+		if (tl == null)
+			return;
+		tl.removeAllViews();
+		int i = 0;
+		for (MFBImageInfo mfbii : rgMfbii)
+		{
+			try {
+				// TableRow tr = new TableRow(this);
+
+				TableRow tr = (TableRow) l.inflate(R.layout.imageitem, tl, false);
+				tr.setId(MFBImageInfo.idImageGalleryIdBase + i++);
+
+				ImageView iv = (ImageView) tr.findViewById(R.id.imageItemView);
+				((TextView)tr.findViewById(R.id.imageItemComment)).setText(mfbii.Comment);
+
+				mfbii.LoadImageForImageView(true, iv);
+
+				registerForContextMenu(tr);
+
+				final MFBImageInfo mfbiiFinal = mfbii;
+				tr.setOnClickListener((View v) -> {
+						mfbiiFinal.ViewFullImageInWebView(getActivity());
+					});
+				tr.setOnLongClickListener((View v) -> {
+					mfbiiLastClicked = mfbiiFinal;
+					getActivity().openContextMenu(v);
+					return true;
+				});
+
+				tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+			}
+			catch (NullPointerException ex) { // should never happen.
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	protected void setDecimalEditMode(int id, EditMode em)
@@ -289,12 +323,12 @@ public class ActMFBForm extends Fragment {
 		e.setMode(em);
 	}
 	
-	public boolean onImageContextItemSelected(MenuItem item, final GallerySource src)
+	public boolean onImageContextItemSelected(MenuItem item, GallerySource src)
 	{
-		AdapterContextMenuInfo acmi = (AdapterContextMenuInfo) item.getMenuInfo();
-		long idImg = acmi.targetView.getId();
-		
-		final MFBImageInfo mfbii = src.getImages()[(int) idImg - MFBImageInfo.idImageGalleryIdBase];
+		if (mfbiiLastClicked == null)	// should never be true
+			return false;
+
+		final MFBImageInfo mfbii = mfbiiLastClicked;
 		
 		switch (item.getItemId())
 		{
@@ -340,6 +374,7 @@ public class ActMFBForm extends Fragment {
 			mfbii.ViewFullImageInWebView(getActivity());
 			break;
 		}
+		mfbiiLastClicked = null;
 		return true;
 	}
 

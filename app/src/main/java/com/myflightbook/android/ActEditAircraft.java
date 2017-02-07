@@ -183,6 +183,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 		AddListener(R.id.acPrefsHeader);
 		AddListener(R.id.acNotesHeader);
 		AddListener(R.id.txtACMaintenance);
+		AddListener(R.id.txtImageHeader);
 
 		Intent i = getActivity().getIntent();
 		int idAircraft = i.getIntExtra(AIRCRAFTID, 0);
@@ -367,6 +368,11 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
 			break;
 		}
+		case R.id.txtImageHeader: {
+			View target = findViewById(R.id.tblImageTable);
+			setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+			break;
+		}
 		}
 		toView();
 	}
@@ -474,7 +480,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 	 * @see com.myflightbook.android.ActMFBForm.GallerySource#getGalleryID()
 	 */
 	public int getGalleryID() {
-		return R.id.galImages;
+		return R.id.tblImageTable;
 	}
 
 	public MFBImageInfo[] getImages() {

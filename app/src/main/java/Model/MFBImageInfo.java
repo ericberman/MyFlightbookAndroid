@@ -44,14 +44,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.BaseAdapter;
-import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.myflightbook.android.ActLocalVideo;
 import com.myflightbook.android.ActWebView;
@@ -119,53 +112,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 	private String m_szURL = MFBConstants.szURL_FlightPicture;
 	private String m_keyName = MFBConstants.szIMG_KEY_Flight;
 	private String m_key = "";
-	
-	public static class ImageAdapter extends BaseAdapter {
-		MFBImageInfo[] m_rgmfbii = null;
-		Context m_context = null;
-		
-	    public ImageAdapter(MFBImageInfo[] rgmfbii, Context c) {
-	    	m_rgmfbii = rgmfbii;
-	    	m_context = c;
-	    }
 
-	    public int getCount() {
-	    	return m_rgmfbii.length;
-	    }
-
-	    public Object getItem(int position) {
-	    	if (m_rgmfbii == null)
-	    		return null;
-	    	else
-	    		return m_rgmfbii[position];
-	    }
-
-	    public long getItemId(int position) {
-	        return position;
-	    }
-
-	    public View getView(int position, View v, ViewGroup parent) {
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater)m_context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.mfbiiitem, parent, false);
-            }
-                        
-            ImageView i = (ImageView) v.findViewById(R.id.imgMFBIIImage);
-            TextView t = (TextView) v.findViewById(R.id.txtMFBIIComment);
-
-            v.setLayoutParams(new Gallery.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-            MFBImageInfo mfbii = m_rgmfbii[position];
-            mfbii.LoadImageForImageView(true, i);
-	        
-	        t.setText(mfbii.Comment == null ? "" : mfbii.Comment);
-	        // set the Id of the view equal to the id of the underlying image
-	        v.setId(idImageGalleryIdBase + position);
-
-	        return v;
-	    }
-	}
-	
 	public interface ImageCacheCompleted {
 		void imgCompleted(MFBImageInfo sender);
 	}

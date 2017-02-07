@@ -59,7 +59,7 @@
 <string name="lblCatTimes">Flight Times and Properties</string>
 <string name="lblCatOverall">General Flight Information</string>
 <string name="lblCatCockpit">In the cockpit</string>
-<string name="lblCatSharing">Images and sharing</string>
+<string name="lblCatSharing">Sharing</string>
 <string name="lblFacebook">Share flight on Facebook</string>
 <string name="lblTwitter">Share flight on Twitter</string>
 <string name="lblMyFlightbook">Share flight on MyFlightbook</string>
@@ -229,6 +229,7 @@
 <!-- Image Content Descriptions -->
 <string name="cdTakePicture">Take or choose a picture</string>
 <string name="cdImagesForFlight">Images for flight</string>
+<string name="cdImagesForAircraft">Images for aircraft</string>
 <string name="cdHasImages">Item has images</string>
 <string name="cdMapMarker">Marker on map</string>
 <string name="cdImageInfo">Flight Image</string>
