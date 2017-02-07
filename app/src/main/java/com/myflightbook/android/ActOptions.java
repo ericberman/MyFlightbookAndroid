@@ -18,8 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -166,12 +164,6 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 		findViewById(R.id.btnSignOut).setVisibility(AuthToken.FIsValid() ? View.VISIBLE : View.GONE);
     }
     
-    public void onWindowFocusChanged(boolean fHasFocus)
-    {
-    	if (fHasFocus)
-    		updateStatus();
-    }
-    
 	public void onResume()
 	{
 		super.onResume();
@@ -205,13 +197,13 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     
     public void ViewFacebook()
     {
-		Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(String.format(MFBConstants.urlFacebook, AuthToken.m_szEmail, "Comment from Android user")));
+		Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlFacebook));
 		startActivity(i);    	
     }
     
     public void ViewTwitter()
     {
-		Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(String.format(MFBConstants.urlTwitter, AuthToken.m_szEmail, "Comment from Android user")));
+		Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlTwitter));
 		startActivity(i);
     }
     
@@ -350,9 +342,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 		{
 		case R.id.btnSignIn:
 			DlgSignIn d = new DlgSignIn(getActivity());
-			d.setOnDismissListener(new OnDismissListener() {
-				public void onDismiss(DialogInterface dialog) { updateStatus(); }
-			});
+			d.setOnDismissListener((dialog) ->updateStatus());
 			d.show();
 			break;
 		case R.id.btnSignOut:
