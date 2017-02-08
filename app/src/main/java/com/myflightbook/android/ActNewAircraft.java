@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -58,368 +57,345 @@ import Model.MFBUtil;
 import Model.MakesandModels;
 
 public class ActNewAircraft extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener, ActMFBForm.GallerySource {
-	
-	public static MakesandModels[] AvailableMakesAndModels = null;
-	private static Aircraft m_ac = new Aircraft();
-	private String szTailLast = "";
-	public static final int SELECT_MAKE_ACTIVITY_REQUEST_CODE = 41845;
-	public static final int BEGIN_NEW_AIRCRAFT_REQUEST_CODE = 49283;
-	public static final String SELECT_MAKE_RESULT_IDENTIFIER = "SelectedMake";
-	public final static String MODELFORAIRCRAFT = "com.myflightbook.android.aircraftModelID";
-	protected static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
 
-	private class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
-		private Context m_Context = null;
-		private ProgressDialog m_pd = null;
-		public Object m_Result = null;
-		@SuppressWarnings("unused")
-		public MFBSoap m_Svc = null;
+    public static MakesandModels[] AvailableMakesAndModels = null;
+    private static Aircraft m_ac = new Aircraft();
+    private String szTailLast = "";
+    public static final int SELECT_MAKE_ACTIVITY_REQUEST_CODE = 41845;
+    public static final int BEGIN_NEW_AIRCRAFT_REQUEST_CODE = 49283;
+    public final static String MODELFORAIRCRAFT = "com.myflightbook.android.aircraftModelID";
+    protected static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
 
-		public SaveAircraftTask(Context c) {
-			super();
-			m_Context = c;
-		}
+    private class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
+        private Context m_Context = null;
+        private ProgressDialog m_pd = null;
+        Object m_Result = null;
+        MFBSoap m_Svc = null;
 
-		@Override
-		protected MFBSoap doInBackground(Aircraft... params) {
-			AircraftSvc acs = new AircraftSvc();
-			acs.m_Progress = this;
-			Aircraft[] rgac = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac);
-			m_Result = rgac;
-			return m_Svc = (MFBSoap) acs;
-		}
+        SaveAircraftTask(Context c) {
+            super();
+            m_Context = c;
+        }
 
-		protected void onPreExecute() {
-			m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgNewAircraft));
-		}
+        @Override
+        protected MFBSoap doInBackground(Aircraft... params) {
+            AircraftSvc acs = new AircraftSvc();
+            acs.m_Progress = this;
+            m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac);
+            return m_Svc = acs;
+        }
 
-		protected void onPostExecute(MFBSoap svc) {
-    		if (!isAdded() || getActivity().isFinishing())
-    			return;
+        protected void onPreExecute() {
+            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgNewAircraft));
+        }
 
-			Aircraft[] rgac = (Aircraft[]) m_Result;
-			if (rgac == null || rgac.length == 0)
-				MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
-			else
-				Dismiss(RESULT_CODE_AIRCRAFT_CREATED);
-			
-			try { m_pd.dismiss();} catch (Exception e) {}
-		}
+        protected void onPostExecute(MFBSoap svc) {
+            if (!isAdded() || getActivity().isFinishing())
+                return;
 
-		protected void onProgressUpdate(String... msg)
-		{
-			m_pd.setMessage(msg[0]);
-		}
+            Aircraft[] rgac = (Aircraft[]) m_Result;
+            if (rgac == null || rgac.length == 0)
+                MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
+            else
+                Dismiss(RESULT_CODE_AIRCRAFT_CREATED);
 
-		public void NotifyProgress(int percentageComplete, String szMsg) {
-			this.publishProgress(new String[] {szMsg});
-		}
-	}
-	
-	private class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
-		private Context m_Context = null;
-		private ProgressDialog m_pd = null;
+            try {
+                m_pd.dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-		public GetMakesTask(Context c) {
-			super();
-			m_Context = c;
-		}
+        protected void onProgressUpdate(String... msg) {
+            m_pd.setMessage(msg[0]);
+        }
 
-		@Override
-		protected MFBSoap doInBackground(Void... params) {
-			MakesandModelsSvc mms = new MakesandModelsSvc();
-			AvailableMakesAndModels = mms.GetMakesAndModels();
-
-			return (MFBSoap) mms;
-		}
-
-		protected void onPreExecute() {
-			m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgMakes));
-		}
-
-		protected void onPostExecute(MFBSoap svc) {
-			if (AvailableMakesAndModels == null || AvailableMakesAndModels.length == 0)
-			{
-				MFBUtil.Alert(m_Context, getString(R.string.txtError), getString(R.string.errCannotRetrieveMakes));
-				Cancel();
-				return;
-			}
-			ActNewAircraft.this.setCurrentMakeModel(AvailableMakesAndModels[0]);
-
-			try { m_pd.dismiss();} catch (Exception e) {}
-		}
-	}
-	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		this.setHasOptionsMenu(true);
-		return inflater.inflate(R.layout.newaircraft, container, false);
+        public void NotifyProgress(int percentageComplete, String szMsg) {
+            this.publishProgress(szMsg);
+        }
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		
-		if (!AuthToken.FIsValid())
-		{
-			MFBUtil.Alert(this, getString(R.string.errCannotAddAircraft), getString(R.string.errMustBeSignedInToCreateAircraft));
-			Cancel();
-			return;
-		}
-		
-		// Give the aircraft a tailnumber based on locale
-		m_ac.TailNumber = CountryCode.BestGuessForCurrentLocale().Prefix;
-		
-		((Button)findViewById(R.id.btnMakeModel)).setOnClickListener(this);
-		((CheckBox) findViewById(R.id.ckAnonymous)).setOnClickListener(this);
-		
-		String[] rgszInstanceTypes = new String[Aircraft.rgidInstanceTypes.length];
-		for (int i = 0; i < Aircraft.rgidInstanceTypes.length; i++)
-			rgszInstanceTypes[i] = getString(Aircraft.rgidInstanceTypes[i]);
-		
-		Spinner sp = (Spinner)findViewById(R.id.spnAircraftType);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.mfbsimpletextitem, rgszInstanceTypes);
-		sp.setAdapter(adapter);
-		sp.setSelection(0);
-		sp.setOnItemSelectedListener(this);
 
-		// make the hint for creating make/model a hyperlink
-		TextView txtHint = (TextView)findViewById(R.id.txtAddMakesHint);
-		txtHint.setText(Html.fromHtml(this.getString(R.string.lblAddMakes)));
-		txtHint.setMovementMethod(LinkMovementMethod.getInstance());
+    private class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
+        private Context m_Context = null;
+        private ProgressDialog m_pd = null;
 
-		// Get available makes/models, but only if we have none.  Can refresh.
-		// This avoids getting makes/models when just getting a picture.
-		if (AvailableMakesAndModels == null || AvailableMakesAndModels.length == 0)
-		{
-			GetMakesTask gt = new GetMakesTask(this.getActivity());
-			gt.execute();
-		}
-		
-		toView();
-	}
-	
-	public void onPause()
-	{
-		super.onPause();
-		fromView();
-	}
-	
-	public void onResume()
-	{
-		super.onResume();
-		toView();
-	}
-	
-	private void Cancel()
-	{
-		Intent i = new Intent();
-		getActivity().setResult(Activity.RESULT_CANCELED, i);
-		getActivity().finish();		
-	}
-	
-	private void newAircraft()
-	{
-		m_ac = new Aircraft();
-		
-		// Clean up any pending image turds that could be lying around
-		MFBImageInfo mfbii = new MFBImageInfo(MFBImageInfo.PictureDestination.AircraftImage);
-		mfbii.DeletePendingImages(m_ac.AircraftID);
-		
-		// Give the aircraft a tailnumber based on locale
-		m_ac.TailNumber = CountryCode.BestGuessForCurrentLocale().Prefix;
+        GetMakesTask(Context c) {
+            super();
+            m_Context = c;
+        }
 
-		toView();
-	}
-	
-	private void Dismiss(int resultCode)
-	{
-		Intent i = new Intent();
-		Activity a = getActivity();
-		if (a != null)
-		{
-			a.setResult(resultCode, i);
-			a.finish();
-		}
-	}
-	
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		if (resultCode == Activity.RESULT_OK)
-		{
-			if (requestCode == SELECT_IMAGE_ACTIVITY_REQUEST_CODE)
-				AddGalleryImage(data);
-			else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
-				AddCameraImage(m_TempFilePath, false);
-			else if (requestCode == SELECT_MAKE_ACTIVITY_REQUEST_CODE)
-			{
-				int selectedMakeIndex = data.getIntExtra(MODELFORAIRCRAFT, 0);
-				if (AvailableMakesAndModels != null && AvailableMakesAndModels.length > selectedMakeIndex)
-					setCurrentMakeModel(AvailableMakesAndModels[selectedMakeIndex]);
-			}
-		}
-		if (requestCode == BEGIN_NEW_AIRCRAFT_REQUEST_CODE)
-			newAircraft();
-	}
-	
-	protected void setCurrentMakeModel(MakesandModels mm)
-	{
-		if (mm != null)
-		{
-			m_ac.ModelID = mm.ModelId;
-			Button b = (Button)findViewById(R.id.btnMakeModel);
-			b.setText(mm.Description);
-		}
-	}
-	
-	protected void fromView()
-	{
-		m_ac.TailNumber = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
-		m_ac.InstanceTypeID = ((Spinner)findViewById(R.id.spnAircraftType)).getSelectedItemPosition() + 1;
-		
-		if (m_ac.InstanceTypeID > 1) // not a real aircraft - auto-assign a tail
-			m_ac.TailNumber = "SIM";
-	}
-	
-	protected void toView()
-	{
-		EditText et = (EditText) findViewById(R.id.txtTail);
-		et.setText(m_ac.TailNumber);
-		et.setSelection(m_ac.TailNumber.length());
-		((Spinner) findViewById(R.id.spnAircraftType)).setSelection(m_ac.InstanceTypeID - 1);
-		setCurrentMakeModel(MakesandModels.getMakeModelByID(m_ac.ModelID, AvailableMakesAndModels));
-		
-		findViewById(R.id.tblrowTailnumber).setVisibility(m_ac.IsAnonymous() || !m_ac.IsReal() ? View.GONE : View.VISIBLE);
-		findViewById(R.id.tblrowIsAnonymous).setVisibility(m_ac.IsReal() ? View.VISIBLE : View.GONE);		
-		refreshGallery();
-	}
-	
-	protected void saveLastTail()
-	{
-		if (m_ac.IsReal() && !m_ac.IsAnonymous())
-			this.szTailLast = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
-	}
-	
-	protected void toggleAnonymous(CheckBox sender)
-	{
-		saveLastTail();
-		m_ac.TailNumber = (m_ac.IsAnonymous()) ? this.szTailLast : m_ac.anonTailNumber();
-		sender.setChecked(m_ac.IsAnonymous());
-		toView();
-	}
-	
-	public void onClick(View v)
-	{
-		switch (v.getId())
-		{
-		case R.id.btnMakeModel:
-			Intent i = new Intent(getActivity(), ActSelectMake.class);
-			i.putExtra(MODELFORAIRCRAFT, m_ac.ModelID);
-			startActivityForResult(i, SELECT_MAKE_ACTIVITY_REQUEST_CODE);
-			break;
-		case R.id.ckAnonymous:
-			toggleAnonymous((CheckBox) v);
-			break;
-		}
-	}
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            MakesandModelsSvc mms = new MakesandModelsSvc();
+            AvailableMakesAndModels = mms.GetMakesAndModels();
 
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-		saveLastTail();
-		Spinner sp = (Spinner)findViewById(R.id.spnAircraftType);
-		m_ac.InstanceTypeID = sp.getSelectedItemPosition() + 1;
-		toView();
-	}
+            return mms;
+        }
 
-	public void onNothingSelected(AdapterView<?> arg0) {
-		
-	}
-	
-	// @Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-	    inflater.inflate(R.menu.newaircraft, menu);
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    case R.id.menuChoosePicture:
-	    	ChoosePicture();
-	    	return true;
-	    case R.id.menuTakePicture:
-	    	TakePicture();
-	    	return true;
-	    case R.id.menuAddAircraft:
-			fromView();
-			
-			if (m_ac.FIsValid())
-			{
-				SaveAircraftTask st = new SaveAircraftTask(getActivity());
-				st.execute(m_ac);
-			}
-			else
-				MFBUtil.Alert(this, getString(R.string.txtError), m_ac.ErrorString);
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
-	}
-	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
-	{
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getActivity().getMenuInflater();
-		inflater.inflate(R.menu.imagemenu, menu);
-	}
-	
-	@Override
-	public boolean onContextItemSelected(MenuItem item)
-	{
-		switch (item.getItemId())
-		{
-		case R.id.menuAddComment:
-		case R.id.menuDeleteImage:
-		case R.id.menuViewImage:
-			return onImageContextItemSelected(item, this);
-		default:
-			break;
-		}
-		return true;
-	}
+        protected void onPreExecute() {
+            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgMakes));
+        }
 
-	/*
-	 * GallerySource methods
-	 * (non-Javadoc)
-	 * @see com.myflightbook.android.ActMFBForm.GallerySource#getGalleryID()
-	 */
-	public int getGalleryID() {
-		return R.id.tblImageTable;
-	}
+        protected void onPostExecute(MFBSoap svc) {
+            if (AvailableMakesAndModels == null || AvailableMakesAndModels.length == 0) {
+                MFBUtil.Alert(m_Context, getString(R.string.txtError), getString(R.string.errCannotRetrieveMakes));
+                Cancel();
+                return;
+            }
 
-	public MFBImageInfo[] getImages() {
-		if (m_ac == null || m_ac.AircraftImages == null)
-			return new MFBImageInfo[0];
-		else
-			return m_ac.AircraftImages;
-	}
+            try {
+                m_pd.dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	public void setImages(MFBImageInfo[] rgmfbii) {
-		m_ac.AircraftImages = rgmfbii;
-	}
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        this.setHasOptionsMenu(true);
+        return inflater.inflate(R.layout.newaircraft, container, false);
+    }
 
-	public void newImage(MFBImageInfo mfbii) {
-		mfbii.setPictureDestination(PictureDestination.AircraftImage);
-		mfbii.setTargetID(m_ac.AircraftID);
-		mfbii.toDB();
-		m_ac.AircraftImages = MFBImageInfo.getLocalImagesForId(m_ac.AircraftID, PictureDestination.AircraftImage);
-	}
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-	public void refreshGallery() {
-		setUpImageGallery(getGalleryID(), getImages());
-	}
+        if (!AuthToken.FIsValid()) {
+            MFBUtil.Alert(this, getString(R.string.errCannotAddAircraft), getString(R.string.errMustBeSignedInToCreateAircraft));
+            Cancel();
+            return;
+        }
 
-	public PictureDestination getDestination() {
-		return PictureDestination.AircraftImage;
-	}
+        // Give the aircraft a tailnumber based on locale
+        m_ac.TailNumber = CountryCode.BestGuessForCurrentLocale().Prefix;
+
+        findViewById(R.id.btnMakeModel).setOnClickListener(this);
+        findViewById(R.id.ckAnonymous).setOnClickListener(this);
+
+        String[] rgszInstanceTypes = new String[Aircraft.rgidInstanceTypes.length];
+        for (int i = 0; i < Aircraft.rgidInstanceTypes.length; i++)
+            rgszInstanceTypes[i] = getString(Aircraft.rgidInstanceTypes[i]);
+
+        Spinner sp = (Spinner) findViewById(R.id.spnAircraftType);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgszInstanceTypes);
+        sp.setAdapter(adapter);
+        sp.setSelection(0);
+        sp.setOnItemSelectedListener(this);
+
+        // make the hint for creating make/model a hyperlink
+        TextView txtHint = (TextView) findViewById(R.id.txtAddMakesHint);
+        txtHint.setText(getString(R.string.lblAddMakes));
+        txtHint.setMovementMethod(LinkMovementMethod.getInstance());
+
+        // Get available makes/models, but only if we have none.  Can refresh.
+        // This avoids getting makes/models when just getting a picture.
+        if (AvailableMakesAndModels == null || AvailableMakesAndModels.length == 0) {
+            GetMakesTask gt = new GetMakesTask(this.getActivity());
+            gt.execute();
+        }
+
+        toView();
+    }
+
+    public void onPause() {
+        super.onPause();
+        fromView();
+    }
+
+    public void onResume() {
+        super.onResume();
+        toView();
+    }
+
+    private void Cancel() {
+        Intent i = new Intent();
+        getActivity().setResult(Activity.RESULT_CANCELED, i);
+        getActivity().finish();
+    }
+
+    private void newAircraft() {
+        m_ac = new Aircraft();
+
+        // Clean up any pending image turds that could be lying around
+        MFBImageInfo mfbii = new MFBImageInfo(MFBImageInfo.PictureDestination.AircraftImage);
+        mfbii.DeletePendingImages(m_ac.AircraftID);
+
+        // Give the aircraft a tailnumber based on locale
+        m_ac.TailNumber = CountryCode.BestGuessForCurrentLocale().Prefix;
+
+        toView();
+    }
+
+    private void Dismiss(int resultCode) {
+        Intent i = new Intent();
+        Activity a = getActivity();
+        if (a != null) {
+            a.setResult(resultCode, i);
+            a.finish();
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_IMAGE_ACTIVITY_REQUEST_CODE)
+                AddGalleryImage(data);
+            else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+                AddCameraImage(m_TempFilePath, false);
+            else if (requestCode == SELECT_MAKE_ACTIVITY_REQUEST_CODE) {
+                int selectedMakeIndex = data.getIntExtra(MODELFORAIRCRAFT, 0);
+                if (AvailableMakesAndModels != null && AvailableMakesAndModels.length > selectedMakeIndex)
+                    setCurrentMakeModel(AvailableMakesAndModels[selectedMakeIndex]);
+            }
+        }
+        if (requestCode == BEGIN_NEW_AIRCRAFT_REQUEST_CODE)
+            newAircraft();
+    }
+
+    protected void setCurrentMakeModel(MakesandModels mm) {
+        if (mm != null) {
+            m_ac.ModelID = mm.ModelId;
+            Button b = (Button) findViewById(R.id.btnMakeModel);
+            b.setText(mm.Description);
+        }
+    }
+
+    protected void fromView() {
+        m_ac.TailNumber = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
+        m_ac.InstanceTypeID = ((Spinner) findViewById(R.id.spnAircraftType)).getSelectedItemPosition() + 1;
+
+        if (m_ac.InstanceTypeID > 1) // not a real aircraft - auto-assign a tail
+            m_ac.TailNumber = "SIM";
+    }
+
+    protected void toView() {
+        EditText et = (EditText) findViewById(R.id.txtTail);
+        et.setText(m_ac.TailNumber);
+        et.setSelection(m_ac.TailNumber.length());
+        ((Spinner) findViewById(R.id.spnAircraftType)).setSelection(m_ac.InstanceTypeID - 1);
+        setCurrentMakeModel(MakesandModels.getMakeModelByID(m_ac.ModelID, AvailableMakesAndModels));
+
+        findViewById(R.id.tblrowTailnumber).setVisibility(m_ac.IsAnonymous() || !m_ac.IsReal() ? View.GONE : View.VISIBLE);
+        findViewById(R.id.tblrowIsAnonymous).setVisibility(m_ac.IsReal() ? View.VISIBLE : View.GONE);
+        refreshGallery();
+    }
+
+    protected void saveLastTail() {
+        if (m_ac.IsReal() && !m_ac.IsAnonymous())
+            this.szTailLast = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
+    }
+
+    protected void toggleAnonymous(CheckBox sender) {
+        saveLastTail();
+        m_ac.TailNumber = (m_ac.IsAnonymous()) ? this.szTailLast : m_ac.anonTailNumber();
+        sender.setChecked(m_ac.IsAnonymous());
+        toView();
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnMakeModel:
+                Intent i = new Intent(getActivity(), ActSelectMake.class);
+                i.putExtra(MODELFORAIRCRAFT, m_ac.ModelID);
+                startActivityForResult(i, SELECT_MAKE_ACTIVITY_REQUEST_CODE);
+                break;
+            case R.id.ckAnonymous:
+                toggleAnonymous((CheckBox) v);
+                break;
+        }
+    }
+
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+                               long arg3) {
+        saveLastTail();
+        Spinner sp = (Spinner) findViewById(R.id.spnAircraftType);
+        m_ac.InstanceTypeID = sp.getSelectedItemPosition() + 1;
+        toView();
+    }
+
+    public void onNothingSelected(AdapterView<?> arg0) {
+
+    }
+
+    // @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.newaircraft, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menuChoosePicture:
+                ChoosePicture();
+                return true;
+            case R.id.menuTakePicture:
+                TakePicture();
+                return true;
+            case R.id.menuAddAircraft:
+                fromView();
+
+                if (m_ac.FIsValid()) {
+                    SaveAircraftTask st = new SaveAircraftTask(getActivity());
+                    st.execute(m_ac);
+                } else
+                    MFBUtil.Alert(this, getString(R.string.txtError), m_ac.ErrorString);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.imagemenu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menuAddComment:
+            case R.id.menuDeleteImage:
+            case R.id.menuViewImage:
+                return onImageContextItemSelected(item, this);
+            default:
+                break;
+        }
+        return true;
+    }
+
+    /*
+     * GallerySource methods
+     * (non-Javadoc)
+     * @see com.myflightbook.android.ActMFBForm.GallerySource#getGalleryID()
+     */
+    public int getGalleryID() {
+        return R.id.tblImageTable;
+    }
+
+    public MFBImageInfo[] getImages() {
+        if (m_ac == null || m_ac.AircraftImages == null)
+            return new MFBImageInfo[0];
+        else
+            return m_ac.AircraftImages;
+    }
+
+    public void setImages(MFBImageInfo[] rgmfbii) {
+        m_ac.AircraftImages = rgmfbii;
+    }
+
+    public void newImage(MFBImageInfo mfbii) {
+        mfbii.setPictureDestination(PictureDestination.AircraftImage);
+        mfbii.setTargetID(m_ac.AircraftID);
+        mfbii.toDB();
+        m_ac.AircraftImages = MFBImageInfo.getLocalImagesForId(m_ac.AircraftID, PictureDestination.AircraftImage);
+    }
+
+    public void refreshGallery() {
+        setUpImageGallery(getGalleryID(), getImages());
+    }
+
+    public PictureDestination getDestination() {
+        return PictureDestination.AircraftImage;
+    }
 }

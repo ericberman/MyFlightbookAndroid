@@ -1,499 +1,500 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="lblOK">OK</string>
-<string name="lblCancel">Annuler</string>
-<string name="lblConfirm">Confirmer</string>
-<string name="app_name">MyFlightbook</string>
+    <string name="lblOK">OK</string>
+    <string name="lblCancel">Annuler</string>
+    <string name="lblConfirm">Confirmer</string>
+    <string name="app_name">MyFlightbook</string>
 
-<string name="UserName">Entrez votre adresse mail:</string>
-<string name="Password">Entrez votre mot de passe</string>
-<string name="signin">Connexion sécurisée</string>
+    <string name="UserName">Entrez votre adresse mail:</string>
+    <string name="Password">Entrez votre mot de passe</string>
+    <string name="signin">Connexion sécurisée</string>
 
-<string name="signInPrompt">Vous devez avoir un compte sur MyFlightbook.com pour utiliser MyFlightbook sur Android.</string>
-<string name="statusNotSignedIn">Vous n\'êtes pas identifié.  Merci de vous identifier ou créez un compte.</string>
-<string name="statusSignedIn">Vous êtes connecté en tant que: %s.</string>
-<string name="szSignIn">Identifiez vous…</string>
-<string name="szSignOut">Déconnectez</string>
-<string name="lblForgotPassword">Mot de passe oublié? C\'est Reset à MyFlightbook.com</string>
-<string name="createuser">Créez un compte…</string>
-<string name="lblOptAutoDetect">Détection automatique des décollages et atterrissages</string>
-<string name="lblOptRecord">Enregistrement de la route</string>
-<string name="lblOptIncludeHeliports">Inclure les heliports</string>
-<string name="lblOptRoundNearestTenth">Utilisez dixième d\'heure</string>
-<string name="lblOptUseHHMM">Entrez durées en format hh:mm</string>
-<string name="lblOptUseLocalTime">Utiliser l\'heure locale</string>
-<string name="lblOptTOSpeed">La vitesse de décollage (Kts)</string>
+    <string name="signInPrompt">Vous devez avoir un compte sur MyFlightbook.com pour utiliser MyFlightbook sur Android.</string>
+    <string name="statusNotSignedIn">Vous n\'êtes pas identifié.  Merci de vous identifier ou créez un compte.</string>
+    <string name="statusSignedIn">Vous êtes connecté en tant que: %s.</string>
+    <string name="szSignIn">Identifiez vous…</string>
+    <string name="szSignOut">Déconnectez</string>
+    <string name="lblForgotPassword">Mot de passe oublié? C\'est Reset à MyFlightbook.com</string>
+    <string name="createuser">Créez un compte…</string>
+    <string name="lblOptAutoDetect">Détection automatique des décollages et atterrissages</string>
+    <string name="lblOptRecord">Enregistrement de la route</string>
+    <string name="lblOptIncludeHeliports">Inclure les heliports</string>
+    <string name="lblOptRoundNearestTenth">Utilisez dixième d\'heure</string>
+    <string name="lblOptUseHHMM">Entrez durées en format hh:mm</string>
+    <string name="lblOptUseLocalTime">Utiliser l\'heure locale</string>
+    <string name="lblOptTOSpeed">La vitesse de décollage (Kts)</string>
 
-<string name="lblRoute">Trajet</string>
-<string name="lblAppendNearest">le plus proche</string>
-<string name="lblViewOnMap">Vue</string>
-<string name="lblAddApproaches">Ajouter des approches</string>
-<string name="lblComments">Commentaires</string>
-<string name="submitFlightNew">Ajout du Vol</string>
-<string name="submitFlightExisting">Mise à jour du Vol</string>
-<string name="lblAircraft">Aéronef</string>
-<string name="lblLandings">Total</string>
-<string name="lblFSDayLandings">Jour\n(Complet)</string>
-<string name="lblFSNightLandings">Nuit\n(Complet)</string>
-<string name="lblApproaches">Approches</string>
-<string name="lblHold">Circuit d\'attente</string>
-<string name="lblNight">Nuit</string>
-<string name="lblSimIMC">Sim. VSV</string>
-<string name="lblIMC">VSV</string>
-<string name="lblXC">Navigation</string>
-<string name="lblDual">Double</string>
-<string name="lblGround">Simulateur </string>
-<string name="lblCFI">Instruction</string>
-<string name="lblSIC">Copilote</string>
-<string name="lblPIC">Commandant de bord</string>
-<string name="lblTotal">Temps Total</string>
-<string name="lblHobbsStart">Début Hobbs</string>
-<string name="lblEngineStart">Mise en route moteur</string>
-<string name="lblFlightStart">Début du Vol</string>
-<string name="lblHobbsEnd">Fin Hobbs</string>
-<string name="lblEngineEnd">Arrêt Moteur</string>
-<string name="lblFlightEnd">Fin de Vol</string>
-<string name="lblProperties">Caractéristiques…</string>
-<string name="lblCurrentProps">Caractéristiques du vol:</string>
-<string name="lblCatApproachesAndLandings">Atterrissages et Approches</string>
-<string name="lblCatTimes">Temps et type de vols</string>
-<string name="lblCatOverall">Information Générale sur le vol</string>
-<string name="lblCatCockpit">Dans le cockpit</string>
-<string name="lblCatSharing">Partage</string>
-<string name="lblFacebook">Partager le vol sur Facebook</string>
-<string name="lblTwitter">Partager le vol sur Twitter</string>
-<string name="lblMyFlightbook">Partager le vol sur  MyFlightbook</string>
-<string name="lblSetUpFacebook">Twitter et Facebook peuvent être activés sur&lt;a href=\"%s\"&gt;MyFlightbook.com&lt;/a&gt;</string>
+    <string name="lblRoute">Trajet</string>
+    <string name="lblAppendNearest">le plus proche</string>
+    <string name="lblViewOnMap">Vue</string>
+    <string name="lblAddApproaches">Ajouter des approches</string>
+    <string name="lblComments">Commentaires</string>
+    <string name="submitFlightNew">Ajout du Vol</string>
+    <string name="submitFlightExisting">Mise à jour du Vol</string>
+    <string name="lblAircraft">Aéronef</string>
+    <string name="lblLandings">Total</string>
+    <string name="lblFSDayLandings">Jour\n(Complet)</string>
+    <string name="lblFSNightLandings">Nuit\n(Complet)</string>
+    <string name="lblApproaches">Approches</string>
+    <string name="lblHold">Circuit d\'attente</string>
+    <string name="lblNight">Nuit</string>
+    <string name="lblSimIMC">Sim. VSV</string>
+    <string name="lblIMC">VSV</string>
+    <string name="lblXC">Navigation</string>
+    <string name="lblDual">Double</string>
+    <string name="lblGround">Simulateur </string>
+    <string name="lblCFI">Instruction</string>
+    <string name="lblSIC">Copilote</string>
+    <string name="lblPIC">Commandant de bord</string>
+    <string name="lblTotal">Temps Total</string>
+    <string name="lblHobbsStart">Début Hobbs</string>
+    <string name="lblEngineStart">Mise en route moteur</string>
+    <string name="lblFlightStart">Début du Vol</string>
+    <string name="lblHobbsEnd">Fin Hobbs</string>
+    <string name="lblEngineEnd">Arrêt Moteur</string>
+    <string name="lblFlightEnd">Fin de Vol</string>
+    <string name="lblProperties">Caractéristiques…</string>
+    <string name="lblCurrentProps">Caractéristiques du vol:</string>
+    <string name="lblCatApproachesAndLandings">Atterrissages et Approches</string>
+    <string name="lblCatTimes">Temps et type de vols</string>
+    <string name="lblCatOverall">Information Générale sur le vol</string>
+    <string name="lblCatCockpit">Dans le cockpit</string>
+    <string name="lblCatSharing">Partage</string>
+    <string name="lblFacebook">Partager le vol sur Facebook</string>
+    <string name="lblTwitter">Partager le vol sur Twitter</string>
+    <string name="lblMyFlightbook">Partager le vol sur  MyFlightbook</string>
+    <string name="lblSetUpFacebook">Twitter et Facebook peuvent être activés sur&lt;a href=\"%s\"&gt;MyFlightbook.com&lt;/a&gt;</string>
 
-<string name="lblNow">Maintenant</string>
-<string name="lblNone">Aucun</string>
-<string name="lblTouchForNow">(Tapez pour maintenant)</string>
-<string name="lblTouchForToday">(Tapez pour aujourd\'hui)</string>
+    <string name="lblNow">Maintenant</string>
+    <string name="lblNone">Aucun</string>
+    <string name="lblTouchForNow">(Tapez pour maintenant)</string>
+    <string name="lblTouchForToday">(Tapez pour aujourd\'hui)</string>
 
-<string name="lblNewUser">Créer un compte</string>
-<string name="lblEmail">Adresse Email</string>
-<string name="lblEmail2">Confirmez Email</string>
-<string name="lblPass">Mot de passe</string>
-<string name="lblPass2">Confirmez mot de passee</string>
-<string name="lblFirstName">Prénom</string>
-<string name="lblLastName">Nom</string>
-<string name="lblEmailHint">Email</string>
-<string name="lblEmailConfirmHint">Confirmez Email</string>
-<string name="lblQuestionHint">Question</string>
-<string name="lblAnswerHint">Réponse</string>
-<string name="lblQuestion">Question Secrète</string>
-<string name="lblAnswer">Réponse Secrète</string>
-<string name="lblOptional">(En option)</string>
-<string name="lblOver14">J\'ai au moins 14 ans</string>
-<string name="lblPrivacy">Règle de vie privée</string>
-<string name="lblTandC">Conditions d\'utilisation</string>
-<string name="lblViewWebContent">Présentation…</string>
-<string name="lblDisclaimer">En créant un compte vous acceptez les conditions d\'utilisation</string>
-<string name="lblCreateAccount">Création du compte</string>
-<string name="lblQuestionDescription">Dans le cas où vous avez oublié votre mot de passe, s\'il vous plaît fournir une question de sécurité et de réponse. Une bonne question de sécurité est quelque chose que:\r\n\r\n- Seulement, vous savez, et ne pas oublier\r\n- Ne change pas au fil du temps\r\n- A court, l\'orthographe sans ambiguïté et la capitalisation.\r\n\r\nVous pouvez choisir un dans la liste fournie, le modifier, ou faire un de vos propres.</string>
-<string-array name="defaultSecurityQuestions">
-    <item></item><!-- Allows type-in -->
-    <item>Quel était le nom de votre premier animal de compagnie?</item>
-    <item>Où avez-vous sur votre lune de miel?</item>
-    <item>Quels ont été les quatre derniers chiffres de votre numéro de téléphone de l\'enfance?</item>
-    <item>Quelle ville vous étiez dans le 31 décembre 1999?</item>
-    <item>Quel était le nom de votre 4ème professeur de catégorie?</item>
-    <item>Où étiez-vous quand vous avez eu votre première boisson alcoolisée?</item>
-    <item>Quelle était la mascotte de votre école?</item>
-    <item>Quelle est la marque de votre première voiture?</item>
-    <item>Qui était votre héros d\'enfance?</item>
-    <item>Quel est le nom de votre ami d\'enfance préféré?</item>
-    <item>Quel est le nom de la réception de votre mariage lieu a eu lieu?</item>
-</string-array>
+    <string name="lblNewUser">Créer un compte</string>
+    <string name="lblEmail">Adresse Email</string>
+    <string name="lblEmail2">Confirmez Email</string>
+    <string name="lblPass">Mot de passe</string>
+    <string name="lblPass2">Confirmez mot de passee</string>
+    <string name="lblFirstName">Prénom</string>
+    <string name="lblLastName">Nom</string>
+    <string name="lblEmailHint">Email</string>
+    <string name="lblEmailConfirmHint">Confirmez Email</string>
+    <string name="lblQuestionHint">Question</string>
+    <string name="lblAnswerHint">Réponse</string>
+    <string name="lblQuestion">Question Secrète</string>
+    <string name="lblAnswer">Réponse Secrète</string>
+    <string name="lblOptional">(En option)</string>
+    <string name="lblOver14">J\'ai au moins 14 ans</string>
+    <string name="lblPrivacy">Règle de vie privée</string>
+    <string name="lblTandC">Conditions d\'utilisation</string>
+    <string name="lblViewWebContent">Présentation…</string>
+    <string name="lblDisclaimer">En créant un compte vous acceptez les conditions d\'utilisation</string>
+    <string name="lblCreateAccount">Création du compte</string>
+    <string name="lblQuestionDescription">Dans le cas où vous avez oublié votre mot de passe, s\'il vous plaît fournir une question de sécurité et de réponse. Une bonne question de sécurité est quelque chose que:\r\n\r\n- Seulement, vous savez, et ne pas oublier\r\n- Ne change pas au fil du temps\r\n- A court, l\'orthographe sans ambiguïté et la capitalisation.\r\n\r\nVous pouvez choisir un dans la liste fournie, le modifier, ou faire un de vos propres.</string>
+    <string-array name="defaultSecurityQuestions">
+        <item /><!-- Allows type-in -->
+        <item>Quel était le nom de votre premier animal de compagnie?</item>
+        <item>Où avez-vous sur votre lune de miel?</item>
+        <item>Quels ont été les quatre derniers chiffres de votre numéro de téléphone de l\'enfance?</item>
+        <item>Quelle ville vous étiez dans le 31 décembre 1999?</item>
+        <item>Quel était le nom de votre 4ème professeur de catégorie?</item>
+        <item>Où étiez-vous quand vous avez eu votre première boisson alcoolisée?</item>
+        <item>Quelle était la mascotte de votre école?</item>
+        <item>Quelle est la marque de votre première voiture?</item>
+        <item>Qui était votre héros d\'enfance?</item>
+        <item>Quel est le nom de votre ami d\'enfance préféré?</item>
+        <item>Quel est le nom de la réception de votre mariage lieu a eu lieu?</item>
+    </string-array>
 
-<string name="lblBack">Retour</string>
+    <string name="lblBack">Retour</string>
 
-<string name="lblOptionsProfile">Règlage du Compte</string>
-<string name="lblOptionsLocation">Règlages de la localisation</string>
-<string name="lblOptionsTime">Temps</string>
-<string name="lblOptionsContact">Gardez le contact</string>
-<string name="lblFAQ">FAQ</string>
-<string name="lblSupportDescript">MyFlightbook est et restera gratuit. Mais si vous le trouvez utile, nous sommes heureux d\'accepter votre soutien.</string>
-<string name="btnSupport">Soutien MyFlightbook</string>
-<string name="lblAdditionalOptions">Options supplémentaires</string>
-<string name="lblAdditionalOptionsText">Des fonctionnalités supplémentaires et les paramètres de votre compte est en MyFlightbook.com</string>
-<string name="lblGoToMyFlightbookOptions">Aller à MyFlightbook.com</string>
-<string name="lblOptionsOther">Au sujet de  MyFlightbook</string>
-<string name="lblFollowFacebook">Facebook</string>
-<string name="lblFollowTwitter">Twitter</string>
-<string name="lblWarning1">L\'UTILISATION EN VOL PEUT ETRE CONSTITUER UNE INFRACTION ET CAUSER UNE DISTRACTION.  VOUS ETES RESPONSABLE DES CONSEQUENCES DE VOS ACTIONS. VERIFIER LA REGLEMENTATION APPLICABLE</string>
-<string name="lblWarning2">L\'utilisation peut constituer une infraction et causer une distraction. Vous êtes responsable des conséquences de vos actions. Vérifier la réglementation applicable.</string>
-<string name="lblGPSDisclaimer">Avec certains matériels, MyFlightbook pour Android est capable de détecter automatiquement les décollages et atterissages. Le logiciel peut enregistrer les données de vol pour une analyse ultérieure. Android n\'est pas confome aux standards aéronautiques pour la fonction GPS, donc ces fonctions sont imparfaites.</string>
-<string name="lblAutoHobbs">Saisie automatique du Hobbs d\'arrivée</string>
-<string name="lblAutoTime">Saisie automatique du Temps Total</string>
-<string name="lblCopyright">© 2012&#8211;2016 MyFlightbook LLC</string>
-<string name="lblCodeCredit">Une partie du code utilise en partie la librairie KSoap2 library disponible sur http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Un grand merci!</string>
-<string name="lblContactMe">Contactez nous </string>
-<string name="lblCleanup">Nettoyage</string>
-<string name="lblAddAircraft">Ajouter un aéronef…</string>
+    <string name="lblOptionsProfile">Règlage du Compte</string>
+    <string name="lblOptionsLocation">Règlages de la localisation</string>
+    <string name="lblOptionsTime">Temps</string>
+    <string name="lblOptionsContact">Gardez le contact</string>
+    <string name="lblFAQ">FAQ</string>
+    <string name="lblSupportDescript">MyFlightbook est et restera gratuit. Mais si vous le trouvez utile, nous sommes heureux d\'accepter votre soutien.</string>
+    <string name="btnSupport">Soutien MyFlightbook</string>
+    <string name="lblAdditionalOptions">Options supplémentaires</string>
+    <string name="lblAdditionalOptionsText">Des fonctionnalités supplémentaires et les paramètres de votre compte est en MyFlightbook.com</string>
+    <string name="lblGoToMyFlightbookOptions">Aller à MyFlightbook.com</string>
+    <string name="lblOptionsOther">Au sujet de  MyFlightbook</string>
+    <string name="lblFollowFacebook">Facebook</string>
+    <string name="lblFollowTwitter">Twitter</string>
+    <string name="lblWarning1">L\'UTILISATION EN VOL PEUT ETRE CONSTITUER UNE INFRACTION ET CAUSER UNE DISTRACTION.  VOUS ETES RESPONSABLE DES CONSEQUENCES DE VOS ACTIONS. VERIFIER LA REGLEMENTATION APPLICABLE</string>
+    <string name="lblWarning2">L\'utilisation peut constituer une infraction et causer une distraction. Vous êtes responsable des conséquences de vos actions. Vérifier la réglementation applicable.</string>
+    <string name="lblGPSDisclaimer">Avec certains matériels, MyFlightbook pour Android est capable de détecter automatiquement les décollages et atterissages. Le logiciel peut enregistrer les données de vol pour une analyse ultérieure. Android n\'est pas confome aux standards aéronautiques pour la fonction GPS, donc ces fonctions sont imparfaites.</string>
+    <string name="lblAutoHobbs">Saisie automatique du Hobbs d\'arrivée</string>
+    <string name="lblAutoTime">Saisie automatique du Temps Total</string>
+    <string name="lblCopyright">© 2012&#8211;2016 MyFlightbook LLC</string>
+    <string name="lblCodeCredit">Une partie du code utilise en partie la librairie KSoap2 library disponible sur http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Un grand merci!</string>
+    <string name="lblContactMe">Contactez nous </string>
+    <string name="lblCleanup">Nettoyage</string>
+    <string name="lblAddAircraft">Ajouter un aéronef…</string>
 
-<string name="lblFrequentlyUsedAircraft">Aéronef fréquemment utilisé</string>
-<string name="lblArchivedAircraft">Autres aéronef</string>
+    <string name="lblFrequentlyUsedAircraft">Aéronef fréquemment utilisé</string>
+    <string name="lblArchivedAircraft">Autres aéronef</string>
 
-<string name="lblNewAircraftPromopt">Saisir ci-dessous, les informations de votre aéronef.</string>
-<string name="lblTail">Immatriculation</string>
-<string name="lblAircraftType">Type</string>
-<string name="lblMakeModel">Fabricant et modèle</string>
-<string name="lblAddMakes">Si vous ne trouvez pas la désignation de votre aéronef, ajoutez la à&lt;a href=\"http://myflightbook.com\"&gt;MyFlightbook.com&lt;/a&gt;".</string>
-<string name="lblAutoAssignTail">(Sera saisie automatiquement)</string>
-<string name="lblBtnAddAircraft">Ajouter un avion</string>
-<string name="lblAnonymous">Cet avion est anonyme</string>
+    <string name="lblNewAircraftPromopt">Saisir ci-dessous, les informations de votre aéronef.</string>
+    <string name="lblTail">Immatriculation</string>
+    <string name="lblAircraftType">Type</string>
+    <string name="lblMakeModel">Fabricant et modèle</string>
+    <string name="lblAddMakes">Si vous ne trouvez pas la désignation de votre aéronef, ajoutez la à MyFlightbook.com.</string>
+    <string name="lblAutoAssignTail">(Sera saisie automatiquement)</string>
+    <string name="lblBtnAddAircraft">Ajouter un avion</string>
+    <string name="lblAnonymous">Cet avion est anonyme</string>
 
-<string name="lblCatMaintenance">Maintenance et inspections</string>
-<string name="lblCatAircraftInfo">Général</string>
-<string name="lblMaintPrompt">Saisir ci-dessous la date et l\'heure de la dernière vérification:</string>
-<string name="lblVORCheck">VOR:</string>
-<string name="lblTransponder">Transpondeur:</string>
-<string name="lblPitotStatic">Pitot/statique:</string>
-<string name="lblAltimeter">Altimètre:</string>
-<string name="lblELT">Balise de détresse:</string>
-<string name="lblAnnual">Annuelle ou CDN:</string>
-<string name="lblRegistration">Enregistrement:</string>
-<string name="lbl100Hour">100 Heures:</string>
-<string name="lblOilChange">Vidange:</string>
-<string name="lblNewEngine">Nouveau moteur</string>
-<string name="lblAircraftPrefsHeader">Remplir automatiquement de nouveaux vols dans cet avion</string>
-<string name="lblShowAircraft">Montrer cet avion pour de couveaux vols</string>
-<string name="lblRoleNone">Ne pas remplir automatiquement</string>
-<string name="lblRolePIC">Si PIC est vide, elle a mis égal au Temps Total</string>
-<string name="lblRoleSIC">Si SIC est vide, elle a mis égal au Temps Total</string>
-<string name="lblRoleCFI">Si CFI est vide, elle a mis égal au Temps Total</string>
-<string name="lblUpdateAircraft">Mise à jour de la fiche avion</string>
-<string name="lblNotesHeader">Remarques sur cet avion</string>
-<string name="lblPublicNotes">Les notes publiques:</string>
-<string name="lblPrivateNotes">Les notes privées:</string>
-<string name="lblPublicNoteHint">Fournir une note</string>
-<string name="lblPrivateNoteHint">Fournir une note</string>
-<string name="lblSchedule">Programme</string>
+    <string name="lblCatMaintenance">Maintenance et inspections</string>
+    <string name="lblCatAircraftInfo">Général</string>
+    <string name="lblMaintPrompt">Saisir ci-dessous la date et l\'heure de la dernière vérification:</string>
+    <string name="lblVORCheck">VOR:</string>
+    <string name="lblTransponder">Transpondeur:</string>
+    <string name="lblPitotStatic">Pitot/statique:</string>
+    <string name="lblAltimeter">Altimètre:</string>
+    <string name="lblELT">Balise de détresse:</string>
+    <string name="lblAnnual">Annuelle ou CDN:</string>
+    <string name="lblRegistration">Enregistrement:</string>
+    <string name="lbl100Hour">100 Heures:</string>
+    <string name="lblOilChange">Vidange:</string>
+    <string name="lblNewEngine">Nouveau moteur</string>
+    <string name="lblAircraftPrefsHeader">Remplir automatiquement de nouveaux vols dans cet avion</string>
+    <string name="lblShowAircraft">Montrer cet avion pour de couveaux vols</string>
+    <string name="lblRoleNone">Ne pas remplir automatiquement</string>
+    <string name="lblRolePIC">Si PIC est vide, elle a mis égal au Temps Total</string>
+    <string name="lblRoleSIC">Si SIC est vide, elle a mis égal au Temps Total</string>
+    <string name="lblRoleCFI">Si CFI est vide, elle a mis égal au Temps Total</string>
+    <string name="lblUpdateAircraft">Mise à jour de la fiche avion</string>
+    <string name="lblNotesHeader">Remarques sur cet avion</string>
+    <string name="lblPublicNotes">Les notes publiques:</string>
+    <string name="lblPrivateNotes">Les notes privées:</string>
+    <string name="lblPublicNoteHint">Fournir une note</string>
+    <string name="lblPrivateNoteHint">Fournir une note</string>
+    <string name="lblSchedule">Programme</string>
 
-<string name="lblFlightStatus">Type de Vol</string>
-<string name="lblFlightSpeed">Vitesse</string>
-<string name="lblFlightAltitude">Altitude</string>
-<string name="lblFeet">pieds</string>
-<string name="lblMeters">m</string>
-<string name="lblFlightGPSQuality">Qualité GPS </string>
-<string name="lblUnknown">(inconnu)</string>
-<string name="lblGPSUnknown">(inconnu)</string>
-<string name="lblGPSPoor">Faible</string>
-<string name="lblGPSGood">Bonne</string>
-<string name="lblGPSExcellent">Excellent</string>
-<string name="lblFlightOnGround">Au Sol</string>
-<string name="lblFlightInAir">En vol</string>
-<string name="lblElapsedTime">Temps écoulé: </string>
-<string name="lblNoSpeed">--</string>
-<string name="lblNoAltitude">--</string>
-<string name="lblStartingTime">00:00:00</string>
-<string name="lblSunrise">(Sunrise)</string>
-<string name="lblSunset">(Sunset)</string>
-<string name="lblLatitude">(Latitude)</string>
-<string name="lblLongitude">(Longitude)</string>
+    <string name="lblFlightStatus">Type de Vol</string>
+    <string name="lblFlightSpeed">Vitesse</string>
+    <string name="lblFlightAltitude">Altitude</string>
+    <string name="lblFeet">pieds</string>
+    <string name="lblMeters">m</string>
+    <string name="lblFlightGPSQuality">Qualité GPS </string>
+    <string name="lblUnknown">(inconnu)</string>
+    <string name="lblGPSUnknown">(inconnu)</string>
+    <string name="lblGPSPoor">Faible</string>
+    <string name="lblGPSGood">Bonne</string>
+    <string name="lblGPSExcellent">Excellent</string>
+    <string name="lblFlightOnGround">Au Sol</string>
+    <string name="lblFlightInAir">En vol</string>
+    <string name="lblElapsedTime">Temps écoulé: </string>
+    <string name="lblNoSpeed">--</string>
+    <string name="lblNoAltitude">--</string>
+    <string name="lblStartingTime">00:00:00</string>
+    <string name="lblSunrise">(Sunrise)</string>
+    <string name="lblSunset">(Sunset)</string>
+    <string name="lblLatitude">(Latitude)</string>
+    <string name="lblLongitude">(Longitude)</string>
 
-<string name="lblTotalsAllTime">Tous les vols</string>
-<string name="lblTotals12Month">Derniers 12 mois</string>
-<string name="lblTotalsYTD">A ce jour pour l\'année</string>
+    <string name="lblTotalsAllTime">Tous les vols</string>
+    <string name="lblTotals12Month">Derniers 12 mois</string>
+    <string name="lblTotalsYTD">A ce jour pour l\'année</string>
 
-<!-- Telemetry comments -->
-<string name="telemetryFSLanding">Arrêt complet d\'atterrissage détecté</string>
-<string name="telemetryFSNight">Atterrissage de nuit arrêt complet détecté</string>
-<string name="telemetryTakeOff">Décollage détecté</string>
+    <!-- Telemetry comments -->
+    <string name="telemetryFSLanding">Arrêt complet d\'atterrissage détecté</string>
+    <string name="telemetryFSNight">Atterrissage de nuit arrêt complet détecté</string>
+    <string name="telemetryTakeOff">Décollage détecté</string>
 
-<!-- Progress indicators -->
-<string name="prgTotals">Récupération des totaux…</string>
-<string name="prgCurrency">Récupération des Privilèges en cours…</string>
-<string name="prgAircraft">Récupération des Avions…</string>
-<string name="prgSigningIn">S\'identifier…</string>
-<string name="prgCreatingAccount">Créer un compte…</string>
-<string name="prgSavingFlight">Enregistrer le Vol…</string>
-<string name="prgDeletingFlight">Effacer un vol…</string>
-<string name="prgNewAircraft">Enregistrer l\'Avion…</string>
-<string name="prgMakes">Récupérer les modèles et leurs constructeurs…</string>
-<string name="prgVisitedAirports">Récupération des aéroports visités…</string>
-<string name="prgCPT">Mise à jour de la liste des propriétés de vol disponibles…</string>
-<string name="prgRecent">Chargement en cours…</string>
-<string name="prgRecentFlights">Récupération des vols…</string>
-<string name="prgPropsForFlight">Récupération des propriétés de vol disponibles…</string>
-<string name="prgDeleteProp">Suppression propriété de vol…</string>
-<string name="prgUploadingImages">Téléchargement image %1$d sur %2$d</string>
-<string name="prgUpdatingAircraft">Mise à jour de l\'avion…</string>
-<string name="prgDeletingAircraft">Effacer…</string>
-<string name="emptyWaterMarkDouble">0.0</string>
-<string name="emptyWaterMarkInt">0</string>
-<string name="emptyWaterMarkHHMM">HH:MM</string>
-<string name="emptyWaterMarkRoute">Route pour le vol</string>
+    <!-- Progress indicators -->
+    <string name="prgTotals">Récupération des totaux…</string>
+    <string name="prgCurrency">Récupération des Privilèges en cours…</string>
+    <string name="prgAircraft">Récupération des Avions…</string>
+    <string name="prgSigningIn">S\'identifier…</string>
+    <string name="prgCreatingAccount">Créer un compte…</string>
+    <string name="prgSavingFlight">Enregistrer le Vol…</string>
+    <string name="prgDeletingFlight">Effacer un vol…</string>
+    <string name="prgNewAircraft">Enregistrer l\'Avion…</string>
+    <string name="prgMakes">Récupérer les modèles et leurs constructeurs…</string>
+    <string name="prgVisitedAirports">Récupération des aéroports visités…</string>
+    <string name="prgCPT">Mise à jour de la liste des propriétés de vol disponibles…</string>
+    <string name="prgRecent">Chargement en cours…</string>
+    <string name="prgRecentFlights">Récupération des vols…</string>
+    <string name="prgPropsForFlight">Récupération des propriétés de vol disponibles…</string>
+    <string name="prgDeleteProp">Suppression propriété de vol…</string>
+    <string name="prgUploadingImages">Téléchargement image %1$d sur %2$d</string>
+    <string name="prgUpdatingAircraft">Mise à jour de l\'avion…</string>
+    <string name="prgDeletingAircraft">Effacer…</string>
+    <string name="emptyWaterMarkDouble">0.0</string>
+    <string name="emptyWaterMarkInt">0</string>
+    <string name="emptyWaterMarkHHMM">HH:MM</string>
+    <string name="emptyWaterMarkRoute">Route pour le vol</string>
 
-<!-- Image Content Descriptions -->
-<string name="cdTakePicture">Take or choose a picture</string>
-<string name="cdImagesForFlight">Images pour le vol</string>
-<string name="cdImagesForAircraft">Images pour avions</string>
-<string name="cdHasImages">Item has images</string>
-<string name="cdMapMarker">Marker on map</string>
-<string name="cdImageInfo">Flight Image</string>
-<string name="cdPauseFlight">Pause Flight Monitoring</string>
-<string name="cdRecording">Flight Telemetry Recording</string>
-<string name="cdIsSignedValid">La signature est valide</string>
-<string name="cdIsSignedInvalid">La signature n\'est pas valide</string>
+    <!-- Image Content Descriptions -->
+    <string name="cdTakePicture">Take or choose a picture</string>
+    <string name="cdImagesForFlight">Images pour le vol</string>
+    <string name="cdImagesForAircraft">Images pour avions</string>
+    <string name="cdHasImages">Item has images</string>
+    <string name="cdMapMarker">Marker on map</string>
+    <string name="cdImageInfo">Flight Image</string>
+    <string name="cdPauseFlight">Pause Flight Monitoring</string>
+    <string name="cdRecording">Flight Telemetry Recording</string>
+    <string name="cdIsSignedValid">La signature est valide</string>
+    <string name="cdIsSignedInvalid">La signature n\'est pas valide</string>
 
-<string name="mapOptionNearby">Proches</string>
-<string name="mapOptionRoute">Trajet</string>
+    <string name="mapOptionNearby">Proches</string>
+    <string name="mapOptionRoute">Trajet</string>
 
-<string name="lblAddComment">Ecrire un commentaire pour cette image</string>
-<string name="lblAddCommentWM">Commentaire</string>
+    <string name="lblAddComment">Ecrire un commentaire pour cette image</string>
+    <string name="lblAddCommentWM">Commentaire</string>
 
-<string name="lblEditPropertyTitle">Propriétés du Vol</string>
+    <string name="lblEditPropertyTitle">Propriétés du Vol</string>
 
-<string name="lblDateRangeTotals">Plage des dates pour les totaux</string>
-<string name="lblDateRangeRecents">Les vols récents</string>
-<string name="lblAutoFillOptions">Critères d\'auto remplissage</string>
-<string name="lblConfirmImageDelete">Effacer cette image?  Ne peut être annulé.</string>
-<string name="lblConfirmFlightDelete">Effacer ce vol ?  Ne peut être annulé.</string>
+    <string name="lblDateRangeTotals">Plage des dates pour les totaux</string>
+    <string name="lblDateRangeRecents">Les vols récents</string>
+    <string name="lblAutoFillOptions">Critères d\'auto remplissage</string>
+    <string name="lblConfirmImageDelete">Effacer cette image?  Ne peut être annulé.</string>
+    <string name="lblConfirmFlightDelete">Effacer ce vol ?  Ne peut être annulé.</string>
 
-<string name="txtSavedPendingFlight">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
-<string name="txtSuccess">Succès</string>
-<string name="txtSavedFlight">Votre vol a été enregistré sur MyFlightbook.com</string>
-<string name="txtPending"> (EN COURS)</string>
+    <string name="txtSavedPendingFlight">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
+    <string name="txtSuccess">Succès</string>
+    <string name="txtSavedFlight">Votre vol a été enregistré sur MyFlightbook.com</string>
+    <string name="txtPending"> (EN COURS)</string>
 
-<string name="txtError">Errreur</string>
-<string name="errMainDBFailure">Impossible de créer/copier base de données principale - l\'application ne fonctionnera pas!</string>
-<string name="errAirportDBFailure">Impossible de créer/copier base de données de l\'aéroport - aéroport le plus proche et la fonctionnalité de mappage ne fonctionne pas!</string>
-<string name="errWarningTitle">Avertissement</string>
-<string name="errNoGPSTitle">Pas de GPS</string>
-<string name="errCantUseGPS">Impossible de démarrer le service GPS: </string>
-<string name="errNoInternetNoSave">Ne peut enregistrer le vol - Pas d\'accès internet.</string>
-<string name="errNoInternet">Pas d\'accès internet.</string>
-<string name="errorSoapError">Une erreur inconnue s\'est produite parler au serveur MyFlightbook.</string>
-<string name="errNoAircraft">Impossible d\'enregistrer vol - aucun avion valide a été sélectionné. S\'il vous plaît choisir un avion pour ce vol. Vous pouvez en créer un si nécessaire.</string>
-<string name="errNoAircraftFound">S\'il vous plaît créer au moins un avion</string>
-<string name="errNoCamera">Impossible de démarrer la caméra.</string>
-<string name="errCannotRetrieveMakes">Impossible de récupérer la liste des marques et des modèles d\'avions</string>
-<string name="errCannotAddAircraft">Impossible d\'ajouter des avions</string>
-<string name="errMustBeSignedInToCreateAircraft">Vous devez être connecté pour créer un avion</string>
-<string name="errMustBeSignedInToViewRecentFlights">Vous devez être connecté pour voir les vols récents</string>
-<string name="errCannotFindFlight">Vol sélectionné n\'a pas été trouvé.</string>
-<string name="errNoAircraftFoundShort">Aucun aéronef.</string>
-<string name="errMustCreateAircraft">Aucun aéronef n\'a été trouvé pour votre compte. Vous devez créer un certain avant que vous puissiez ajouter des vols.</string>
-<string name="txtCleanupComplete">Nettoyer complète; aucun problème constaté.</string>
-<string name="errCleanupOrphansFound">Vols disparus ont été retrouvés et ont été déplacés aux vols récents.</string>
-<string name="errTypeEmailTwice">S\'il vous plaît entrez votre adresse e-mail deux fois pour éviter les fautes de frappe.</string>
-<string name="errTypePasswordTwice">S\'il vous plaît entrez votre mot de passe deux fois pour éviter les fautes de frappe</string>
-<string name="errNeedQandA">S\'il vous plaît fournir une question secrète et sa réponse au cas où vous oubliez votre mot de passe.</string>
-<string name="errMustBe14">Comptes ne sont disponibles que pour les personnes de 14 ans et plus.</string>
-<string name="errNoMaps">Ce dispositif ne supporte pas les cartes.</string>
-<string name="errRealAircraftCantUseSIM">SIM préfixe est réservée aux simulateurs/FTDs/ATDs.</string>
-<string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs doivent commencer par le préfixe \'SIM\'</string>
-<string name="errNoGoogleMaps">Cette fonction nécessite les services de Google Play, qui ne sont pas installés.</string>
+    <string name="txtError">Errreur</string>
+    <string name="errMainDBFailure">Impossible de créer/copier base de données principale - l\'application ne fonctionnera pas!</string>
+    <string name="errAirportDBFailure">Impossible de créer/copier base de données de l\'aéroport - aéroport le plus proche et la fonctionnalité de mappage ne fonctionne pas!</string>
+    <string name="errWarningTitle">Avertissement</string>
+    <string name="errNoGPSTitle">Pas de GPS</string>
+    <string name="errCantUseGPS">Impossible de démarrer le service GPS: </string>
+    <string name="errNoInternetNoSave">Ne peut enregistrer le vol - Pas d\'accès internet.</string>
+    <string name="errNoInternet">Pas d\'accès internet.</string>
+    <string name="errorSoapError">Une erreur inconnue s\'est produite parler au serveur MyFlightbook.</string>
+    <string name="errNoAircraft">Impossible d\'enregistrer vol - aucun avion valide a été sélectionné. S\'il vous plaît choisir un avion pour ce vol. Vous pouvez en créer un si nécessaire.</string>
+    <string name="errNoAircraftFound">S\'il vous plaît créer au moins un avion</string>
+    <string name="errNoCamera">Impossible de démarrer la caméra.</string>
+    <string name="errCannotRetrieveMakes">Impossible de récupérer la liste des marques et des modèles d\'avions</string>
+    <string name="errCannotAddAircraft">Impossible d\'ajouter des avions</string>
+    <string name="errMustBeSignedInToCreateAircraft">Vous devez être connecté pour créer un avion</string>
+    <string name="errMustBeSignedInToViewRecentFlights">Vous devez être connecté pour voir les vols récents</string>
+    <string name="errCannotFindFlight">Vol sélectionné n\'a pas été trouvé.</string>
+    <string name="errNoAircraftFoundShort">Aucun aéronef.</string>
+    <string name="errMustCreateAircraft">Aucun aéronef n\'a été trouvé pour votre compte. Vous devez créer un certain avant que vous puissiez ajouter des vols.</string>
+    <string name="txtCleanupComplete">Nettoyer complète; aucun problème constaté.</string>
+    <string name="errCleanupOrphansFound">Vols disparus ont été retrouvés et ont été déplacés aux vols récents.</string>
+    <string name="errTypeEmailTwice">S\'il vous plaît entrez votre adresse e-mail deux fois pour éviter les fautes de frappe.</string>
+    <string name="errTypePasswordTwice">S\'il vous plaît entrez votre mot de passe deux fois pour éviter les fautes de frappe</string>
+    <string name="errNeedQandA">S\'il vous plaît fournir une question secrète et sa réponse au cas où vous oubliez votre mot de passe.</string>
+    <string name="errMustBe14">Comptes ne sont disponibles que pour les personnes de 14 ans et plus.</string>
+    <string name="errNoMaps">Ce dispositif ne supporte pas les cartes.</string>
+    <string name="errNoModelSpecified">Every aircraft requires a model.</string>
+    <string name="errRealAircraftCantUseSIM">SIM préfixe est réservée aux simulateurs/FTDs/ATDs.</string>
+    <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs doivent commencer par le préfixe \'SIM\'</string>
+    <string name="errNoGoogleMaps">Cette fonction nécessite les services de Google Play, qui ne sont pas installés.</string>
 
-<string name="txtUpdateRouteOnMap">Mise à jour</string>
-<string name="txtShareKML">Envoyer KML pour…</string>
+    <string name="txtUpdateRouteOnMap">Mise à jour</string>
+    <string name="txtShareKML">Envoyer KML pour…</string>
 
-<string name="lblPreviouslyUsed">Préf</string>
+    <string name="lblPreviouslyUsed">Préf</string>
 
-<!-- Aircraft Instance Types -->
-<string name="aircraftInstanceTypeReal">Avion Réel</string>
-<string name="aircraftInstanceTypeSimUncertified">Sim :Non certifié</string>
-<string name="aircraftInstanceTypeSimLogAppchs">Sim: Logger les approches</string>
-<string name="aircraftInstanceTypeSimLogAppchsLandings">Sim :Logger les approaches, les atterrissages </string>
-<string name="aircraftInstanceTypeATD">Simulateur approuvé (ATD)</string>
+    <!-- Aircraft Instance Types -->
+    <string name="aircraftInstanceTypeReal">Avion Réel</string>
+    <string name="aircraftInstanceTypeSimUncertified">Sim :Non certifié</string>
+    <string name="aircraftInstanceTypeSimLogAppchs">Sim: Logger les approches</string>
+    <string name="aircraftInstanceTypeSimLogAppchsLandings">Sim :Logger les approaches, les atterrissages </string>
+    <string name="aircraftInstanceTypeATD">Simulateur approuvé (ATD)</string>
 
-<!-- Recent flights ranges -->
-<string name="recent30">30 derniers jours</string>
-<string name="recent60">60 derniers jours</string>
-<string name="recent90">90 derniers jours</string>
-<string name="recent180">180 derniers jours</string>
-<string name="recentYear">1 dernière année</string>
-<string name="recent2Years">2 dernières années</string>
-<string name="recent3Years">3 dernières années</string>
-<string name="recent5Years">5 dernières années</string>
-<string name="numResultsShownTemplate">%d vols</string>
-<string name="allResultsShown">Tous les vols</string>
+    <!-- Recent flights ranges -->
+    <string name="recent30">30 derniers jours</string>
+    <string name="recent60">60 derniers jours</string>
+    <string name="recent90">90 derniers jours</string>
+    <string name="recent180">180 derniers jours</string>
+    <string name="recentYear">1 dernière année</string>
+    <string name="recent2Years">2 dernières années</string>
+    <string name="recent3Years">3 dernières années</string>
+    <string name="recent5Years">5 dernières années</string>
+    <string name="numResultsShownTemplate">%d vols</string>
+    <string name="allResultsShown">Tous les vols</string>
 
-<!-- Auto-fill options -->
-<string name="autoNone">Aucun</string>
-<string name="autoEngine">Temps moteur</string>
-<string name="autoFlight">Temps de vol</string>
-<string name="autoHobbs">Temps Hobbs</string>
+    <!-- Auto-fill options -->
+    <string name="autoNone">Aucun</string>
+    <string name="autoEngine">Temps moteur</string>
+    <string name="autoFlight">Temps de vol</string>
+    <string name="autoHobbs">Temps Hobbs</string>
 
-<!-- Tab names -->
-<string name="tabNew">Nouveau</string>
-<string name="tabRecent">Récent</string>
-<string name="tabCurrency">Etat des compétences</string>
-<string name="tabTotals">Totaux</string>
-<string name="tabAircraft">Avion</string>
-<string name="tabOptions">Options</string>
-<string name="tabVisitedAirports">Visités</string>
-<string name="tabTraining">Formation</string>
-<string name="tabNearest">Plus proche</string>
+    <!-- Tab names -->
+    <string name="tabNew">Nouveau</string>
+    <string name="tabRecent">Récent</string>
+    <string name="tabCurrency">Etat des compétences</string>
+    <string name="tabTotals">Totaux</string>
+    <string name="tabAircraft">Avion</string>
+    <string name="tabOptions">Options</string>
+    <string name="tabVisitedAirports">Visités</string>
+    <string name="tabTraining">Formation</string>
+    <string name="tabNearest">Plus proche</string>
 
-<!-- Menu Strings -->
-<string name="menuRefreshAircraftShort">Rafraichir</string>
-<string name="menuRefreshAircraft">Rafraichir la  Liste</string>
-<string name="menuAddAircraftShort">Ajouter</string>
-<string name="menuAddAircraft">Ajouter Avion</string>
-<string name="menuResetFlightShort">Remise à zéro</string>
-<string name="menuResetFlight">Remettre à zéro le vol</string>
-<string name="menuAddFlightShort">Ajouter</string>
-<string name="menuAddFlight">Ajouter un vol</string>
-<string name="menuAddFlightLaterShort">Ajouter plus tard</string>
-<string name="menuAddFlightLater">Ajouter plus tard</string>
-<string name="menuDeleteFlight">Effacer Vol</string>
-<string name="menuDeleteFlightShort">Effacer</string>
-<string name="menuUpdateFlight">Mettre à jour Vol</string>
-<string name="menuSaveFlight">Ajouter un vol</string>
-<string name="menuSaveFlightShort">Ajouter</string>
-<string name="menuDeleteImage">Effacer</string>
-<string name="menuDeleteImageShort">Effacer</string>
-<string name="menuEditComment">Modifier commentaire</string>
-<string name="menuEditCommentShort">Commentaire</string>
-<string name="menuViewImage">Voir</string>
-<string name="menuViewImageShort">Voir</string>
-<string name="menuUpdateAircraft">Mettre à jour l\'avion</string>
-<string name="menuUpdateAircraftShort">Mise à jour</string>
-<string name="menuContact">Nous contacter</string>
-<string name="menuContactShort">Contact</string>
-<string name="menuFollowFB">Suivre sur Facebook</string>
-<string name="menuFollowFBShort">Facebook</string>
-<string name="menuFollowTW">Suivre sur Twitter</string>
-<string name="menuFollowTWShort">Twitter</string>
-<string name="menuReturnToFlightShort">Revenir au vol</string>
-<string name="menuReturnToFlight">Revenir au vol</string>
-<string name="menuRecentForward">Suivant</string>
-<string name="menuRecentStartOver">Recommencer</string>
-<string name="menuRecentsRefresh">Recharger la page</string>
-<string name="menuRefresh">Recharger la page</string>
-<string name="menuTakePicture">Prendre une photo</string>
-<string name="menuTakePictureShort">caméra</string>
-<string name="menuTakeVideo">Faire une vidéo</string>
-<string name="menuTakeVideoShort">Vidéo</string>
-<string name="menuChoosePicture">Choisissez une photo</string>
-<string name="menuChoosePictureShort">Photos</string>
-<string name="menuSignFlight">Signer</string>
-<string name="menuDeleteAircraft">Effacer Avion</string>
-<string name="menuDeleteAircraftShort">Effacer</string>
-<string name="menuShareKMLShort">KML</string>
-<string name="menuShareKMLLong">KML</string>
+    <!-- Menu Strings -->
+    <string name="menuRefreshAircraftShort">Rafraichir</string>
+    <string name="menuRefreshAircraft">Rafraichir la  Liste</string>
+    <string name="menuAddAircraftShort">Ajouter</string>
+    <string name="menuAddAircraft">Ajouter Avion</string>
+    <string name="menuResetFlightShort">Remise à zéro</string>
+    <string name="menuResetFlight">Remettre à zéro le vol</string>
+    <string name="menuAddFlightShort">Ajouter</string>
+    <string name="menuAddFlight">Ajouter un vol</string>
+    <string name="menuAddFlightLaterShort">Ajouter plus tard</string>
+    <string name="menuAddFlightLater">Ajouter plus tard</string>
+    <string name="menuDeleteFlight">Effacer Vol</string>
+    <string name="menuDeleteFlightShort">Effacer</string>
+    <string name="menuUpdateFlight">Mettre à jour Vol</string>
+    <string name="menuSaveFlight">Ajouter un vol</string>
+    <string name="menuSaveFlightShort">Ajouter</string>
+    <string name="menuDeleteImage">Effacer</string>
+    <string name="menuDeleteImageShort">Effacer</string>
+    <string name="menuEditComment">Modifier commentaire</string>
+    <string name="menuEditCommentShort">Commentaire</string>
+    <string name="menuViewImage">Voir</string>
+    <string name="menuViewImageShort">Voir</string>
+    <string name="menuUpdateAircraft">Mettre à jour l\'avion</string>
+    <string name="menuUpdateAircraftShort">Mise à jour</string>
+    <string name="menuContact">Nous contacter</string>
+    <string name="menuContactShort">Contact</string>
+    <string name="menuFollowFB">Suivre sur Facebook</string>
+    <string name="menuFollowFBShort">Facebook</string>
+    <string name="menuFollowTW">Suivre sur Twitter</string>
+    <string name="menuFollowTWShort">Twitter</string>
+    <string name="menuReturnToFlightShort">Revenir au vol</string>
+    <string name="menuReturnToFlight">Revenir au vol</string>
+    <string name="menuRecentForward">Suivant</string>
+    <string name="menuRecentStartOver">Recommencer</string>
+    <string name="menuRecentsRefresh">Recharger la page</string>
+    <string name="menuRefresh">Recharger la page</string>
+    <string name="menuTakePicture">Prendre une photo</string>
+    <string name="menuTakePictureShort">caméra</string>
+    <string name="menuTakeVideo">Faire une vidéo</string>
+    <string name="menuTakeVideoShort">Vidéo</string>
+    <string name="menuChoosePicture">Choisissez une photo</string>
+    <string name="menuChoosePictureShort">Photos</string>
+    <string name="menuSignFlight">Signer</string>
+    <string name="menuDeleteAircraft">Effacer Avion</string>
+    <string name="menuDeleteAircraftShort">Effacer</string>
+    <string name="menuShareKMLShort">KML</string>
+    <string name="menuShareKMLLong">KML</string>
 
-<!-- Abbreviations -->
-<string name="abbrevHours">hrs</string>
-<string name="abbrevNauticalMiles">nm</string>
+    <!-- Abbreviations -->
+    <string name="abbrevHours">hrs</string>
+    <string name="abbrevNauticalMiles">nm</string>
 
-<!-- Search -->
-<string name="fqTextContains">Contient:</string>
-<string name="fqAirportsVisited">Aéroports:</string>
-<string name="fqTextContainsPrompt">Texte pour a recherche</string>
-<string name="fqAirportsContainsPrompt">Aéroports visités</string>
-<string name="fqFlightDate">Sélection par Dates ou Période:</string>
-<string name="fqFlightAircraft">Type d\'aéronef</string>
-<string name="fqFlightModel">Constructeur et modèle</string>
-<string name="fqFlightModelName">Nom de modèle</string>
-<string name="fqFlightModelNamePrompt">Nom de modèle</string>
-<string name="FlightQueryDistanceAllFlights">Tous les vols</string>
-<string name="FlightQueryDistanceLocalFlights">Vols locaux uniquement</string>
-<string name="FlightQueryDistanceNonLocalFlights">Autres que vols locaux</string>
-<string name="fqAircraftFeatures">Charactéristiques aéronefs</string>
-<string name="afTailwheel">Train classique</string>
-<string name="afHighPerf">Haute performance</string>
-<string name="afMotorglider">Motor Glider</string>
-<string name="afMultiEngineHeli">Hélicoptère multimoteur</string>
-<string name="afEngineAny">Tout Moteur</string>
-<string name="afEnginePiston">Piston Moteur</string>
-<string name="afEngineTurboProp">Turbopropulseurs</string>
-<string name="afEngineJet">Turboréacteur</string>
-<string name="afEngineTurbineAny">Moteur à turbine (Tout)</string>
-<string name="afEngineElectric">Electrique</string>
-<string name="afInstanceAny">Tous les aéronefs</string>
-<string name="afInstanceReal">Avion réel</string>
-<string name="afInstanceTraining">Dispositifs de formation</string>
-<string name="afGlass">Glass Cockpit</string>
-<string name="afComplex">Complexe</string>
-<string name="afRetract">Train rentrant</string>
-<string name="afCSProp">Hélice à pas variable</string>
-<string name="afFlaps">Volets</string>
-<string name="fqFlightFeatures">Charactéristiques de vol</string>
-<string name="ffFSLanding">Atterissages complets</string>
-<string name="ffFSNightLanding">Atterissages complets - Nuit</string>
-<string name="ffApproaches">Approches IFR</string>
-<string name="ffHold">Procédures d\'attente</string>
-<string name="ffTelemetry">Données télémétriques</string>
-<string name="ffXC">Temps navigation</string>
-<string name="ffSimIMC">Simulation VSV (vol sans visibilité)</string>
-<string name="ffIMC">VSV (vol sans visibilité)</string>
-<string name="ffNight">Nuit</string>
-<string name="ffIsPublic">Données du vol partagées</string>
-<string name="ffIsSigned">Vol est signé</string>
-<string name="ffDual">Double commande</string>
-<string name="ffCFI">Instruction</string>
-<string name="ffSIC">Copilote</string>
-<string name="ffPIC">Commandant de Bord</string>
-<string name="fqDateAllTime">Sélection complète</string>
-<string name="fqDate12Months">12 derniers mois</string>
-<string name="fqDate6Months">6 derniers mois</string>
-<string name="fqDate30Days">30 derniers jours</string>
-<string name="fqDate90Days">90 derniers jours</string>
-<string name="fqDateYTD">Cette année</string>
-<string name="fqDateThisMonth">Mois en cours</string>
-<string name="fqDateSpecificDates">Les dates spécifiées</string>
-<string name="fqDatePreviousMonth">Mois précédent</string>
-<string name="fqDatePreviousYear">Année précédente</string>
-<string name="fqDateStartDate">Date de début</string>
-<string name="fqDateEndDate">Date de fin</string>
-<string name="fqDateCustom">Période sélectionnée</string>
-<string name="fqProperties">Caractéristiques</string>
+    <!-- Search -->
+    <string name="fqTextContains">Contient:</string>
+    <string name="fqAirportsVisited">Aéroports:</string>
+    <string name="fqTextContainsPrompt">Texte pour a recherche</string>
+    <string name="fqAirportsContainsPrompt">Aéroports visités</string>
+    <string name="fqFlightDate">Sélection par Dates ou Période:</string>
+    <string name="fqFlightAircraft">Type d\'aéronef</string>
+    <string name="fqFlightModel">Constructeur et modèle</string>
+    <string name="fqFlightModelName">Nom de modèle</string>
+    <string name="fqFlightModelNamePrompt">Nom de modèle</string>
+    <string name="FlightQueryDistanceAllFlights">Tous les vols</string>
+    <string name="FlightQueryDistanceLocalFlights">Vols locaux uniquement</string>
+    <string name="FlightQueryDistanceNonLocalFlights">Autres que vols locaux</string>
+    <string name="fqAircraftFeatures">Charactéristiques aéronefs</string>
+    <string name="afTailwheel">Train classique</string>
+    <string name="afHighPerf">Haute performance</string>
+    <string name="afMotorglider">Motor Glider</string>
+    <string name="afMultiEngineHeli">Hélicoptère multimoteur</string>
+    <string name="afEngineAny">Tout Moteur</string>
+    <string name="afEnginePiston">Piston Moteur</string>
+    <string name="afEngineTurboProp">Turbopropulseurs</string>
+    <string name="afEngineJet">Turboréacteur</string>
+    <string name="afEngineTurbineAny">Moteur à turbine (Tout)</string>
+    <string name="afEngineElectric">Electrique</string>
+    <string name="afInstanceAny">Tous les aéronefs</string>
+    <string name="afInstanceReal">Avion réel</string>
+    <string name="afInstanceTraining">Dispositifs de formation</string>
+    <string name="afGlass">Glass Cockpit</string>
+    <string name="afComplex">Complexe</string>
+    <string name="afRetract">Train rentrant</string>
+    <string name="afCSProp">Hélice à pas variable</string>
+    <string name="afFlaps">Volets</string>
+    <string name="fqFlightFeatures">Charactéristiques de vol</string>
+    <string name="ffFSLanding">Atterissages complets</string>
+    <string name="ffFSNightLanding">Atterissages complets - Nuit</string>
+    <string name="ffApproaches">Approches IFR</string>
+    <string name="ffHold">Procédures d\'attente</string>
+    <string name="ffTelemetry">Données télémétriques</string>
+    <string name="ffXC">Temps navigation</string>
+    <string name="ffSimIMC">Simulation VSV (vol sans visibilité)</string>
+    <string name="ffIMC">VSV (vol sans visibilité)</string>
+    <string name="ffNight">Nuit</string>
+    <string name="ffIsPublic">Données du vol partagées</string>
+    <string name="ffIsSigned">Vol est signé</string>
+    <string name="ffDual">Double commande</string>
+    <string name="ffCFI">Instruction</string>
+    <string name="ffSIC">Copilote</string>
+    <string name="ffPIC">Commandant de Bord</string>
+    <string name="fqDateAllTime">Sélection complète</string>
+    <string name="fqDate12Months">12 derniers mois</string>
+    <string name="fqDate6Months">6 derniers mois</string>
+    <string name="fqDate30Days">30 derniers jours</string>
+    <string name="fqDate90Days">90 derniers jours</string>
+    <string name="fqDateYTD">Cette année</string>
+    <string name="fqDateThisMonth">Mois en cours</string>
+    <string name="fqDateSpecificDates">Les dates spécifiées</string>
+    <string name="fqDatePreviousMonth">Mois précédent</string>
+    <string name="fqDatePreviousYear">Année précédente</string>
+    <string name="fqDateStartDate">Date de début</string>
+    <string name="fqDateEndDate">Date de fin</string>
+    <string name="fqDateCustom">Période sélectionnée</string>
+    <string name="fqProperties">Caractéristiques</string>
 
-<string name="menuFlightSearch">Trouver les vols</string>
-<string name="fqStatusAllFlights">(Tous les vols)</string>
-<string name="fqStatusNotAllflights">(Sélection partielle des vols)</string>
+    <string name="menuFlightSearch">Trouver les vols</string>
+    <string name="fqStatusAllFlights">(Tous les vols)</string>
+    <string name="fqStatusNotAllflights">(Sélection partielle des vols)</string>
 
-<!-- Currency Disclaimer -->
-<string name="CurrencyDisclaimer">Notes importantes</string>
+    <!-- Currency Disclaimer -->
+    <string name="CurrencyDisclaimer">Notes importantes</string>
 
-<!--  Visited Airports -->
-<string name="AllAirports">Tous les aéroports</string>
-<string name="vaSingleVisit">1 visite au %s</string>
-<string name="vaMultiVisit">%1$d visites du %2$s au %3$s</string>
-<string name="vaUniqueAirports">(%d aéroports trouvés)</string>
+    <!--  Visited Airports -->
+    <string name="AllAirports">Tous les aéroports</string>
+    <string name="vaSingleVisit">1 visite au %s</string>
+    <string name="vaMultiVisit">%1$d visites du %2$s au %3$s</string>
+    <string name="vaUniqueAirports">(%d aéroports trouvés)</string>
 
-<!--  Training -->
-<string name="lblEndorsements">Endossements</string>
-<string name="lblStudents">Les étudiants</string>
-<string name="lblInstructors">Les instructeurs</string>
-<string name="lblAchievements">Réalisations</string>
-<string name="lblRatingsProgress">Progrès vers la certification</string>
-<string name="lbl8710">8710 Forme</string>
-<string name="errTrainingNotAvailable">Vous devez être connecté et avoir accès à Internet pour afficher les éléments de formation.</string>
+    <!--  Training -->
+    <string name="lblEndorsements">Endossements</string>
+    <string name="lblStudents">Les étudiants</string>
+    <string name="lblInstructors">Les instructeurs</string>
+    <string name="lblAchievements">Réalisations</string>
+    <string name="lblRatingsProgress">Progrès vers la certification</string>
+    <string name="lbl8710">8710 Forme</string>
+    <string name="errTrainingNotAvailable">Vous devez être connecté et avoir accès à Internet pour afficher les éléments de formation.</string>
 
-<!--  Category Class -->
-<string name="ccHeader">Catégorie / Classe</string>
-<string name="ccASEL">Avion, SEP (t)</string>
-<string name="ccAMEL">Avion, MEP (t)</string>
-<string name="ccASES">Avion, SEP (h)</string>
-<string name="ccAMES">Avion, MEP (h)</string>
-<string name="ccGlider">Planeur</string>
-<string name="ccHelicopter">Hélicoptère</string>
-<string name="ccGyroplane">Autogire</string>
-<string name="ccPoweredLift">Sustentation motorisée</string>
-<string name="ccAirship">Dirigeable</string>
-<string name="ccHotAirBalloon">Montgolfière</string>
-<string name="ccGasBalloon">Ballon captif</string>
-<string name="ccPoweredParachuteLand">Paramoteur (t)</string>
-<string name="ccPoweredParachuteSea">Paramoteur (h)</string>
-<string name="ccWeightShiftControlLand">ULM pendulaire (t)</string>
-<string name="ccWeightShiftControlSea">ULM pendulaire (h)</string>
-<string name="ccUAS">Drone</string>
-<string name="ccPoweredParaglider">Paramoteur</string>
+    <!--  Category Class -->
+    <string name="ccHeader">Catégorie / Classe</string>
+    <string name="ccASEL">Avion, SEP (t)</string>
+    <string name="ccAMEL">Avion, MEP (t)</string>
+    <string name="ccASES">Avion, SEP (h)</string>
+    <string name="ccAMES">Avion, MEP (h)</string>
+    <string name="ccGlider">Planeur</string>
+    <string name="ccHelicopter">Hélicoptère</string>
+    <string name="ccGyroplane">Autogire</string>
+    <string name="ccPoweredLift">Sustentation motorisée</string>
+    <string name="ccAirship">Dirigeable</string>
+    <string name="ccHotAirBalloon">Montgolfière</string>
+    <string name="ccGasBalloon">Ballon captif</string>
+    <string name="ccPoweredParachuteLand">Paramoteur (t)</string>
+    <string name="ccPoweredParachuteSea">Paramoteur (h)</string>
+    <string name="ccWeightShiftControlLand">ULM pendulaire (t)</string>
+    <string name="ccWeightShiftControlSea">ULM pendulaire (h)</string>
+    <string name="ccUAS">Drone</string>
+    <string name="ccPoweredParaglider">Paramoteur</string>
 
-<!-- Empty string -->
-<string name="strEmpty"></string>
+    <!-- Empty string -->
+    <string name="strEmpty"></string>
 
-<!-- Approach Helper -->
-<string name="ahApproachHelper">Détails pour Approches aux instruments::</string>
-<string name="ahNumApproaches"># d\'approches</string>
-<string name="ahApproachType">Type d\'approche</string>
-<string name="ahApproachRunway">Piste</string>
-<string name="ahApproachAirport">Aéroport</string>
-<string name="ahAddToTotals">Ajouter au nombre total d\'approches</string>
+    <!-- Approach Helper -->
+    <string name="ahApproachHelper">Détails pour Approches aux instruments::</string>
+    <string name="ahNumApproaches"># d\'approches</string>
+    <string name="ahApproachType">Type d\'approche</string>
+    <string name="ahApproachRunway">Piste</string>
+    <string name="ahApproachAirport">Aéroport</string>
+    <string name="ahAddToTotals">Ajouter au nombre total d\'approches</string>
 
 </resources>
