@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:padding="20dp"
-	android:gravity="top" android:layout_height="fill_parent">
-	<ImageView android:layout_width="fill_parent"
-	    android:contentDescription="@string/cdMapMarker"
-		android:layout_height="300dp" android:scaleType="centerInside"
-		android:gravity="center_horizontal"
-		android:id="@+id/imgMFBIIImage">
-	</ImageView>
-	<TextView android:id="@+id/txtMFBIIComment"
-		android:layout_width="fill_parent" android:gravity="center_horizontal"
-		android:layout_height="wrap_content"></TextView>
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="top|center_horizontal"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/imgMFBIIImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cdMapMarker"
+        android:gravity="center_horizontal|center_vertical"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/txtMFBIIComment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
 </LinearLayout>

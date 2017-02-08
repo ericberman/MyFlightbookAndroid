@@ -25,7 +25,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -300,9 +299,7 @@ public class ActMFBForm extends Fragment {
 				registerForContextMenu(tr);
 
 				final MFBImageInfo mfbiiFinal = mfbii;
-				tr.setOnClickListener((View v) -> {
-						mfbiiFinal.ViewFullImageInWebView(getActivity());
-					});
+				tr.setOnClickListener((v) ->  mfbiiFinal.ViewFullImageInWebView(getActivity()));
 				tr.setOnLongClickListener((View v) -> {
 					mfbiiLastClicked = mfbiiFinal;
 					getActivity().openContextMenu(v);
@@ -334,9 +331,7 @@ public class ActMFBForm extends Fragment {
 		{
 		case R.id.menuAddComment:
 			DlgImageComment dlgComment = new DlgImageComment(getActivity(), 
-					mfbii, 
-					new DlgImageComment.AnnotationUpdate() 
-			{ public void updateAnnotation(MFBImageInfo mfbii) { setUpImageGallery(src.getGalleryID(), src.getImages());}});
+					mfbii, (mfbii2) -> setUpImageGallery(src.getGalleryID(), src.getImages()));
 			dlgComment.show();
 			break;
 		case R.id.menuDeleteImage:
@@ -344,8 +339,7 @@ public class ActMFBForm extends Fragment {
 			.setIcon(android.R.drawable.ic_dialog_alert)
 			.setTitle(R.string.lblConfirm)
 			.setMessage(R.string.lblConfirmImageDelete)
-			.setPositiveButton(R.string.lblOK, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
+			.setPositiveButton(R.string.lblOK, (dialog, which) -> {
 					// Image can be both local AND on server (aircraft)
 					// Need to delete in both places, as appropriate.
 					if (mfbii.IsLocal())
@@ -357,7 +351,7 @@ public class ActMFBForm extends Fragment {
 					}
 					
 					// Now remove this from the existing images in the source
-					ArrayList<MFBImageInfo> alNewImages = new ArrayList<MFBImageInfo>();
+					ArrayList<MFBImageInfo> alNewImages = new ArrayList<>();
 					MFBImageInfo[] rgMfbii = src.getImages();
 					for (MFBImageInfo m : rgMfbii) // re-add images that are NOT the one being deleted
 						if (mfbii.getID() != m.getID() || m.ThumbnailFile.compareTo(mfbii.ThumbnailFile) != 0)
@@ -365,8 +359,7 @@ public class ActMFBForm extends Fragment {
 					src.setImages(alNewImages.toArray(new MFBImageInfo[0]));
 
 					setUpImageGallery(src.getGalleryID(), src.getImages());
-				}
-			})
+				})
 			.setNegativeButton(R.string.lblCancel, null)
 			.show();
 			break;
