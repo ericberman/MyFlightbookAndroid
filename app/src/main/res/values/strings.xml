@@ -63,7 +63,7 @@
     <string name="lblFacebook">Share flight on Facebook</string>
     <string name="lblTwitter">Share flight on Twitter</string>
     <string name="lblMyFlightbook">Share flight on MyFlightbook</string>
-    <string name="lblSetUpFacebook">Twitter and Facebook support can be enabled in your profile at &lt;a href=\"%s\"&gt;MyFlightbook.com&lt;/a&gt;</string>
+    <string name="lblSetUpFacebook">Enable Twitter and Facebook support.</string>
 
     <string name="lblNow">Now</string>
     <string name="lblNone">None</string>

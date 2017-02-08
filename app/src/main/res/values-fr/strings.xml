@@ -63,7 +63,7 @@
     <string name="lblFacebook">Partager le vol sur Facebook</string>
     <string name="lblTwitter">Partager le vol sur Twitter</string>
     <string name="lblMyFlightbook">Partager le vol sur  MyFlightbook</string>
-    <string name="lblSetUpFacebook">Twitter et Facebook peuvent être activés sur&lt;a href=\"%s\"&gt;MyFlightbook.com&lt;/a&gt;</string>
+    <string name="lblSetUpFacebook">Enable Twitter and Facebook support.</string>
 
     <string name="lblNow">Maintenant</string>
     <string name="lblNone">Aucun</string>

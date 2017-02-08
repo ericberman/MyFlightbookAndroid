@@ -918,7 +918,7 @@
 
         <!-- Sharing -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:orientation="vertical"
@@ -926,9 +926,13 @@
 
             <TextView
                 android:id="@+id/txtSocialNetworkHint"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lblSetUpFacebook" />
+                android:clickable="true"
+                android:padding="5dip"
+                android:layout_marginBottom="5dip"
+                android:text="@string/lblSetUpFacebook"
+                android:textAlignment="center" />
 
             <CheckBox
                 android:id="@+id/ckFacebook"

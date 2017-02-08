@@ -103,15 +103,14 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             
             if (m_rgac == null)
             	m_rgac = (new AircraftSvc()).getCachedAircraft();
-            
-            Aircraft ac = Aircraft.getAircraftById(le.idAircraft, m_rgac);
-            
+
             String szDate = "";
             String szRoute = "";
             String szComments = "";
             Boolean fIsPending = false;
             
             if (le != null) {
+				Aircraft ac = Aircraft.getAircraftById(le.idAircraft, m_rgac);
             	EditMode em = DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
             	String szTime = String.format("(%s%s) ", 
             			DecimalEdit.StringForMode(le.decTotal, em), 

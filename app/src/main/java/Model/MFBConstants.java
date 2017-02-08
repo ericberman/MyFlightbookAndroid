@@ -122,4 +122,6 @@ public class MFBConstants {
 	
 	// Formatting strings
 	public static final String TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
+
+	public static final String LOG_TAG = "MFBAndroid";
 }

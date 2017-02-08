@@ -20,7 +20,9 @@ package com.myflightbook.android;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,104 +43,92 @@ import Model.MFBUtil;
 
 public class ActTraining extends ListFragment implements OnItemClickListener {
 
-	public class TrainingItem extends Object
-	{
-		public int idTitle;
-		public String szURLDest;
-		
-		public TrainingItem()
-		{
-			
-		}
-		
-		public TrainingItem(int TitleID, String DestinationURL)
-		{
-			idTitle = TitleID;
-			szURLDest = DestinationURL;
-		}		
-	}
-	
-	TrainingItem[] m_rgTrainingItems = 
-			{
-			new TrainingItem(R.string.lblStudents, "students"),
-			new TrainingItem(R.string.lblInstructors, "instructors"),
-			new TrainingItem(R.string.lblEndorsements, "endorse"),
-			new TrainingItem(R.string.lbl8710, "8710"),
-			new TrainingItem(R.string.lblAchievements, "badges"),
-			new TrainingItem(R.string.lblRatingsProgress, "progress")
-			};
+    public class TrainingItem {
+        int idTitle;
+        String szURLDest;
 
-	
-	private class TrainingAdapter extends ArrayAdapter<TrainingItem>
-	{		
-		private TrainingItem[] m_rgti;
-		
-		public TrainingAdapter(Context c, int rid, TrainingItem[] rgti) {
-			super(c, rid, rgti);
-			m_rgti = rgti;
-		}
+        TrainingItem(int TitleID, String DestinationURL) {
+            idTitle = TitleID;
+            szURLDest = DestinationURL;
+        }
+    }
 
-		@Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+    TrainingItem[] m_rgTrainingItems =
+            {
+                    new TrainingItem(R.string.lblStudents, "students"),
+                    new TrainingItem(R.string.lblInstructors, "instructors"),
+                    new TrainingItem(R.string.lblEndorsements, "endorse"),
+                    new TrainingItem(R.string.lbl8710, "8710"),
+                    new TrainingItem(R.string.lblAchievements, "badges"),
+                    new TrainingItem(R.string.lblRatingsProgress, "progress")
+            };
+
+
+    private class TrainingAdapter extends ArrayAdapter<TrainingItem> {
+        private TrainingItem[] m_rgti;
+
+        TrainingAdapter(Context c, int rid, TrainingItem[] rgti) {
+            super(c, rid, rgti);
+            m_rgti = rgti;
+        }
+
+        @Override
+        public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.trainingitem, parent, false);
             }
-            
+
             if (m_rgti == null)
-            	return v;
+                return v;
 
             TrainingItem ti = m_rgti[position];
-            
+
             TextView tvti = (TextView) v.findViewById(R.id.txtTrainingItem);
             tvti.setText(ActTraining.this.getString(ti.idTitle));
-            
+
             return v;
-		}
-	}
-	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        }
+    }
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(false);
         return inflater.inflate(R.layout.training, container, false);
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-	}
-	
-	// update the list if our array is null
-	public void onResume()
-	{
-		super.onResume();
-		populateList();
-	}
-	
-	public void populateList()
-	{
-		TrainingAdapter ta = new TrainingAdapter(getActivity(), R.layout.trainingitem, m_rgTrainingItems);
-		setListAdapter(ta);
-		getListView().setOnItemClickListener(this);
-	}
-	
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-	{
-		// TODO: IsOnline doesn't work from main thread.
-		if (!AuthToken.FIsValid() || !MFBSoap.IsOnline())
-		{
-			MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errTrainingNotAvailable));
-			return;
-		}
-			
-		String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
-		String szDest = m_rgTrainingItems[position].szURLDest;
-		String szURL;
-		try {
-			szURL = String.format(Locale.US, MFBConstants.urlTraining, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), szDest);
-			ActWebView.ViewURL(getActivity(), szURL);
-		} catch (UnsupportedEncodingException e) {
-		}
-	}
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    // update the list if our array is null
+    public void onResume() {
+        super.onResume();
+        populateList();
+    }
+
+    public void populateList() {
+        TrainingAdapter ta = new TrainingAdapter(getActivity(), R.layout.trainingitem, m_rgTrainingItems);
+        setListAdapter(ta);
+        getListView().setOnItemClickListener(this);
+    }
+
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // TODO: IsOnline doesn't work from main thread.
+        if (!AuthToken.FIsValid() || !MFBSoap.IsOnline()) {
+            MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errTrainingNotAvailable));
+            return;
+        }
+
+        String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
+        String szDest = m_rgTrainingItems[position].szURLDest;
+        String szURL;
+        try {
+            szURL = String.format(Locale.US, MFBConstants.urlTraining, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), szDest);
+            ActWebView.ViewURL(getActivity(), szURL);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+        }
+    }
 }
