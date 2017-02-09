@@ -35,7 +35,7 @@ import Model.Aircraft;
 import Model.MFBConstants;
 import Model.MFBUtil;
 
-public class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
+class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
     private class AircraftTask extends AsyncTask<String, Void, MFBSoap> {
         private Object m_Result = null;

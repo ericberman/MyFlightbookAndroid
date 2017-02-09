@@ -23,7 +23,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.TimePicker;
@@ -35,172 +34,148 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class DlgDatePicker extends Dialog implements android.view.View.OnClickListener, OnDateChangedListener, OnTimeChangedListener {
-	
-	public interface DateTimeUpdate {
-		void updateDate(int id, Date dt);
-	}
+class DlgDatePicker extends Dialog implements android.view.View.OnClickListener, OnDateChangedListener, OnTimeChangedListener {
 
-	public enum datePickMode {LOCALDATEONLY, LOCALDATENULLABLE, UTCDATETIME}
-	
-	private Date m_Date = new Date();
-	private datePickMode m_Mode;
-	public int m_id;	// the id of the date/time to update
+    interface DateTimeUpdate {
+        void updateDate(int id, Date dt);
+    }
 
-	public static boolean fUseLocalTime = false;
+    enum datePickMode {LOCALDATEONLY, LOCALDATENULLABLE, UTCDATETIME}
 
-	public DateTimeUpdate m_delegate = null;
+    private Date m_Date = new Date();
+    private datePickMode m_Mode;
+    int m_id;    // the id of the date/time to update
 
-	private Button bOK;
-	private Button bNow;
-	private Button bNone;
-	private DatePicker dpDate;
-	private TimePicker tpTime;
-	
-	private void Init(datePickMode dpm, Date dt)
-	{
-		setContentView(R.layout.datepicker);
-		setMode(dpm);
-		setDate(dt);
-	}
-	
-	public DlgDatePicker(Context c, datePickMode dpm, Date dt)
-	{
-		super(c);
-		Init(dpm, dt);
-	}
-	
-	public DlgDatePicker(Fragment f, datePickMode dpm, Date dt)
-	{
-		super(f.getActivity());
-		Init(dpm, dt);
-	}
-	
-	public void onCreate(Bundle savedInstanceState)
-	{
-		bOK = (Button)findViewById(R.id.btnOK);
-		bNow = (Button)findViewById(R.id.btnDateNow);
-		bNone = (Button)findViewById(R.id.btnDateNone);
-		
-		bOK.setOnClickListener(this);
-		bNow.setOnClickListener(this);
-		bNone.setOnClickListener(this);
-		
-		GregorianCalendar c = getCalendar();
-		c.setTime(m_Date);
+    static boolean fUseLocalTime = false;
 
-		dpDate = (DatePicker)findViewById(R.id.datePicker);
-		tpTime = (TimePicker)findViewById(R.id.timePicker);
-		
-		int y = c.get(Calendar.YEAR);
-		int m = c.get(Calendar.MONTH);
-		int d = c.get(Calendar.DAY_OF_MONTH);
-		int h = c.get(Calendar.HOUR_OF_DAY);
-		int min = c.get(Calendar.MINUTE);
+    DateTimeUpdate m_delegate = null;
 
-		dpDate.init(y, m, d, this);
-		tpTime.setOnTimeChangedListener(this);
-		tpTime.setIs24HourView(true);
-		tpTime.setCurrentHour(h);
-		tpTime.setCurrentMinute(min);
-	}
-	
-	public void updatePickers(Date dt)
-	{
-		GregorianCalendar c = getCalendar();		
-		c.setTime(dt);
-		
-		int y = c.get(Calendar.YEAR);
-		int m = c.get(Calendar.MONTH);
-		int d = c.get(Calendar.DAY_OF_MONTH);
-		int h = c.get(Calendar.HOUR_OF_DAY);
-		int min = c.get(Calendar.MINUTE);
-		
-		if (dpDate != null)
-			dpDate.updateDate(y, m, d);
-		if (tpTime != null)
-		{
-			tpTime.setCurrentHour(h);
-			tpTime.setCurrentMinute(min);
-		}		
-	}
-	
-	public void setDate(Date dt)
-	{
-		updatePickers(m_Date = dt);
-	}
-	
-	public Date getDate()
-	{
-		return m_Date;
-	}
+    private DatePicker dpDate;
+    private TimePicker tpTime;
 
-	public void setMode(datePickMode dp)
-	{
-		m_Mode = dp;
-		TimePicker tp = (TimePicker)findViewById(R.id.timePicker);
-		tp.setVisibility((dp == datePickMode.UTCDATETIME) ? View.VISIBLE : View.GONE);
-		Button b = (Button)findViewById(R.id.btnDateNone);
-		b.setVisibility((dp == datePickMode.LOCALDATEONLY) ? View.GONE : View.VISIBLE);
-	}
-	
-	private void NotifyDelegate()
-	{
-		if (this.m_delegate != null)
-			m_delegate.updateDate(m_id, m_Date);
-	}
+    private void Init(datePickMode dpm, Date dt) {
+        setContentView(R.layout.datepicker);
+        setMode(dpm);
+        setDate(dt);
+    }
 
-	public void onClick(View v)
-	{
-		int id = v.getId();
-		switch (id)
-		{
-		case R.id.btnDateNone:
-			m_Date = UTCDate.NullDate();
-			NotifyDelegate();
-			dismiss();
-			break;
-		case R.id.btnDateNow:
-			setDate(new Date());
-			NotifyDelegate();
-			break;
-		case R.id.btnOK:
-			dismiss();
-			break;
-		default:
-			break;
-		}
-	}
-	
-	private GregorianCalendar getCalendar()
-	{
-		GregorianCalendar c;
-		if (fUseLocalTime || m_Mode == datePickMode.LOCALDATEONLY || m_Mode == datePickMode.LOCALDATENULLABLE)
-			c = new GregorianCalendar();
-		else
-			c = new GregorianCalendar(UTCDate.getUTCTimeZone());
-		
-		return c;
-	}
-	
-	public void onDateChanged(DatePicker vw, int year, int monthOfYear, int dayOfMonth)
-	{
-		GregorianCalendar c = getCalendar();
-		c.set(year, monthOfYear, dayOfMonth, tpTime.getCurrentHour(), tpTime.getCurrentMinute());
-		
-		this.m_Date = c.getTime();
-		
-		NotifyDelegate();
-	}
-	
-	public void onTimeChanged(TimePicker view, int hourOfDay, int minute)
-	{
-		GregorianCalendar c = getCalendar();
-		
-		c.set(dpDate.getYear(), dpDate.getMonth(), dpDate.getDayOfMonth(), hourOfDay, minute);
-		this.m_Date = c.getTime();
-	
-		if (m_Mode == datePickMode.UTCDATETIME)
-			NotifyDelegate();
-	}
+    DlgDatePicker(Context c, datePickMode dpm, Date dt) {
+        super(c);
+        Init(dpm, dt);
+    }
+
+    DlgDatePicker(Fragment f, datePickMode dpm, Date dt) {
+        super(f.getActivity());
+        Init(dpm, dt);
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        findViewById(R.id.btnOK).setOnClickListener(this);
+        findViewById(R.id.btnDateNow).setOnClickListener(this);
+        findViewById(R.id.btnDateNone).setOnClickListener(this);
+
+        GregorianCalendar c = getCalendar();
+        c.setTime(m_Date);
+
+        dpDate = (DatePicker) findViewById(R.id.datePicker);
+        tpTime = (TimePicker) findViewById(R.id.timePicker);
+
+        int y = c.get(Calendar.YEAR);
+        int m = c.get(Calendar.MONTH);
+        int d = c.get(Calendar.DAY_OF_MONTH);
+        int h = c.get(Calendar.HOUR_OF_DAY);
+        int min = c.get(Calendar.MINUTE);
+
+        dpDate.init(y, m, d, this);
+        tpTime.setOnTimeChangedListener(this);
+        tpTime.setIs24HourView(true);
+        tpTime.setCurrentHour(h);
+        tpTime.setCurrentMinute(min);
+    }
+
+    private void updatePickers(Date dt) {
+        GregorianCalendar c = getCalendar();
+        c.setTime(dt);
+
+        int y = c.get(Calendar.YEAR);
+        int m = c.get(Calendar.MONTH);
+        int d = c.get(Calendar.DAY_OF_MONTH);
+        int h = c.get(Calendar.HOUR_OF_DAY);
+        int min = c.get(Calendar.MINUTE);
+
+        if (dpDate != null)
+            dpDate.updateDate(y, m, d);
+        if (tpTime != null) {
+            tpTime.setCurrentHour(h);
+            tpTime.setCurrentMinute(min);
+        }
+    }
+
+    public void setDate(Date dt) {
+        updatePickers(m_Date = dt);
+    }
+
+    public Date getDate() {
+        return m_Date;
+    }
+
+    private void setMode(datePickMode dp) {
+        m_Mode = dp;
+        findViewById(R.id.timePicker).setVisibility((dp == datePickMode.UTCDATETIME) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.btnDateNone).setVisibility((dp == datePickMode.LOCALDATEONLY) ? View.GONE : View.VISIBLE);
+    }
+
+    private void NotifyDelegate() {
+        if (this.m_delegate != null)
+            m_delegate.updateDate(m_id, m_Date);
+    }
+
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.btnDateNone:
+                m_Date = UTCDate.NullDate();
+                NotifyDelegate();
+                dismiss();
+                break;
+            case R.id.btnDateNow:
+                setDate(new Date());
+                NotifyDelegate();
+                break;
+            case R.id.btnOK:
+                dismiss();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private GregorianCalendar getCalendar() {
+        GregorianCalendar c;
+        if (fUseLocalTime || m_Mode == datePickMode.LOCALDATEONLY || m_Mode == datePickMode.LOCALDATENULLABLE)
+            c = new GregorianCalendar();
+        else
+            c = new GregorianCalendar(UTCDate.getUTCTimeZone());
+
+        return c;
+    }
+
+    public void onDateChanged(DatePicker vw, int year, int monthOfYear, int dayOfMonth) {
+        GregorianCalendar c = getCalendar();
+        c.set(year, monthOfYear, dayOfMonth, tpTime.getCurrentHour(), tpTime.getCurrentMinute());
+
+        this.m_Date = c.getTime();
+
+        NotifyDelegate();
+    }
+
+    public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+        GregorianCalendar c = getCalendar();
+
+        c.set(dpDate.getYear(), dpDate.getMonth(), dpDate.getDayOfMonth(), hourOfDay, minute);
+        this.m_Date = c.getTime();
+
+        if (m_Mode == datePickMode.UTCDATETIME)
+            NotifyDelegate();
+    }
 }

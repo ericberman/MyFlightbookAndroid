@@ -26,43 +26,41 @@ import android.support.v4.app.FragmentTransaction;
 import Model.FlightQuery;
 
 public class RecentFlightsActivity extends FragmentActivity {
-	ActRecentsWS recents = null;
-	FlightQuery fqSaved = null;
-	
-	public static final String REQUEST_FLIGHT_QUERY = "com.myflightbook.android.TempFQ";
+    ActRecentsWS recents = null;
+    FlightQuery fqSaved = null;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragmenthost);
+    public static final String REQUEST_FLIGHT_QUERY = "com.myflightbook.android.TempFQ";
 
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager
-				.beginTransaction();
-		recents = new ActRecentsWS();
-		fragmentTransaction.replace(android.R.id.content, recents);
-		fragmentTransaction.commit();
-		
-		fqSaved = ActFlightQuery.GetCurrentQuery();
-		
-		Bundle b = getIntent().getExtras();
-		if (b != null)
-			ActFlightQuery.SetCurrentQuery((FlightQuery) b.getSerializable(REQUEST_FLIGHT_QUERY));
-	}
-	
-	public void onResume()
-	{
-		super.onResume();
-		// just created it - mark it invalid
-		recents.invalidate();
-		recents.refreshRecentFlights(true);
-	}
-	
-	public void onPause()
-	{
-		super.onPause();
-		recents.invalidate();
-		ActFlightQuery.SetCurrentQuery(fqSaved);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragmenthost);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager
+                .beginTransaction();
+        recents = new ActRecentsWS();
+        fragmentTransaction.replace(android.R.id.content, recents);
+        fragmentTransaction.commit();
+
+        fqSaved = ActFlightQuery.GetCurrentQuery();
+
+        Bundle b = getIntent().getExtras();
+        if (b != null)
+            ActFlightQuery.SetCurrentQuery((FlightQuery) b.getSerializable(REQUEST_FLIGHT_QUERY));
+    }
+
+    public void onResume() {
+        super.onResume();
+        // just created it - mark it invalid
+        recents.invalidate();
+        recents.refreshRecentFlights(true);
+    }
+
+    public void onPause() {
+        super.onPause();
+        recents.invalidate();
+        ActFlightQuery.SetCurrentQuery(fqSaved);
+    }
 
 }

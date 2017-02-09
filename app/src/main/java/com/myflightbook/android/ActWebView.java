@@ -23,7 +23,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -33,10 +35,10 @@ import Model.MFBConstants;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class ActWebView extends Activity {
-	
-	public String szURL = "";
-	public String szTempFile = "";
-	
+
+    public String szURL = "";
+    public String szTempFile = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,35 +50,40 @@ public class ActWebView extends Activity {
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setBuiltInZoomControls(true);
         wv.getSettings().setSupportZoom(true);
-        
+
         wv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return false;
             }
-        });   
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest url) {
+                return false;
+            }
+        });
         wv.loadUrl(szURL);
     }
-    
-    public void onPause()
-    {
-    	super.onPause();
-    	if (szTempFile != null && szTempFile.length() > 0)
-    		new File(szTempFile).delete();
+
+    public void onPause() {
+        super.onPause();
+        if (szTempFile != null && szTempFile.length() > 0) {
+            if (!(new File(szTempFile).delete())) {
+                Log.e(MFBConstants.LOG_TAG, "Delete of temp file failed in ActWebView");
+            }
+        }
     }
 
-    public static void ViewTempFile(Activity a, File f)
-    {
-		Intent i = new Intent(a, ActWebView.class);
-		i.putExtra(MFBConstants.intentViewURL, Uri.fromFile(f).toString());
-		i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
-		a.startActivity(i);
+    public static void ViewTempFile(Activity a, File f) {
+        Intent i = new Intent(a, ActWebView.class);
+        i.putExtra(MFBConstants.intentViewURL, Uri.fromFile(f).toString());
+        i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
+        a.startActivity(i);
     }
 
-    public static void ViewURL(Activity a, String szURL)
-    {
-		Intent i = new Intent(a, ActWebView.class);
-		i.putExtra(MFBConstants.intentViewURL, szURL);
-		a.startActivity(i);
+    public static void ViewURL(Activity a, String szURL) {
+        Intent i = new Intent(a, ActWebView.class);
+        i.putExtra(MFBConstants.intentViewURL, szURL);
+        a.startActivity(i);
     }
 }
