@@ -33,50 +33,43 @@ import Model.MFBLocation;
 import Model.VisitedAirport;
 
 public class VisitedAirportSvc extends MFBSoap {
-	
-	@Override
-	public void AddMappings(SoapSerializationEnvelope e)
-	{
-		e.addMapping(NAMESPACE, "LatLong", LatLong.class);
-		e.addMapping(NAMESPACE, "Airport", Airport.class);
 
-		MarshalDate mdt = new MarshalDate();
-		mdt.register(e);
-		MarshalDouble md = new MarshalDouble();
-		md.register(e);
-	}
-	
-	public VisitedAirport[] VisitedAirportsForUser(String szAuthToken)
-	{
-		SoapObject Request = setMethod("VisitedAirports");
-    	Request.addProperty("szAuthToken", szAuthToken);
-    	
-    	VisitedAirport[] rgva = new VisitedAirport[0];
-    	
-    	SoapObject result = (SoapObject) Invoke();
-		if (result == null)
-			setLastError("Error retrieving visited airports - " + getLastError());
-		else
-		{
-			Location l = MFBLocation.LastSeenLoc();
+    @Override
+    public void AddMappings(SoapSerializationEnvelope e) {
+        e.addMapping(NAMESPACE, "LatLong", LatLong.class);
+        e.addMapping(NAMESPACE, "Airport", Airport.class);
 
-			try
-			{
-				rgva = new VisitedAirport[result.getPropertyCount()];
-				
-				for (int i = 0; i < rgva.length; i++)
-				{
-					rgva[i] = new VisitedAirport((SoapObject) result.getProperty(i));
-					if (l != null)
-						rgva[i].airport.Distance = l.distanceTo(rgva[i].airport.getLocation()) * MFBConstants.METERS_TO_NM; 
-				}
-			}
-			catch (Exception e)
-			{
-				setLastError(getLastError() + e.getMessage());
-			}
-		}
-			
-    	return rgva;
-	}	
+        MarshalDate mdt = new MarshalDate();
+        mdt.register(e);
+        MarshalDouble md = new MarshalDouble();
+        md.register(e);
+    }
+
+    public VisitedAirport[] VisitedAirportsForUser(String szAuthToken) {
+        SoapObject Request = setMethod("VisitedAirports");
+        Request.addProperty("szAuthToken", szAuthToken);
+
+        VisitedAirport[] rgva = new VisitedAirport[0];
+
+        SoapObject result = (SoapObject) Invoke();
+        if (result == null)
+            setLastError("Error retrieving visited airports - " + getLastError());
+        else {
+            Location l = MFBLocation.LastSeenLoc();
+
+            try {
+                rgva = new VisitedAirport[result.getPropertyCount()];
+
+                for (int i = 0; i < rgva.length; i++) {
+                    rgva[i] = new VisitedAirport((SoapObject) result.getProperty(i));
+                    if (l != null)
+                        rgva[i].airport.Distance = l.distanceTo(rgva[i].airport.getLocation()) * MFBConstants.METERS_TO_NM;
+                }
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return rgva;
+    }
 }

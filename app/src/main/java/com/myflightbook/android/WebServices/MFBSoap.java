@@ -36,75 +36,58 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import Model.MFBConstants;
 
-public class MFBSoap extends Object {
-	private String m_szLastErr = "";
-	private String m_methodName = "";
-	private SoapObject m_request = null;
-	public Object m_Result;
+public class MFBSoap {
+    private String m_szLastErr = "";
+    private String m_methodName = "";
+    private SoapObject m_request = null;
 
-	public interface MFBSoapProgressUpdate {
-		void NotifyProgress(int percentageComplete, String szMsg);
-	}
-	
-	public MFBSoapProgressUpdate m_Progress = null;
+    public interface MFBSoapProgressUpdate {
+        void NotifyProgress(int percentageComplete, String szMsg);
+    }
 
-	public static String NAMESPACE = "http://myflightbook.com/";
-	private String PROTOCOL = "http://";
-	private String PROTOCOLS = "https://";
-	private String URL;
-		
-	public MFBSoap()
-	{
-		super();
-	}
-	
-	public String getLastError()
-	{
-		return m_szLastErr;
-	}
-	
-	public SoapObject setMethod(String szMethod)
-	{
-		m_methodName = szMethod;
-		m_request = new SoapObject(NAMESPACE, szMethod);
-		return m_request;
-	}
-	
-	public String getMethod()
-	{
-		return m_methodName;
-	}
-	
-	public void AddMappings(SoapSerializationEnvelope e)
-	{
-		
-	}
-	
-	public static Boolean IsOnline()
-	{
-		Context ctx = MFBMain.GetMainContext();
-		if (ctx == null)
-			return false;
-		
-		ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = cm.getActiveNetworkInfo();
-        if (info==null || !info.isConnected())
+    public MFBSoapProgressUpdate m_Progress = null;
+
+    static String NAMESPACE = "http://myflightbook.com/";
+
+    public MFBSoap() {
+        super();
+    }
+
+    public String getLastError() {
+        return m_szLastErr;
+    }
+
+    public SoapObject setMethod(String szMethod) {
+        m_methodName = szMethod;
+        m_request = new SoapObject(NAMESPACE, szMethod);
+        return m_request;
+    }
+
+    public void AddMappings(SoapSerializationEnvelope e) {
+    }
+
+    public static Boolean IsOnline() {
+        Context ctx = MFBMain.GetMainContext();
+        if (ctx == null)
             return false;
-        
+
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        if (info == null || !info.isConnected())
+            return false;
+
         // if on the main thread, and we're here, we need to be optimistic
         if (Looper.getMainLooper().getThread() == Thread.currentThread())
-        	return true;
-        
+            return true;
+
         Socket sock = null;
-        try 
-        {
+        try {
             SocketAddress sockaddr = new InetSocketAddress(MFBConstants.szIP, 80);
             // Create an unbound socket
             sock = new Socket();
@@ -114,87 +97,78 @@ public class MFBSoap extends Object {
             int timeoutMs = 2000;   // 2 seconds
             sock.connect(sockaddr, timeoutMs);
             return true;
-        }
-        catch (SocketTimeoutException e) {}
-        catch(Exception e){ }
-        finally 
-        {
-        	if (sock != null)
-				try {
-					sock.close();
-				} catch (IOException e) {
-				}
+        } catch (Exception ignored) {
+        } finally {
+            if (sock != null)
+                try {
+                    sock.close();
+                } catch (IOException ignored) {
+                }
         }
         return false;
-	}
-	
-	public Object Invoke()
-	{
-		setLastError("");
-		Object o = null;
-		
-		if (!IsOnline())
-		{
-			setLastError(MFBMain.GetMainContext().getString(R.string.errNoInternet));
-			return o;
-		}
-		
-		if (m_methodName.length() == 0)
-		{
-			setLastError("No method name specified");
-			return o;
-		}
-		
-		if (m_request == null)
-		{
-			setLastError("No request object set");
-			return o;
-		}
-		
-    	SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-    	envelope.dotNet = true;
-    	// envelope.implicitTypes = true;
-    	AddMappings(envelope);
-    	envelope.setOutputSoapObject(m_request);
+    }
 
-    	URL = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? PROTOCOL : PROTOCOLS) + MFBConstants.szIP + "/logbook/public/webservice.asmx";
-    	HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+    public Object Invoke() {
+        setLastError("");
+        Object o;
 
-		androidHttpTransport.debug = MFBConstants.fIsDebug;
-		
-    	try
-    	{
-    		List<HeaderProperty> headerList = new ArrayList<HeaderProperty>();
-    		Locale l = Locale.getDefault();
-    		String szLocale = String.format("%s-%s", l.getLanguage(), l.getCountry());
-    		HeaderProperty hp = new HeaderProperty("accept-language", szLocale);
-    		headerList.add(hp);
-    		
-    		androidHttpTransport.call(NAMESPACE + m_methodName, envelope, headerList);
-    		o = envelope.getResponse();
-    	}
-    	catch (Exception e)
-    	{
-    		String szFault = e.getMessage();
-    		if (szFault == null)
-    			szFault = MFBMain.GetMainContext().getString(R.string.errorSoapError);
-    		else if (szFault.contains(MFBConstants.szFaultSeparator))
-    		{
-    			szFault = szFault.substring(szFault.lastIndexOf(MFBConstants.szFaultSeparator) + MFBConstants.szFaultSeparator.length()).replace("System.Exception: ", "");
-    			int iStartStackTrace = szFault.indexOf("\n ");
-    			if (iStartStackTrace > 0)
-    				szFault = szFault.substring(0, iStartStackTrace);
-    		}
-    			
-    		setLastError(szFault);
-    		
-    		o = null;
-    	}
-    	
-    	return m_Result = o;
-	}
+        if (!IsOnline()) {
+            setLastError(MFBMain.GetMainContext().getString(R.string.errNoInternet));
+            return null;
+        }
 
-	public void setLastError(String sz) {
-		this.m_szLastErr = sz;
-	}
+        if (m_methodName.length() == 0) {
+            setLastError("No method name specified");
+            return null;
+        }
+
+        if (m_request == null) {
+            setLastError("No request object set");
+            return null;
+        }
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        // envelope.implicitTypes = true;
+        AddMappings(envelope);
+        envelope.setOutputSoapObject(m_request);
+
+        String PROTOCOL = "http://";
+        String PROTOCOLS = "https://";
+        String URL = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? PROTOCOL : PROTOCOLS) + MFBConstants.szIP + "/logbook/public/webservice.asmx";
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+
+        androidHttpTransport.debug = MFBConstants.fIsDebug;
+
+        try {
+            List<HeaderProperty> headerList = new ArrayList<>();
+            Locale l = Locale.getDefault();
+            String szLocale = String.format("%s-%s", l.getLanguage(), l.getCountry());
+            HeaderProperty hp = new HeaderProperty("accept-language", szLocale);
+            headerList.add(hp);
+
+            androidHttpTransport.call(NAMESPACE + m_methodName, envelope, headerList);
+            o = envelope.getResponse();
+        } catch (Exception e) {
+            String szFault = e.getMessage();
+            if (szFault == null)
+                szFault = MFBMain.GetMainContext().getString(R.string.errorSoapError);
+            else if (szFault.contains(MFBConstants.szFaultSeparator)) {
+                szFault = szFault.substring(szFault.lastIndexOf(MFBConstants.szFaultSeparator) + MFBConstants.szFaultSeparator.length()).replace("System.Exception: ", "");
+                int iStartStackTrace = szFault.indexOf("\n ");
+                if (iStartStackTrace > 0)
+                    szFault = szFault.substring(0, iStartStackTrace);
+            }
+
+            setLastError(szFault);
+
+            o = null;
+        }
+
+        return o;
+    }
+
+    public void setLastError(String sz) {
+        this.m_szLastErr = sz;
+    }
 }

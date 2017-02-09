@@ -23,43 +23,37 @@ import org.ksoap2.serialization.SoapObject;
 import Model.FlightProperty;
 
 public class FlightPropertiesSvc extends MFBSoap {
-	
-	public FlightProperty[] PropertiesForFlight(String szAuthToken, int idFlight)
-	{
-		SoapObject Request = setMethod("PropertiesForFlight");
-    	Request.addProperty("szAuthUserToken", szAuthToken);
-    	Request.addProperty("idFlight", idFlight);
-    	
-    	FlightProperty[] rgfp = new FlightProperty[0];
-    	
-    	SoapObject result = (SoapObject) Invoke();
-		if (result == null)
-			setLastError("Error getting properties for flight - " + getLastError());
-		else
-		{
-			try
-			{
-				rgfp = new FlightProperty[result.getPropertyCount()];
-				
-				for (int i = 0; i < rgfp.length; i++)
-					rgfp[i] = new FlightProperty((SoapObject) result.getProperty(i));
-			}
-			catch (Exception e)
-			{
-				setLastError(getLastError() + e.getMessage());
-			}		
-		}
-		
-		return rgfp;
-	}
-	
-	public void DeletePropertyForFlight(String szAuthToken, int idFlight, int propId)
-	{
-		SoapObject Request = setMethod("DeletePropertyForFlight");
-    	Request.addProperty("szAuthUserToken", szAuthToken);
-    	Request.addProperty("idFlight", idFlight);
-    	Request.addProperty("propId", propId);
-    	
-    	Invoke();
-	}
+
+    public FlightProperty[] PropertiesForFlight(String szAuthToken, int idFlight) {
+        SoapObject Request = setMethod("PropertiesForFlight");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("idFlight", idFlight);
+
+        FlightProperty[] rgfp = new FlightProperty[0];
+
+        SoapObject result = (SoapObject) Invoke();
+        if (result == null)
+            setLastError("Error getting properties for flight - " + getLastError());
+        else {
+            try {
+                rgfp = new FlightProperty[result.getPropertyCount()];
+
+                for (int i = 0; i < rgfp.length; i++)
+                    rgfp[i] = new FlightProperty((SoapObject) result.getProperty(i));
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return rgfp;
+    }
+
+    public void DeletePropertyForFlight(String szAuthToken, int idFlight, int propId) {
+        SoapObject Request = setMethod("DeletePropertyForFlight");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("idFlight", idFlight);
+        Request.addProperty("propId", propId);
+
+        Invoke();
+    }
 }

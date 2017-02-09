@@ -18,40 +18,34 @@
  */
 package com.myflightbook.android.WebServices;
 
-import org.ksoap2.serialization.*;
+import org.ksoap2.serialization.SoapObject;
 
 import Model.CurrencyStatusItem;
 
 
 public class CurrencySvc extends MFBSoap {
 
-	public CurrencyStatusItem[] CurrencyForUser(String szAuthToken)
-	{
-		SoapObject Request = setMethod("GetCurrencyForUser");
-    	Request.addProperty("szAuthToken", szAuthToken);
-    	
-    	CurrencyStatusItem[] rgCsi = new CurrencyStatusItem[0];
-    	
-    	SoapObject result = (SoapObject) Invoke();
-		if (result == null)
-			setLastError("Error retrieving currency - " + getLastError());
-		else
-		{
-			try
-			{
-				rgCsi = new CurrencyStatusItem[result.getPropertyCount()];
-				
-				for (int i = 0; i < rgCsi.length; i++)
-				{
-					rgCsi[i] = new CurrencyStatusItem((SoapObject) result.getProperty(i));
-				}
-			}
-			catch (Exception e)
-			{
-				setLastError(getLastError() + e.getMessage());
-			}
-		}
-			
-    	return rgCsi;
-	}	
+    public CurrencyStatusItem[] CurrencyForUser(String szAuthToken) {
+        SoapObject Request = setMethod("GetCurrencyForUser");
+        Request.addProperty("szAuthToken", szAuthToken);
+
+        CurrencyStatusItem[] rgCsi = new CurrencyStatusItem[0];
+
+        SoapObject result = (SoapObject) Invoke();
+        if (result == null)
+            setLastError("Error retrieving currency - " + getLastError());
+        else {
+            try {
+                rgCsi = new CurrencyStatusItem[result.getPropertyCount()];
+
+                for (int i = 0; i < rgCsi.length; i++) {
+                    rgCsi[i] = new CurrencyStatusItem((SoapObject) result.getProperty(i));
+                }
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return rgCsi;
+    }
 }

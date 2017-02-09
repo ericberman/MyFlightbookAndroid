@@ -1,26 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/flightItem" android:layout_width="fill_parent"
-	android:orientation="horizontal" android:layout_height="wrap_content"
-	android:padding="10dp">
-	<ImageView android:src="@drawable/camera" android:padding="4dip"
-	    android:contentDescription="@string/cdHasImages"
-	android:layout_width="120dip" android:layout_height="90dip" android:id="@+id/imgCamera" android:layout_gravity="center" />
-	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
-	android:orientation="vertical">
-		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-			<ImageView android:padding="4dip"
-			    android:contentDescription="@string/strEmpty"
-				android:layout_width="32dip" android:layout_height="32dip" android:id="@+id/imgSigState" android:layout_gravity="center" />
-   			<TextView android:text="" android:id="@+id/txtDate"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:textStyle="bold"></TextView>
-		</LinearLayout>
-		<TextView android:text="" android:id="@+id/txtRoute"
-			android:layout_width="wrap_content" android:layout_height="wrap_content">
-		</TextView>
-		<TextView android:text="" android:id="@+id/txtComments"
-			android:layout_width="fill_parent" android:layout_height="wrap_content">
-		</TextView>
-	</LinearLayout>
+    android:id="@+id/flightItem"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/imgCamera"
+        android:layout_width="120dip"
+        android:layout_height="90dip"
+        android:layout_gravity="top"
+        android:contentDescription="@string/cdHasImages"
+        android:padding="4dip"
+        android:src="@drawable/camera" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtRoute"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/txtComments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgSigState"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:layout_gravity="center_vertical|right"
+
+        android:contentDescription="@string/strEmpty"
+        android:padding="4dip" />
 </LinearLayout>

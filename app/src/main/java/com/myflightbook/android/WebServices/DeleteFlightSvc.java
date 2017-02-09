@@ -23,14 +23,13 @@ import org.ksoap2.serialization.SoapPrimitive;
 
 public class DeleteFlightSvc extends MFBSoap {
 
-	public void DeleteFlight(String szAuthToken, int idFlight)
-	{
-		SoapObject Request = setMethod("DeleteLogbookEntry");
-    	Request.addProperty("szAuthUserToken", szAuthToken);
-    	Request.addProperty("idFlight", idFlight);
-    	
-    	SoapPrimitive result = (SoapPrimitive) Invoke();
-		if (result == null)
-			setLastError("Error deleting flight - " + getLastError());
-	}
+    public void DeleteFlight(String szAuthToken, int idFlight) {
+        SoapObject Request = setMethod("DeleteLogbookEntry");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("idFlight", idFlight);
+
+        SoapPrimitive result = (SoapPrimitive) Invoke();
+        if (result == null)
+            setLastError("Error deleting flight - " + getLastError());
+    }
 }

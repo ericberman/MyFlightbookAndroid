@@ -23,44 +23,37 @@ import org.ksoap2.serialization.SoapObject;
 
 public class CreateUserSvc extends MFBSoap {
 
-	public Boolean FCreateUser(String szEmail, String szPass, String szFirst, String szLast,
-			String szQ, String szA)
-	{
-		Boolean fResult = false;
-		SoapObject Request = setMethod("CreateUser");
-		Request.addProperty("szAppToken", AuthToken.APPTOKEN);
-		Request.addProperty("szEmail", szEmail);
-		Request.addProperty("szPass", szPass);
-		Request.addProperty("szFirst", szFirst);
-		Request.addProperty("szLast", szLast);
-		Request.addProperty("szQuestion", szQ);
-		Request.addProperty("szAnswer", szA);
-    	
-    	SoapObject result = (SoapObject) Invoke();
-		if (result == null)
-			setLastError("Error creating account - " + getLastError());
-		else
-		{
-			try
-			{
-				String szAuthToken = result.getProperty("szAuthToken").toString();
-				
-				// if we get here, we have success.
-				AuthToken.m_szAuthToken = szAuthToken;
-				AuthToken.m_szEmail = szEmail;
-				AuthToken.m_szPass = szPass;
-				fResult = true;
-				
-				// Clear the aircraft cache because we need to reload it
-				AircraftSvc ac = new AircraftSvc();
-				ac.FlushCache();
-			}
-			catch (Exception e)
-			{
-				setLastError(getLastError() + e.getMessage());
-			}
-		}
-			
-    	return fResult;
-	}	
+    public Boolean FCreateUser(String szEmail, String szPass, String szFirst, String szLast,
+                               String szQ, String szA) {
+        Boolean fResult = false;
+        SoapObject Request = setMethod("CreateUser");
+        Request.addProperty("szAppToken", AuthToken.APPTOKEN);
+        Request.addProperty("szEmail", szEmail);
+        Request.addProperty("szPass", szPass);
+        Request.addProperty("szFirst", szFirst);
+        Request.addProperty("szLast", szLast);
+        Request.addProperty("szQuestion", szQ);
+        Request.addProperty("szAnswer", szA);
+
+        SoapObject result = (SoapObject) Invoke();
+        if (result == null)
+            setLastError("Error creating account - " + getLastError());
+        else {
+            try {
+                // if we get here, we have success.
+                AuthToken.m_szAuthToken = result.getProperty("szAuthToken").toString();
+                AuthToken.m_szEmail = szEmail;
+                AuthToken.m_szPass = szPass;
+                fResult = true;
+
+                // Clear the aircraft cache because we need to reload it
+                AircraftSvc ac = new AircraftSvc();
+                ac.FlushCache();
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return fResult;
+    }
 }
