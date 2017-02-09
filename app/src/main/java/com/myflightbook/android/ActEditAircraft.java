@@ -257,7 +257,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
                 break;
         }
 
-        setUpImageGallery(getGalleryID(), getImages());
+        setUpImageGallery(getGalleryID(), getImages(), getGalleryHeader());
 
         findViewById(R.id.sectMaintenance).setVisibility(m_ac.IsReal() && !m_ac.IsAnonymous() ? View.VISIBLE : View.GONE);
     }
@@ -460,6 +460,10 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         return R.id.tblImageTable;
     }
 
+    public View getGalleryHeader() {
+        return findViewById(R.id.txtImageHeader);
+    }
+
     public MFBImageInfo[] getImages() {
         if (m_ac == null || m_ac.AircraftImages == null)
             return new MFBImageInfo[0];
@@ -479,7 +483,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     }
 
     public void refreshGallery() {
-        setUpImageGallery(getGalleryID(), getImages());
+        setUpImageGallery(getGalleryID(), getImages(), getGalleryHeader());
     }
 
     public PictureDestination getDestination() {

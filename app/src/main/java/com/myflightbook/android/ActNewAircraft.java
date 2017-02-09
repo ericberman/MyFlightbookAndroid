@@ -373,6 +373,10 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         return R.id.tblImageTable;
     }
 
+    public View getGalleryHeader() {
+        return null;
+    }
+
     public MFBImageInfo[] getImages() {
         if (m_ac == null || m_ac.AircraftImages == null)
             return new MFBImageInfo[0];
@@ -392,7 +396,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     }
 
     public void refreshGallery() {
-        setUpImageGallery(getGalleryID(), getImages());
+        setUpImageGallery(getGalleryID(), getImages(), getGalleryHeader());
     }
 
     public PictureDestination getDestination() {

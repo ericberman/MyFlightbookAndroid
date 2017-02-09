@@ -245,13 +245,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     if (fIsNew) {
                         // Reset the flight and we stay on this page
                         ResetFlight(true);
-                        ocl = (d, id) ->  d.cancel();
+                        ocl = (d, id) -> d.cancel();
                     } else {
                         // no need to reset the current flight because we will finish.
                         ocl = (d, id) -> {
-                                d.cancel();
-                                finish();
-                            };
+                            d.cancel();
+                            finish();
+                        };
                         lelocal = m_le = null; // so that onPause won't cause it to be saved on finish() call.
                     }
                     new AlertDialog.Builder(ActNewFlight.this.getActivity())
@@ -305,9 +305,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         Button btnAppend = (Button) findViewById(R.id.btnAppendNearest);
         btnAppend.setOnLongClickListener((v) -> {
-                AppendAdHoc();
-                return true;
-            });
+            AppendAdHoc();
+            return true;
+        });
 
         // Expand/collapse
         AddListener(R.id.txtViewInTheCockpit);
@@ -343,8 +343,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // get notification of hobbs changes, or at least focus changes
         OnFocusChangeListener s = (v, hasFocus) -> {
-                if (!hasFocus) onHobbsChanged(v);
-            };
+            if (!hasFocus) onHobbsChanged(v);
+        };
 
         findViewById(R.id.txtHobbsStart).setOnFocusChangeListener(s);
         findViewById(R.id.txtHobbsEnd).setOnFocusChangeListener(s);
@@ -514,7 +514,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     protected void setUpGalleryForFlight() {
         if (m_le.rgFlightImages == null)
             m_le.getImagesForFlight();
-        setUpImageGallery(getGalleryID(), m_le.rgFlightImages);
+        setUpImageGallery(getGalleryID(), m_le.rgFlightImages, getGalleryHeader());
     }
 
     public void onPause() {
@@ -630,16 +630,16 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.lblConfirmFlightDelete)
                         .setPositiveButton(R.string.lblOK, (dialog, which) -> {
-                                if (m_le.IsPendingFlight()) {
-                                    m_le.DeletePendingFlight();
-                                    m_le = null; // clear this out since we're going to finish().
-                                    RecentFlightsSvc.ClearCachedFlights();
-                                    finish();
-                                } else if (m_le.IsExistingFlight()) {
-                                    DeleteTask dt = new DeleteTask();
-                                    dt.execute();
-                                }
-                            })
+                            if (m_le.IsPendingFlight()) {
+                                m_le.DeletePendingFlight();
+                                m_le = null; // clear this out since we're going to finish().
+                                RecentFlightsSvc.ClearCachedFlights();
+                                finish();
+                            } else if (m_le.IsExistingFlight()) {
+                                DeleteTask dt = new DeleteTask();
+                                dt.execute();
+                            }
+                        })
                         .setNegativeButton(R.string.lblCancel, null)
                         .show();
                 return true;
@@ -1008,10 +1008,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 new AlertDialog.Builder(ActNewFlight.this.getActivity())
                         .setMessage(getString(R.string.errNoInternetNoSave))
                         .setTitle(getString(R.string.txtError))
-                        .setNegativeButton("OK", (d, id) -> {
-                                d.cancel();
-                                finish();
-                            })
+                        .setNegativeButton(getString(R.string.lblOK), (d, id) -> {
+                            d.cancel();
+                            finish();
+                        })
                         .create().show();
                 return;
             }
@@ -1045,9 +1045,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         .setMessage(getString(R.string.txtSavedPendingFlight))
                         .setTitle(getString(R.string.txtSuccess))
                         .setNegativeButton("OK", (d, id) -> {
-                                d.cancel();
-                                finish();
-                            })
+                            d.cancel();
+                            finish();
+                        })
                         .create().show();
             }
         } else {
@@ -1492,6 +1492,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
      */
     public int getGalleryID() {
         return R.id.tblImageTable;
+    }
+
+    public View getGalleryHeader() {
+        return findViewById(R.id.txtImageHeader);
     }
 
     public MFBImageInfo[] getImages() {
