@@ -18,6 +18,8 @@
  */
 package Model;
 
+import android.util.Log;
+
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.WebServices.AuthToken;
 
@@ -42,7 +44,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class CustomExceptionHandler  implements UncaughtExceptionHandler {
+public class CustomExceptionHandler implements UncaughtExceptionHandler {
 
     private UncaughtExceptionHandler defaultUEH;
 
@@ -61,21 +63,21 @@ public class CustomExceptionHandler  implements UncaughtExceptionHandler {
     }
 
     public void uncaughtException(Thread t, Throwable e) {
-    	Date dt = new Date();
+        Date dt = new Date();
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
         e.printStackTrace(printWriter);
         String szUsername = "(unknown user)";
         if (AuthToken.m_szEmail != null && AuthToken.m_szEmail.length() > 0)
-        	szUsername = AuthToken.m_szEmail;
-        
+            szUsername = AuthToken.m_szEmail;
+
         String szVersion = String.format(Locale.getDefault(), "Version %s (%d)\r\n\r\n", MFBMain.versionName, MFBMain.versionCode);
-        
+
         final String stacktrace = szVersion + szUsername + "       \r\n\r\n" + result.toString() + e.getMessage() + e.getLocalizedMessage();
         printWriter.close();
-        
-		Calendar c = new GregorianCalendar();
-		c.setTime(dt);
+
+        Calendar c = new GregorianCalendar();
+        c.setTime(dt);
 
         final String filename = String.format(Locale.getDefault(), "%d%d%d%d%d%d.stacktrace", c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
 
@@ -98,101 +100,96 @@ public class CustomExceptionHandler  implements UncaughtExceptionHandler {
         }
     }
 
-	public void sendPendingReports() {
-		if (localPath == null || localPath.length() == 0)
-			return;
+    public void sendPendingReports() {
+        if (localPath == null || localPath.length() == 0)
+            return;
 
-		new Thread(new Runnable() {
-			public void run() {
-				File dir = new File(localPath);
-				File[] files = dir.listFiles();
-				StringBuilder sb = new StringBuilder();
-				for (File f : files) {
-					if (!f.getName().endsWith(".stacktrace"))
-						continue;;
-					try {
-						BufferedReader br = new BufferedReader(new FileReader(f));
-						String line;
-						while ((line = br.readLine()) != null) {
-							sb.append(line);
-							sb.append('\n');
-						}
-						br.close() ;
+        new Thread(() -> {
+                File dir = new File(localPath);
+                File[] files = dir.listFiles();
+                StringBuilder sb = new StringBuilder();
+                for (File f : files) {
+                    if (!f.getName().endsWith(".stacktrace"))
+                        continue;
 
-						sendToServer(sb.toString(), f.getName());
-						f.delete();
-					}
-					catch (IOException ex) {
-						ex.printStackTrace();
-					}
-				}
-			}
-		}).start();
-	}
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(f));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line);
+                            sb.append('\n');
+                        }
+                        br.close();
+
+                        sendToServer(sb.toString(), f.getName());
+                        if (!f.delete())
+                            Log.e(MFBConstants.LOG_TAG, "Delete of error report failed");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }).start();
+    }
 
     private void sendToServer(String stacktrace, String filename) {
         if (MFBConstants.fIsDebug)
-        	return;
+            return;
 
-		String szBoundary = "EXCEPTONBOUNDARY";
-		String szBoundaryDivider = String.format("--%s\r\n", szBoundary);
-		
-		HttpURLConnection urlConnection = null;
-		
-	    OutputStream out = null;
-		InputStream in = null;
-	   try
-	   {
-		   urlConnection = (HttpURLConnection) (new URL(url)).openConnection();
-		
-		   urlConnection.setDoOutput(true);
-		   urlConnection.setChunkedStreamingMode(0);
-		   urlConnection.setRequestMethod("POST");
-		   urlConnection.setRequestProperty("Content-Type", String.format("multipart/form-data; boundary=%s", szBoundary));
-		   
-		   out = new BufferedOutputStream(urlConnection.getOutputStream());
-		   
-		   out.write(szBoundaryDivider.getBytes("UTF8"));
-		   out.write("Content-Disposition: form-data; name=\"filename\"\r\n\r\n".getBytes("UTF8"));
-		   out.write(String.format("%s\r\n%s", filename, szBoundaryDivider).getBytes("UTF8"));
-		   
-		   out.write("Content-Disposition: form-data; name=\"stacktrace\"\r\n\r\n".getBytes("UTF8"));
-		   out.write(String.format("%s\r\n%s", stacktrace, szBoundaryDivider).getBytes("UTF8"));
+        String szBoundary = "EXCEPTONBOUNDARY";
+        String szBoundaryDivider = String.format("--%s\r\n", szBoundary);
 
-		   out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes("UTF8"));
-		   
-		   out.flush();
+        HttpURLConnection urlConnection = null;
 
-		   in = new BufferedInputStream(urlConnection.getInputStream());
-		   int status = urlConnection.getResponseCode();
-		   if (status != HttpURLConnection.HTTP_OK)
-			   throw new Exception(String.format("Bad response - status = %d", status));
+        OutputStream out = null;
+        InputStream in;
+        try {
+            urlConnection = (HttpURLConnection) (new URL(url)).openConnection();
 
-		   byte[] rgResponse = new byte[1024];
-		   in.read(rgResponse);
+            urlConnection.setDoOutput(true);
+            urlConnection.setChunkedStreamingMode(0);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", String.format("multipart/form-data; boundary=%s", szBoundary));
 
-		   String sz = new String(rgResponse, "UTF8");
-		   if (!sz.contains("OK"))
-			   throw new Exception(sz);
-	   }
-	   catch (Exception ex)
-	   {
-		   ex.printStackTrace();
-	   }
-	   finally
-	   {
-		   if (out != null)
-			try {
-				out.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if (urlConnection != null)
-				try {
-					urlConnection.disconnect();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-	   }
+            out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+            out.write(szBoundaryDivider.getBytes("UTF8"));
+            out.write("Content-Disposition: form-data; name=\"filename\"\r\n\r\n".getBytes("UTF8"));
+            out.write(String.format("%s\r\n%s", filename, szBoundaryDivider).getBytes("UTF8"));
+
+            out.write("Content-Disposition: form-data; name=\"stacktrace\"\r\n\r\n".getBytes("UTF8"));
+            out.write(String.format("%s\r\n%s", stacktrace, szBoundaryDivider).getBytes("UTF8"));
+
+            out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes("UTF8"));
+
+            out.flush();
+
+            in = new BufferedInputStream(urlConnection.getInputStream());
+            int status = urlConnection.getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK)
+                throw new Exception(String.format(Locale.US, "Bad response - status = %d", status));
+
+            byte[] rgResponse = new byte[1024];
+            if (in.read(rgResponse) == 0)
+                Log.e(MFBConstants.LOG_TAG, "No bytes read from the response to uploading error report!");
+
+            String sz = new String(rgResponse, "UTF8");
+            if (!sz.contains("OK"))
+                throw new Exception(sz);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (out != null)
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            if (urlConnection != null)
+                try {
+                    urlConnection.disconnect();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+        }
     }
 }

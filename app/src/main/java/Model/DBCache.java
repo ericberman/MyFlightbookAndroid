@@ -25,128 +25,104 @@ import android.util.Log;
 
 import com.myflightbook.android.MFBMain;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
-public class DBCache extends Object {
-	
-	private static final String CACHE_TABLE="CacheStatus"; 
-	private static final String COL_TABLENAME = "TableName";
-	private static final String COL_LASTREFRESH = "LastRefresh";
-	private static final int CACHE_VALID_WINDOW = 14;
-	private static final int CACHE_RETRY_WINDOW = 3;
-	private static final long ONE_HOUR = 60 * 60 * 1000L; // milliseconds in an hour
-	
-	public String errorString = "";
-	
-	public enum DBCacheStatus {VALID, VALID_BUT_RETRY, INVALID}
-	
-	public DBCache()
-	{
-		super();
-	}
-	
-	private void deleteTableEntry(SQLiteDatabase db, String tablename)
-	{
-		db.delete(CACHE_TABLE, COL_TABLENAME + " = ?", new String[] {tablename});		
-	}
-	
-	public void flushCache(String tablename, Boolean fDeleteTableToo)
-	{
-		this.errorString = "";
-		SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+public class DBCache {
 
-		try
-		{
-			deleteTableEntry(db, tablename);
-			if (fDeleteTableToo)
-				db.delete(tablename, "", null);
-		}
-		catch (Exception ex)
-		{
-			this.errorString = "Error flushing cache for table " + tablename + ex.getMessage();
-			Log.e("MFBAndroid", this.errorString);
-		}
-		finally
-		{
-		}
-	}
-	
-	public void updateCache(String tablename)
-	{
-		this.errorString = "";
-		SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-		
-		try
-		{
-			deleteTableEntry(db, tablename);
-			ContentValues values = new ContentValues();
-			Date dt = new Date();
-			SimpleDateFormat s = new SimpleDateFormat(MFBConstants.TIMESTAMP);
-	
-			values.put(COL_LASTREFRESH, s.format(dt));		
-			values.put(COL_TABLENAME, tablename);
-			
-			db.insertOrThrow(CACHE_TABLE, null, values);
-		}
-		catch (Exception ex)
-		{
-			this.errorString = "Error updating cache for table " + tablename + ex.getMessage();
-			Log.e("MFBAndroid", this.errorString);
-		}
-		finally
-		{
-		}
-	}
-	
-	public DBCacheStatus Status(String tablename)
-	{
-		this.errorString = "";
-		SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-		DBCacheStatus dbcs = DBCacheStatus.INVALID;
-		Cursor c = null;
-		
-		try
-		{
-			c = db.query(CACHE_TABLE, new String[] {COL_LASTREFRESH}, String.format("%s = ?", COL_TABLENAME), new String[] {tablename}, null, null, null);
-			if (c != null && c.moveToFirst())
-			{
-				SimpleDateFormat sf = new SimpleDateFormat(MFBConstants.TIMESTAMP);
-				Date dtNow = new Date();
-				
-				String s = c.getString(0);
+    private static final String CACHE_TABLE = "CacheStatus";
+    private static final String COL_TABLENAME = "TableName";
+    private static final String COL_LASTREFRESH = "LastRefresh";
+    private static final int CACHE_VALID_WINDOW = 14;
+    private static final int CACHE_RETRY_WINDOW = 3;
+    private static final long ONE_HOUR = 60 * 60 * 1000L; // milliseconds in an hour
 
-				Date dtLastRefresh;
-				try
-				{
-					dtLastRefresh = sf.parse(s);
-				}
-				catch (Exception e)
-				{
-					// see if this was saved with the old (locale-specific) format; try to parse using that.
-					dtLastRefresh = (new SimpleDateFormat()).parse(s);
-				}
-				
-				long l = (dtNow.getTime() - dtLastRefresh.getTime() + ONE_HOUR) / (ONE_HOUR * 24);
+    public String errorString = "";
 
-				if (l < CACHE_VALID_WINDOW)
-					dbcs = DBCacheStatus.VALID_BUT_RETRY;
-				if (l < CACHE_RETRY_WINDOW)
-					dbcs = DBCacheStatus.VALID;
-			}
-		}
-		catch (Exception e)
-		{
-			this.errorString = "Error checking status for table " + tablename + e.getMessage();
-			Log.e("MFBAndroid", this.errorString);
-			dbcs = DBCacheStatus.INVALID;
-		}
-		finally
-		{
-			if (c != null)
-				c.close();
-		}
-		
-		return dbcs;
-	}
+    public enum DBCacheStatus {VALID, VALID_BUT_RETRY, INVALID}
+
+    public DBCache() {
+        super();
+    }
+
+    private void deleteTableEntry(SQLiteDatabase db, String tablename) {
+        db.delete(CACHE_TABLE, COL_TABLENAME + " = ?", new String[]{tablename});
+    }
+
+    public void flushCache(String tablename, Boolean fDeleteTableToo) {
+        this.errorString = "";
+        SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+
+        try {
+            deleteTableEntry(db, tablename);
+            if (fDeleteTableToo)
+                db.delete(tablename, "", null);
+        } catch (Exception ex) {
+            this.errorString = "Error flushing cache for table " + tablename + ex.getMessage();
+            Log.e(MFBConstants.LOG_TAG, this.errorString);
+        }
+    }
+
+    public void updateCache(String tablename) {
+        this.errorString = "";
+        SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+
+        try {
+            deleteTableEntry(db, tablename);
+            ContentValues values = new ContentValues();
+            Date dt = new Date();
+            SimpleDateFormat s = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
+
+            values.put(COL_LASTREFRESH, s.format(dt));
+            values.put(COL_TABLENAME, tablename);
+
+            db.insertOrThrow(CACHE_TABLE, null, values);
+        } catch (Exception ex) {
+            this.errorString = "Error updating cache for table " + tablename + ex.getMessage();
+            Log.e(MFBConstants.LOG_TAG, this.errorString);
+        }
+    }
+
+    public DBCacheStatus Status(String tablename) {
+        this.errorString = "";
+        SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+        DBCacheStatus dbcs = DBCacheStatus.INVALID;
+        Cursor c = null;
+
+        try {
+            c = db.query(CACHE_TABLE, new String[]{COL_LASTREFRESH}, String.format("%s = ?", COL_TABLENAME), new String[]{tablename}, null, null, null);
+            if (c != null && c.moveToFirst()) {
+                SimpleDateFormat sf = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
+                Date dtNow = new Date();
+
+                String s = c.getString(0);
+
+                Date dtLastRefresh;
+                try {
+                    dtLastRefresh = sf.parse(s);
+                } catch (Exception e) {
+                    // see if this was saved with the old (locale-specific) format; try to parse using that.
+                    dtLastRefresh = (DateFormat.getDateInstance()).parse(s);
+                }
+
+                long l = (dtNow.getTime() - dtLastRefresh.getTime() + ONE_HOUR) / (ONE_HOUR * 24);
+
+                if (l < CACHE_VALID_WINDOW)
+                    dbcs = DBCacheStatus.VALID_BUT_RETRY;
+                if (l < CACHE_RETRY_WINDOW)
+                    dbcs = DBCacheStatus.VALID;
+            }
+        } catch (Exception e) {
+            this.errorString = "Error checking status for table " + tablename + e.getMessage();
+            Log.e(MFBConstants.LOG_TAG, this.errorString);
+            dbcs = DBCacheStatus.INVALID;
+        } finally {
+            if (c != null)
+                c.close();
+        }
+
+        return dbcs;
+    }
 }
