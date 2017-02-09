@@ -189,15 +189,14 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 
             // Show the camera if the aircraft has images.
             ImageView imgCamera = (ImageView) v.findViewById(R.id.imgCamera);
-            imgCamera.setVisibility(View.GONE);
-            imgCamera.setImageBitmap(null);
             if (ac.HasImage()) {
                 MFBImageInfo mfbii = ac.AircraftImages[0];
                 Bitmap b = mfbii.bitmapFromThumb();
                 if (b != null) {
-                    imgCamera.setVisibility(View.VISIBLE);
                     imgCamera.setImageBitmap(b);
                 }
+            } else {
+                imgCamera.setImageResource(R.drawable.noimage);
             }
 
             int textColor = ac.HideFromSelection ? 0x88000000 : 0xFF000000;
