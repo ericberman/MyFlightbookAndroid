@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent" 
-    android:maxLines="4" android:lines="2"
-    android:padding="3dip" android:ellipsize="none" android:scrollHorizontally="false"
-    android:singleLine="false">
-</TextView>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:ellipsize="none"
+    android:lines="2"
+    android:maxLines="4"
+    android:padding="3dip"
+    android:scrollHorizontally="false" />
