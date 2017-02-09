@@ -71,10 +71,11 @@
                     android:id="@+id/TextView04"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:labelFor="@+id/txtPass"
                     android:text="@string/lblPass" />
 
                 <EditText
-                    android:id="@+id/txtPass"
+                    android:id="@id/txtPass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
@@ -91,10 +92,11 @@
                     android:id="@+id/TextView05"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:labelFor="@+id/txtPass2"
                     android:text="@string/lblPass2" />
 
                 <EditText
-                    android:id="@+id/txtPass2"
+                    android:id="@id/txtPass2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
@@ -258,6 +260,7 @@
                     android:id="@+id/btnViewPrivacy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarStyle"
                     android:text="@string/lblViewWebContent" />
             </TableRow>
 
@@ -276,6 +279,7 @@
                     android:id="@+id/btnViewTandC"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarStyle"
                     android:text="@string/lblViewWebContent" />
             </TableRow>
         </TableLayout>
@@ -305,6 +309,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/lblCreateAccount"
+                style="?android:attr/buttonBarStyle"
                 android:textStyle="bold" />
 
             <Button
@@ -312,6 +317,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblCancel" />
         </LinearLayout>
     </LinearLayout>

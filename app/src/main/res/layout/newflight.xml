@@ -899,16 +899,20 @@
                 android:text="" />
         </LinearLayout>
 
-        <TextView android:id="@+id/txtImageHeader" android:text="@string/cdImagesForFlight" android:drawableStart="@drawable/collapse_light" android:clickable="true"
-            style="@style/DividerBar" />
+        <TextView
+            android:id="@+id/txtImageHeader"
+            style="@style/DividerBar"
+            android:clickable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:text="@string/cdImagesForFlight" />
 
         <TableLayout
+            android:id="@+id/tblImageTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/table_background"
             android:padding="4dp"
-            android:stretchColumns="0,1"
-            android:id="@+id/tblImageTable"/>
+            android:stretchColumns="0,1" />
 
         <!--  Images and Sharing -->
         <TextView
@@ -928,9 +932,9 @@
                 android:id="@+id/txtSocialNetworkHint"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
                 android:clickable="true"
                 android:padding="5dip"
-                android:layout_marginBottom="5dip"
                 android:text="@string/lblSetUpFacebook"
                 android:textAlignment="center" />
 

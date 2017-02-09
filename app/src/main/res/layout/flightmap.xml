@@ -1,50 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:map="http://schemas.android.com/apk/res-auto"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-		<ToggleButton
-		    android:id="@+id/ckShowAllAirports"
-		    android:layout_width="24dip"
-		    android:layout_height="24dip"
-		    android:padding="3dip"
-		    android:layout_marginStart="3dip"
-		    android:layout_gravity="center_vertical|center_horizontal"
-		    android:background="@drawable/ic_toggle_airport_bg"
-		    style="@style/toggleAirportButton"
-		    android:textOff=""
-		    android:textOn="" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-		<LinearLayout android:layout_width="fill_parent" android:id="@+id/llMapToolbar" android:layout_height="wrap_content" android:orientation="horizontal">
-			<EditText 
-				android:layout_width="0dip"
-				android:hint="@string/emptyWaterMarkRoute"
-				android:layout_height="wrap_content" 
-                android:inputType="textCapCharacters|textNoSuggestions|textMultiLine"
-				android:layout_weight=".7"
-				android:id="@+id/txtMapRoute">
-			</EditText>
-			<ImageButton android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text=""
-			    android:src="@drawable/ic_action_save"
-			    android:contentDescription="@string/txtShareKML"
-			    android:id="@+id/btnExportKML">
-	  		</ImageButton>
-			<ImageButton android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text=""
-				android:src="@drawable/ic_action_refresh_dk" 
-				android:contentDescription="@string/txtUpdateRouteOnMap"
-				android:id="@+id/btnUpdateMapRoute">
-			</ImageButton>
-		</LinearLayout>
-	</LinearLayout>
-	<fragment
-          android:id="@+id/mfbMap"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:name="com.google.android.gms.maps.MapFragment"
-     />
+        <ToggleButton
+            android:id="@+id/ckShowAllAirports"
+            style="@style/toggleAirportButton"
+            android:layout_width="24dip"
+            android:layout_height="24dip"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginStart="3dip"
+            android:background="@drawable/ic_toggle_airport_bg"
+            android:padding="3dip"
+            android:textOff=""
+            android:textOn="" />
+
+        <LinearLayout
+            android:id="@+id/llMapToolbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/txtMapRoute"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight=".7"
+                android:hint="@string/emptyWaterMarkRoute"
+                android:inputType="textCapCharacters|textNoSuggestions|textMultiLine" />
+
+            <ImageButton
+                style="?android:attr/buttonBarStyle"
+                android:id="@+id/btnExportKML"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/txtShareKML"
+                android:src="@drawable/ic_action_save"
+                android:text="" />
+
+            <ImageButton
+                style="?android:attr/buttonBarStyle"
+                android:id="@+id/btnUpdateMapRoute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/txtUpdateRouteOnMap"
+                android:src="@drawable/ic_action_refresh_dk"
+                android:text="" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <fragment
+        android:id="@+id/mfbMap"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

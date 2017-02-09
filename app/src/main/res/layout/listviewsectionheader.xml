@@ -2,6 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
- 	<TextView android:layout_width="fill_parent" android:id="@+id/lblTableRowSectionHeader" android:text="" style="@style/DividerBar"></TextView>
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lblTableRowSectionHeader"
+        style="@style/DividerBar"
+        android:layout_width="fill_parent"
+        android:text="" />
 </LinearLayout>

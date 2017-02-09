@@ -40,18 +40,21 @@
                 android:id="@+id/btnSignIn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/szSignIn" />
 
             <Button
                 android:id="@+id/btnCreateNewAccount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/createuser" />
 
             <Button
                 android:id="@+id/btnSignOut"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/szSignOut" />
         </LinearLayout>
 
@@ -219,6 +222,7 @@
                 android:id="@+id/btnAdditionalOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblGoToMyFlightbookOptions" />
         </LinearLayout>
 
@@ -239,12 +243,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblContactMe" />
 
             <Button
                 android:id="@+id/btnFAQ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFAQ" />
         </LinearLayout>
 
@@ -253,22 +259,28 @@
             android:layout_height="wrap_content"
             android:gravity="bottom|center_horizontal"
             android:orientation="horizontal"
+            style="?android:attr/buttonBarStyle"
             android:padding="5dp">
 
             <Button
                 android:id="@+id/btnFacebook"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/fb_f_logo"
                 android:drawablePadding="3dip"
+                android:padding="5dip"
+                android:drawableStart="@drawable/fb_f_logo"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFollowFacebook" />
 
             <Button
                 android:id="@+id/btnTwitter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/twitter_logo_blue"
+                android:padding="5dip"
+                android:layout_marginStart="10dp"
                 android:drawablePadding="3dip"
+                android:drawableStart="@drawable/twitter_logo_blue"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFollowTwitter" />
         </LinearLayout>
 
@@ -290,6 +302,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/btnSupport" />
         </LinearLayout>
 
@@ -318,6 +331,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_horizontal"
+            style="?android:attr/buttonBarStyle"
             android:text="@string/lblCleanup" />
     </LinearLayout>
 </ScrollView>
