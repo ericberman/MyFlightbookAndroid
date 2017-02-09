@@ -745,7 +745,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     }
 
 	/*
-	 * Serialization
+     * Serialization
 	 */
 
     public int getPropertyCount() {

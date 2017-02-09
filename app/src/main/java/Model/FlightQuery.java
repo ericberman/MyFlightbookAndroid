@@ -49,7 +49,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		Trailing30,
 		Trailing90,
 		Custom
-		};
+		}
 		
 	public enum FlightDistance { AllFlights, LocalOnly, NonLocalOnly}
 	
@@ -57,7 +57,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     
     public enum EngineTypeRestriction { AllEngines, Piston, Jet, Turboprop, AnyTurbine, Electric }
 	
-	public enum FlightQueryProp {
+	private enum FlightQueryProp {
 		// Date properties.
 		pidDateRange, pidDateMin, pidDateMax,
 		// Text, aircraft, airport, make
@@ -72,7 +72,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		
 		// Aircraft attributes
 		pidIsComplex, pidHasFlaps, pidIsHighPerformance, pidIsConstantSpeedProp, pidMotorGlider, pidMultiEngineHeli,
-		pidIsRetract, pidIsGlass, pidIsTailwheel, pidEngineType, pidInstanceType};
+		pidIsRetract, pidIsGlass, pidIsTailwheel, pidEngineType, pidInstanceType}
 
 	// Whoo boy, lots of properties here.
 	public DateRanges DateRange;
@@ -84,6 +84,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	public String[] AirportList;
 	public MakeModel[] MakeList;
 	public String ModelName;
+	@SuppressWarnings("WeakerAccess")
 	public String[] TypeNames;
 	public CategoryClass[] CatClassList;
 	public CustomPropertyType[] PropertyTypes;
@@ -94,19 +95,23 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	public Boolean IsPublic = false;
 	public Boolean HasNightLandings = false;
 	public Boolean HasFullStopLandings = false;
+	@SuppressWarnings("WeakerAccess")
 	public Boolean HasLandings = false;
 	public Boolean HasApproaches = false;
 	public Boolean HasHolds = false;
 	public Boolean HasXC = false;
 	public Boolean HasSimIMCTime = false;
+	@SuppressWarnings("WeakerAccess")
 	public Boolean HasGroundSim = false;
 	public Boolean HasIMC = false;
+	@SuppressWarnings("WeakerAccess")
 	public Boolean HasAnyInstrument = false;
 	public Boolean HasNight = false;
 	public Boolean HasDual = false;
 	public Boolean HasCFI = false;
 	public Boolean HasSIC = false;
 	public Boolean HasPIC = false;
+	@SuppressWarnings("WeakerAccess")
 	public Boolean HasTotalTime = false;
 	public Boolean HasTelemetry = false;
 	public Boolean IsSigned = false;
@@ -239,7 +244,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     	IsMotorglider = false;
     }
 
-    public static String DateRangeToString(DateRanges dr)
+    @SuppressWarnings("unused")
+	public static String DateRangeToString(DateRanges dr)
     {
         switch (dr)
         {
@@ -290,7 +296,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
             HasFlightCriteria();
     }	
 
-    public Boolean HasSearchProperty(CustomPropertyType cpt)
+    @SuppressWarnings("unused")
+	public Boolean HasSearchProperty(CustomPropertyType cpt)
     {
     	for (CustomPropertyType cpt2 : PropertyTypes)
     		if (cpt.idPropType == cpt2.idPropType)
@@ -360,7 +367,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 
 		SoapObject typeNames = (SoapObject) so.getProperty("TypeNames");
 		int cTypeNames = typeNames.getPropertyCount();
-		ArrayList<String> alTypes = new ArrayList<String>();
+		ArrayList<String> alTypes = new ArrayList<>();
 		for (int i = 0; i < cTypeNames; i++)
 		{
 			String s = ReadNullableString(typeNames, i);
@@ -429,21 +436,21 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		case pidGeneralText:
 			return GeneralText;
 		case pidAircraftList:
-			return new Vector<Aircraft>(Arrays.asList(this.AircraftList));
+			return new Vector<>(Arrays.asList(this.AircraftList));
 		case pidAirportList:
-			return new Vector<String>(Arrays.asList(this.AirportList));
+			return new Vector<>(Arrays.asList(this.AirportList));
 		case pidFlightDistance:
 			return Distance.toString();
 		case pidMakeList:
-			return new Vector<MakeModel>(Arrays.asList(this.MakeList));
+			return new Vector<>(Arrays.asList(this.MakeList));
 		case pidModelName:
 			return ModelName;
 		case pidTypeNames:
-			return new Vector<String>(Arrays.asList(this.TypeNames));
+			return new Vector<>(Arrays.asList(this.TypeNames));
 		case pidCatClassList:
-			return new Vector<CategoryClass>(Arrays.asList(this.CatClassList));
+			return new Vector<>(Arrays.asList(this.CatClassList));
 		case pidProperties:
-			return new Vector<CustomPropertyType>(Arrays.asList(this.PropertyTypes));
+			return new Vector<>(Arrays.asList(this.PropertyTypes));
 		// Flight attributes - 14
 		case pidIsPublic:
 			return IsPublic;

@@ -28,197 +28,183 @@ import com.myflightbook.android.MFBMain;
 
 import java.util.Date;
 
-public class MFBFlightListener implements MFBLocation.FlightEvents
-{
-	private LogbookEntry m_leNewFlight = null;
-	private ListenerFragmentDelegate m_delegate = null;
-	private static final String keyInProgressId = "idFlightInProgress";
-	
-	public interface ListenerFragmentDelegate
-	{
-		public void ToView();
-		public void FromView();
-		public void RefreshDetectedFields();
-		public void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc, Boolean fRecording);
-		public void unPauseFlight();
-		public void saveCurrentFlight();
-	}
-	
-	public MFBFlightListener()	{ }
-	
-	protected void appendNearest()
-	{
-		m_leNewFlight.szRoute = Airport.AppendNearestToRoute(m_leNewFlight.szRoute, MFBMain.GetMainLocation().CurrentLoc());
-	}
+public class MFBFlightListener implements MFBLocation.FlightEvents {
+    private LogbookEntry m_leNewFlight = null;
+    private ListenerFragmentDelegate m_delegate = null;
+    private static final String keyInProgressId = "idFlightInProgress";
 
-	public void TakeoffDetected(Location l, Boolean fIsNight) {
-		if (m_leNewFlight == null)
-		{
-			Log.e("MFBAndroid", "logbookentry is NULL in TakeoffDetected");
-			return;
-		}
-		
-		// ignore any new takeoffs after engine stop or before engine start
-		if (!m_leNewFlight.FlightInProgress())
-			return;
+    public interface ListenerFragmentDelegate {
+        void ToView();
 
-		boolean fNeedsViewRefresh = false;
-		
-		// create or increment a night-takeoff property.
-		if (fIsNight)
-		{
-			m_leNewFlight.AddNightTakeoff();
-			fNeedsViewRefresh = true;
-		}
-		
-		if (m_delegate != null)
-			m_delegate.unPauseFlight();  // don't pause in flight
-		
-		if (!m_leNewFlight.isKnownFlightStart())  
-		{
-			if (m_delegate != null)
-				m_delegate.FromView();
-			m_leNewFlight.dtFlightStart = new Date();
-			appendNearest();
-			fNeedsViewRefresh = true;
-		}
-		
-		if (fNeedsViewRefresh && m_delegate != null)
-			m_delegate.RefreshDetectedFields();
-	}
-	
-	private void SaveInProgressFlight()
-	{
-		if (m_delegate == null)
-		{
-			m_leNewFlight.ToDB();
-			if (m_leNewFlight.IsNewFlight())
-				saveCurrentFlightId();
-		}
-		else
-		{
-			m_delegate.RefreshDetectedFields();
-			m_delegate.saveCurrentFlight();
-		}
-	}
+        void FromView();
 
-	public void LandingDetected(Location l) {
-		// 3 things to do:
-		// a) update flight end
-		if (m_leNewFlight == null)
-		{
-			Log.e("MFBAndroid", "logbookentry is NULL in LandingDetected	");
-			return;
-		}
-		
-		// ignore any new landings after engine stop.
-		if (!m_leNewFlight.FlightInProgress())
-			return;
-		
-		m_leNewFlight.dtFlightEnd = new Date();
-		
-		// b) increment the number of landings
-		m_leNewFlight.cLandings++;
-		
-		// and append the nearest route		
-		appendNearest();
-		
-		Log.w("MFBAndroid", String.format("Landing received, now %d", m_leNewFlight.cLandings));
-		
-		SaveInProgressFlight();
-	}
-	
-	public void FSLandingDetected(Boolean fIsNight)
-	{
-		if (m_delegate != null)
-			m_delegate.FromView();
-		
-		if (fIsNight)
-			++m_leNewFlight.cNightLandings;
-		else
-			++m_leNewFlight.cFullStopLandings;
-		
-		if (m_delegate != null)
-			m_delegate.RefreshDetectedFields();
-	}
-	
-	public void AddNightTime(double t) {
-		if (m_leNewFlight == null)
-		{
-			Log.e("MFBAndroid", "logbookentry is NULL in AddNightTime");
-			return;
-		}
+        void RefreshDetectedFields();
 
-		double night = (ActNewFlight.accumulatedNight += t);
-		if (MFBLocation.fPrefRoundNearestTenth)
-			night = Math.round(night * 10.0) / 10.0;
-		m_leNewFlight.decNight = night;
-		
-		if (m_delegate != null)
-			m_delegate.RefreshDetectedFields();
-	}
+        void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc, Boolean fRecording);
 
-	public void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc, Boolean fRecording) {
-		if (m_delegate != null)
-			m_delegate.UpdateStatus(quality, fAirborne, loc, fRecording);
-	}
+        void unPauseFlight();
 
-	public boolean shouldKeepListening() {
-		if (m_leNewFlight == null)	// never started a flight, so no need to keep listening
-			return false;
-		
-		// Stay awake (listening to GPS) IF you have (autodetect OR recording turned) on AND
-		// if the engine is running.
-		boolean fEngineIsRunning = (m_leNewFlight.FlightInProgress());
-		boolean fDoesDetect = (MFBLocation.fPrefAutoDetect || MFBLocation.fPrefRecordFlight);
-		boolean fStayAwake = (fEngineIsRunning && fDoesDetect);
-		
-		Log.w("MFBAndroid", String.format("should keep listening: %s, is Recording: %s", fStayAwake ? "yes" : "no", MFBLocation.IsRecording ? "yes" : "no"));
-		return fStayAwake;
-	}
-	
-	public long saveCurrentFlightId()
-	{
-		long i = -1;
-		if (m_leNewFlight != null && m_leNewFlight.IsNewFlight())
-		{
-			SharedPreferences mPrefs = ((Activity) MFBMain.GetMainContext()).getPreferences(Activity.MODE_PRIVATE);
-	    	SharedPreferences.Editor ed = mPrefs.edit();
-	    	ed.putLong(keyInProgressId, m_leNewFlight.idLocalDB);
-	    	i = m_leNewFlight.idLocalDB;
-	    	ed.commit();
-		}
-		return i;
-	}
-	
-	public static long getInProgressFlightId()
-	{
-		SharedPreferences mPrefs = ((Activity) MFBMain.GetMainContext()).getPreferences(Activity.MODE_PRIVATE);
-		return mPrefs.getLong(keyInProgressId, LogbookEntry.ID_NEW_FLIGHT);
-	}
-	
-	public LogbookEntry getInProgressFlight()
-	{
-		if (m_leNewFlight == null)
-		{
-			long lastNewFlightID = getInProgressFlightId();
-			m_leNewFlight = new LogbookEntry(lastNewFlightID);
-			
-			if (lastNewFlightID != m_leNewFlight.idLocalDB) // save the in-progress ID in case of crash, to prevent turds
-				saveCurrentFlightId();
-		}
-		return m_leNewFlight;
-	}
-	
-	public MFBFlightListener setInProgressFlight(LogbookEntry le)
-	{
-		m_leNewFlight = le;
-		return this;
-	}
-	
-	public MFBFlightListener setDelegate(ListenerFragmentDelegate d)
-	{
-		m_delegate = d;
-		return this;
-	}
+        void saveCurrentFlight();
+    }
+
+    public MFBFlightListener() {
+    }
+
+    private void appendNearest() {
+        m_leNewFlight.szRoute = Airport.AppendNearestToRoute(m_leNewFlight.szRoute, MFBMain.GetMainLocation().CurrentLoc());
+    }
+
+    public void TakeoffDetected(Location l, Boolean fIsNight) {
+        if (m_leNewFlight == null) {
+            Log.e("MFBAndroid", "logbookentry is NULL in TakeoffDetected");
+            return;
+        }
+
+        // ignore any new takeoffs after engine stop or before engine start
+        if (!m_leNewFlight.FlightInProgress())
+            return;
+
+        boolean fNeedsViewRefresh = false;
+
+        // create or increment a night-takeoff property.
+        if (fIsNight) {
+            m_leNewFlight.AddNightTakeoff();
+            fNeedsViewRefresh = true;
+        }
+
+        if (m_delegate != null)
+            m_delegate.unPauseFlight();  // don't pause in flight
+
+        if (!m_leNewFlight.isKnownFlightStart()) {
+            if (m_delegate != null)
+                m_delegate.FromView();
+            m_leNewFlight.dtFlightStart = new Date();
+            appendNearest();
+            fNeedsViewRefresh = true;
+        }
+
+        if (fNeedsViewRefresh && m_delegate != null)
+            m_delegate.RefreshDetectedFields();
+    }
+
+    private void SaveInProgressFlight() {
+        if (m_delegate == null) {
+            m_leNewFlight.ToDB();
+            if (m_leNewFlight.IsNewFlight())
+                saveCurrentFlightId();
+        } else {
+            m_delegate.RefreshDetectedFields();
+            m_delegate.saveCurrentFlight();
+        }
+    }
+
+    public void LandingDetected(Location l) {
+        // 3 things to do:
+        // a) update flight end
+        if (m_leNewFlight == null) {
+            Log.e("MFBAndroid", "logbookentry is NULL in LandingDetected	");
+            return;
+        }
+
+        // ignore any new landings after engine stop.
+        if (!m_leNewFlight.FlightInProgress())
+            return;
+
+        m_leNewFlight.dtFlightEnd = new Date();
+
+        // b) increment the number of landings
+        m_leNewFlight.cLandings++;
+
+        // and append the nearest route
+        appendNearest();
+
+        Log.w("MFBAndroid", String.format("Landing received, now %d", m_leNewFlight.cLandings));
+
+        SaveInProgressFlight();
+    }
+
+    public void FSLandingDetected(Boolean fIsNight) {
+        if (m_delegate != null)
+            m_delegate.FromView();
+
+        if (fIsNight)
+            ++m_leNewFlight.cNightLandings;
+        else
+            ++m_leNewFlight.cFullStopLandings;
+
+        if (m_delegate != null)
+            m_delegate.RefreshDetectedFields();
+    }
+
+    public void AddNightTime(double t) {
+        if (m_leNewFlight == null) {
+            Log.e("MFBAndroid", "logbookentry is NULL in AddNightTime");
+            return;
+        }
+
+        double night = (ActNewFlight.accumulatedNight += t);
+        if (MFBLocation.fPrefRoundNearestTenth)
+            night = Math.round(night * 10.0) / 10.0;
+        m_leNewFlight.decNight = night;
+
+        if (m_delegate != null)
+            m_delegate.RefreshDetectedFields();
+    }
+
+    public void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc, Boolean fRecording) {
+        if (m_delegate != null)
+            m_delegate.UpdateStatus(quality, fAirborne, loc, fRecording);
+    }
+
+    public boolean shouldKeepListening() {
+        if (m_leNewFlight == null)    // never started a flight, so no need to keep listening
+            return false;
+
+        // Stay awake (listening to GPS) IF you have (autodetect OR recording turned) on AND
+        // if the engine is running.
+        boolean fEngineIsRunning = (m_leNewFlight.FlightInProgress());
+        boolean fDoesDetect = (MFBLocation.fPrefAutoDetect || MFBLocation.fPrefRecordFlight);
+        boolean fStayAwake = (fEngineIsRunning && fDoesDetect);
+
+        Log.w("MFBAndroid", String.format("should keep listening: %s, is Recording: %s", fStayAwake ? "yes" : "no", MFBLocation.IsRecording ? "yes" : "no"));
+        return fStayAwake;
+    }
+
+    public long saveCurrentFlightId() {
+        long i = -1;
+        if (m_leNewFlight != null && m_leNewFlight.IsNewFlight()) {
+            SharedPreferences mPrefs = ((Activity) MFBMain.GetMainContext()).getPreferences(Activity.MODE_PRIVATE);
+            SharedPreferences.Editor ed = mPrefs.edit();
+            ed.putLong(keyInProgressId, m_leNewFlight.idLocalDB);
+            i = m_leNewFlight.idLocalDB;
+            ed.apply();
+        }
+        return i;
+    }
+
+    private static long getInProgressFlightId() {
+        SharedPreferences mPrefs = ((Activity) MFBMain.GetMainContext()).getPreferences(Activity.MODE_PRIVATE);
+        return mPrefs.getLong(keyInProgressId, LogbookEntry.ID_NEW_FLIGHT);
+    }
+
+    public LogbookEntry getInProgressFlight() {
+        if (m_leNewFlight == null) {
+            long lastNewFlightID = getInProgressFlightId();
+            m_leNewFlight = new LogbookEntry(lastNewFlightID);
+
+            if (lastNewFlightID != m_leNewFlight.idLocalDB) // save the in-progress ID in case of crash, to prevent turds
+                saveCurrentFlightId();
+        }
+        return m_leNewFlight;
+    }
+
+    public MFBFlightListener setInProgressFlight(LogbookEntry le) {
+        m_leNewFlight = le;
+        return this;
+    }
+
+    public MFBFlightListener setDelegate(ListenerFragmentDelegate d) {
+        m_delegate = d;
+        return this;
+    }
 }

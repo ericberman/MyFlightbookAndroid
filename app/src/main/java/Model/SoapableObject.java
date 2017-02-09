@@ -17,64 +17,58 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Model;
+
 import org.kobjects.isodate.IsoDate;
 import org.ksoap2.serialization.SoapObject;
 
 import java.util.Date;
+import java.util.Locale;
 
-public abstract class SoapableObject extends Object {
+public abstract class SoapableObject {
 
-	public SoapableObject()
-	{
-		super();
-	}
-	
-	public SoapableObject(SoapObject so)
-	{
-		super();
-		FromProperties(so);
-	}
-	
-	public SoapObject AddNullableDate(SoapObject so, String propName, Date dt)
-	{
-		if (dt == null)
-			return so.addProperty(propName, "");
-		else
-			return so.addProperty(propName, IsoDate.dateToString(dt, IsoDate.DATE_TIME));
-	}
-	
-	public SoapObject AddDouble(SoapObject so, String propName, Double d)
-	{
-		return so.addProperty(propName, String.format("%.2f", d));
-	}
-	
-	public Date ReadNullableDate(SoapObject so, String propName)
-	{
-		String sz = so.getProperty(propName).toString();
-		if (sz == null || sz.length() == 0)
-			return null;
-		else
-			return IsoDate.stringToDate(sz, IsoDate.DATE_TIME);
-	}
-	
-	private String FromNullableString(Object o)
-	{
-		if (o != null && !o.toString().contains("anyType"))
-			return o.toString();
-		return "";
-	}
-	
-	public String ReadNullableString(SoapObject so, int index)
-	{
-		return FromNullableString(so.getProperty(index));
-	}
-	
-	public String ReadNullableString(SoapObject so, String propName)
-	{
-		return FromNullableString(so.getProperty(propName));
-	}
-	
-	public abstract void ToProperties(SoapObject so);
+    public SoapableObject() {
+        super();
+    }
 
-	public abstract void FromProperties(SoapObject so);
+    public SoapableObject(SoapObject so) {
+        super();
+        FromProperties(so);
+    }
+
+    SoapObject AddNullableDate(SoapObject so, String propName, Date dt) {
+        if (dt == null)
+            return so.addProperty(propName, "");
+        else
+            return so.addProperty(propName, IsoDate.dateToString(dt, IsoDate.DATE_TIME));
+    }
+
+    SoapObject AddDouble(SoapObject so, String propName, Double d) {
+        return so.addProperty(propName, String.format(Locale.US, "%.2f", d));
+    }
+
+    Date ReadNullableDate(SoapObject so, String propName) {
+        String sz = so.getProperty(propName).toString();
+        if (sz == null || sz.length() == 0)
+            return null;
+        else
+            return IsoDate.stringToDate(sz, IsoDate.DATE_TIME);
+    }
+
+    private String FromNullableString(Object o) {
+        if (o != null && !o.toString().contains("anyType"))
+            return o.toString();
+        return "";
+    }
+
+    String ReadNullableString(SoapObject so, int index) {
+        return FromNullableString(so.getProperty(index));
+    }
+
+    String ReadNullableString(SoapObject so, String propName) {
+        return FromNullableString(so.getProperty(propName));
+    }
+
+    public abstract void ToProperties(SoapObject so);
+
+    public abstract void FromProperties(SoapObject so);
 }

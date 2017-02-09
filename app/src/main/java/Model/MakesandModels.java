@@ -22,66 +22,49 @@ import org.ksoap2.serialization.SoapObject;
 
 
 public class MakesandModels extends SoapableObject {
-	
-	public String Description = "";
-	public int ModelId = -1;
-	
-	private final String MANUFACTURER_BREAK = " (";
-	public final String KEY_MODELID = "ModelID";
-	public final String KEY_DESCRIPTION = "Description";
-	
-	public MakesandModels()
-	{
-		super();
-	}
-	
-	public MakesandModels(SoapObject so)
-	{
-		super();
-		FromProperties(so);
-	}
 
-	@Override
-	public String toString()
-	{
-		return Description;
-	}
-	
-	public String getManufacturer()
-	{
-		if (Description.contains(MANUFACTURER_BREAK))
-			return Description.substring(0, Description.indexOf(MANUFACTURER_BREAK));
-		else
-			return Description;
-	}
-	
-	public String getModelName()
-	{
-		if (Description.contains(MANUFACTURER_BREAK))
-			return Description.substring(Description.indexOf(MANUFACTURER_BREAK)).trim();
-		else
-			return Description;
-	}
-	
-	public static MakesandModels getMakeModelByID(int modelId, MakesandModels[] rgmm)
-	{
-		if (rgmm != null)
-			for (MakesandModels mm : rgmm)
-				if (mm.ModelId == modelId)
-					return mm;
-		return null;
-	}
-	
-	@Override
-	public void ToProperties(SoapObject so) {
-		so.addProperty(KEY_DESCRIPTION, Description);
-		so.addProperty(KEY_MODELID, ModelId);
-	}
+    public String Description = "";
+    public int ModelId = -1;
 
-	@Override
-	public void FromProperties(SoapObject so) {
-		Description = so.getProperty(KEY_DESCRIPTION).toString();
-		ModelId = Integer.parseInt(so.getProperty(KEY_MODELID).toString());
-	}
+    private final String KEY_MODELID = "ModelID";
+    private final String KEY_DESCRIPTION = "Description";
+
+    public MakesandModels(SoapObject so) {
+        super();
+        FromProperties(so);
+    }
+
+    @Override
+    public String toString() {
+        return Description;
+    }
+
+    public String getManufacturer() {
+        String MANUFACTURER_BREAK = " (";
+        if (Description.contains(MANUFACTURER_BREAK))
+            return Description.substring(0, Description.indexOf(MANUFACTURER_BREAK));
+        else
+            return Description;
+    }
+
+    public static MakesandModels getMakeModelByID(int modelId, MakesandModels[] rgmm) {
+        if (rgmm != null)
+            for (MakesandModels mm : rgmm)
+                if (mm.ModelId == modelId)
+                    return mm;
+        return null;
+    }
+
+    @Override
+    public void ToProperties(SoapObject so) {
+        so.addProperty(KEY_DESCRIPTION, Description);
+        so.addProperty(KEY_MODELID, ModelId);
+    }
+
+    @Override
+    public void FromProperties(SoapObject so) {
+        Description = so.getProperty(KEY_DESCRIPTION).toString();
+        ModelId = Integer.parseInt(so.getProperty(KEY_MODELID).toString());
+    }
 
 }

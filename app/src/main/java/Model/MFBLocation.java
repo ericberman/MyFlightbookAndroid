@@ -34,50 +34,53 @@ import com.myflightbook.android.ActNewFlight;
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.R;
 
-public class MFBLocation extends Object implements LocationListener {
-	public enum GPSQuality {Unknown, Poor, Good, Excellent};
+public class MFBLocation implements LocationListener {
+    public enum GPSQuality {Unknown, Poor, Good, Excellent}
 
-	public interface FlightEvents {
-		void TakeoffDetected(Location l, Boolean fIsNight);
-		void LandingDetected(Location l);
-		void FSLandingDetected(Boolean fIsNight);
-		void AddNightTime(double t);
-		void UpdateStatus(GPSQuality quality, Boolean fAirborne, Location loc, Boolean fRecording);
-		boolean shouldKeepListening();
-	}
-	
-	private Boolean m_fIsEnabled = true;
-	private Context m_Context = null;
-	private FlightEvents m_Listener = null;
-	
-	private static Location m_lastSeenLoc = null; // last location we've seen
-	private Location m_currentLoc = null; // last good location we've seen
-	private int cSamplesSinceWaking = 0;
-	private Boolean fPreviousLocWasNight = false;
-	private Location PreviousLoc = null;
+    interface FlightEvents {
+        void TakeoffDetected(Location l, Boolean fIsNight);
 
-	public enum AutoFillOptions {None, FlightTime, EngineTime, HobbsTime}
+        void LandingDetected(Location l);
 
-	static public Boolean fPrefRecordFlight = false;
-	static public Boolean fPrefAutoDetect = false;
-	static public Boolean fPrefRoundNearestTenth = false;
-	static public AutoFillOptions fPrefAutoFillHobbs = AutoFillOptions.None;
-	static public AutoFillOptions fPrefAutoFillTime = AutoFillOptions.None;
-	
-	public static Boolean IsRecording = false;
-	public static Boolean IsFlying = false;
-	public static Boolean HasPendingLanding = false;
-	private Boolean IsListening = false;
-	
-	static private final int FINE_LOCATION_PERMISSION = 62;
+        void FSLandingDetected(Boolean fIsNight);
 
-	private void Init() {
-		if (m_Context != null) {
-			this.startListening();
-		}
+        void AddNightTime(double t);
+
+        void UpdateStatus(GPSQuality quality, Boolean fAirborne, Location loc, Boolean fRecording);
+
+        boolean shouldKeepListening();
+    }
+
+    private Boolean m_fIsEnabled = true;
+    private Context m_Context = null;
+    private FlightEvents m_Listener = null;
+
+    private static Location m_lastSeenLoc = null; // last location we've seen
+    private Location m_currentLoc = null; // last good location we've seen
+    private int cSamplesSinceWaking = 0;
+    private Boolean fPreviousLocWasNight = false;
+    private Location PreviousLoc = null;
+
+    public enum AutoFillOptions {None, FlightTime, EngineTime, HobbsTime}
+
+    static public Boolean fPrefRecordFlight = false;
+    static public Boolean fPrefAutoDetect = false;
+    static public Boolean fPrefRoundNearestTenth = false;
+    static public AutoFillOptions fPrefAutoFillHobbs = AutoFillOptions.None;
+    static public AutoFillOptions fPrefAutoFillTime = AutoFillOptions.None;
+
+    public static Boolean IsRecording = false;
+    public static Boolean IsFlying = false;
+    public static Boolean HasPendingLanding = false;
+    private Boolean IsListening = false;
+
+    private void Init() {
+        if (m_Context != null) {
+            this.startListening();
+        }
 
 		/*
-		 if (MFBConstants.fFakeGPS) 
+         if (MFBConstants.fFakeGPS)
 		 { 
 			 m_lastSeenLoc = new Location("MFB");
 			 m_lastSeenLoc.setLatitude(47.906987);
@@ -85,274 +88,230 @@ public class MFBLocation extends Object implements LocationListener {
 			 m_lastSeenLoc.setAltitude(500); 
 		 }
 		 */
-	}
+    }
 
-	private Boolean fCheckPermissions() {
-		if (m_Context == null)
-			return false;
-	
-		return ContextCompat.checkSelfPermission(m_Context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-	}
+    private Boolean fCheckPermissions() {
+        return m_Context != null && ContextCompat.checkSelfPermission(m_Context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
 
+    public void startListening() {
+        if (!IsListening && MFBMain.HasGPS() && !MFBConstants.fFakeGPS) {
+            if (!fCheckPermissions())
+                return;
 
-	
-	public void startListening()
-	{
-		if (!IsListening && MFBMain.HasGPS() && !MFBConstants.fFakeGPS)
-		{
-			if (!fCheckPermissions())
-				return;
+            try {
+                LocationManager lm = (LocationManager) m_Context.getSystemService(Context.LOCATION_SERVICE);
+                if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    return;
 
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        0,
+                        0, this);
+                Log.w("MFBAndroid", String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
+                IsListening = true;
+                if (m_lastSeenLoc == null)
+                    m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (m_lastSeenLoc == null && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+                    m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (m_lastSeenLoc != null)
+                    InformListenerOfStatus(m_lastSeenLoc);
+            } catch (IllegalArgumentException ex) {
+                MFBUtil.Alert(m_Context, m_Context.getString(R.string.errNoGPSTitle), m_Context.getString(R.string.errCantUseGPS) + ex.getMessage());
+            } catch (SecurityException ignored) {
+            }
+        }
+    }
 
-			try
-			{
-				LocationManager lm = (LocationManager) m_Context.getSystemService(Context.LOCATION_SERVICE);
-				if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
-					return;
+    public void stopListening() {
+        if (IsListening && MFBMain.HasGPS()) {
+            if (!fCheckPermissions())
+                return;
 
-				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-						0,
-						0, this);
-				Log.w("MFBAndroid", String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
-				IsListening = true;
-				if (m_lastSeenLoc == null)
-					m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-				if (m_lastSeenLoc == null && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-					m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-				if (m_lastSeenLoc != null)
-					InformListenerOfStatus(m_lastSeenLoc);
-			}
-			catch (IllegalArgumentException ex)
-			{
-				MFBUtil.Alert(m_Context, m_Context.getString(R.string.errNoGPSTitle), m_Context.getString(R.string.errCantUseGPS) + ex.getMessage());
-			}
-			catch (SecurityException ex) { }
-		}
-	}
+            LocationManager lm = (LocationManager) m_Context
+                    .getSystemService(Context.LOCATION_SERVICE);
+            try {
+                lm.removeUpdates(this);
+                Log.w("MFBAndroid", "Stop Listening");
+                IsListening = false;
+            } catch (SecurityException ignored) {
+            }
+        }
+    }
 
-	public void stopListening() {
-		if (IsListening && MFBMain.HasGPS()) {
-			if (!fCheckPermissions())
-				return;
+    public MFBLocation() {
+        super();
+        Init();
+    }
 
-			LocationManager lm = (LocationManager) m_Context
-					.getSystemService(Context.LOCATION_SERVICE);
-			try {
-				lm.removeUpdates(this);
-				Log.w("MFBAndroid", "Stop Listening");
-				IsListening = false;
-			}
-			catch (SecurityException ex) { }
-		}
-	}
+    public void SetListener(FlightEvents l) {
+        m_Listener = l;
+    }
 
-	public MFBLocation() {
-		super();
-		Init();
-	}
-	
-	public void SetListener(FlightEvents l)
-	{
-		m_Listener = l;
-	}
-	
-	public void SetContext(Context c)
-	{
-		m_Context = c;
-	}
+    public void SetContext(Context c) {
+        m_Context = c;
+    }
 
-	public MFBLocation(Context c, FlightEvents l) {
-		super();
-		m_Context = c;
-		m_Listener = l;
-		Init();
-	}
-	
-	public Location CurrentLoc()
-	{
-		return m_lastSeenLoc;
-	}
-	
-	public static Location LastSeenLoc()
-	{
-		return m_lastSeenLoc;
-	}
+    public MFBLocation(Context c, FlightEvents l) {
+        super();
+        m_Context = c;
+        m_Listener = l;
+        Init();
+    }
 
-	public void ResetFlightData() {
-		SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-		try
-		{
-			db.delete("FlightTrack", null, null);
-		}
-		catch (Exception e)
-		{
-			Log.e("MFBAndroid", "Unable to clear track in ResetFlightData");
-		}
-		finally
-		{
-		}
-		IsRecording = false;
-		IsFlying = false;
-		HasPendingLanding = false;
-		InformListenerOfStatus(m_lastSeenLoc);
-	}
+    public Location CurrentLoc() {
+        return m_lastSeenLoc;
+    }
 
-	public String getFlightDataString() {
-		return LocSample.FlightDataFromSamples(LocSample.flightPathFromDB());
-	}
+    public static Location LastSeenLoc() {
+        return m_lastSeenLoc;
+    }
 
-	private void InformListenerOfStatus(Location newLoc)
-	{
-		if (m_Listener == null)
-			return;
-		
-		if (newLoc == null)
-		{
-			m_Listener.UpdateStatus(GPSQuality.Unknown, IsFlying, newLoc, IsRecording);
-			return;
-		}
-		
-		GPSQuality q = GPSQuality.Unknown;
-		if (newLoc.hasAccuracy())
-		{
-			float Accuracy = newLoc.getAccuracy();
-			if (Accuracy <= 0.0 || Accuracy > MFBConstants.MIN_ACCURACY)
-				q = GPSQuality.Poor;
-			else
-				q = (Accuracy < (MFBConstants.MIN_ACCURACY / 2.0)) ? GPSQuality.Excellent : GPSQuality.Good; 
-		}
-		
-		m_Listener.UpdateStatus(q, IsFlying, newLoc, IsRecording);
-	}
+    public void ResetFlightData() {
+        SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+        try {
+            db.delete("FlightTrack", null, null);
+        } catch (Exception e) {
+            Log.e("MFBAndroid", "Unable to clear track in ResetFlightData");
+        }
+        IsRecording = false;
+        IsFlying = false;
+        HasPendingLanding = false;
+        InformListenerOfStatus(m_lastSeenLoc);
+    }
 
-	public void onLocationChanged(Location newLoc) {
-		LocSample loc = new LocSample(newLoc);
-		
-		double SpeedKts = loc.Speed;
-		double Accuracy = loc.HError;
-		Boolean fValidQuality = (Accuracy > 0 && Accuracy < MFBConstants.MIN_ACCURACY);
-		Boolean fValidSpeed = (SpeedKts > 0.1);
-		Boolean fValidTime = true;
-		
-		m_lastSeenLoc = newLoc; // always update this, even if we don't use it.
-		
-		if (m_currentLoc == null)
-			m_currentLoc = m_lastSeenLoc;
-		
-		// see if things are too tightly spaced
-		// get the time interval since the last location update
-		long dt = loc.TimeStamp.getTime() - m_currentLoc.getTime();
-		if ((IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_AIRBORNE) ||
-			(!IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_TAXI))
-			fValidTime = false;
-					
-		if (!m_fIsEnabled)
-			return;
-		
-		// only do detection/recording with quality samples
-		if ((++cSamplesSinceWaking > MFBConstants.BOGUS_SAMPLE_COUNT) && fValidSpeed && fValidQuality && fValidTime)
-		{
+    public String getFlightDataString() {
+        return LocSample.FlightDataFromSamples(LocSample.flightPathFromDB());
+    }
+
+    private void InformListenerOfStatus(Location newLoc) {
+        if (m_Listener == null)
+            return;
+
+        if (newLoc == null) {
+            m_Listener.UpdateStatus(GPSQuality.Unknown, IsFlying, null, IsRecording);
+            return;
+        }
+
+        GPSQuality q = GPSQuality.Unknown;
+        if (newLoc.hasAccuracy()) {
+            float Accuracy = newLoc.getAccuracy();
+            if (Accuracy <= 0.0 || Accuracy > MFBConstants.MIN_ACCURACY)
+                q = GPSQuality.Poor;
+            else
+                q = (Accuracy < (MFBConstants.MIN_ACCURACY / 2.0)) ? GPSQuality.Excellent : GPSQuality.Good;
+        }
+
+        m_Listener.UpdateStatus(q, IsFlying, newLoc, IsRecording);
+    }
+
+    public void onLocationChanged(Location newLoc) {
+        LocSample loc = new LocSample(newLoc);
+
+        double SpeedKts = loc.Speed;
+        double Accuracy = loc.HError;
+        Boolean fValidQuality = (Accuracy > 0 && Accuracy < MFBConstants.MIN_ACCURACY);
+        Boolean fValidSpeed = (SpeedKts > 0.1);
+        Boolean fValidTime = true;
+
+        m_lastSeenLoc = newLoc; // always update this, even if we don't use it.
+
+        if (m_currentLoc == null)
+            m_currentLoc = m_lastSeenLoc;
+
+        // see if things are too tightly spaced
+        // get the time interval since the last location update
+        long dt = loc.TimeStamp.getTime() - m_currentLoc.getTime();
+        if ((IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_AIRBORNE) ||
+                (!IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_TAXI))
+            fValidTime = false;
+
+        if (!m_fIsEnabled)
+            return;
+
+        // only do detection/recording with quality samples
+        if ((++cSamplesSinceWaking > MFBConstants.BOGUS_SAMPLE_COUNT) && fValidSpeed && fValidQuality && fValidTime) {
             SunriseSunsetTimes sst = new SunriseSunsetTimes(loc.TimeStamp, loc.Latitude, loc.Longitude);
 
-			// it's a good sample - use it
-			m_currentLoc = newLoc;
-			
-			if (PreviousLoc != null && fPreviousLocWasNight && sst.IsCivilNight && MFBLocation.fPrefAutoDetect)
-			{
-				double t = (newLoc.getTime() - PreviousLoc.getTime()) / 3600000.0;
-				if (t < .5 && m_Listener != null)	// limit of half an hour between samples for night time
-					m_Listener.AddNightTime(t);
-			}
-			fPreviousLocWasNight = sst.IsCivilNight;
-			PreviousLoc = newLoc;
-			
-			// detect takeoffs/landings  These are different speeds to prevent bouncing
-			if (MFBLocation.fPrefAutoDetect) 
-			{
-				if (IsFlying)
-				{
-					if (SpeedKts < MFBTakeoffSpeed.getLandingSpeed())
-					{
-						IsFlying = false;
-						loc.Comment = "Landing detected";
-						Log.w("MFBAndroid", "Landing detected...");
-						HasPendingLanding = true;
-						if (m_Listener != null)
-						{
-							Log.w("MFBAndroid", "Notifying listener...");
-							m_Listener.LandingDetected(newLoc);
-						}
-					}
-				}
-				else
-				{
-					if (SpeedKts > MFBTakeoffSpeed.getTakeOffspeed())
-					{
-						IsFlying = true;
-						loc.Comment = MFBMain.GetMainContext().getString(R.string.telemetryTakeOff);
-						HasPendingLanding = false; // back in the air - can't be a FS landing
-						if (m_Listener != null)
-						{
-							m_Listener.TakeoffDetected(newLoc, sst.IsFAANight);
-						}
-					}
-				}
-				
+            // it's a good sample - use it
+            m_currentLoc = newLoc;
+
+            if (PreviousLoc != null && fPreviousLocWasNight && sst.IsCivilNight && MFBLocation.fPrefAutoDetect) {
+                double t = (newLoc.getTime() - PreviousLoc.getTime()) / 3600000.0;
+                if (t < .5 && m_Listener != null)    // limit of half an hour between samples for night time
+                    m_Listener.AddNightTime(t);
+            }
+            fPreviousLocWasNight = sst.IsCivilNight;
+            PreviousLoc = newLoc;
+
+            // detect takeoffs/landings  These are different speeds to prevent bouncing
+            if (MFBLocation.fPrefAutoDetect) {
+                if (IsFlying) {
+                    if (SpeedKts < MFBTakeoffSpeed.getLandingSpeed()) {
+                        IsFlying = false;
+                        loc.Comment = "Landing detected";
+                        Log.w("MFBAndroid", "Landing detected...");
+                        HasPendingLanding = true;
+                        if (m_Listener != null) {
+                            Log.w("MFBAndroid", "Notifying listener...");
+                            m_Listener.LandingDetected(newLoc);
+                        }
+                    }
+                } else {
+                    if (SpeedKts > MFBTakeoffSpeed.getTakeOffspeed()) {
+                        IsFlying = true;
+                        loc.Comment = MFBMain.GetMainContext().getString(R.string.telemetryTakeOff);
+                        HasPendingLanding = false; // back in the air - can't be a FS landing
+                        if (m_Listener != null) {
+                            m_Listener.TakeoffDetected(newLoc, sst.IsFAANight);
+                        }
+                    }
+                }
+
                 // see if we've had a full-stop landing
-                if (SpeedKts < MFBConstants.FULL_STOP_SPEED && HasPendingLanding)
-                {
+                if (SpeedKts < MFBConstants.FULL_STOP_SPEED && HasPendingLanding) {
                     if (m_Listener != null)
-                    	m_Listener.FSLandingDetected(sst.IsFAANight);
+                        m_Listener.FSLandingDetected(sst.IsFAANight);
                     Log.w("MFBAndroid", "FS " + (sst.IsFAANight ? "night " : "") + "landing detected");
                     loc.Comment = MFBMain.GetMainContext().getString(sst.IsFAANight ? R.string.telemetryFSNight : R.string.telemetryFSLanding);
                     HasPendingLanding = false;
                 }
-			}
+            }
 
-			if (MFBLocation.fPrefRecordFlight && IsRecording && !ActNewFlight.fPaused)
-			{
-				SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-				try
-				{
-					ContentValues cv = new ContentValues();
-					loc.ToContentValues(cv);
-					long l = db.insert("FlightTrack", null, cv);
-					if (l < 0)
-						throw new Exception("Error saving to flight track");
-				}
-				catch (Exception e)
-				{
-					Log.e("MFBAndroid", "Unable to save to flight track");
-				}
-				finally
-				{
-				}
-			}
-		}
-		
-		// rate the quality
-		InformListenerOfStatus(newLoc);
-	}
-	
-	public void setIsRecording(Boolean f)
-	{
-		IsRecording = (fPrefRecordFlight && f);
-	}
-	
-	public Boolean getIsRecording()
-	{
-		return (fPrefRecordFlight && IsRecording);
-	}
+            if (MFBLocation.fPrefRecordFlight && IsRecording && !ActNewFlight.fPaused) {
+                SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+                try {
+                    ContentValues cv = new ContentValues();
+                    loc.ToContentValues(cv);
+                    long l = db.insert("FlightTrack", null, cv);
+                    if (l < 0)
+                        throw new Exception("Error saving to flight track");
+                } catch (Exception e) {
+                    Log.e("MFBAndroid", "Unable to save to flight track");
+                }
+            }
+        }
 
-	public void onProviderDisabled(String provider) {
-		m_fIsEnabled = false;
-	}
+        // rate the quality
+        InformListenerOfStatus(newLoc);
+    }
 
-	public void onProviderEnabled(String provider) {
-		m_fIsEnabled = true;
-	}
+    public void setIsRecording(Boolean f) {
+        IsRecording = (fPrefRecordFlight && f);
+    }
 
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-	}
+    public Boolean getIsRecording() {
+        return (fPrefRecordFlight && IsRecording);
+    }
+
+    public void onProviderDisabled(String provider) {
+        m_fIsEnabled = false;
+    }
+
+    public void onProviderEnabled(String provider) {
+        m_fIsEnabled = true;
+    }
+
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
 
 }

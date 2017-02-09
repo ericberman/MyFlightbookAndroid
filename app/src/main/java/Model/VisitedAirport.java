@@ -18,6 +18,8 @@
  */
 package Model;
 
+import android.support.annotation.NonNull;
+
 import org.kobjects.isodate.IsoDate;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
@@ -28,118 +30,104 @@ import java.util.Hashtable;
 
 public class VisitedAirport extends SoapableObject implements KvmSerializable, Comparable<VisitedAirport> {
 
-	public String Code;
-	public Date EarliestDate;
-	public Date LatestDate;
-	public int NumberOfVisits;
-	public Airport airport;
-	public String Aliases;
-	
-	enum VisitedAirportProp {pidCode, pidEarliestDate, pidLatestDate, pidNumVisits, pidAirport, pidAliases}
+    public String Code;
+    public Date EarliestDate;
+    public Date LatestDate;
+    public int NumberOfVisits;
+    public Airport airport;
+    public String Aliases;
 
-	public VisitedAirport()
-	{
-		super();
-	}
-	
-	public VisitedAirport(SoapObject so)
-	{
-		super();
-		FromProperties(so);
-	}
-	
-	public static String toRoute(VisitedAirport[] rgva)
-	{
-		StringBuilder sb = new StringBuilder();
-		for (VisitedAirport va : rgva)
-			sb.append(va.Code + " ");
-		return sb.toString().trim();
-	}
-	
-	public String getAllNames()
-	{
-		if (Aliases == null)
-			return Code;
-		return Code + "," + Aliases;
-	}
-	
-	@Override
-	public void ToProperties(SoapObject so) {
-	}
+    private enum VisitedAirportProp {pidCode, pidEarliestDate, pidLatestDate, pidNumVisits, pidAirport, pidAliases}
 
-	@Override
-	public void FromProperties(SoapObject so) {
-		Code = so.getProperty("Code").toString();
-		try  { Aliases = so.getPropertyAsString("Aliases").toString(); }
-		catch (Exception e) { Aliases = "";}
-		finally {}
-		EarliestDate = IsoDate.stringToDate(so.getProperty("EarliestVisitDate").toString(), IsoDate.DATE);
-		LatestDate = IsoDate.stringToDate(so.getProperty("LatestVisitDate").toString(), IsoDate.DATE);
-		NumberOfVisits = Integer.parseInt(so.getProperty("NumberOfVisits").toString());
-		airport = new Airport();
-		airport.FromProperties((SoapObject) so.getProperty("Airport"));
-	}
+    public VisitedAirport(SoapObject so) {
+        super();
+        FromProperties(so);
+    }
 
-	public Object getProperty(int i) {
-		VisitedAirportProp vap = VisitedAirportProp.values()[i];
-		switch (vap)
-		{
-		case pidCode:
-			return Code;
-		case pidAliases:
-			return Aliases;
-		case pidEarliestDate:
-			return EarliestDate;
-		case pidLatestDate:
-			return LatestDate;
-		case pidNumVisits:
-			return NumberOfVisits;
-		case pidAirport:
-			return airport;
-		}
-		return null;
-	}
+    public static String toRoute(VisitedAirport[] rgva) {
+        StringBuilder sb = new StringBuilder();
+        for (VisitedAirport va : rgva)
+            sb.append(va.Code).append(" ");
+        return sb.toString().trim();
+    }
 
-	public int getPropertyCount() {
-		return VisitedAirportProp.values().length;
-	}
+    @Override
+    public void ToProperties(SoapObject so) {
+    }
 
-	public void getPropertyInfo(int i, @SuppressWarnings("rawtypes") Hashtable h, PropertyInfo pi) {
-		VisitedAirportProp vap = VisitedAirportProp.values()[i];
-		switch (vap)
-		{
-		case pidCode:
-			pi.type = PropertyInfo.STRING_CLASS;
-			pi.name = "Code";
-			break;
-		case pidAliases:
-			pi.type = PropertyInfo.STRING_CLASS;
-			pi.name = "Aliases";
-			break;
-		case pidEarliestDate:
-			pi.type = PropertyInfo.OBJECT_CLASS;
-			pi.name = "EarliestVisitDate";
-			break;
-		case pidLatestDate:
-			pi.type = PropertyInfo.OBJECT_CLASS;
-			pi.name = "LatestVisitDate";
-			break;
-		case pidNumVisits:
-			pi.type = PropertyInfo.INTEGER_CLASS;
-			pi.name = "NumberOfVisits";
-			break;
-		case pidAirport:
-			pi.type = PropertyInfo.OBJECT_CLASS;
-			pi.name = "Airport";
-			break;
-		}
-	}
+    @Override
+    public void FromProperties(SoapObject so) {
+        Code = so.getProperty("Code").toString();
+        try {
+            Aliases = so.getPropertyAsString("Aliases");
+        } catch (Exception e) {
+            Aliases = "";
+        }
+        EarliestDate = IsoDate.stringToDate(so.getProperty("EarliestVisitDate").toString(), IsoDate.DATE);
+        LatestDate = IsoDate.stringToDate(so.getProperty("LatestVisitDate").toString(), IsoDate.DATE);
+        NumberOfVisits = Integer.parseInt(so.getProperty("NumberOfVisits").toString());
+        airport = new Airport();
+        airport.FromProperties((SoapObject) so.getProperty("Airport"));
+    }
 
-	public void setProperty(int arg0, Object arg1) {
-	}
+    public Object getProperty(int i) {
+        VisitedAirportProp vap = VisitedAirportProp.values()[i];
+        switch (vap) {
+            case pidCode:
+                return Code;
+            case pidAliases:
+                return Aliases;
+            case pidEarliestDate:
+                return EarliestDate;
+            case pidLatestDate:
+                return LatestDate;
+            case pidNumVisits:
+                return NumberOfVisits;
+            case pidAirport:
+                return airport;
+        }
+        return null;
+    }
 
-	public int compareTo(VisitedAirport another) {
-		return this.airport.FacilityName.compareToIgnoreCase(another.airport.FacilityName);
-	}
+    public int getPropertyCount() {
+        return VisitedAirportProp.values().length;
+    }
+
+    public void getPropertyInfo(int i, @SuppressWarnings("rawtypes") Hashtable h, PropertyInfo pi) {
+        VisitedAirportProp vap = VisitedAirportProp.values()[i];
+        switch (vap) {
+            case pidCode:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "Code";
+                break;
+            case pidAliases:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "Aliases";
+                break;
+            case pidEarliestDate:
+                pi.type = PropertyInfo.OBJECT_CLASS;
+                pi.name = "EarliestVisitDate";
+                break;
+            case pidLatestDate:
+                pi.type = PropertyInfo.OBJECT_CLASS;
+                pi.name = "LatestVisitDate";
+                break;
+            case pidNumVisits:
+                pi.type = PropertyInfo.INTEGER_CLASS;
+                pi.name = "NumberOfVisits";
+                break;
+            case pidAirport:
+                pi.type = PropertyInfo.OBJECT_CLASS;
+                pi.name = "Airport";
+                break;
+        }
+    }
+
+    public void setProperty(int arg0, Object arg1) {
+    }
+
+    public int compareTo(@NonNull VisitedAirport another) {
+        return this.airport.FacilityName.compareToIgnoreCase(another.airport.FacilityName);
+    }
 
 }

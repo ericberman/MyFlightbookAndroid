@@ -20,108 +20,98 @@ package Model;
 
 public class MFBConstants {
 
-	public static final Boolean fIsDebug = false;
-	public static final Boolean fFakeGPS = false;
-	public static final Boolean fDebugLocal = false;
-	public static final Boolean fFakePix = false;
+    public static final Boolean fIsDebug = false;
+    public static final Boolean fFakeGPS = false;
+    public static final Boolean fDebugLocal = false;
+    public static final Boolean fFakePix = false;
 
-	private static String szIPDebug = "developer.myflightbook.com";
-	private static String szIPDebugRoam = "webmail.hothpark.com";
-	private static String szIPRelease = "myflightbook.com";
-	
-	// Configuration constants
-	//public static final String szIP = "webmail.hothpark.com";
-	public static String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
+    private static String szIPDebug = "developer.myflightbook.com";
+    private static String szIPDebugRoam = "webmail.hothpark.com";
+    private static String szIPRelease = "myflightbook.com";
 
-	// DB Versioning
-	public static final int DBVersionMain = 17;
-	public static final int DBVersionAirports = 18;
-	
-	// To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
-	// To read it: PRAGMA user_version
-	
-	// images
-	public static final String szURL_FlightPicture = "/logbook/public/uploadpicture.aspx";
-	public static final String szURL_AircraftPicture = "/logbook/public/uploadairplanepicture.aspx?id=1";
-	public static final String szIMG_KEY_Flight = "idFlight";
-	public static final String szIMG_KEY_Aircraft = "txtAircraft";
+    // Configuration constants
+    //public static final String szIP = "webmail.hothpark.com";
+    public static String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
 
-	public static final double MPS_TO_KNOTS = 1.94384449;
-	public static final double METERS_TO_FEET = 3.2808399;
-	public static final double METERS_TO_NM = (1.0 / 1852.0);
-	public static final double MS_PER_HOUR = (1000.0 * 60 * 60); // ms per hour
-	
-	public static final double NM_FOR_CROSS_COUNTRY = 50.0;
+    // DB Versioning
+    public static final int DBVersionMain = 17;
+    public static final int DBVersionAirports = 18;
 
-	// speeds for distinguishing takeoff/landing
-	// we want some hysteresis here, so set the take-off speed higher than the
-	// landing speed
-	private static final int MIN_DISTANCE_DEBUG = 5;
-	private static final double MIN_SAMPLE_RATE_TAXI_DEBUG = 10000; // Sample rate in milliseconds
-	private static final double MIN_SAMPLE_RATE_AIRBORNE_DEBUG = 3000;
+    // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
+    // To read it: PRAGMA user_version
 
-	private static final int MIN_DISTANCE_RELEASE = 30;
-	private static final double MIN_SAMPLE_RATE_TAXI_RELEASE = 10000;
-	private static final double MIN_SAMPLE_RATE_AIRBORNE_RELEASE = 3000;
-	
-	public static final int FULL_STOP_SPEED = 5; // 5kts or less is full stop
+    // images
+    static final String szURL_FlightPicture = "/logbook/public/uploadpicture.aspx";
+    static final String szURL_AircraftPicture = "/logbook/public/uploadairplanepicture.aspx?id=1";
+    static final String szIMG_KEY_Flight = "idFlight";
+    static final String szIMG_KEY_Aircraft = "txtAircraft";
 
-	public static int MIN_DISTANCE = fIsDebug ? MIN_DISTANCE_DEBUG
-			: MIN_DISTANCE_RELEASE;
-	public static double MIN_SAMPLE_RATE_TAXI = fIsDebug ? MIN_SAMPLE_RATE_TAXI_DEBUG
-			: MIN_SAMPLE_RATE_TAXI_RELEASE;
-	public static double MIN_SAMPLE_RATE_AIRBORNE = fIsDebug ? MIN_SAMPLE_RATE_AIRBORNE_DEBUG
-			: MIN_SAMPLE_RATE_AIRBORNE_RELEASE;
-	
-	public static final long MIN_SAMPLE_INTERVAL = 2000L; // 2 seconds interval 
+    public static final double MPS_TO_KNOTS = 1.94384449;
+    public static final double METERS_TO_FEET = 3.2808399;
+    public static final double METERS_TO_NM = (1.0 / 1852.0);
+    public static final double MS_PER_HOUR = (1000.0 * 60 * 60); // ms per hour
 
-	// minimum horizontal accuracy for us not to throw things out.
-	public static final float MIN_ACCURACY = 50.0f;
+    public static final double NM_FOR_CROSS_COUNTRY = 50.0;
 
-	// Number of supposedly valid GPS samples to ignore after a wake-up
-	public static final int BOGUS_SAMPLE_COUNT = 1;
+    // speeds for distinguishing takeoff/landing
+    // we want some hysteresis here, so set the take-off speed higher than the
+    // landing speed
+    private static final double MIN_SAMPLE_RATE_TAXI_DEBUG = 10000; // Sample rate in milliseconds
+    private static final double MIN_SAMPLE_RATE_AIRBORNE_DEBUG = 3000;
 
-	// Soap constants
-	public static final String szFaultSeparator = "--->";
+    private static final double MIN_SAMPLE_RATE_TAXI_RELEASE = 10000;
+    private static final double MIN_SAMPLE_RATE_AIRBORNE_RELEASE = 3000;
 
-	// Tabs
-	public static final String tabCurrency = "tabCurrency";
-	public static final String tabRecents = "tabRecents";
-	public static final String tabTotals = "tabTotals";
-	public static final String tabNewFlight = "tabNewFlight";
-	public static final String tabOptions = "tabOptions";
-	public static final String tabAircraft = "tabAircraft";
-	public static final String tabVisitedAirports = "tabVisitedAirports";
-	public static final String tabTraining = "tabTraining";
+    static final int FULL_STOP_SPEED = 5; // 5kts or less is full stop
 
-	// intents
-	public static final String intentViewURL = "com.myflightbook.android.URL";
-	public static final String intentViewTempFile = "com.myflightbook.android.TempFile";
+    static double MIN_SAMPLE_RATE_TAXI = fIsDebug ? MIN_SAMPLE_RATE_TAXI_DEBUG
+            : MIN_SAMPLE_RATE_TAXI_RELEASE;
+    static double MIN_SAMPLE_RATE_AIRBORNE = fIsDebug ? MIN_SAMPLE_RATE_AIRBORNE_DEBUG
+            : MIN_SAMPLE_RATE_AIRBORNE_RELEASE;
 
-	// URLs
-	// TODO: These need to be branded and, in some cases, URLencoded.
-	public static final String urlPrivacy = "http://MyFlightbook.com/logbook/public/privacy.aspx?naked=1";
-	public static final String urlTandC = "http://myflightbook.com/logbook/Public/TandC.aspx?naked=1";
-	public static final String urlContact = "http://myflightbook.com/logbook/public/ContactMe.aspx?email=%s&subj=%s&noCap=1&naked=1";
-	public static final String urlSign = "%s://%s/logbook/public/SignEntry.aspx?idFlight=%d&auth=%s&naked=1"; 
-	public static final String urlFacebook = "http://www.facebook.com/pages/MyFlightbook/145794653106";
-	public static final String urlTwitter = "http://twitter.com/myflightbook";
-	public static final String urlProfile = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
-	public static final String urlCrashReport = "http://%s/logbook/public/CrashReport.aspx";
-	public static final String urlSupport = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=donate";
-	public static final String urlPreferences = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=profile";
-	public static final String urlTraining = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
-	public static final String urlAircraftSchedule = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=aircraftschedule&naked=1&ac=%d";
-	public static final String urlFAQ = "http://myflightbook.com/logbook/public/FAQ.aspx?naked=1";
+    // minimum horizontal accuracy for us not to throw things out.
+    static final float MIN_ACCURACY = 50.0f;
 
-	public static final String destMiniFlights = "miniflights";
-	public static final String destProfile = "profile";
-	
-	// Control IDs
-	public static final int CurrencyTableIDBase = 20000;
-	
-	// Formatting strings
-	public static final String TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
+    // Number of supposedly valid GPS samples to ignore after a wake-up
+    static final int BOGUS_SAMPLE_COUNT = 1;
 
-	public static final String LOG_TAG = "MFBAndroid";
+    // Soap constants
+    public static final String szFaultSeparator = "--->";
+
+    // Tabs
+    public static final String tabCurrency = "tabCurrency";
+    public static final String tabRecents = "tabRecents";
+    public static final String tabTotals = "tabTotals";
+    public static final String tabNewFlight = "tabNewFlight";
+    public static final String tabOptions = "tabOptions";
+    public static final String tabAircraft = "tabAircraft";
+    public static final String tabVisitedAirports = "tabVisitedAirports";
+    public static final String tabTraining = "tabTraining";
+
+    // intents
+    public static final String intentViewURL = "com.myflightbook.android.URL";
+    public static final String intentViewTempFile = "com.myflightbook.android.TempFile";
+
+    // URLs
+    // TODO: These need to be branded and, in some cases, URLencoded.
+    public static final String urlPrivacy = "http://MyFlightbook.com/logbook/public/privacy.aspx?naked=1";
+    public static final String urlTandC = "http://myflightbook.com/logbook/Public/TandC.aspx?naked=1";
+    public static final String urlContact = "http://myflightbook.com/logbook/public/ContactMe.aspx?email=%s&subj=%s&noCap=1&naked=1";
+    public static final String urlSign = "%s://%s/logbook/public/SignEntry.aspx?idFlight=%d&auth=%s&naked=1";
+    public static final String urlFacebook = "http://www.facebook.com/pages/MyFlightbook/145794653106";
+    public static final String urlTwitter = "http://twitter.com/myflightbook";
+    public static final String urlProfile = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
+    public static final String urlCrashReport = "http://%s/logbook/public/CrashReport.aspx";
+    public static final String urlSupport = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=donate";
+    public static final String urlPreferences = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=profile";
+    public static final String urlTraining = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
+    public static final String urlAircraftSchedule = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=aircraftschedule&naked=1&ac=%d";
+    public static final String urlFAQ = "http://myflightbook.com/logbook/public/FAQ.aspx?naked=1";
+
+    public static final String destProfile = "profile";
+
+    // Formatting strings
+    static final String TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
+
+    public static final String LOG_TAG = "MFBAndroid";
 }
