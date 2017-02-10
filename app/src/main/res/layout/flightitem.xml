@@ -44,7 +44,7 @@
         android:id="@+id/imgSigState"
         android:layout_width="32dip"
         android:layout_height="32dip"
-        android:layout_gravity="center_vertical|right"
+        android:layout_gravity="center_vertical|end"
 
         android:contentDescription="@string/strEmpty"
         android:padding="4dip" />

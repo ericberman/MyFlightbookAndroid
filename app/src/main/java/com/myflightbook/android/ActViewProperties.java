@@ -255,7 +255,8 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         setListAdapter(mAdapter);
 
         getExpandableListView().setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
-                ActViewProperties.this.mActiveProperty = (HashMap<String, String>) ActViewProperties.this.mAdapter.getChild(groupPosition, childPosition);
+            //noinspection unchecked
+            ActViewProperties.this.mActiveProperty = (HashMap<String, String>) ActViewProperties.this.mAdapter.getChild(groupPosition, childPosition);
                 int position = Integer.parseInt(ActViewProperties.this.mActiveProperty.get("Position"));
                 ActViewProperties.this.onItemClick(v, position, id);
                 return false;
@@ -270,6 +271,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         m_rgfpIn = rgfp;
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onItemClick(View view, int position, long id) {
         FlightProperty fp = m_rgfpAll[position];
         switch (fp.getType()) {

@@ -166,7 +166,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             RecentFlightsSvc rfs = new RecentFlightsSvc();
             m_rgFlightRoute = rfs.FlightPathForFlight(AuthToken.m_szAuthToken, m_le.idFlight);
             if ((m_rgFlightRoute != null) && (m_rgFlightRoute.length > 0))
-                ActFlightMap.this.runOnUiThread(() -> updateMapElements());
+                ActFlightMap.this.runOnUiThread(ActFlightMap.this::updateMapElements);
         }
     }
 

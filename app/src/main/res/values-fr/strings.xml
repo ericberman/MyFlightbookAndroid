@@ -7,7 +7,7 @@
 
     <string name="UserName">Entrez votre adresse mail:</string>
     <string name="Password">Entrez votre mot de passe</string>
-    <string name="signin">Connexion sécurisée</string>
+    <string name="signin">Se connecter</string>
 
     <string name="signInPrompt">Vous devez avoir un compte sur MyFlightbook.com pour utiliser MyFlightbook sur Android.</string>
     <string name="statusNotSignedIn">Vous n\'êtes pas identifié.  Merci de vous identifier ou créez un compte.</string>

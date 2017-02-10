@@ -102,7 +102,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     private long mLastVacuum = 0; // ms of last vacuum
 
     private TabHost mTabHost = null;
-    private HashMap<String, TabInfo> mapTabInfo = new HashMap<String, TabInfo>();
+    private HashMap<String, TabInfo> mapTabInfo = new HashMap<>();
     private TabInfo mLastTab = null;
     private int mLastTabIndex = -1;
 
