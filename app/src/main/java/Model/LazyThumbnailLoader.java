@@ -25,14 +25,14 @@ import Model.MFBImageInfo.ImageCacheCompleted;
 
 public class LazyThumbnailLoader implements Runnable, ImageCacheCompleted {
     private ThumbnailedItem[] m_rgItems;
-    @SuppressWarnings("rawtypes")
+
     private ArrayAdapter m_li;
 
     public interface ThumbnailedItem {
         MFBImageInfo getDefaultImage();
     }
 
-    public LazyThumbnailLoader(ThumbnailedItem[] rgItems, @SuppressWarnings("rawtypes") ArrayAdapter li) {
+    public LazyThumbnailLoader(ThumbnailedItem[] rgItems, ArrayAdapter li) {
         m_rgItems = rgItems;
         m_li = li;
     }

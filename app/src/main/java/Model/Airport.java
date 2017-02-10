@@ -427,7 +427,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
         return AirportProp.values().length;
     }
 
-    public void getPropertyInfo(int i, @SuppressWarnings("rawtypes") Hashtable h, PropertyInfo pi) {
+    public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         AirportProp apProp = AirportProp.values()[i];
         switch (apProp) {
             case pidAirportID:

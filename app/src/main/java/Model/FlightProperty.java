@@ -263,7 +263,6 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
         return FPProp.values().length;
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int arg0, Hashtable h, PropertyInfo pi) {
         FPProp f = FPProp.values()[arg0];
         switch (f) {

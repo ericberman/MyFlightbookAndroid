@@ -55,13 +55,13 @@ public class CategoryClass extends SoapableObject implements KvmSerializable, Se
         AltCatClass = 0;
     }
 
-	public CategoryClass()
+	CategoryClass()
 	{
 		super();
 		Init(CatClassID.none);
 	}
 
-	public CategoryClass(CatClassID ccid)
+	private CategoryClass(CatClassID ccid)
 	{
         super();
         Init(ccid);
@@ -140,7 +140,7 @@ public class CategoryClass extends SoapableObject implements KvmSerializable, Se
         return null;
     }
 
-    public void getPropertyInfo(int i, @SuppressWarnings("rawtypes") Hashtable arg1, PropertyInfo pi) {
+    public void getPropertyInfo(int i, Hashtable arg1, PropertyInfo pi) {
         CatClassProp ccp = CatClassProp.values()[i];
         switch (ccp) {
             // Date properties.

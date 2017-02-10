@@ -66,7 +66,6 @@ public class PostingOptions extends SoapableObject implements KvmSerializable {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         postingOptions po = postingOptions.values()[i];
         switch (po) {

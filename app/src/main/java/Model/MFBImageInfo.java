@@ -780,7 +780,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int arg0, Hashtable h, PropertyInfo pi) {
         FPProp f = FPProp.values()[arg0];
         switch (f) {

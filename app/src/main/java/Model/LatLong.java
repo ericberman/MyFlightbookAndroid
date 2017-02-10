@@ -105,7 +105,7 @@ public class LatLong extends SoapableObject implements KvmSerializable {
         return FPProp.values().length;
     }
 
-    public void getPropertyInfo(int i, @SuppressWarnings("rawtypes") Hashtable h, PropertyInfo pi) {
+    public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         FPProp fp = FPProp.values()[i];
         switch (fp) {
             case pidLat:

@@ -177,7 +177,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         return cptPropID.values().length;
     }
 
-    public void getPropertyInfo(int arg0, @SuppressWarnings("rawtypes") Hashtable arg1, PropertyInfo pi) {
+    public void getPropertyInfo(int arg0, Hashtable arg1, PropertyInfo pi) {
         cptPropID pid = cptPropID.values()[arg0];
         switch (pid) {
             case pidFavorite:
