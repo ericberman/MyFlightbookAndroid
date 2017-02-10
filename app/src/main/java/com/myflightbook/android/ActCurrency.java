@@ -110,8 +110,9 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 
     void BindTable() {
         TableLayout tl = (TableLayout) findViewById(R.id.tblCurrency);
-        if (tl != null)
-            tl.removeAllViews();
+        if (tl == null)
+            throw new NullPointerException("tl is null in BindTable (ActCurrency)!");
+        tl.removeAllViews();
         LayoutInflater l = getActivity().getLayoutInflater();
 
         if (m_rgcsi == null)

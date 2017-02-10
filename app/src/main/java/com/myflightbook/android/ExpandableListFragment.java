@@ -19,7 +19,6 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -155,6 +154,7 @@ public class ExpandableListFragment extends Fragment
 * @param position The position of the view in the list
 * @param id The row id of the item that was clicked
 */
+    @SuppressWarnings("UnusedParameters")
     public void onListItemClick(ExpandableListView l, View v, int position, long id) {
     }
 
@@ -169,7 +169,9 @@ public class ExpandableListFragment extends Fragment
             if (!mExpandableListShown && !hadAdapter) {
                 // The list was hidden, and previously didn't have an
                 // adapter. It is now time to show it.
-                setListShown(true, getView().getWindowToken() != null);
+                View v = getView();
+                if (v != null)
+                    setListShown(true, getView().getWindowToken() != null);
             }
         }
     }
@@ -178,7 +180,6 @@ public class ExpandableListFragment extends Fragment
 * Set the currently selected list item to the specified
 * position with the adapter's data
 *
-* @param position
 */
     public void setSelection(int position) {
         ensureList();
@@ -188,6 +189,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the position of the currently selected list item.
 */
+    @SuppressWarnings("unused")
     public int getSelectedItemPosition() {
         ensureList();
         return mExpandableList.getSelectedItemPosition();
@@ -196,6 +198,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the cursor row ID of the currently selected list item.
 */
+    @SuppressWarnings("unused")
     public long getSelectedItemId() {
         ensureList();
         return mExpandableList.getSelectedItemId();
@@ -204,6 +207,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the activity's list view widget.
 */
+    @SuppressWarnings("unused")
     public ExpandableListView getListView() {
         ensureList();
         return mExpandableList;
@@ -214,6 +218,7 @@ public class ExpandableListFragment extends Fragment
 * be shown when the list is empty. If you would like to have it
 * shown, call this method to supply the text it should use.
 */
+    @SuppressWarnings("unused")
     public void setEmptyText(CharSequence text) {
         ensureList();
         if (mStandardEmptyView == null) {
@@ -233,13 +238,14 @@ public class ExpandableListFragment extends Fragment
 *
 * <p>Applications do not normally need to use this themselves. The default
 * behavior of ListFragment is to start with the list not being shown, only
-* showing it once an adapter is given with {@link #setListAdapter(ListAdapter)}.
+* showing it once an adapter is given with ListAdapter.
 * If the list at that point had not been shown, when it does get shown
 * it will be do without the user ever seeing the hidden state.
 *
 * @param shown If true, the list view is shown; if false, the progress
 * indicator. The initial value is true.
 */
+    @SuppressWarnings("unused")
     public void setListShown(boolean shown) {
         setListShown(shown, true);
     }
@@ -248,6 +254,7 @@ public class ExpandableListFragment extends Fragment
 * Like {@link #setListShown(boolean)}, but no animation is used when
 * transitioning from the previous state.
 */
+    @SuppressWarnings("unused")
     public void setListShownNoAnimation(boolean shown) {
         setListShown(shown, false);
     }
@@ -301,6 +308,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the ListAdapter associated with this activity's ListView.
 */
+    @SuppressWarnings("unused")
     public ExpandableListAdapter getListAdapter() {
         return mAdapter;
     }
@@ -412,11 +420,14 @@ public class ExpandableListFragment extends Fragment
 * Updates the screen state (current list and other views) when the
 * content changes.
 *
-* @see Activity#onContentChanged()
 */
 
+    @SuppressWarnings("unused")
     public void onContentChanged() {
 // super.onContentChanged();
+        View v = getView();
+        if (v == null)
+            return;
         View emptyView = getView().findViewById(android.R.id.empty);
         mExpandableList = (ExpandableListView)getView().findViewById(android.R.id.list);
         if (mExpandableList == null) {
@@ -452,6 +463,7 @@ public class ExpandableListFragment extends Fragment
 * Get the ExpandableListAdapter associated with this activity's
 * ExpandableListView.
 */
+    @SuppressWarnings("unused")
     public ExpandableListAdapter getExpandableListAdapter() {
         return mAdapter;
     }
@@ -461,6 +473,7 @@ public class ExpandableListFragment extends Fragment
 *
 * @return The ID of the currently selected group or child.
 */
+    @SuppressWarnings("unused")
     public long getSelectedId() {
         return mExpandableList.getSelectedId();
     }
@@ -476,6 +489,7 @@ public class ExpandableListFragment extends Fragment
 * @return A packed position representation containing the currently
 * selected group or child's position and type.
 */
+    @SuppressWarnings("unused")
     public long getSelectedPosition() {
         return mExpandableList.getSelectedPosition();
     }
@@ -491,6 +505,7 @@ public class ExpandableListFragment extends Fragment
 * it is collapsed.
 * @return Whether the selection was successfully set on the child.
 */
+    @SuppressWarnings("unused")
     public boolean setSelectedChild(int groupPosition, int childPosition, boolean shouldExpandGroup) {
         return mExpandableList.setSelectedChild(groupPosition, childPosition, shouldExpandGroup);
     }
@@ -499,6 +514,7 @@ public class ExpandableListFragment extends Fragment
 * Sets the selection to the specified group.
 * @param groupPosition The position of the group that should be selected.
 */
+    @SuppressWarnings("unused")
     public void setSelectedGroup(int groupPosition) {
         mExpandableList.setSelectedGroup(groupPosition);
     }

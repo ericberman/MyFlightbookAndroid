@@ -256,284 +256,278 @@
 
             <!-- GPS Quality -->
 
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <TableLayout
+                android:id="@+id/sectGPS"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_margin="3dip"
+                android:stretchColumns="1,2,3,4,5,6">
 
-                <!-- GPS Quality -->
-
-                <TableLayout
-                    android:id="@+id/sectGPS"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dip"
-                    android:stretchColumns="1,2,3,4,5,6">
-
-                    <TableRow
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal|center_vertical">
-
-                        <ImageView
-                            android:id="@+id/imgSunrise"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left|center_vertical"
-                            android:contentDescription="@string/lblSunrise"
-                            android:padding="2dip"
-                            android:src="@drawable/sunrise"></ImageView>
-
-                        <TextView
-                            android:id="@+id/txtSunrise"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblSunrise"></TextView>
-
-                        <TextView
-                            android:id="@+id/TextView04"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblElapsedTime"
-                            android:textSize="12sp"></TextView>
-
-                        <TextView
-                            android:id="@+id/TextView06"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:text="@string/lblFlightStatus"
-                            android:textSize="12sp"></TextView>
-
-                        <TextView
-                            android:id="@+id/txtFlightSpeed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:text="@string/lblNoSpeed"
-                            android:textStyle="bold"></TextView>
-
-                        <TextView
-                            android:id="@+id/TextView08"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblFlightGPSQuality"
-                            android:textSize="12sp"></TextView>
-
-                        <TextView
-                            android:id="@+id/txtLatitude"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblLatitude"></TextView>
-
-                        <ImageView
-                            android:id="@+id/imgRecording"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:contentDescription="@string/cdRecording"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:paddingRight="5dip"
-                            android:src="@drawable/recording"
-                            android:visibility="invisible"></ImageView>
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal|center_vertical">
-
-                        <ImageView
-                            android:id="@+id/imgSunset"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left|center_vertical"
-                            android:contentDescription="@string/lblSunset"
-                            android:padding="2dip"
-                            android:src="@drawable/sunset"></ImageView>
-
-                        <TextView
-                            android:id="@+id/txtSunset"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblSunset"></TextView>
-
-                        <TextView
-                            android:id="@+id/txtElapsedTime"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblStartingTime"
-                            android:textStyle="bold"></TextView>
-
-                        <TextView
-                            android:id="@+id/txtFlightStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:text="@string/lblUnknown"
-                            android:textStyle="bold"></TextView>
-
-                        <TextView
-                            android:id="@+id/txtFlightAltitude"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:text="@string/lblNoAltitude"
-                            android:textStyle="bold"></TextView>
-
-                        <TextView
-                            android:id="@+id/txtFlightGPSQuality"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblUnknown"
-                            android:textStyle="bold"></TextView>
-
-                        <TextView
-                            android:id="@+id/txtLongitude"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblLongitude"></TextView>
-
-                        <ImageButton
-                            android:id="@+id/btnPausePlay"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:contentDescription="@string/cdPauseFlight"
-                            android:paddingRight="5dip"
-                            android:src="@drawable/pause" />
-                    </TableRow>
-                </TableLayout>
-
-                <TableLayout
+                <TableRow
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="3dip">
+                    android:gravity="center_horizontal|center_vertical">
 
-                    <TableRow
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center_horizontal"
-                        android:padding="3dip">
-
-                        <TextView
-                            android:id="@+id/lblHobbsStart"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:width="100dip"
-                            android:gravity="center_horizontal"
-                            android:text="@string/lblHobbsStart" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:width="100dip"
-                            android:gravity="center_horizontal"
-                            android:text="@string/lblEngineStart" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:width="100dip"
-                            android:gravity="center_horizontal"
-                            android:text="@string/lblFlightStart" />
-                    </TableRow>
-
-                    <TableRow
+                    <ImageView
+                        android:id="@+id/imgSunrise"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:padding="3dip">
+                        android:layout_gravity="start|center_vertical"
+                        android:contentDescription="@string/lblSunrise"
+                        android:padding="2dip"
+                        android:src="@drawable/sunrise" />
 
-                        <Model.DecimalEdit
-                            android:id="@+id/txtHobbsStart"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:width="90dip"
-                            android:ems="10"
-                            mfb:EditMode="DECIMAL" />
-
-                        <Button
-                            android:id="@+id/btnFlightStartSet"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblTouchForNow" />
-
-                        <Button
-                            android:id="@+id/btnEngineStartSet"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblTouchForNow" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center_horizontal"
-                        android:padding="3dip">
-
-                        <TextView
-                            android:id="@+id/lblHobbsEnd"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:width="100dip"
-                            android:gravity="center_horizontal"
-                            android:text="@string/lblHobbsEnd" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:width="100dip"
-                            android:gravity="center_horizontal"
-                            android:text="@string/lblEngineEnd" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:width="100dip"
-                            android:gravity="center_horizontal"
-                            android:text="@string/lblFlightEnd" />
-                    </TableRow>
-
-                    <TableRow
+                    <TextView
+                        android:id="@+id/txtSunrise"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:padding="3dip">
+                        android:text="@string/lblSunrise" />
 
-                        <Model.DecimalEdit
-                            android:id="@+id/txtHobbsEnd"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:width="90dip"
-                            android:nextFocusDown="@+id/txtNight"
-                            mfb:EditMode="DECIMAL" />
+                    <TextView
+                        android:id="@+id/TextView04"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblElapsedTime"
+                        android:textSize="12sp" />
 
-                        <Button
-                            android:id="@+id/btnEngineEndSet"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblTouchForNow" />
+                    <TextView
+                        android:id="@+id/TextView06"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="@string/lblFlightStatus"
+                        android:textSize="12sp" />
 
-                        <Button
-                            android:id="@+id/btnFlightEndSet"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/lblTouchForNow" />
-                    </TableRow>
-                </TableLayout>
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtFlightSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="@string/lblNoSpeed"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/TextView08"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblFlightGPSQuality"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txtLatitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblLatitude" />
+
+                    <ImageView
+                        android:id="@+id/imgRecording"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:contentDescription="@string/cdRecording"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:paddingStart="5dip"
+                        android:paddingEnd="5dip"
+                        android:src="@drawable/recording"
+                        android:visibility="invisible" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal|center_vertical">
+
+                    <ImageView
+                        android:id="@+id/imgSunset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:contentDescription="@string/lblSunset"
+                        android:padding="2dip"
+                        android:src="@drawable/sunset" />
+
+                    <TextView
+                        android:id="@+id/txtSunset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblSunset" />
+
+                    <TextView
+                        android:id="@+id/txtElapsedTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblStartingTime"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtFlightStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="@string/lblUnknown"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtFlightAltitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="@string/lblNoAltitude"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtFlightGPSQuality"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblUnknown"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtLongitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblLongitude" />
+
+                    <ImageButton
+                        android:id="@+id/btnPausePlay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:contentDescription="@string/cdPauseFlight"
+                        android:paddingEnd="5dip"
+                        android:paddingStart="5dip"
+                        android:src="@drawable/pause" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip">
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_horizontal"
+                    android:padding="3dip">
+
+                    <TextView
+                        android:id="@+id/lblHobbsStart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:width="100dip"
+                        android:gravity="center_horizontal"
+                        android:text="@string/lblHobbsStart" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:width="100dip"
+                        android:gravity="center_horizontal"
+                        android:text="@string/lblEngineStart" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:width="100dip"
+                        android:gravity="center_horizontal"
+                        android:text="@string/lblFlightStart" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:padding="3dip">
+
+                    <Model.DecimalEdit
+                        android:id="@+id/txtHobbsStart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:width="90dip"
+                        android:ems="10"
+                        mfb:EditMode="DECIMAL" />
+
+                    <Button
+                        android:id="@+id/btnFlightStartSet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblTouchForNow" />
+
+                    <Button
+                        android:id="@+id/btnEngineStartSet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblTouchForNow" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_horizontal"
+                    android:padding="3dip">
+
+                    <TextView
+                        android:id="@+id/lblHobbsEnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:gravity="center_horizontal"
+                        android:text="@string/lblHobbsEnd" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:gravity="center_horizontal"
+                        android:text="@string/lblEngineEnd" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:gravity="center_horizontal"
+                        android:text="@string/lblFlightEnd" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:padding="3dip">
+
+                    <Model.DecimalEdit
+                        android:id="@+id/txtHobbsEnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:width="90dip"
+                        android:nextFocusDown="@+id/txtNight"
+                        mfb:EditMode="DECIMAL" />
+
+                    <Button
+                        android:id="@+id/btnEngineEndSet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblTouchForNow" />
+
+                    <Button
+                        android:id="@+id/btnFlightEndSet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblTouchForNow" />
+                </TableRow>
+            </TableLayout>
 
         </LinearLayout>
         <!-- Remainder of "In the Cockpit" -->
@@ -826,7 +820,7 @@
                 android:id="@+id/ckFacebook"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/fb_f_logo"
+                android:drawableStart="@drawable/fb_f_logo"
                 android:drawablePadding="3dip"
                 android:text="@string/lblFacebook" />
 
@@ -834,7 +828,7 @@
                 android:id="@+id/ckTwitter"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/twitter_logo_blue"
+                android:drawableStart="@drawable/twitter_logo_blue"
                 android:drawablePadding="3dip"
                 android:text="@string/lblTwitter" />
 
@@ -842,7 +836,7 @@
                 android:id="@+id/ckMyFlightbook"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/icon"
+                android:drawableStart="@drawable/icon"
                 android:drawablePadding="3dip"
                 android:text="@string/lblMyFlightbook" />
         </LinearLayout>

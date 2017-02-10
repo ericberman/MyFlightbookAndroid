@@ -2,29 +2,28 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_margin="4dip" >
+    android:layout_margin="4dip">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TableLayout
             android:id="@+id/TableLayout01"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp" >
+            android:padding="5dp">
 
             <TableRow
                 android:id="@+id/tableRowText"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/fqTextContains" >
-                </TextView>
+                    android:text="@string/fqTextContains" />
 
                 <EditText
                     android:id="@+id/fqGeneralText"
@@ -36,13 +35,12 @@
             <TableRow
                 android:id="@+id/tableRowAirports"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/fqAirportsVisited" >
-                </TextView>
+                    android:text="@string/fqAirportsVisited" />
 
                 <EditText
                     android:id="@+id/fqAirports"
@@ -56,161 +54,172 @@
                 android:id="@+id/rbDistanceTypeGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/rbDistanceAny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/FlightQueryDistanceAllFlights" >
-                </RadioButton>
+                    android:text="@string/FlightQueryDistanceAllFlights" />
 
                 <RadioButton
                     android:id="@+id/rbDistanceLocal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/FlightQueryDistanceLocalFlights" >
-                </RadioButton>
+                    android:text="@string/FlightQueryDistanceLocalFlights" />
 
                 <RadioButton
                     android:id="@+id/rbDistanceNonlocal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/FlightQueryDistanceNonLocalFlights" >
-                </RadioButton>
+                    android:text="@string/FlightQueryDistanceNonLocalFlights" />
             </RadioGroup>
         </TableLayout>
 
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/txtFQDatesHeader" android:clickable="true" android:drawableStart="@drawable/collapse_light" android:text="@string/fqFlightDate" style="@style/DividerBar"></TextView>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:id="@+id/sectFQDates" android:orientation="vertical">
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/txtFQDatesHeader"
+            style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dip"
-            android:orientation="horizontal" >
+            android:clickable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:text="@string/fqFlightDate" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDateStartDate" >
-            </TextView>
-
-            <Button
-                android:id="@+id/btnfqDateStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false" >
-            </Button>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDateEndDate" >
-            </TextView>
-
-            <Button
-                android:id="@+id/btnfqDateEnd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false" >
-            </Button>
-        </LinearLayout>
-
-        <RadioGroup
-            android:id="@+id/rbCommonTimeGroup"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/sectFQDates"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
-            <RadioButton
-                android:id="@+id/rbAlltime"
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dip"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDateStartDate" />
+
+                <Button
+                    android:id="@+id/btnfqDateStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDateEndDate" />
+
+                <Button
+                    android:id="@+id/btnfqDateEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false" />
+            </LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/rbCommonTimeGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/fqDateAllTime" />
+                android:orientation="vertical">
 
-            <RadioButton
-                android:id="@+id/rbYTD"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDateYTD" />
+                <RadioButton
+                    android:id="@+id/rbAlltime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDateAllTime" />
 
-            <RadioButton
-                android:id="@+id/rbPreviousYear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDatePreviousYear" />
+                <RadioButton
+                    android:id="@+id/rbYTD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDateYTD" />
 
-            <RadioButton
-                android:id="@+id/rbThisMonth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDateThisMonth" />
+                <RadioButton
+                    android:id="@+id/rbPreviousYear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDatePreviousYear" />
 
-            <RadioButton
-                android:id="@+id/rbPreviousMonth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDatePreviousMonth" />
+                <RadioButton
+                    android:id="@+id/rbThisMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDateThisMonth" />
 
-            <RadioButton
-                android:id="@+id/rbTrailing30"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDate30Days" />
+                <RadioButton
+                    android:id="@+id/rbPreviousMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDatePreviousMonth" />
 
-            <RadioButton
-                android:id="@+id/rbTrailing90"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDate90Days" />
+                <RadioButton
+                    android:id="@+id/rbTrailing30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDate30Days" />
 
-            <RadioButton
-                android:id="@+id/rbTrailing6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDate6Months" />
+                <RadioButton
+                    android:id="@+id/rbTrailing90"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDate90Days" />
 
-            <RadioButton
-                android:id="@+id/rbTrailing12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDate12Months" />
+                <RadioButton
+                    android:id="@+id/rbTrailing6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDate6Months" />
 
-            <RadioButton
-                android:id="@+id/rbCustom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fqDateCustom" />
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/rbTrailing12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDate12Months" />
+
+                <RadioButton
+                    android:id="@+id/rbCustom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqDateCustom" />
+            </RadioGroup>
         </LinearLayout>
 
         <TextView
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/fqFlightAircraft" >
-        </TextView>
+            android:text="@string/fqFlightAircraft" />
 
         <com.myflightbook.android.MultiSpinner
             android:id="@+id/multispinnerAircraft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="4dip" >
-        </com.myflightbook.android.MultiSpinner>
+            android:layout_margin="4dip" />
 
         <!-- Aircraft Features -->
 
-        <TextView android:text="@string/fqAircraftFeatures" style="@style/DividerBar" android:id="@+id/txtFQACFeatures" android:clickable="true" android:drawableStart="@drawable/collapse_light"></TextView>
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/sectFQAircraftFeatures">
+        <TextView
+            android:id="@+id/txtFQACFeatures"
+            style="@style/DividerBar"
+            android:clickable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:text="@string/fqAircraftFeatures" />
+
+        <LinearLayout
+            android:id="@+id/sectFQAircraftFeatures"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <CheckBox
                     android:id="@+id/ckIsTailwheel"
@@ -240,7 +249,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <CheckBox
                     android:id="@+id/ckIsRetract"
@@ -265,19 +274,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/afMotorglider" />
+
                 <CheckBox
                     android:id="@+id/ckIsMultiEngineHeli"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/afMultiEngineHeli" />
-        	</LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <RadioGroup
             android:id="@+id/rbEngineTypeGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/rbAllEngines"
@@ -314,14 +324,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/afEngineElectric" />
-           
+
         </RadioGroup>
 
         <RadioGroup
             android:id="@+id/rbInstanceTypeGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/rbInstanceAny"
@@ -346,8 +356,7 @@
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/fqFlightModel" >
-        </TextView>
+            android:text="@string/fqFlightModel" />
 
         <!-- Make/models -->
 
@@ -356,40 +365,49 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="4dip" >
-        </com.myflightbook.android.MultiSpinner>
-	    <EditText android:layout_width="fill_parent" android:layout_height="wrap_content"
-	        android:id="@+id/fqModelName"
-	        android:hint="@string/fqFlightModelNamePrompt" />
-        
-		<!-- Categories/Classes -->
-		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/ccHeader" style="@style/DividerBar"></TextView>
-	    <com.myflightbook.android.MultiSpinner android:layout_margin="4dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
-	        android:layout_gravity="center_horizontal"
-			android:id="@+id/multispinnerCategoryClasses"></com.myflightbook.android.MultiSpinner>
-        
-        <!-- Flight Features -->
+            android:layout_margin="4dip" />
 
+        <EditText
+            android:id="@+id/fqModelName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/fqFlightModelNamePrompt" />
 
+        <!-- Categories/Classes -->
         <TextView
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
+            android:text="@string/ccHeader" />
+
+        <com.myflightbook.android.MultiSpinner
+            android:id="@+id/multispinnerCategoryClasses"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="4dip" />
+
+        <!-- Flight Features -->
+
+
+        <TextView
             android:id="@+id/txtFQFlightFeatures"
+            style="@style/DividerBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqFlightFeatures" >
-        </TextView>
+            android:text="@string/fqFlightFeatures" />
 
         <LinearLayout
             android:id="@+id/sectFQFlightFeatures"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <CheckBox
                     android:id="@+id/ckHasFSLandings"
@@ -437,7 +455,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <CheckBox
                     android:id="@+id/ckHasIMC"
@@ -462,7 +480,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ffIsSigned" />
-                
+
                 <CheckBox
                     android:id="@+id/ckHasDual"
                     android:layout_width="wrap_content"
@@ -488,14 +506,21 @@
                     android:text="@string/ffPIC" />
             </LinearLayout>
         </LinearLayout>
-        
-  		<!--  Properties -->
-		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/fqProperties" style="@style/DividerBar"></TextView>
-	    <com.myflightbook.android.MultiSpinner android:layout_margin="4dip" android:layout_width="wrap_content" android:layout_height="wrap_content"
-	        android:layout_gravity="center_horizontal"
-			android:id="@+id/multispinnerProps">
-	    </com.myflightbook.android.MultiSpinner>
-        
+
+        <!--  Properties -->
+        <TextView
+            style="@style/DividerBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fqProperties" />
+
+        <com.myflightbook.android.MultiSpinner
+            android:id="@+id/multispinnerProps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="4dip" />
+
     </LinearLayout>
 
 </ScrollView>

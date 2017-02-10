@@ -38,7 +38,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -126,6 +125,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 szComments = le.szComments.trim();
 
                 if (le.hasImages() || (ac != null && ac.HasImage())) {
+                    //noinspection ConstantConditions - ac.AircraftImages cannot be null because ac.HasImage() has already verified that it isn't.
                     MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.AircraftImages[0];
                     Bitmap b = mfbii.bitmapFromThumb();
                     if (b != null) {
@@ -276,11 +276,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
         getListView().setSelectionFromTop(index, top);
 
-        getListView().setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                ActRecentsWS.this.onItemClick(a, v, position, id);
-            }
-        });
+        getListView().setOnItemClickListener(ActRecentsWS.this::onItemClick);
         new Thread(new LazyThumbnailLoader(m_rgLe, (FlightAdapter) this.getListAdapter())).start();
     }
 

@@ -487,7 +487,7 @@
     <string name="ccPoweredParaglider">Powered Paraglider</string>
 
     <!-- Empty string -->
-    <string name="strEmpty"></string>
+    <string name="strEmpty" />
 
     <!-- Approach Helper -->
     <string name="ahApproachHelper">Details for Instrument Approaches:</string>
