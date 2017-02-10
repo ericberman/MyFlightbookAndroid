@@ -3,7 +3,6 @@
     android:id="@+id/LinearLayout01"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/table_background"
     android:orientation="horizontal"
     android:padding="10dp">
 
