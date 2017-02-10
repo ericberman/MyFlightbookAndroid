@@ -211,7 +211,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         if (ActNewFlight.lastNewFlightID > 0) {
             for (LogbookEntry le : rgLeNew)
                 if (le.idLocalDB != ActNewFlight.lastNewFlightID) {
-                    Log.e("MFBAndroid", String.format("DELETING FOUND ORPHANED FLIGHT: %d", le.idLocalDB));
+                    Log.e(MFBConstants.LOG_TAG, String.format("DELETING FOUND ORPHANED FLIGHT: %d", le.idLocalDB));
                     le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
                     le.ToDB();
                     RecentFlightsSvc.ClearCachedFlights();

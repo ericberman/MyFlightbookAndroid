@@ -160,7 +160,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
             myInput.close();
         } catch (Exception ex) {
-            Log.e("MFBAndroid", "Error copying database: " + ex.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Error copying database: " + ex.getMessage());
         } finally {
             // Close the streams
             try {
@@ -200,7 +200,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (m_DBName.compareTo(DB_NAME_MAIN) == 0) {
-            Log.e("MFBAndroid", String.format("Upgrading main DB from %d to %d", oldVersion, newVersion));
+            Log.e(MFBConstants.LOG_TAG, String.format("Upgrading main DB from %d to %d", oldVersion, newVersion));
             // below will attempt to migrate version to version, step by step
             // Initial release was (I believe) version 3, so anything less than that
             while (oldVersion < newVersion) {
@@ -228,7 +228,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         case 16:
                             // Force an upgrade for 7->8 too (added per-user aircraft options)
                             // 9->10 added country codes.
-                            Log.e("MFBAndroid", "Slamming new main database");
+                            Log.e(MFBConstants.LOG_TAG, "Slamming new main database");
                             copyDataBase(); // just force an upgrade, always.  We need to force a download of aircraft again anyhow
                             oldVersion = 16; // will increment below
                             break;
@@ -245,7 +245,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } else // else it is the airport DB.  This is read-only, so we can ALWAYS just slam in a new copy.
         {
             try {
-                Log.e("MFBAndroid", String.format("Upgrading airport DB from %d to %d", oldVersion, newVersion));
+                Log.e(MFBConstants.LOG_TAG, String.format("Upgrading airport DB from %d to %d", oldVersion, newVersion));
                 copyDataBase();
             } catch (IOException e) {
                 e.printStackTrace();

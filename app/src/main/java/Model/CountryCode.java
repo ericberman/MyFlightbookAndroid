@@ -60,7 +60,7 @@ public class CountryCode {
                     m_allCodes.add(new CountryCode(c));
             }
         } catch (Exception e) {
-            Log.e("MFBAndroid", "Unable to retrieve pending flight telemetry data: " + e.getLocalizedMessage());
+            Log.e(MFBConstants.LOG_TAG, "Unable to retrieve pending flight telemetry data: " + e.getLocalizedMessage());
         } finally {
             if (c != null)
                 c.close();

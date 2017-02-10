@@ -289,7 +289,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
                 Arrays.sort(rgap);
             }
         } catch (Exception e) {
-            Log.e("MFBAndroid", "Exception querying airports:" + e.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Exception querying airports:" + e.getMessage());
             // some of the airports could be null; just clear them all out
             rgap = new Airport[0];
         } finally {

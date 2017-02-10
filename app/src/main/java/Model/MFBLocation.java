@@ -107,7 +107,7 @@ public class MFBLocation implements LocationListener {
                 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         0,
                         0, this);
-                Log.w("MFBAndroid", String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
+                Log.w(MFBConstants.LOG_TAG, String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
                 IsListening = true;
                 if (m_lastSeenLoc == null)
                     m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -131,7 +131,7 @@ public class MFBLocation implements LocationListener {
                     .getSystemService(Context.LOCATION_SERVICE);
             try {
                 lm.removeUpdates(this);
-                Log.w("MFBAndroid", "Stop Listening");
+                Log.w(MFBConstants.LOG_TAG, "Stop Listening");
                 IsListening = false;
             } catch (SecurityException ignored) {
             }
@@ -171,7 +171,7 @@ public class MFBLocation implements LocationListener {
         try {
             db.delete("FlightTrack", null, null);
         } catch (Exception e) {
-            Log.e("MFBAndroid", "Unable to clear track in ResetFlightData");
+            Log.e(MFBConstants.LOG_TAG, "Unable to clear track in ResetFlightData");
         }
         IsRecording = false;
         IsFlying = false;
@@ -249,10 +249,10 @@ public class MFBLocation implements LocationListener {
                     if (SpeedKts < MFBTakeoffSpeed.getLandingSpeed()) {
                         IsFlying = false;
                         loc.Comment = "Landing detected";
-                        Log.w("MFBAndroid", "Landing detected...");
+                        Log.w(MFBConstants.LOG_TAG, "Landing detected...");
                         HasPendingLanding = true;
                         if (m_Listener != null) {
-                            Log.w("MFBAndroid", "Notifying listener...");
+                            Log.w(MFBConstants.LOG_TAG, "Notifying listener...");
                             m_Listener.LandingDetected(newLoc);
                         }
                     }
@@ -271,7 +271,7 @@ public class MFBLocation implements LocationListener {
                 if (SpeedKts < MFBConstants.FULL_STOP_SPEED && HasPendingLanding) {
                     if (m_Listener != null)
                         m_Listener.FSLandingDetected(sst.IsFAANight);
-                    Log.w("MFBAndroid", "FS " + (sst.IsFAANight ? "night " : "") + "landing detected");
+                    Log.w(MFBConstants.LOG_TAG, "FS " + (sst.IsFAANight ? "night " : "") + "landing detected");
                     loc.Comment = MFBMain.GetMainContext().getString(sst.IsFAANight ? R.string.telemetryFSNight : R.string.telemetryFSLanding);
                     HasPendingLanding = false;
                 }
@@ -286,7 +286,7 @@ public class MFBLocation implements LocationListener {
                     if (l < 0)
                         throw new Exception("Error saving to flight track");
                 } catch (Exception e) {
-                    Log.e("MFBAndroid", "Unable to save to flight track");
+                    Log.e(MFBConstants.LOG_TAG, "Unable to save to flight track");
                 }
             }
         }

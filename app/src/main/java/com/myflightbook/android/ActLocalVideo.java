@@ -50,7 +50,7 @@ public class ActLocalVideo extends Activity {
         super.onPause();
         if (szTempFile != null && szTempFile.length() > 0) {
             if (!(new File(szTempFile).delete()))
-                Log.v("MFBAndroid", "Local video delete failed");
+                Log.v(MFBConstants.LOG_TAG, "Local video delete failed");
         }
     }
 

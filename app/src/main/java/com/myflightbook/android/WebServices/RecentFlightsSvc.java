@@ -42,6 +42,7 @@ import Model.FlightProperty;
 import Model.FlightQuery;
 import Model.LatLong;
 import Model.LogbookEntry;
+import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MakeModel;
 
@@ -162,7 +163,7 @@ public class RecentFlightsSvc extends MFBSoap {
                     rgLocalIDs[i++] = c.getInt(c.getColumnIndex("_id"));
             }
         } catch (Exception ex) {
-            Log.e("MFBAndroid", ex.getLocalizedMessage());
+            Log.e(MFBConstants.LOG_TAG, ex.getLocalizedMessage());
         } finally {
             if (c != null)
                 c.close();

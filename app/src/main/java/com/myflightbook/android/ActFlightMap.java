@@ -67,6 +67,7 @@ import Model.FlightQuery;
 import Model.LatLong;
 import Model.LocSample;
 import Model.LogbookEntry;
+import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBLocation;
 import Model.MFBUtil;
@@ -338,7 +339,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         try {
             mf.getMapAsync(this);
         } catch (Exception ex) {
-            Log.e("MFBAndroid", ex.getLocalizedMessage());
+            Log.e(MFBConstants.LOG_TAG, ex.getLocalizedMessage());
         }
         return null;
     }

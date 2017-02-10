@@ -56,7 +56,7 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
 
     public void TakeoffDetected(Location l, Boolean fIsNight) {
         if (m_leNewFlight == null) {
-            Log.e("MFBAndroid", "logbookentry is NULL in TakeoffDetected");
+            Log.e(MFBConstants.LOG_TAG, "logbookentry is NULL in TakeoffDetected");
             return;
         }
 
@@ -102,7 +102,7 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         // 3 things to do:
         // a) update flight end
         if (m_leNewFlight == null) {
-            Log.e("MFBAndroid", "logbookentry is NULL in LandingDetected	");
+            Log.e(MFBConstants.LOG_TAG, "logbookentry is NULL in LandingDetected	");
             return;
         }
 
@@ -118,7 +118,7 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         // and append the nearest route
         appendNearest();
 
-        Log.w("MFBAndroid", String.format("Landing received, now %d", m_leNewFlight.cLandings));
+        Log.w(MFBConstants.LOG_TAG, String.format("Landing received, now %d", m_leNewFlight.cLandings));
 
         SaveInProgressFlight();
     }
@@ -138,7 +138,7 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
 
     public void AddNightTime(double t) {
         if (m_leNewFlight == null) {
-            Log.e("MFBAndroid", "logbookentry is NULL in AddNightTime");
+            Log.e(MFBConstants.LOG_TAG, "logbookentry is NULL in AddNightTime");
             return;
         }
 
@@ -166,7 +166,7 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         boolean fDoesDetect = (MFBLocation.fPrefAutoDetect || MFBLocation.fPrefRecordFlight);
         boolean fStayAwake = (fEngineIsRunning && fDoesDetect);
 
-        Log.w("MFBAndroid", String.format("should keep listening: %s, is Recording: %s", fStayAwake ? "yes" : "no", MFBLocation.IsRecording ? "yes" : "no"));
+        Log.w(MFBConstants.LOG_TAG, String.format("should keep listening: %s, is Recording: %s", fStayAwake ? "yes" : "no", MFBLocation.IsRecording ? "yes" : "no"));
         return fStayAwake;
     }
 

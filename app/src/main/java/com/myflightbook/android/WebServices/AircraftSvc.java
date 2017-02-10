@@ -37,6 +37,7 @@ import Model.Aircraft;
 import Model.Aircraft.PilotRole;
 import Model.DBCache;
 import Model.LatLong;
+import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 
@@ -143,7 +144,7 @@ public class AircraftSvc extends MFBSoap {
                         ac.LastAnnual = df.parse(c.getString(cLastAnnual));
                         ac.RegistrationDue = df.parse(c.getString(cRegistrationDue));
                     } catch (Exception ex) {
-                        Log.e("MFBAndroid", "Error getting cached aircraft: " + ex.getMessage());
+                        Log.e(MFBConstants.LOG_TAG, "Error getting cached aircraft: " + ex.getMessage());
                     }
 
                     ac.Last100 = c.getDouble(cLast100);
@@ -157,7 +158,7 @@ public class AircraftSvc extends MFBSoap {
                 }
             }
         } catch (Exception ex) {
-            Log.e("MFBAndroid", "Error getting cached aircraft from db: " + ex.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Error getting cached aircraft from db: " + ex.getMessage());
         } finally {
             if (c != null)
                 c.close();

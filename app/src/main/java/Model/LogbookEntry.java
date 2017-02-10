@@ -174,7 +174,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         // save it to the DB for uploading...
         mfbii.setTargetID(this.idLocalDB);
         mfbii.toDB();
-        Log.w("MFBAndroid", String.format("Adding image %d for flight %d", mfbii.getID(), idLocalDB));
+        Log.w(MFBConstants.LOG_TAG, String.format("Adding image %d for flight %d", mfbii.getID(), idLocalDB));
 
         // and append it to rgExisting.
         MFBImageInfo[] rgmfbNew = (rgFlightImages == null) ? new MFBImageInfo[1] : new MFBImageInfo[rgFlightImages.length + 1];
@@ -833,7 +833,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
             db.delete(FlightProperty.TABLENAME, "idFlight = ?", rgIdArg);
             this.idLocalDB = -1;
         } catch (Exception e) {
-            Log.v("MFBAndroid", "Error deleting pending flight - " + e.getMessage());
+            Log.v(MFBConstants.LOG_TAG, "Error deleting pending flight - " + e.getMessage());
         }
     }
 
@@ -885,7 +885,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         } catch (Exception e) {
             fResult = false;
             szError = e.getMessage();
-            Log.e("MFBAndroid", "Error persisting logbook entry to db - " + szError);
+            Log.e(MFBConstants.LOG_TAG, "Error persisting logbook entry to db - " + szError);
         }
         return fResult;
     }
@@ -927,7 +927,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
             hobbsEnd = c.getDouble(c.getColumnIndex("hobbsEnd"));
             szFlightData = c.getString(c.getColumnIndex("szFlightData"));
         } catch (Exception e) {
-            Log.e("MFBAndroid", "FromCursor failed: " + e.getLocalizedMessage());
+            Log.e(MFBConstants.LOG_TAG, "FromCursor failed: " + e.getLocalizedMessage());
             this.idLocalDB = -1;
         }
     }
@@ -946,7 +946,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
                 } else
                     throw new Exception("Query for flight from db failed!");
             } catch (Exception e) {
-                Log.e("MFBAndroid", "Requested stored flight failed to load - resetting");
+                Log.e(MFBConstants.LOG_TAG, "Requested stored flight failed to load - resetting");
                 this.idLocalDB = -1;
             } finally {
                 if (c != null)

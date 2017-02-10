@@ -310,11 +310,11 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         if ((t - mLastVacuum) > 1000 * 3600 * 24 * 7) {
             SQLiteDatabase db = mDBHelper.getWritableDatabase();
             try {
-                Log.w("MFBAndroid", "running VACUUM command");
+                Log.w(MFBConstants.LOG_TAG, "running VACUUM command");
                 db.execSQL("VACUUM");
                 mLastVacuum = t;
             } catch (Exception e) {
-                Log.e("MFBAndroid", "VACUUM failed: " + e.getLocalizedMessage());
+                Log.e(MFBConstants.LOG_TAG, "VACUUM failed: " + e.getLocalizedMessage());
             }
         }
 

@@ -386,7 +386,7 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
                 } else
                     throw new Exception("Query for flightproperties from db failed!");
             } catch (Exception e) {
-                Log.v("MFBAndroid", "Requested flight properties not read - " + e.getMessage());
+                Log.v(MFBConstants.LOG_TAG, "Requested flight properties not read - " + e.getMessage());
             } finally {
                 if (c != null)
                     c.close();
@@ -416,12 +416,12 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
                     }
                     db.setTransactionSuccessful();
                 } catch (Exception ex) {
-                    Log.v("MFBAndroid", "Error rewriting properties - " + ex.getMessage());
+                    Log.v(MFBConstants.LOG_TAG, "Error rewriting properties - " + ex.getMessage());
                 } finally {
                     db.endTransaction();
                 }
             } catch (Exception e) {
-                Log.v("MFBAndroid", "Error rewriting properties - " + e.getMessage());
+                Log.v(MFBConstants.LOG_TAG, "Error rewriting properties - " + e.getMessage());
             }
         }
     }

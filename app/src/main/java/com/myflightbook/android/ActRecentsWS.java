@@ -55,6 +55,7 @@ import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
 import Model.LazyThumbnailLoader;
 import Model.LogbookEntry;
+import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBImageInfo.ImageCacheCompleted;
 import Model.MFBUtil;
@@ -246,7 +247,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
         if (!m_fIsRefreshing) {
             m_fIsRefreshing = true; // don't refresh if already in progress.
-            Log.d("MFBAndroid", "ActRecentsWS - Refreshing From Server");
+            Log.d(MFBConstants.LOG_TAG, "ActRecentsWS - Refreshing From Server");
             RefreshFlightsTask rft = new RefreshFlightsTask();
             rft.fClearCache = fClearAll;
             rft.execute();

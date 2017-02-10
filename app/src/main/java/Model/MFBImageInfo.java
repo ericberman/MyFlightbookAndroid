@@ -250,7 +250,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                     rgIds[i++] = c.getLong(0);
             }
         } catch (Exception e) {
-            Log.e("MFBAndroid", "Error deleting pending images: " + e.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Error deleting pending images: " + e.getMessage());
         } finally {
             if (c != null)
                 c.close();
@@ -283,7 +283,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 }
             }
         } catch (Exception e) {
-            Log.e("MFBAndroid", "Error getting images for id: " + e.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Error getting images for id: " + e.getMessage());
         } finally {
             if (c != null)
                 c.close();
@@ -310,7 +310,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 }
             }
         } catch (Exception e) {
-            Log.e("MFBAndroid", "Error getting aircraft images: " + e.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Error getting aircraft images: " + e.getMessage());
         } finally {
             if (c != null)
                 c.close();
@@ -349,14 +349,14 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         String szPrefix = mfbii.getImagePrefix();
         String szSuffix = mfbii.getImageSuffix();
 
-        Log.w("MFBAndroid", String.format("Delete orphans for %s", pd.toString()));
+        Log.w(MFBConstants.LOG_TAG, String.format("Delete orphans for %s", pd.toString()));
         // Get a list of all the files
         String[] rgszFiles = c.fileList();
 
         // Now delete any images that match the prefix but which aren't in our list.
         for (String szFile : rgszFiles)
             if (szFile.startsWith(szPrefix) && szFile.endsWith(szSuffix) && !alImages.contains(szFile)) {
-                Log.e("MFBAndroid", "ORPHAN FOUND TO DELETE: " + szFile);
+                Log.e(MFBConstants.LOG_TAG, "ORPHAN FOUND TO DELETE: " + szFile);
                 c.deleteFile(szFile);
             }
     }
@@ -392,14 +392,14 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 try (FileOutputStream fos = MFBMain.GetMainContext().openFileOutput(getImageFile(), Context.MODE_PRIVATE)) {
                     fos.write(m_imgData);
                 } catch (IOException e) {
-                    Log.e("MFBAndroid", "Error saving image full file: " + e.getMessage());
+                    Log.e(MFBConstants.LOG_TAG, "Error saving image full file: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
 
             Log.v("MFBImageInfo", String.format("Saved image, row %d", m_id));
         } catch (Exception e) {
-            Log.e("MFBAndroid", "Error adding image: " + e.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Error adding image: " + e.getMessage());
         }
     }
 
@@ -411,7 +411,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
             Log.v("MFBImageInfo", String.format("deleting img %d, file %s", m_id, getImageFile()));
         } catch (Exception ex) {
-            Log.e("MFBAndroid", String.format("Unable to delete image %d: %s", m_id, ex.getMessage()));
+            Log.e(MFBConstants.LOG_TAG, String.format("Unable to delete image %d: %s", m_id, ex.getMessage()));
         }
     }
 
@@ -491,7 +491,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 fromCursor(c, fGetThumb, fGetFullImage);
             }
         } catch (Exception ex) {
-            Log.e("MFBAndroid", String.format("Unable to load image %d: %s", m_id, ex.getMessage()));
+            Log.e(MFBConstants.LOG_TAG, String.format("Unable to load image %d: %s", m_id, ex.getMessage()));
         } finally {
             if (c != null)
                 c.close();
@@ -615,7 +615,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             }
             if (fDeleteFileWhenDone) {
                 if (!fTemp.delete())  // delete the temp file.
-                    Log.w("MFBAndroid", "Delete of temp file failed");
+                    Log.w(MFBConstants.LOG_TAG, "Delete of temp file failed");
             }
         }
 
@@ -709,7 +709,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
             byte[] rgResponse = new byte[1024];
             int cBytes = in.read(rgResponse);
-            Log.v("MFBAndroid", String.format(Locale.US, "%d bytes read in uploadpendingimage", cBytes));
+            Log.v(MFBConstants.LOG_TAG, String.format(Locale.US, "%d bytes read in uploadpendingimage", cBytes));
 
             String sz = new String(rgResponse, "UTF8");
             if (!sz.contains("OK"))
@@ -718,7 +718,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             fResult = true;
         } catch (Exception ex) {
             final String szErr = ex.getMessage();
-            Log.e("MFBAndroid", "Error uploading image: " + szErr);
+            Log.e(MFBConstants.LOG_TAG, "Error uploading image: " + szErr);
 
             final Context c = MFBMain.GetMainContext();
             Handler h = new Handler(c.getMainLooper());
@@ -1031,7 +1031,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                     else
                         ActWebView.ViewTempFile(a, fTemp);
                 } catch (IOException e) {
-                    Log.e("MFBAndroid", "Error saving image full file: " + e.getMessage());
+                    Log.e(MFBConstants.LOG_TAG, "Error saving image full file: " + e.getMessage());
                     e.printStackTrace();
                 }
             } catch (IOException e) {

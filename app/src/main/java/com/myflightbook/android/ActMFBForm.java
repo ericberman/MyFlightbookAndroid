@@ -123,7 +123,7 @@ public class ActMFBForm extends Fragment {
         protected Boolean doInBackground(String... params) {
             String szFilename = params[0];
             if (szFilename == null || szFilename.length() == 0) {
-                Log.e("MFBAndroid", "No filename passed back!!!");
+                Log.e(MFBConstants.LOG_TAG, "No filename passed back!!!");
                 return false;
             }
 

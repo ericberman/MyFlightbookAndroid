@@ -354,7 +354,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         long idLocalFlightToView = i.getLongExtra(ActRecentsWS.VIEWEXISTINGFLIGHTLOCALID, 0);
         Boolean fIsNewFlight = (idFlightToView == 0);
 
-        Log.w("MFBAndroid", String.format("ActNewFlight - onCreate - Viewing flight idflight=%d, idlocal=%d", idFlightToView, idLocalFlightToView));
+        Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - onCreate - Viewing flight idflight=%d, idlocal=%d", idFlightToView, idLocalFlightToView));
 
         // set for no focus.
         findViewById(R.id.btnFlightSet).requestFocus();
@@ -394,7 +394,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le != null && m_le.rgFlightImages == null)
             m_le.getImagesForFlight();
 
-        Log.w("MFBAndroid", String.format("ActNewFlight - created, m_le is %s", m_le == null ? "null" : "non-null"));
+        Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - created, m_le is %s", m_le == null ? "null" : "non-null"));
     }
 
     protected void enableCrossFill(int id) {
@@ -488,7 +488,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         setUpGalleryForFlight();
 
-        Log.w("MFBAndroid", String.format("onResume completed, landings are %d, isRecording: %s", m_le.cLandings, MFBLocation.IsRecording ? "yes" : "no"));
+        Log.w(MFBConstants.LOG_TAG, String.format("onResume completed, landings are %d, isRecording: %s", m_le.cLandings, MFBLocation.IsRecording ? "yes" : "no"));
 
         RestoreState();
 
@@ -527,7 +527,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         FromView();
         saveCurrentFlight();
-        Log.w("MFBAndroid", String.format("Paused, landings are %d", m_le.cLandings));
+        Log.w(MFBConstants.LOG_TAG, String.format("Paused, landings are %d", m_le.cLandings));
         SaveState();
 
         // free up some scheduling resources.
@@ -1513,7 +1513,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     public void newImage(MFBImageInfo mfbii) {
-        Log.w("MFBAndroid", String.format("newImage called. m_le is %s", m_le == null ? "null" : "not null"));
+        Log.w(MFBConstants.LOG_TAG, String.format("newImage called. m_le is %s", m_le == null ? "null" : "not null"));
         m_le.AddImageForflight(mfbii);
     }
 
