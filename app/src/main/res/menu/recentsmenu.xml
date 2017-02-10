@@ -11,5 +11,5 @@
     <item
         android:id="@+id/menuResetRecents"
         android:title="@string/menuRecentStartOver"
-        android:titleCondensed="@string/menuRecentStartOver" />"
+        android:titleCondensed="@string/menuRecentStartOver" />
 </menu>

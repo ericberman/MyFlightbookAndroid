@@ -56,6 +56,7 @@
         <activity
             android:name=".FlightQueryActivity"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".FixedExpandableListActivity" />
         <activity android:name=".RecentFlightsActivity" />
         <activity
             android:name=".ActAddApproach"
