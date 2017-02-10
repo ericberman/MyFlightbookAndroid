@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="lblOK">OK</string>
     <string name="lblCancel">Cancel</string>
     <string name="lblConfirm">Confirm</string>
@@ -309,7 +309,6 @@
     <string name="recent2Years">2 years</string>
     <string name="recent3Years">3 years</string>
     <string name="recent5Years">5 years</string>
-    <string name="numResultsShownTemplate">%d Flights</string>
     <string name="allResultsShown">All Flights</string>
 
     <!-- Auto-fill options -->
@@ -454,8 +453,11 @@
     <!--  Visited Airports -->
     <string name="AllAirports">All Airports</string>
     <string name="vaSingleVisit">1 visit on %s</string>
-    <string name="vaMultiVisit">%1$d visits from %2$s to %3$s</string>
-    <string name="vaUniqueAirports">(%d unique airports found)</string>
+    <string name="vaMultiVisit" tools:ignore="PluralsCandidate">%1$d visits from %2$s to %3$s</string>
+    <plurals name="uniqueAirportsCount">
+        <item quantity="one">(%1$d unique airport found)</item>
+        <item quantity="other">(%1$d unique airports found)</item>
+    </plurals>
 
     <!--  Training -->
     <string name="lblEndorsements">Endorsements</string>

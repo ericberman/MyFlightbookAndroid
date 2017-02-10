@@ -148,7 +148,8 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         hmAllAirports = new HashMap<>();
         hmAllAirports.put("Code", "");
         hmAllAirports.put("Name", szKeyLast);
-        hmAllAirports.put("Visits", String.format(getString(R.string.vaUniqueAirports), visitedAirports.length));
+        int cVisits = visitedAirports.length;
+        hmAllAirports.put("Visits", getResources().getQuantityString(R.plurals.uniqueAirportsCount, cVisits, cVisits));
         hmAllAirports.put("Distance", "");
         hmAllAirports.put("Position", "-1");
         ArrayList<HashMap<String, String>> alAllAirports = new ArrayList<>();
