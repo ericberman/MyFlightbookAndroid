@@ -10,13 +10,11 @@
         android:orientation="vertical">
 
         <TableLayout
-            android:id="@+id/TableLayout01"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp">
 
             <TableRow
-                android:id="@+id/tableRowText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -33,7 +31,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowAirports"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -51,7 +48,6 @@
             </TableRow>
 
             <RadioGroup
-                android:id="@+id/rbDistanceTypeGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -121,7 +117,6 @@
             </LinearLayout>
 
             <RadioGroup
-                android:id="@+id/rbCommonTimeGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -274,7 +269,6 @@
                 android:orientation="horizontal">
 
                 <RadioGroup
-                    android:id="@+id/rbEngineTypeGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
@@ -316,7 +310,6 @@
                 </RadioGroup>
 
                 <RadioGroup
-                    android:id="@+id/rbInstanceTypeGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 

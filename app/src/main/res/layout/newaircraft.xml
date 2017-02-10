@@ -10,25 +10,21 @@
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/TextView01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/lblNewAircraftPromopt" />
 
         <TableLayout
-            android:id="@+id/TableLayout01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2sp">
 
             <TableRow
-                android:id="@+id/tblrowAircraftInstanceType"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/TextView02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblAircraftType" />
@@ -42,13 +38,11 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tblrowAircraftModel"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/TextView04"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblMakeModel" />
@@ -82,7 +76,6 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/TextView03"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblTail" />

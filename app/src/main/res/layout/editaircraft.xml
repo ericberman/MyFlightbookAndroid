@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mfb="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ScrollView01"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
@@ -12,18 +11,15 @@
 
         <!-- General aircraft information -->
         <TextView
-            android:id="@+id/TextView01"
             style="@style/DividerBar"
             android:text="@string/lblCatAircraftInfo" />
 
         <TableLayout
-            android:id="@+id/tblEditAircraft"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp">
 
             <TableRow
-                android:id="@+id/TableRow01"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -43,7 +39,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow04"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -61,7 +56,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow05"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -158,7 +152,6 @@
             android:stretchColumns="1">
 
             <TableRow
-                android:id="@+id/TableRowPublicNotes"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -177,7 +170,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRowPrivateNotes"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -217,7 +209,6 @@
                 android:padding="5dp">
 
                 <TableRow
-                    android:id="@+id/TableRow02"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -236,7 +227,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow03"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -255,7 +245,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow18"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -274,7 +263,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow15"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -293,7 +281,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow06"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -312,7 +299,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow07"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -331,7 +317,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow08"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -350,7 +335,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow09"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -369,7 +353,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow10"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -388,7 +371,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/TableRow11"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 

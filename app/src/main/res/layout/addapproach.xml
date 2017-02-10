@@ -13,13 +13,11 @@
         android:textStyle="bold" />
 
     <TableLayout
-        android:id="@+id/tblAddApproach"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="5dp">
 
         <TableRow
-            android:id="@+id/TableRow01"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
@@ -39,7 +37,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/TableRow02"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
@@ -67,7 +64,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/TableRow03"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
@@ -93,7 +89,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/TableRow04"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
@@ -123,7 +118,6 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/TableRow05"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 

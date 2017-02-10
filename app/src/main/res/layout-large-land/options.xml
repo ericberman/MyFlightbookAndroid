@@ -10,12 +10,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/TextView01"
             style="@style/DividerBar"
             android:text="@string/lblOptionsProfile" />
 
         <TextView
-            android:id="@+id/TextView02"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -59,7 +57,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/TextViewForgotPW"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
@@ -67,19 +64,16 @@
             android:text="@string/lblForgotPassword" />
 
         <TextView
-            android:id="@+id/TextView03"
             style="@style/DividerBar"
             android:text="@string/lblOptionsLocation" />
 
         <TextView
-            android:id="@+id/TextView04"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:text="@string/lblGPSDisclaimer" />
 
         <TextView
-            android:id="@+id/TextView05"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -98,7 +92,6 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="200dp"
@@ -112,7 +105,6 @@
                 android:paddingTop="2sp" />
 
             <CheckBox
-                android:id="@+id/ckFiller"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/strEmpty"
@@ -133,7 +125,6 @@
             android:text="@string/lblOptRecord" />
 
         <TextView
-            android:id="@+id/TextView11"
             style="@style/DividerBar"
             android:text="@string/lblOptionsTime" />
 
@@ -158,7 +149,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView06"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblAutoHobbs" />
@@ -176,7 +166,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView07"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblAutoTime" />
@@ -202,7 +191,6 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/txtHeaderAdditional"
             style="@style/DividerBar"
             android:text="@string/lblAdditionalOptions" />
 
@@ -214,7 +202,6 @@
             android:padding="5dp">
 
             <TextView
-                android:id="@+id/txtViewAdditionalOptionsDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lblAdditionalOptionsText" />
@@ -228,7 +215,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/TextView08"
             style="@style/DividerBar"
             android:text="@string/lblOptionsContact" />
 
@@ -283,7 +269,6 @@
             android:padding="5dp">
 
             <TextView
-                android:id="@+id/txtViewSupport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lblSupportDescript" />
@@ -298,7 +283,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/TextView09"
             style="@style/DividerBar"
             android:text="@string/lblOptionsOther" />
 
@@ -310,7 +294,6 @@
             android:text="@string/lblCopyright" />
 
         <TextView
-            android:id="@+id/TextView10"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"

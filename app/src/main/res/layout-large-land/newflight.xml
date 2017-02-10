@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mfb="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ScrollView01"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
@@ -13,7 +12,6 @@
         <!-- General Flight Info -->
 
         <TextView
-            android:id="@+id/TextView01"
             style="@style/DividerBar"
             android:text="@string/lblCatOverall" />
 
@@ -41,7 +39,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/LinearLayout01"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -112,19 +109,16 @@
         <!-- Landings -->
 
         <TextView
-            android:id="@+id/TextView02"
             style="@style/DividerBar"
             android:text="@string/lblCatApproachesAndLandings" />
 
         <LinearLayout
-            android:id="@+id/LinearLayout02"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:padding="5dp">
 
             <LinearLayout
-                android:id="@+id/LinearLayout03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -132,7 +126,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/lblLandings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -149,7 +142,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LinearLayout04"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -157,7 +149,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/lblFSDayLandings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -175,7 +166,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LinearLayout05"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -183,7 +173,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/lblFSNightLandings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -203,7 +192,6 @@
             <!-- Approaches and hold -->
 
             <LinearLayout
-                android:id="@+id/LinearLayout07"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -211,7 +199,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/lblApproaches"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -269,7 +256,6 @@
                     android:gravity="center_horizontal|center_vertical">
 
                     <ImageView
-                        android:id="@+id/imgSunrise"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start|center_vertical"
@@ -284,14 +270,12 @@
                         android:text="@string/lblSunrise" />
 
                     <TextView
-                        android:id="@+id/TextView04"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblElapsedTime"
                         android:textSize="12sp" />
 
                     <TextView
-                        android:id="@+id/TextView06"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
@@ -309,7 +293,6 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/TextView08"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblFlightGPSQuality"
@@ -340,7 +323,6 @@
                     android:gravity="center_horizontal|center_vertical">
 
                     <ImageView
-                        android:id="@+id/imgSunset"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start|center_vertical"
@@ -417,7 +399,6 @@
                     android:padding="3dip">
 
                     <TextView
-                        android:id="@+id/lblHobbsStart"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:width="100dip"
@@ -475,7 +456,6 @@
                     android:padding="3dip">
 
                     <TextView
-                        android:id="@+id/lblHobbsEnd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -536,7 +516,6 @@
         <!-- Times and properties -->
 
         <TextView
-            android:id="@+id/TextView09"
             style="@style/DividerBar"
             android:text="@string/lblCatTimes" />
 
@@ -558,7 +537,6 @@
                     android:layout_margin="3dip">
 
                     <TextView
-                        android:id="@+id/lblNight"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -567,7 +545,6 @@
                         android:text="@string/lblNight" />
 
                     <TextView
-                        android:id="@+id/lblSimIMC"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -576,7 +553,6 @@
                         android:text="@string/lblSimIMC" />
 
                     <TextView
-                        android:id="@+id/lblIMC"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -585,7 +561,6 @@
                         android:text="@string/lblIMC" />
 
                     <TextView
-                        android:id="@+id/lblXC"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -594,7 +569,6 @@
                         android:text="@string/lblXC" />
 
                     <TextView
-                        android:id="@+id/lblDual"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -653,7 +627,6 @@
                     android:layout_margin="3dip">
 
                     <TextView
-                        android:id="@+id/lblGround"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -662,7 +635,6 @@
                         android:text="@string/lblGround" />
 
                     <TextView
-                        android:id="@+id/lblCFI"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -671,7 +643,6 @@
                         android:text="@string/lblCFI" />
 
                     <TextView
-                        android:id="@+id/lblSIC"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -680,7 +651,6 @@
                         android:text="@string/lblSIC" />
 
                     <TextView
-                        android:id="@+id/lblPIC"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -689,7 +659,6 @@
                         android:text="@string/lblPIC" />
 
                     <TextView
-                        android:id="@+id/lblTotal"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -793,7 +762,6 @@
             android:stretchColumns="0,1" />
 
         <TextView
-            android:id="@+id/TextView12"
             style="@style/DividerBar"
             android:text="@string/lblCatSharing" />
 

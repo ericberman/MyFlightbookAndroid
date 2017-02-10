@@ -29,9 +29,6 @@
     <string name="lblViewOnMap">View</string>
     <string name="lblAddApproaches">Add Approaches</string>
     <string name="lblComments">Comments</string>
-    <string name="submitFlightNew">Add Flight</string>
-    <string name="submitFlightExisting">Update Flight</string>
-    <string name="lblAircraft">Aircraft</string>
     <string name="lblLandings">Total</string>
     <string name="lblFSDayLandings">Day\n(Full Stop)</string>
     <string name="lblFSNightLandings">Night\n(Full Stop)</string>
@@ -106,8 +103,6 @@
         <item>What is the name of the place your wedding reception was held?</item>
     </string-array>
 
-    <string name="lblBack">Back</string>
-
     <string name="lblOptionsProfile">Account Settings</string>
     <string name="lblOptionsLocation">Location Settings</string>
     <string name="lblOptionsTime">Times</string>
@@ -130,7 +125,6 @@
     <string name="lblCodeCredit">Portions of this code use the KSoap2 library at http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Thanks folks!</string>
     <string name="lblContactMe">Contact Us</string>
     <string name="lblCleanup">Clean Up</string>
-    <string name="lblAddAircraft">Add Aircraft…</string>
 
     <string name="lblFrequentlyUsedAircraft">Frequently Used Aircraft</string>
     <string name="lblArchivedAircraft">Other Aircraft</string>
@@ -140,13 +134,11 @@
     <string name="lblAircraftType">Type</string>
     <string name="lblMakeModel">Make/Model</string>
     <string name="lblAddMakes">Don\'t see your airplane\'s make/model?  Add it at MyFlightbook.com.</string>
-    <string name="lblAutoAssignTail">(Will be assigned automatically)</string>
     <string name="lblBtnAddAircraft">Add Aircraft</string>
     <string name="lblAnonymous">This aircraft is anonymous</string>
 
     <string name="lblCatMaintenance">Maintenance and inspections</string>
     <string name="lblCatAircraftInfo">General</string>
-    <string name="lblMaintPrompt">Enter below the date/time of the last:</string>
     <string name="lblVORCheck">VOR Check:</string>
     <string name="lblTransponder">Transponder:</string>
     <string name="lblPitotStatic">Pitot/static:</string>
@@ -163,7 +155,6 @@
     <string name="lblRolePIC">If PIC is empty, set it equal to Total Time</string>
     <string name="lblRoleSIC">If SIC is empty, set it equal to Total Time</string>
     <string name="lblRoleCFI">If CFI is empty, set it equal to Total Time</string>
-    <string name="lblUpdateAircraft">Update Aircraft</string>
     <string name="lblNotesHeader">Notes about this aircraft</string>
     <string name="lblPublicNotes">Public Notes:</string>
     <string name="lblPrivateNotes">Private Notes:</string>
@@ -172,10 +163,7 @@
     <string name="lblSchedule">Schedule</string>
 
     <string name="lblFlightStatus">Flight Status</string>
-    <string name="lblFlightSpeed">Speed</string>
-    <string name="lblFlightAltitude">Altitude</string>
     <string name="lblFeet">ft</string>
-    <string name="lblMeters">m</string>
     <string name="lblFlightGPSQuality">GPS Quality</string>
     <string name="lblUnknown">(unknown)</string>
     <string name="lblGPSUnknown">(unknown)</string>
@@ -192,10 +180,6 @@
     <string name="lblSunset">(Sunset)</string>
     <string name="lblLatitude">(Latitude)</string>
     <string name="lblLongitude">(Longitude)</string>
-
-    <string name="lblTotalsAllTime">All Dates</string>
-    <string name="lblTotals12Month">Last 12 months</string>
-    <string name="lblTotalsYTD">Year to date</string>
 
     <!-- Telemetry comments -->
     <string name="telemetryFSLanding">Full-stop landing detected</string>
@@ -214,14 +198,11 @@
     <string name="prgMakes">Retrieving available makes and models…</string>
     <string name="prgVisitedAirports">Getting Visited Airports…</string>
     <string name="prgCPT">Updating list of available properties…</string>
-    <string name="prgRecent">Loading…</string>
-    <string name="prgRecentFlights">Retrieving flights…</string>
     <string name="prgPropsForFlight">Retrieving properties for flight…</string>
     <string name="prgDeleteProp">Deleting Property…</string>
     <string name="prgUploadingImages">Uploading image %1$d of %2$d</string>
     <string name="prgUpdatingAircraft">Updating Aircraft…</string>
     <string name="prgDeletingAircraft">Deleting…</string>
-    <string name="emptyWaterMarkDouble">0.0</string>
     <string name="emptyWaterMarkInt">0</string>
     <string name="emptyWaterMarkHHMM">HH:MM</string>
     <string name="emptyWaterMarkRoute">Route for flight</string>
@@ -232,22 +213,16 @@
     <string name="cdImagesForAircraft">Images for aircraft</string>
     <string name="cdHasImages">Item has images</string>
     <string name="cdMapMarker">Marker on map</string>
-    <string name="cdImageInfo">Flight Image</string>
     <string name="cdPauseFlight">Pause Flight Monitoring</string>
     <string name="cdRecording">Flight Telemetry Recording</string>
     <string name="cdIsSignedValid">The signature is valid</string>
     <string name="cdIsSignedInvalid">The signature is not valid</string>
-
-    <string name="mapOptionNearby">Nearby</string>
-    <string name="mapOptionRoute">Route</string>
 
     <string name="lblAddComment">Type a comment for this image</string>
     <string name="lblAddCommentWM">Comment</string>
 
     <string name="lblEditPropertyTitle">Flight Property</string>
 
-    <string name="lblDateRangeTotals">Date range for totals</string>
-    <string name="lblDateRangeRecents">Recent flights</string>
     <string name="lblAutoFillOptions">Auto-fill criteria</string>
     <string name="lblConfirmImageDelete">Delete this image?  This cannot be undone.</string>
     <string name="lblConfirmFlightDelete">Delete this flight?  This cannot be undone.</string>
@@ -266,7 +241,6 @@
     <string name="errNoInternetNoSave">Cannot save flight - no access to Internet.</string>
     <string name="errNoInternet">No connection to the Internet is available</string>
     <string name="errorSoapError">An unknown error has occurred talking to the MyFlightbook server.</string>
-    <string name="errNoAircraft">Cannot save flight - no valid aircraft was selected.  Please choose an aircraft for this flight.  You can create one if needed in the \"Aircraft\" tab.</string>
     <string name="errNoAircraftFound">Please create at least one aircraft</string>
     <string name="errNoCamera">Unable to start camera.</string>
     <string name="errCannotRetrieveMakes">Unable to retrieve list of aircraft makes and models</string>
@@ -282,8 +256,6 @@
     <string name="errTypePasswordTwice">Please type your password twice to avoid typos.</string>
     <string name="errNeedQandA">Please provide a secret question and answer in case you forget your password.</string>
     <string name="errMustBe14">Accounts are only available for people 14 years old and older.</string>
-    <string name="errNoMaps">This device does not support maps.</string>
-    <string name="errNoModelSpecified">Every aircraft requires a model.</string>
     <string name="errRealAircraftCantUseSIM">SIM Prefix is reserved for simulators/FTDs/ATDs.</string>
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs must begin with the prefix \'SIM\'</string>
     <string name="errNoGoogleMaps">This feature requires Google Play services, which are not installed.</string>
@@ -301,15 +273,6 @@
     <string name="aircraftInstanceTypeATD">Aviation Training Device (ATD)</string>
 
     <!-- Recent flights ranges -->
-    <string name="recent30">30 days</string>
-    <string name="recent60">60 days</string>
-    <string name="recent90">90 days</string>
-    <string name="recent180">180 days</string>
-    <string name="recentYear">1 year</string>
-    <string name="recent2Years">2 years</string>
-    <string name="recent3Years">3 years</string>
-    <string name="recent5Years">5 years</string>
-    <string name="allResultsShown">All Flights</string>
 
     <!-- Auto-fill options -->
     <string name="autoNone">None</string>
@@ -326,7 +289,6 @@
     <string name="tabOptions">Options</string>
     <string name="tabVisitedAirports">Visited</string>
     <string name="tabTraining">Training</string>
-    <string name="tabNearest">Nearest</string>
 
     <!-- Menu Strings -->
     <string name="menuRefreshAircraftShort">Refresh</string>
@@ -360,8 +322,6 @@
     <string name="menuFollowTWShort">Twitter</string>
     <string name="menuReturnToFlightShort">Return</string>
     <string name="menuReturnToFlight">Return to Flight</string>
-    <string name="menuRecentForward">Forward</string>
-    <string name="menuRecentStartOver">Start Over</string>
     <string name="menuRecentsRefresh">Refresh</string>
     <string name="menuRefresh">Refresh</string>
     <string name="menuTakePicture">Take a picture</string>
@@ -373,8 +333,6 @@
     <string name="menuSignFlight">Sign</string>
     <string name="menuDeleteAircraft">Delete Aircraft</string>
     <string name="menuDeleteAircraftShort">Delete</string>
-    <string name="menuShareKMLShort">KML</string>
-    <string name="menuShareKMLLong">KML</string>
 
     <!-- Abbreviations -->
     <string name="abbrevHours">hrs</string>
@@ -387,7 +345,6 @@
     <string name="fqAirportsContainsPrompt">Airports visited</string>
     <string name="fqFlightAircraft">Flight Aircraft</string>
     <string name="fqFlightModel">Flight aircraft model</string>
-    <string name="fqFlightModelName">Model name</string>
     <string name="fqFlightModelNamePrompt">Model name</string>
     <string name="fqFlightDate">Dates for flights:</string>
     <string name="FlightQueryDistanceAllFlights">All flights</string>
@@ -435,7 +392,6 @@
     <string name="fqDate90Days">Trailing 90 Days</string>
     <string name="fqDateYTD">Year-to-Date</string>
     <string name="fqDateThisMonth">This Month</string>
-    <string name="fqDateSpecificDates">Specific Dates</string>
     <string name="fqDatePreviousMonth">Previous Month</string>
     <string name="fqDatePreviousYear">Previous Year</string>
     <string name="fqDateStartDate">Start Date</string>
