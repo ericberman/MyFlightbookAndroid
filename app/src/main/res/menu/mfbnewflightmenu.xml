@@ -1,10 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:titleCondensed="@string/menuResetFlightShort"
-		android:title="@string/menuResetFlight" android:id="@+id/menuResetFlight"></item>
-	<item android:title="@string/menuAddFlight" android:titleCondensed="@string/menuAddFlightShort" android:id="@+id/btnSubmitFlight" android:showAsAction="ifRoom"></item>
-	<item android:title="@string/menuAddFlightLater" android:titleCondensed="@string/menuAddFlightLaterShort" android:showAsAction="never" android:id="@+id/menuUploadLater"></item>
-	<item android:id="@+id/menuTakePicture" android:titleCondensed="@string/menuTakePictureShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_camera"  android:title="@string/menuTakePicture"></item>
-	<item android:id="@+id/menuTakeVideo" android:titleCondensed="@string/menuTakeVideoShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_video"  android:title="@string/menuTakeVideo"></item>
-	<item android:id="@+id/menuChoosePicture" android:titleCondensed="@string/menuChoosePictureShort"  android:showAsAction="ifRoom" android:icon="@drawable/ic_action_picture" android:title="@string/menuChoosePicture"></item>
+    <item
+        android:id="@+id/menuResetFlight"
+        android:title="@string/menuResetFlight"
+        android:titleCondensed="@string/menuResetFlightShort" />
+    <item
+        android:id="@+id/btnSubmitFlight"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuAddFlight"
+        android:titleCondensed="@string/menuAddFlightShort" />
+    <item
+        android:id="@+id/menuUploadLater"
+        android:showAsAction="never"
+        android:title="@string/menuAddFlightLater"
+        android:titleCondensed="@string/menuAddFlightLaterShort" />
+    <item
+        android:id="@+id/menuTakePicture"
+        android:icon="@drawable/ic_action_camera"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuTakePicture"
+        android:titleCondensed="@string/menuTakePictureShort" />
+    <item
+        android:id="@+id/menuTakeVideo"
+        android:icon="@drawable/ic_action_video"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuTakeVideo"
+        android:titleCondensed="@string/menuTakeVideoShort" />
+    <item
+        android:id="@+id/menuChoosePicture"
+        android:icon="@drawable/ic_action_picture"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuChoosePicture"
+        android:titleCondensed="@string/menuChoosePictureShort" />
 </menu>

@@ -29,9 +29,9 @@ public class ExpandableListFragment extends Fragment
     ExpandableListView.OnGroupExpandListener
     {
 
-    static final int INTERNAL_EMPTY_ID = 0x00ff0001;
-    static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
-    static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
+    static int INTERNAL_EMPTY_ID = View.generateViewId();
+    static int INTERNAL_PROGRESS_CONTAINER_ID = View.generateViewId();
+    static int INTERNAL_LIST_CONTAINER_ID = View.generateViewId();
 
     final private Handler mHandler = new Handler();
 
@@ -42,11 +42,7 @@ public class ExpandableListFragment extends Fragment
     };
 
     final private AdapterView.OnItemClickListener mOnClickListener
-            = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-            onListItemClick((ExpandableListView)parent, v, position, id);
-        }
-    };
+            = (parent, v, position, id) -> onListItemClick((ExpandableListView)parent, v, position, id);
 
     ExpandableListAdapter mAdapter;
     ExpandableListView mExpandableList;

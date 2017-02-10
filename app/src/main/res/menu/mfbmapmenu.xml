@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/menuRefreshMap" android:titleCondensed="@string/txtUpdateRouteOnMap" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_refresh" android:title="@string/txtUpdateRouteOnMap"></item>
-    <item android:id="@+id/menuSaveKML" android:titleCondensed="@string/menuShareKMLShort" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_save" android:title="@string/menuShareKMLShort"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuRefreshMap"
+        android:icon="@drawable/ic_action_refresh"
+        android:showAsAction="ifRoom"
+        android:title="@string/txtUpdateRouteOnMap"
+        android:titleCondensed="@string/txtUpdateRouteOnMap" />
+    <item
+        android:id="@+id/menuSaveKML"
+        android:icon="@drawable/ic_action_save"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuShareKMLShort"
+        android:titleCondensed="@string/menuShareKMLShort" />
 </menu>
