@@ -275,6 +275,14 @@
             android:layout_gravity="center_horizontal">
 
             <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/lblCancel" />
+
+            <Button
                 android:id="@+id/btnCreateUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -283,13 +291,6 @@
                 style="?android:attr/buttonBarStyle"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                style="?android:attr/buttonBarStyle"
-                android:text="@string/lblCancel" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
