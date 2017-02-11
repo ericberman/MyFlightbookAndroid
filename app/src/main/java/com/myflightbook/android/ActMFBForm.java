@@ -571,12 +571,22 @@ public class ActMFBForm extends Fragment {
     }
 
     public void setExpandedState(TextView v, View target, Boolean fExpanded) {
+        setExpandedState(v, target, fExpanded, true);
+    }
+
+    public void setExpandedState(TextView v, View target, Boolean fExpanded, Boolean fAnimated) {
         Drawable d;
         if (fExpanded) {
-            expandView(target);
+            if (fAnimated)
+                expandView(target);
+            else
+                target.setVisibility(View.VISIBLE);
             d = ContextCompat.getDrawable(getActivity(), R.drawable.collapse_light);
         } else {
-            collapseView(target);
+            if (fAnimated)
+                collapseView(target);
+            else
+                target.setVisibility(View.GONE);
             d = ContextCompat.getDrawable(getActivity(), R.drawable.expand_light);
         }
         v.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);

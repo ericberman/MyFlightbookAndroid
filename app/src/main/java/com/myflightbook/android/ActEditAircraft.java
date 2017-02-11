@@ -192,6 +192,23 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         }
 
         toView();
+
+        if (m_ac != null) {
+            setExpandedState((TextView) findViewById(R.id.acPrefsHeader), findViewById(R.id.rbgPilotRole), m_ac.RoleForPilot != PilotRole.None, false);
+            setExpandedState((TextView) findViewById(R.id.acNotesHeader), findViewById(R.id.sectACNotes), m_ac.PrivateNotes.length() + m_ac.PublicNotes.length() > 0, false);
+
+            boolean fHideMaintenance = UTCDate.IsNullDate(m_ac.LastVOR) &&
+                    UTCDate.IsNullDate(m_ac.LastTransponder) &&
+                    UTCDate.IsNullDate(m_ac.LastStatic) &&
+                    UTCDate.IsNullDate(m_ac.LastAltimeter) &&
+                    UTCDate.IsNullDate(m_ac.LastELT) &&
+                    UTCDate.IsNullDate(m_ac.LastAnnual) &&
+                    UTCDate.IsNullDate(m_ac.RegistrationDue) &&
+                    m_ac.Last100 == 0 &&
+                    m_ac.LastOil == 0 &&
+                    m_ac.LastEngine == 0;
+            setExpandedState((TextView) findViewById(R.id.txtACMaintenance), findViewById(R.id.sectACMaintenance), !fHideMaintenance, false);
+        }
     }
 
     @Override

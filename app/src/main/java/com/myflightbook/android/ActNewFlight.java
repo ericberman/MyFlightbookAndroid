@@ -21,6 +21,7 @@ package com.myflightbook.android;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -113,6 +114,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     static private final String m_KeysPausedTime = "totalPauseTime";
     static private final String m_KeysTimeOfLastPause = "timeOfLastPause";
     static private final String m_KeysAccumulatedNight = "accumulatedNight";
+
+    // Expand state of "in the cockpit"
+    static private final String m_KeyShowInCockpit = "inTheCockpit";
 
     public static long lastNewFlightID = LogbookEntry.ID_NEW_FLIGHT;
 
@@ -372,6 +376,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             m_le = MFBMain.getNewFlightListener().getInProgressFlight();
             MFBMain.SetInProgressFlightActivity(this);
             MFBMain.registerNotifyResetAll(this);
+            SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
+            Boolean fExpandCockpit = pref.getBoolean(m_KeyShowInCockpit, true);
+            setExpandedState((TextView) findViewById(R.id.txtViewInTheCockpit), findViewById(R.id.sectInTheCockpit), fExpandCockpit, false);
         } else {
             // view an existing flight
             if (idFlightToView > 0) // existing flight
@@ -819,7 +826,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 break;
             case R.id.txtViewInTheCockpit: {
                 View target = findViewById(R.id.sectInTheCockpit);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+                Boolean fExpandCockpit = target.getVisibility() != View.VISIBLE;
+
+                if (m_le != null && m_le.IsNewFlight()) {
+                    SharedPreferences.Editor e = getActivity().getPreferences(Context.MODE_PRIVATE).edit();
+                    e.putBoolean(m_KeyShowInCockpit, fExpandCockpit);
+                    e.apply();
+                }
+                setExpandedState((TextView) v, target, fExpandCockpit);
             }
             break;
             case R.id.txtImageHeader: {
