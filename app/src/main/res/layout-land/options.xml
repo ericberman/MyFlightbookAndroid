@@ -38,6 +38,7 @@
                 android:id="@+id/btnSignIn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 style="?android:attr/buttonBarStyle"
                 android:text="@string/szSignIn" />
 
@@ -45,6 +46,7 @@
                 android:id="@+id/btnCreateNewAccount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 style="?android:attr/buttonBarStyle"
                 android:text="@string/createuser" />
 
@@ -52,6 +54,7 @@
                 android:id="@+id/btnSignOut"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 style="?android:attr/buttonBarStyle"
                 android:text="@string/szSignOut" />
         </LinearLayout>

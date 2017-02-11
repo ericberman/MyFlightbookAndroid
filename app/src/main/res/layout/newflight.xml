@@ -790,6 +790,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:width="90dip"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical">
 
             <TextView
@@ -809,6 +810,7 @@
                 mfb:EditMode="HHMM" />
         </LinearLayout>
 
+        <!-- Properties -->
         <TextView
             android:id="@+id/txtPinnedPropertiesHeader"
             style="@style/DividerBar"

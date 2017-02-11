@@ -523,7 +523,8 @@
 
         <TableLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
 
             <TableRow
                 android:layout_width="fill_parent"
@@ -710,6 +711,7 @@
             </TableRow>
         </TableLayout>
 
+        <!-- Properties -->
         <TextView
             android:id="@+id/txtPinnedPropertiesHeader"
             style="@style/DividerBar"
