@@ -50,13 +50,14 @@
     <string name="lblHobbsEnd">Fin Hobbs</string>
     <string name="lblEngineEnd">Arrêt Moteur</string>
     <string name="lblFlightEnd">Fin de Vol</string>
-    <string name="lblProperties">Caractéristiques…</string>
+    <string name="lblProperties">Caractéristiques du vol…</string>
     <string name="lblCurrentProps">Caractéristiques du vol:</string>
     <string name="lblCatApproachesAndLandings">Atterrissages et Approches</string>
-    <string name="lblCatTimes">Temps et type de vols</string>
+    <string name="lblCatTimes">Temps de vols</string>
     <string name="lblCatOverall">Information Générale sur le vol</string>
     <string name="lblCatCockpit">Dans le cockpit</string>
     <string name="lblCatSharing">Partage</string>
+    <string name="lblCatProperties">Caractéristiques du vol</string>
     <string name="lblFacebook">Partager le vol sur Facebook</string>
     <string name="lblTwitter">Partager le vol sur Twitter</string>
     <string name="lblMyFlightbook">Partager le vol sur  MyFlightbook</string>

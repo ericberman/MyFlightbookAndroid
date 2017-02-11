@@ -519,230 +519,221 @@
             style="@style/DividerBar"
             android:text="@string/lblCatTimes" />
 
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblNight" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblSimIMC" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblIMC" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblXC" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblDual" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip">
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtNight"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusLeft="@id/txtHobbsEnd"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtSimIMC"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtIMC"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusRight="@+id/txtXC"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtXC"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusLeft="@id/txtIMC"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtDual"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    mfb:EditMode="HHMM" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblGround" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblCFI" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblSIC" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblPIC" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:width="90dip"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lblTotal" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip">
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtGround"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusRight="@+id/txtCFI"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtCFI"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusDown="@+id/txtTotal"
+                    android:nextFocusLeft="@+id/txtGround"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtSIC"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusDown="@+id/txtTotal"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtPIC"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusDown="@+id/txtTotal"
+                    android:nextFocusRight="@+id/txtTotal"
+                    mfb:EditMode="HHMM" />
+
+                <Model.DecimalEdit
+                    android:id="@+id/txtTotal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:nextFocusLeft="@id/txtPIC"
+                    mfb:EditMode="HHMM" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/txtPinnedPropertiesHeader"
+            style="@style/DividerBar"
+            android:clickable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:text="@string/lblCatProperties" />
+
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:id="@+id/sectPinnedProperties"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:padding="5dp">
+            android:orientation="vertical">
 
             <TableLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dip">
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblNight" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblSimIMC" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblIMC" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblXC" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblDual" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dip">
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtNight"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusLeft="@id/txtHobbsEnd"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtSimIMC"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtIMC"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusRight="@+id/txtXC"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtXC"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusLeft="@id/txtIMC"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtDual"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        mfb:EditMode="HHMM" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dip">
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblGround" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblCFI" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblSIC" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblPIC" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:width="90dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblTotal" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dip">
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtGround"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusRight="@+id/txtCFI"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtCFI"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusDown="@+id/txtTotal"
-                        android:nextFocusLeft="@+id/txtGround"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtSIC"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusDown="@+id/txtTotal"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtPIC"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusDown="@+id/txtTotal"
-                        android:nextFocusRight="@+id/txtTotal"
-                        mfb:EditMode="HHMM" />
-
-                    <Model.DecimalEdit
-                        android:id="@+id/txtTotal"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:nextFocusLeft="@id/txtPIC"
-                        mfb:EditMode="HHMM" />
-                </TableRow>
-            </TableLayout>
-
-            <LinearLayout
+                android:id="@+id/tblPinnedProperties"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp" />
+            <Button
+                android:id="@+id/btnProps"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:text="@string/lblProperties" />
 
-
-                <Button
-                    android:id="@+id/btnProps"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/lblProperties" />
-
-                <TextView
-                    android:id="@+id/lblCurPropsPrompt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/lblCurrentProps"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/lblCurrentPropsValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="" />
-            </LinearLayout>
         </LinearLayout>
 
         <!-- Images and Sharing -->

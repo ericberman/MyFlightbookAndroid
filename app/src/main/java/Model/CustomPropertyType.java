@@ -19,6 +19,7 @@
 package Model;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
@@ -28,7 +29,10 @@ import org.ksoap2.serialization.SoapObject;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Set;
 import java.util.Vector;
 
 public class CustomPropertyType extends SoapableObject implements Comparable<CustomPropertyType>, Serializable, KvmSerializable {
@@ -249,4 +253,44 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         }
     }
 
+    //region Pinned properties
+    public static final String prefSharedPinnedProps = "prefsSharedPinnedProps";
+    private static final String prefKeyPinnedProperties = "keyPinnedProperties";
+
+    public static HashSet<Integer> getPinnedProperties(SharedPreferences pref) {
+        Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
+        HashSet<Integer> result = new HashSet<>();
+        for (String s : stringVals)
+            result.add(Integer.parseInt(s));
+        return result;
+    }
+
+    public static Boolean isPinnedProperty(SharedPreferences pref, int id) {
+        return isPinnedProperty(getPinnedProperties(pref), id);
+    }
+
+    public static Boolean isPinnedProperty(HashSet<Integer> pinnedProps, int id) {
+        return pinnedProps.contains(id);
+    }
+
+    public static void setPinnedProperty(SharedPreferences pref, int id) {
+        Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
+        stringVals.add(String.format(Locale.US, "%d", id));
+        SharedPreferences.Editor e = pref.edit();
+        e.putStringSet(prefKeyPinnedProperties, stringVals);
+        e.apply();
+    }
+
+    public static void removePinnedProperty(SharedPreferences pref, int id) {
+        Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
+        String s = String.format(Locale.US, "%d", id);
+        if (!stringVals.contains(s))
+            return;
+        stringVals.remove(s);
+
+        SharedPreferences.Editor e = pref.edit();
+        e.putStringSet(prefKeyPinnedProperties, stringVals);
+        e.apply();
+    }
+    //endregion
 }

@@ -48,11 +48,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.myflightbook.android.WebServices.AircraftSvc;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.CommitFlightSvc;
+import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
 import com.myflightbook.android.WebServices.DeleteFlightSvc;
 import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 import com.myflightbook.android.WebServices.MFBSoap;
@@ -65,11 +68,13 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
 import Model.Aircraft;
 import Model.Airport;
+import Model.CustomPropertyType;
 import Model.DecimalEdit;
 import Model.DecimalEdit.CrossFillDelegate;
 import Model.DecimalEdit.EditMode;
@@ -87,7 +92,7 @@ import Model.PostingOptions;
 import Model.SunriseSunsetTimes;
 
 public class ActNewFlight extends ActMFBForm implements android.view.View.OnClickListener, MFBFlightListener.ListenerFragmentDelegate,
-        DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource, CrossFillDelegate, MFBMain.Invalidatable {
+        DlgDatePicker.DateTimeUpdate, DlgPropEdit.PropertyListener, ActMFBForm.GallerySource, CrossFillDelegate, MFBMain.Invalidatable {
 
     private Aircraft[] m_rgac = null;
     private LogbookEntry m_le = null;
@@ -111,6 +116,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     static private final String m_KeysAccumulatedNight = "accumulatedNight";
 
     public static long lastNewFlightID = LogbookEntry.ID_NEW_FLIGHT;
+
+    private int idLastClickedPropertyType;
 
     private TextView txtQuality, txtStatus, txtSpeed, txtAltitude, txtSunrise, txtSunset, txtLatitude, txtLongitude;
     private ImageView imgRecording;
@@ -148,8 +155,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
             if (fViewProps)
                 ViewPropsForFlight();
-            else
+            else {
+                m_le.SyncProperties();
                 ToView(); // refresh the properties display
+            }
         }
     }
 
@@ -312,6 +321,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         // Expand/collapse
         AddListener(R.id.txtViewInTheCockpit);
         AddListener(R.id.txtImageHeader);
+        AddListener(R.id.txtPinnedPropertiesHeader);
 
         enableCrossFill(R.id.txtNight);
         enableCrossFill(R.id.txtSimIMC);
@@ -699,7 +709,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         return false;
     }
 
-
+    //region append to route
     // NOTE: I had been doing this with an AsyncTask, but it
     // wasn't thread safe with the database.  DB is pretty fast,
     // so we can just make sure we do all DB stuff on the main thread.
@@ -727,6 +737,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         m_le.szRoute = Airport.AppendCodeToRoute(txtRoute.getText().toString(), szAdHoc);
         txtRoute.setText(m_le.szRoute);
     }
+    //endregion
 
     public void takePictureClicked() {
         saveCurrentFlight();
@@ -819,6 +830,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
             }
             break;
+            case R.id.txtPinnedPropertiesHeader: {
+                View target = findViewById(R.id.sectPinnedProperties);
+                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+            }
+            break;
             case R.id.txtSocialNetworkHint: {
                 String szURLProfile = String.format(MFBConstants.urlProfile, MFBConstants.szIP, AuthToken.m_szEmail, AuthToken.m_szPass, MFBConstants.destProfile);
                 ActWebView.ViewURL(getActivity(), szURLProfile);
@@ -840,7 +856,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 if (resultCode == Activity.RESULT_OK)
                     AddGalleryImage(data);
             case EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE:
-                m_le.SyncProperties();
+                setUpPropertiesForFlight();
                 break;
             case ActFlightMap.REQUEST_ROUTE:
                 m_le.szRoute = data.getStringExtra(ActFlightMap.ROUTEFORFLIGHT);
@@ -911,6 +927,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 break;
             case R.id.btnFlightSet:
                 m_le.dtFlight = dt;
+                break;
+            default:
+                // Must be a property being edited
+                setDateForProperty(dt, idLastClickedPropertyType);
                 break;
         }
         ToView();
@@ -1107,17 +1127,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         // Current properties
         if (!m_le.IsExistingFlight() && m_le.rgCustomProperties == null)
             m_le.SyncProperties();
-        TextView tvPrompt = (TextView) findViewById(R.id.lblCurPropsPrompt);
-        TextView tvPropsVal = (TextView) findViewById(R.id.lblCurrentPropsValue);
-        Boolean fHasProps = (m_le.rgCustomProperties != null && m_le.rgCustomProperties.length > 0);
-        tvPrompt.setVisibility(fHasProps ? View.VISIBLE : View.GONE);
-        tvPropsVal.setVisibility(fHasProps ? View.VISIBLE : View.GONE);
-        if (fHasProps) {
-            StringBuilder sbProps = new StringBuilder();
-            for (FlightProperty fp : m_le.rgCustomProperties)
-                sbProps.append(String.format(" - %s\n", fp.format(DlgDatePicker.fUseLocalTime, getActivity())));
-            tvPropsVal.setText(sbProps.toString());
-        }
+        setUpPropertiesForFlight();
 
         // Posting Options
         SetCheckState(R.id.ckFacebook, m_po.m_fPostFacebook);
@@ -1546,4 +1556,155 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         SetStringForField(R.id.txtRoute, m_le.szRoute);
     }
+
+    protected void setUpPropertiesForFlight() {
+        LayoutInflater l = getActivity().getLayoutInflater();
+        TableLayout tl = (TableLayout) findViewById(R.id.tblPinnedProperties);
+        if (tl == null)
+            return;
+        tl.removeAllViews();
+
+        if (m_le == null)
+            return;
+
+        m_le.SyncProperties();
+
+        if (m_le.rgCustomProperties == null)
+            return;
+
+        HashSet<Integer> pinnedProps = CustomPropertyType.getPinnedProperties(getActivity().getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, Activity.MODE_PRIVATE));
+
+        CustomPropertyType[] rgcptAll = CustomPropertyTypesSvc.getCachedPropertyTypes();
+        if (rgcptAll == null)
+            return;
+
+        FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, rgcptAll);
+
+        for (FlightProperty fp : rgProps) {
+            if (fp.CustomPropertyType() == null)
+                fp.RefreshPropType();
+
+            Boolean fIsPinned = CustomPropertyType.isPinnedProperty(pinnedProps, fp.idPropType);
+
+
+            if (!fIsPinned && fp.IsDefaultValue())
+                continue;
+
+            TableRow tr = (TableRow) l.inflate(R.layout.cpttableitem, tl, false);
+            tr.setId(View.generateViewId());
+
+            tr.findViewById(R.id.imgFavorite).setVisibility(fIsPinned ? View.VISIBLE : View.INVISIBLE);
+            ((TextView) tr.findViewById(R.id.txtName)).setText(fp.labelString());
+            // ((TextView) tr.findViewById(R.id.txtCPTDescription)).setText(fp.descriptionString());
+            ((TextView) tr.findViewById(R.id.txtValue)).setText(fp.toString(DlgDatePicker.fUseLocalTime, getContext()));
+            ((TextView) tr.findViewById(R.id.txtHdnPropTypeID)).setText(String.format(Locale.US, "%d", fp.idPropType));
+
+            tr.setOnLongClickListener(v -> {
+                int idPropType = Integer.parseInt(((TextView) v.findViewById(R.id.txtHdnPropTypeID)).getText().toString());
+                SharedPreferences pref = getActivity().getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, Activity.MODE_PRIVATE);
+                Boolean isPinned = CustomPropertyType.isPinnedProperty(pref, idPropType);
+                if (isPinned)
+                    CustomPropertyType.removePinnedProperty(pref, idPropType);
+                else
+                    CustomPropertyType.setPinnedProperty(pref, idPropType);
+
+                v.findViewById(R.id.imgFavorite).setVisibility(isPinned ? View.INVISIBLE : View.VISIBLE);
+                return true;
+            });
+
+            tr.setOnClickListener(v -> {
+                idLastClickedPropertyType = fp.idPropType;
+                switch (fp.getType()) {
+                    case cfpDate:
+                    case cfpDateTime:
+                        DlgDatePicker ddp = new DlgDatePicker(this,
+                                fp.getType() == CustomPropertyType.CFPPropertyType.cfpDate ? DlgDatePicker.datePickMode.LOCALDATEONLY : DlgDatePicker.datePickMode.UTCDATETIME,
+                                fp.dateValue == null ? new Date() : fp.dateValue);
+                        ddp.m_delegate = this;
+                        ddp.m_id = tr.getId();
+                        ddp.show();
+                        break;
+                    default:
+                        DlgPropEdit dpe = new DlgPropEdit(getContext(), tr.getId(), this, fp, m_le.decTotal);
+                        dpe.show();
+                        break;
+                }
+            });
+
+            tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+        }
+    }
+
+    //region in-line property editing
+    private class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
+        private ProgressDialog m_pd = null;
+        FlightProperty fp;
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            FlightPropertiesSvc fpsvc = new FlightPropertiesSvc();
+            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, fp.idFlight, fp.idProp);
+            return true;
+        }
+
+        protected void onPreExecute() {
+            m_pd = MFBUtil.ShowProgress(ActNewFlight.this, ActNewFlight.this.getString(R.string.prgDeleteProp));
+        }
+
+        protected void onPostExecute(Boolean b) {
+            try {
+                m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            setUpPropertiesForFlight();
+        }
+    }
+
+    private void deletDefaultedProperty(FlightProperty fp) {
+        if (fp.idFlight > 0 && fp.IsDefaultValue()) {
+            DeletePropertyTask dpt = new DeletePropertyTask();
+            dpt.fp = fp;
+            dpt.execute();
+            return;
+        }
+
+        // Otherwise, save it
+        FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, CustomPropertyTypesSvc.getCachedPropertyTypes());
+        FlightProperty[] rgfpUpdated = FlightProperty.DistillList(rgProps);
+        FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, rgfpUpdated);
+
+    }
+
+    @Override
+    public void updateProperty(int id, FlightProperty fp) {
+        FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, CustomPropertyTypesSvc.getCachedPropertyTypes());
+        for (int i = 0; i < rgProps.length; i++) {
+            if (rgProps[i].idPropType == fp.idPropType) {
+                rgProps[i] = fp;
+                deletDefaultedProperty(fp);
+                FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, FlightProperty.DistillList(rgProps));
+                m_le.SyncProperties();
+                setUpPropertiesForFlight();
+                break;
+            }
+        }
+    }
+
+    private void setDateForProperty(Date dt, int idPropType) {
+        FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, CustomPropertyTypesSvc.getCachedPropertyTypes());
+        for (FlightProperty fp : rgProps) {
+            if (fp.idPropType == idPropType) {
+                fp.dateValue = dt;
+                deletDefaultedProperty(fp);
+                FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, FlightProperty.DistillList(rgProps));
+                m_le.SyncProperties();
+                setUpPropertiesForFlight();
+                break;
+            }
+        }
+    }
+    //endregion
 }

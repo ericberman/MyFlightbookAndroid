@@ -21,13 +21,17 @@ package com.myflightbook.android;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 
 import com.myflightbook.android.WebServices.AuthToken;
@@ -37,6 +41,7 @@ import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 
 import Model.CustomPropertyType;
@@ -47,6 +52,7 @@ import Model.MFBUtil;
 
 public class ActViewProperties extends FixedExpandableListActivity implements DlgDatePicker.DateTimeUpdate, DlgPropEdit.PropertyListener {
 
+    private final String IS_PINNED_FLAG = "1";
     private FlightProperty[] m_rgfpIn = new FlightProperty[0];
     private FlightProperty[] m_rgfpAll = null;
     private CustomPropertyType[] m_rgcpt = null;
@@ -145,6 +151,23 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
             if (m_rgExpandedGroups != null)
                 m_rgExpandedGroups[groupPosition] = false;
         }
+
+        @Override
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+            final View v = super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
+
+            //noinspection unchecked
+            v.findViewById(R.id.imgFavorite).setVisibility(((HashMap<String, String>) getChild(groupPosition, childPosition)).get("IsPinned").compareTo(IS_PINNED_FLAG) == 0 ? View.VISIBLE : View.INVISIBLE);
+
+            return v;
+        }
+
+        @Override
+        public View newChildView(boolean isLastChild, ViewGroup parent) {
+            LayoutInflater layoutInflater = (LayoutInflater) ActViewProperties.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            return layoutInflater.inflate(R.layout.cptitem, parent, false);
+        }
+
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -201,6 +224,8 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         ArrayList<String> alKeys = new ArrayList<>();
         String szKeyLast = "";
 
+        HashSet<Integer> pinnedProperties = CustomPropertyType.getPinnedProperties(ActViewProperties.this.getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, MODE_PRIVATE));
+
         // slice and dice into headers/first names
         for (int i = 0; i < m_rgfpAll.length; i++) {
             FlightProperty fp = m_rgfpAll[i];
@@ -225,6 +250,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
             hmProperty.put("Value", fp.toString(DlgDatePicker.fUseLocalTime, this));
             hmProperty.put("Description", fp.descriptionString());
             hmProperty.put("Position", String.format(Locale.US, "%d", i));
+            hmProperty.put("IsPinned", CustomPropertyType.isPinnedProperty(pinnedProperties, fp.idPropType) ? IS_PINNED_FLAG : "");
             alProps.add(hmProperty);
 
             childrenMaps.put(szKey, alProps);
@@ -261,6 +287,37 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
                 ActViewProperties.this.onItemClick(v, position, id);
                 return false;
             });
+
+        final ExpandableListView elv = getExpandableListView();
+        elv.setOnItemLongClickListener((parent, view, position, id) -> {
+
+            long packedPosition = elv.getExpandableListPosition(position);
+
+            int itemType = ExpandableListView.getPackedPositionType(packedPosition);
+            int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+            int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
+
+            if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                //noinspection unchecked
+                HashMap<String, String> hm = (HashMap<String, String>) ActViewProperties.this.mAdapter.getChild(groupPosition, childPosition);
+                int pos = Integer.parseInt(hm.get("Position"));
+                FlightProperty fp = m_rgfpAll[pos];
+
+                SharedPreferences pref = ActViewProperties.this.getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, MODE_PRIVATE);
+                if (CustomPropertyType.isPinnedProperty(pref, fp.idPropType)) {
+                    CustomPropertyType.removePinnedProperty(pref, fp.idPropType);
+                    hm.put("IsPinned", "");
+                }
+                else {
+                    CustomPropertyType.setPinnedProperty(pref, fp.idPropType);
+                    hm.put("IsPinned", IS_PINNED_FLAG);
+                }
+
+                mAdapter.notifyDataSetChanged();
+            }
+
+            return true;
+        });
 
         for (int i = 0; i < m_rgExpandedGroups.length; i++)
             if (m_rgExpandedGroups[i])

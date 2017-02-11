@@ -785,61 +785,55 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:padding="5dp">
+            android:width="90dip"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
                 android:width="90dip"
-                android:orientation="vertical">
+                android:gravity="center_horizontal"
+                android:text="@string/lblTotal" />
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:width="90dip"
-                    android:gravity="center_horizontal"
-                    android:text="@string/lblTotal" />
+            <Model.DecimalEdit
+                android:id="@+id/txtTotal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:nextFocusLeft="@id/txtPIC"
+                mfb:EditMode="HHMM" />
+        </LinearLayout>
 
-                <Model.DecimalEdit
-                    android:id="@+id/txtTotal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:nextFocusLeft="@id/txtPIC"
-                    mfb:EditMode="HHMM" />
-            </LinearLayout>
+        <TextView
+            android:id="@+id/txtPinnedPropertiesHeader"
+            style="@style/DividerBar"
+            android:clickable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:text="@string/lblCatProperties" />
+
+        <LinearLayout
+            android:id="@+id/sectPinnedProperties"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:id="@+id/tblPinnedProperties"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp" />
 
             <Button
                 android:id="@+id/btnProps"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:gravity="center_vertical"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:text="@string/lblProperties" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dip">
-
-            <TextView
-                android:id="@+id/lblCurPropsPrompt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lblCurrentProps" />
-
-            <TextView
-                android:id="@+id/lblCurrentPropsValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="" />
         </LinearLayout>
 
         <TextView

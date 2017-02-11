@@ -85,6 +85,9 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
 
     @SuppressLint("SimpleDateFormat")
     public String toString(Boolean fLocal, Context c) {
+        if (m_cpt == null)
+            return String.format(Locale.getDefault(), "(PropType %d)", idPropType);
+
         if (IsDefaultValue())
             return "";
 

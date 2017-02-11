@@ -50,12 +50,13 @@
     <string name="lblHobbsEnd">Ending Hobbs</string>
     <string name="lblEngineEnd">Engine Stop</string>
     <string name="lblFlightEnd">Flight End</string>
-    <string name="lblProperties">Properties…</string>
+    <string name="lblProperties">Edit Flight Properties…</string>
     <string name="lblCurrentProps">Flight Properties:</string>
     <string name="lblCatApproachesAndLandings">Landings and Approaches</string>
-    <string name="lblCatTimes">Flight Times and Properties</string>
+    <string name="lblCatTimes">Flight Times</string>
     <string name="lblCatOverall">General Flight Information</string>
     <string name="lblCatCockpit">In the cockpit</string>
+    <string name="lblCatProperties">Flight Properties</string>
     <string name="lblCatSharing">Sharing</string>
     <string name="lblFacebook">Share flight on Facebook</string>
     <string name="lblTwitter">Share flight on Twitter</string>
