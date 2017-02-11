@@ -33,12 +33,12 @@ import java.io.File;
 
 import Model.MFBConstants;
 
-@SuppressLint("SetJavaScriptEnabled")
 public class ActWebView extends Activity {
 
     public String szURL = "";
     public String szTempFile = "";
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +51,7 @@ public class ActWebView extends Activity {
         wv.getSettings().setBuiltInZoomControls(true);
         wv.getSettings().setSupportZoom(true);
 
+        //noinspection deprecation
         wv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

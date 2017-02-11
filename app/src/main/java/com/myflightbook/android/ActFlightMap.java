@@ -99,7 +99,6 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     public static final String ALIASES = "com.myflightbook.android.aliases";
     public static final int REQUEST_ROUTE = 58372;
 
-    @SuppressLint("InflateParams")
     public boolean onMarkerClick(Marker marker) {
         Airport ap;
         MFBImageInfo mfbii;
@@ -138,7 +137,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
             LayoutInflater vi = getLayoutInflater();
-            View v = vi.inflate(R.layout.mapimageitem, null);
+            @SuppressLint("InflateParams") View v = vi.inflate(R.layout.mapimageitem, null);
             dialog.setView(v);
 
             ImageView i = (ImageView) v.findViewById(R.id.imgMFBIIImage);
@@ -159,7 +158,6 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
         return false;
     }
-
 
     private class FetchFlightPathTask implements Runnable {
         public void run() {
@@ -422,7 +420,6 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         updateMapElements(true);
     }
 
-    @SuppressLint("WorldReadableFiles")
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnUpdateMapRoute:

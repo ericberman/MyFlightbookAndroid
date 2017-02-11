@@ -18,7 +18,6 @@
  */
 package Model;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -361,7 +360,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             }
     }
 
-    @SuppressLint("WorldReadableFiles")
     public void toDB() {
         ContentValues cv = new ContentValues();
 
@@ -1004,7 +1002,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         return output;
     }
 
-    @SuppressLint("WorldReadableFiles")
     public void ViewFullImageInWebView(Activity a) {
         if (URLFullImage.length() > 0) {
             // Image is on server - easy - just use webview

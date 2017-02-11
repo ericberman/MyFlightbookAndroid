@@ -18,7 +18,6 @@
  */
 package Model;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -62,8 +61,7 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
     private CustomPropertyType m_cpt = null; // not persisted, just cached.
     private static CustomPropertyType[] m_rgcptCached = null;
 
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP);
+    private static final SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
 
     public Boolean IsDefaultValue() {
         switch (m_cpt.cptType) {
@@ -83,7 +81,6 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
         return true;
     }
 
-    @SuppressLint("SimpleDateFormat")
     public String toString(Boolean fLocal, Context c) {
         if (m_cpt == null)
             return String.format(Locale.getDefault(), "(PropType %d)", idPropType);
@@ -105,8 +102,7 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
                 return boolValue ? "Yes" : "";
             case cfpDate:
                 if (dateValue != null) {
-                    SimpleDateFormat sdf = new SimpleDateFormat();
-                    return sdf.format(dateValue);
+                    return SimpleDateFormat.getDateInstance().format(dateValue);
                 } else
                     return "";
             case cfpDateTime:
