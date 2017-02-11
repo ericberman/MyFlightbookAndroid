@@ -94,12 +94,14 @@
                         android:minLines="2"
                         android:text="" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnAppendNearest"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:longClickable="true"
-                        android:text="@string/lblAppendNearest" />
+                        android:padding="2dp"
+                        android:src="@drawable/ic_action_location_found"
+                        android:contentDescription="@string/lblAppendNearest" />
 
                     <ImageButton
                         android:id="@+id/btnViewOnMap"

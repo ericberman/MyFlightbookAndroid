@@ -42,7 +42,6 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -312,8 +311,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         AddListener(R.id.btnProps);
         AddListener(R.id.btnAppendNearest);
 
-        Button btnAppend = (Button) findViewById(R.id.btnAppendNearest);
-        btnAppend.setOnLongClickListener((v) -> {
+        findViewById(R.id.btnAppendNearest).setOnLongClickListener((v) -> {
             AppendAdHoc();
             return true;
         });
@@ -475,8 +473,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         LinearLayout l = (LinearLayout) findViewById(R.id.sectGPS);
         l.setVisibility(fIsNewFlight ? View.VISIBLE : View.GONE);
 
-        Button btnNearest = (Button) findViewById(R.id.btnAppendNearest);
-        btnNearest.setVisibility(fIsNewFlight && MFBMain.HasGPS() ? View.VISIBLE : View.GONE);
+        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBMain.HasGPS() ? View.VISIBLE : View.GONE);
         ImageButton btnViewFlight = (ImageButton) findViewById(R.id.btnViewOnMap);
         btnViewFlight.setVisibility((!MFBMain.HasMaps()) ? View.GONE : View.VISIBLE);
 
