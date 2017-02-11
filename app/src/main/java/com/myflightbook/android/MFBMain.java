@@ -250,7 +250,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
             versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
         } catch (NameNotFoundException e) {
-            e.printStackTrace();
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         }
 
         initDB(true);

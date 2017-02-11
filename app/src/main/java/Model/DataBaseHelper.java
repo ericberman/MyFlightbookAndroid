@@ -237,7 +237,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     }
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
 
                 oldVersion++;
@@ -248,7 +248,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 Log.e(MFBConstants.LOG_TAG, String.format("Upgrading airport DB from %d to %d", oldVersion, newVersion));
                 copyDataBase();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
     }

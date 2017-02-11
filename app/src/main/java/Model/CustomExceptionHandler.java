@@ -96,7 +96,7 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
             bos.flush();
             bos.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         }
     }
 
@@ -125,7 +125,7 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
                         if (!f.delete())
                             Log.e(MFBConstants.LOG_TAG, "Delete of error report failed");
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex));
                     }
                 }
             }).start();
@@ -176,19 +176,19 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
             if (!sz.contains("OK"))
                 throw new Exception(sz);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex));
         } finally {
             if (out != null)
                 try {
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
             if (urlConnection != null)
                 try {
                     urlConnection.disconnect();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex));
                 }
         }
     }

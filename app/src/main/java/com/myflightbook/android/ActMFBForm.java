@@ -311,7 +311,7 @@ public class ActMFBForm extends Fragment {
 
                 tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
             } catch (NullPointerException ex) { // should never happen.
-                ex.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex));
             }
         }
     }
@@ -448,19 +448,19 @@ public class ActMFBForm extends Fragment {
                             fos.write(rgBuffer, 0, length);
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                     }
 
                     AddCameraImage(m_TempFilePath, false);
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 } finally {
                     if (fos != null)
                         try {
                             fos.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                         }
                 }
             }
@@ -485,7 +485,7 @@ public class ActMFBForm extends Fragment {
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             MFBUtil.Alert(getActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
         }
     }
@@ -513,7 +513,7 @@ public class ActMFBForm extends Fragment {
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             MFBUtil.Alert(getActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
         }
     }

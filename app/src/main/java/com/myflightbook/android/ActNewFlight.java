@@ -151,7 +151,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
             m_le.ToDB(); // need to save it to the db, in case it isn't already saved.
             // and save the properties
@@ -203,7 +203,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
 
@@ -634,8 +634,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                             MFBConstants.szIP,
                             m_le.idFlight,
                             URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8")));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                } catch (UnsupportedEncodingException ignored) {
                 }
                 return true;
             case R.id.btnDeleteFlight:

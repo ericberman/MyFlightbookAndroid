@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ import java.util.Locale;
 
 import Model.Aircraft;
 import Model.CountryCode;
+import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBUtil;
@@ -102,7 +104,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
 
@@ -146,7 +148,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
     }

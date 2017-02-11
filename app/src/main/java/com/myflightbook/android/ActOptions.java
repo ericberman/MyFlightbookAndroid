@@ -284,8 +284,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         try {
             szURL = String.format(Locale.US, szTemplate, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"));
             ActWebView.ViewURL(getActivity(), szURL);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        } catch (UnsupportedEncodingException ignored) {
         }
     }
 

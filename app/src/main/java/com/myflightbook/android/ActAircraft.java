@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,6 +50,7 @@ import java.util.ArrayList;
 import Model.Aircraft;
 import Model.LazyThumbnailLoader;
 import Model.LazyThumbnailLoader.ThumbnailedItem;
+import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBUtil;
 
@@ -137,7 +139,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
     }

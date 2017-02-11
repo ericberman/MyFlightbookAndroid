@@ -133,7 +133,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 InputStream is = (InputStream) new URL(m_URL).getContent();
                 d = Drawable.createFromStream(is, "src name");
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
             return d;
         }
@@ -390,14 +390,13 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 try (FileOutputStream fos = MFBMain.GetMainContext().openFileOutput(getImageFile(), Context.MODE_PRIVATE)) {
                     fos.write(m_imgData);
                 } catch (IOException e) {
-                    Log.e(MFBConstants.LOG_TAG, "Error saving image full file: " + e.getMessage());
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, "Error saving image full file: " + e.getMessage() + Log.getStackTraceString(e));
                 }
             }
 
             Log.v("MFBImageInfo", String.format("Saved image, row %d", m_id));
         } catch (Exception e) {
-            Log.e(MFBConstants.LOG_TAG, "Error adding image: " + e.getMessage());
+            Log.e(MFBConstants.LOG_TAG, "Error adding image: " + e.getMessage() + Log.getStackTraceString(e));
         }
     }
 
@@ -429,10 +428,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                         baos.write(b, 0, bytesRead);
                     m_imgData = baos.toByteArray();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
         if (m_pd == PictureDestination.FlightImage)
@@ -542,8 +541,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             ExifInterface ei = null;
             try {
                 ei = new ExifInterface(fTemp.getAbsolutePath());
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            } catch (IOException ignored) {
             }
 
             // Geotag it, if necessary, and get rotation.
@@ -565,7 +563,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                     // get the orientation
                     orientation = Integer.parseInt(ei.getAttribute(ExifInterface.TAG_ORIENTATION));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
             }
 
@@ -602,13 +600,13 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             if (fis.read(m_imgData) > 0)
                 fResult = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
             }
             if (fDeleteFileWhenDone) {
@@ -726,13 +724,13 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 try {
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
             if (in != null)
                 try {
                     in.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
             if (urlConnection != null)
                 urlConnection.disconnect();
@@ -1028,10 +1026,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                         ActWebView.ViewTempFile(a, fTemp);
                 } catch (IOException e) {
                     Log.e(MFBConstants.LOG_TAG, "Error saving image full file: " + e.getMessage());
-                    e.printStackTrace();
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
     }

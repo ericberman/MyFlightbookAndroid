@@ -23,6 +23,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,7 @@ import com.myflightbook.android.WebServices.CurrencySvc;
 import com.myflightbook.android.WebServices.MFBSoap;
 
 import Model.CurrencyStatusItem;
+import Model.MFBConstants;
 import Model.MFBUtil;
 
 public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
@@ -87,7 +89,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
     }
@@ -144,7 +146,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 
                 tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             } catch (NullPointerException ex) { // should never happen.
-                ex.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex));
             }
         }
     }

@@ -23,6 +23,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -92,7 +93,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
 
@@ -136,7 +137,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
             try {
                 m_pd.dismiss();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
 
@@ -449,8 +450,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
                 try {
                     szURL = String.format(Locale.US, MFBConstants.urlAircraftSchedule, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), m_ac.AircraftID);
                     ActWebView.ViewURL(getActivity(), szURL);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                } catch (UnsupportedEncodingException ignored) {
                 }
                 return true;
             case R.id.findFlights:
