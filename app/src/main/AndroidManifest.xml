@@ -63,6 +63,9 @@
         <activity
             android:name=".ActNewUser"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ActTimeCalc"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".ActSelectMake" />
         <activity android:name=".ActViewProperties" />
         <activity android:name=".ActWebView" />

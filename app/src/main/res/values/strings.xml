@@ -455,4 +455,12 @@
     <string name="ahApproachAirport">Airport</string>
     <string name="ahAddToTotals">Add to total approach count</string>
 
+    <!-- Time calculator -->
+    <string name="tcAddTimeRangePrompt">If you fly multiple segments in a single entry, you can add them up here.</string>
+    <string name="tcAddTimeStartPrompt">Segment Start:</string>
+    <string name="tcAddTimeEndPrompt">Segment End:</string>
+    <string name="tcCopyResult">Copy</string>
+    <string name="tcAddSegement">Add</string>
+    <string name="tcAddSegmentAndUpdate">Update</string>
+    <string name="tcErrBadTime">Times must be between 00:00 and 24:00</string>
 </resources>

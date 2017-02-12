@@ -48,6 +48,8 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
     static DecimalFormat m_df = new DecimalFormat();
     private CrossFillDelegate delegate = null;
 
+    public Boolean forceHHMM = false;
+
     public DecimalEdit(Context context) {
         super(context);
     }
@@ -84,7 +86,7 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
     // return the effective mode - if HHMM has been specified, then follow user preference.
     public EditMode EffectiveMode() {
         if (m_editMode == EditMode.HHMM)
-            return DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
+            return DecimalEdit.DefaultHHMM || forceHHMM ? EditMode.HHMM : EditMode.DECIMAL;
         return m_editMode;
     }
 

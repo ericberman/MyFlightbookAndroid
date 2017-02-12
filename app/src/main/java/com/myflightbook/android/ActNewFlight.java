@@ -335,6 +335,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         enableCrossFill(R.id.txtSIC);
         enableCrossFill(R.id.txtPIC);
 
+        findViewById(R.id.txtTotal).setOnLongClickListener(v -> {
+            Intent i = new Intent(getActivity(), ActTimeCalc.class);
+            i.putExtra(ActTimeCalc.INITIAL_TIME, DoubleFromField(R.id.txtTotal));
+            startActivityForResult(i, ActTimeCalc.TIME_CALC_REQUEST_CODE);
+            return true;
+        });
+
         ImageButton b = (ImageButton) findViewById(R.id.btnPausePlay);
         b.setOnClickListener(this);
         b = (ImageButton) findViewById(R.id.btnViewOnMap);
@@ -867,6 +874,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     AddGalleryImage(data);
             case EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE:
                 setUpPropertiesForFlight();
+                break;
+            case ActTimeCalc.TIME_CALC_REQUEST_CODE:
+                SetDoubleForField(R.id.txtTotal, m_le.decTotal = data.getDoubleExtra(ActTimeCalc.COMPUTED_TIME, m_le.decTotal));
                 break;
             case ActFlightMap.REQUEST_ROUTE:
                 m_le.szRoute = data.getStringExtra(ActFlightMap.ROUTEFORFLIGHT);
