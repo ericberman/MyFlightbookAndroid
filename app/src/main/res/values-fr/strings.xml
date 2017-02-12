@@ -51,7 +51,6 @@
     <string name="lblEngineEnd">Arrêt Moteur</string>
     <string name="lblFlightEnd">Fin de Vol</string>
     <string name="lblProperties">Caractéristiques du vol…</string>
-    <string name="lblCurrentProps">Caractéristiques du vol:</string>
     <string name="lblCatApproachesAndLandings">Atterrissages et Approches</string>
     <string name="lblCatTimes">Temps de vols</string>
     <string name="lblCatOverall">Information Générale sur le vol</string>

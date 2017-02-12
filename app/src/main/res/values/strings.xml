@@ -51,7 +51,6 @@
     <string name="lblEngineEnd">Engine Stop</string>
     <string name="lblFlightEnd">Flight End</string>
     <string name="lblProperties">Edit Flight Properties…</string>
-    <string name="lblCurrentProps">Flight Properties:</string>
     <string name="lblCatApproachesAndLandings">Landings and Approaches</string>
     <string name="lblCatTimes">Flight Times</string>
     <string name="lblCatOverall">General Flight Information</string>
