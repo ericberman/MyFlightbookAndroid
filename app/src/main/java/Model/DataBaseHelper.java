@@ -19,6 +19,7 @@
 package Model;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -47,7 +48,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 	private SQLiteDatabase myDataBase;
 
-    private final Context myContext;
+    private final String mDBFileName;
+    private final String mFilesDir;
+    private final AssetManager mAssetManager;
 
     /**
      * Constructor Takes and keeps a reference of the passed context in order to
@@ -57,7 +60,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         // NOTE: to increase the version number, change the 3rd parameter below.
         super(context, szDBName, null, dbVersion);
         m_DBName = szDBName;
-        this.myContext = context;
+
+        // Android doesn't like us keeping a context around in a static variable, so let's instead
+        // cache in a non-static variable all of the items that we will need from the context.
+        mDBFileName = context.getDatabasePath(m_DBName).getAbsolutePath();
+        mFilesDir = context.getFilesDir().getPath();
+        mAssetManager = context.getAssets();
     }
 
     /**
@@ -104,7 +112,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase checkDB = null;
 
         try {
-            checkDB = SQLiteDatabase.openDatabase(getDBFileName(), null, SQLiteDatabase.OPEN_READONLY);
+            checkDB = SQLiteDatabase.openDatabase(mDBFileName, null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
             // database does't exist yet.
         } finally {
@@ -113,11 +121,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         return (checkDB != null);
-    }
-
-    private String getDBFileName() {
-        File file = myContext.getDatabasePath(m_DBName);
-        return file.getAbsolutePath();
     }
 
     /**
@@ -130,14 +133,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         InputStream myInput;
 
         // Ensure that the directory exists.
-        File f = new File(myContext.getFilesDir().getPath());
+        File f = new File(mFilesDir);
         if (!f.exists()) {
             if (f.mkdir())
                 Log.v(MFBConstants.LOG_TAG, "Database Directory created");
         }
 
         // Open the empty db as the output stream
-        String szFileName = getDBFileName();
+        String szFileName = mDBFileName;
 
         f = new File(szFileName);
         if (f.exists()) {
@@ -151,7 +154,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             // now put the pieces of the DB together (see above)
             String szAsset = (m_DBName.compareTo(DB_NAME_MAIN) == 0) ? szDBNameMain : szDBNameAirports;
 
-            myInput = myContext.getAssets().open(szAsset);
+            myInput = mAssetManager.open(szAsset);
             // transfer bytes from the inputfile to the outputfile
             byte[] buffer = new byte[1024];
             int length;
@@ -176,7 +179,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void openDataBase() throws SQLException {
 
 		// Open the database
-		myDataBase = SQLiteDatabase.openDatabase(getDBFileName(), null,
+		myDataBase = SQLiteDatabase.openDatabase(mDBFileName, null,
 				SQLiteDatabase.OPEN_READONLY);
 
 	}
