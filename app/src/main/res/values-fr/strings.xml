@@ -456,11 +456,11 @@
     <string name="ahAddToTotals">Ajouter au nombre total d\'approches</string>
 
     <!-- Time calculator -->
-    <string name="tcAddTimeRangePrompt">Si vous lancez plusieurs segments dans une seule entrée, vous pouvez les ajouter ici.</string>
+    <string name="tcAddTimeRangePrompt">Si votre vol avait plusieurs segments, vous pouvez ajouter le temps total ici.</string>
     <string name="tcAddTimeStartPrompt">Début du segment:</string>
     <string name="tcAddTimeEndPrompt">Fin de segment:</string>
     <string name="tcCopyResult">Copie</string>
-    <string name="tcAddSegement">Ajouter</string>
+    <string name="tcAddSgement">Ajouter</string>
     <string name="tcAddSegmentAndUpdate">Mettre à jour</string>
     <string name="tcErrBadTime">Les horaires doivent être entre 00:00 et 24:00</string>
 </resources>

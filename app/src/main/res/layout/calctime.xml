@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textAlignment="center"
-            android:text="@string/tcAddSegement" />
+            android:text="@string/tcAddSegment" />
 
         <Button
             android:id="@+id/btnAddAndUpdate"
