@@ -489,7 +489,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBMain.HasGPS() ? View.VISIBLE : View.GONE);
         ImageButton btnViewFlight = (ImageButton) findViewById(R.id.btnViewOnMap);
-        btnViewFlight.setVisibility((!MFBMain.HasMaps()) ? View.GONE : View.VISIBLE);
+        btnViewFlight.setVisibility((MFBMain.HasMaps()) ? View.VISIBLE : View.GONE);
 
         if (fIsNewFlight) {
             // ensure that we keep the elapsed time up to date
