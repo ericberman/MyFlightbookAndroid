@@ -47,6 +47,7 @@ public class ActTimeCalc extends Activity implements View.OnClickListener {
     public static final int TIME_CALC_REQUEST_CODE = 8723;
 
     ArrayList<Double> m_values = new ArrayList<>();
+    private double initialTime = 0.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class ActTimeCalc extends Activity implements View.OnClickListener {
 
         double dInit = getIntent().getDoubleExtra(INITIAL_TIME, 0.0);
         if (dInit > 0) {
+            initialTime = dInit;
             m_values.add(dInit);
             updateEquationString();
         }
@@ -82,20 +84,25 @@ public class ActTimeCalc extends Activity implements View.OnClickListener {
                 break;
             case R.id.btnAddAndUpdate:
                 addSpecifiedTime();
-                onBackPressed();
+                returnValue(ComputedTotal());
+                super.onBackPressed();
                 break;
         }
     }
 
-    @Override
-    public void onBackPressed() {
+    private void returnValue(double d) {
         Bundle bundle = new Bundle();
-        bundle.putDouble(COMPUTED_TIME, ComputedTotal());
+        bundle.putDouble(COMPUTED_TIME, d);
         hideKeyboard();
 
         Intent mIntent = new Intent();
         mIntent.putExtras(bundle);
         setResult(RESULT_OK, mIntent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        returnValue(initialTime);
         super.onBackPressed();
     }
 
