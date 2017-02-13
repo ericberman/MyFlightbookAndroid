@@ -275,21 +275,26 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
 
     public static void setPinnedProperty(SharedPreferences pref, int id) {
         Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
-        stringVals.add(String.format(Locale.US, "%d", id));
+        HashSet<String> newSet = new HashSet<>(stringVals);
+        newSet.add(String.format(Locale.US, "%d", id));
         SharedPreferences.Editor e = pref.edit();
-        e.putStringSet(prefKeyPinnedProperties, stringVals);
+        e.putStringSet(prefKeyPinnedProperties, newSet);
         e.apply();
     }
 
     public static void removePinnedProperty(SharedPreferences pref, int id) {
         Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
-        String s = String.format(Locale.US, "%d", id);
-        if (!stringVals.contains(s))
+
+        String sRemove = String.format(Locale.US, "%d", id);
+        if (!stringVals.contains(sRemove))
             return;
-        stringVals.remove(s);
+
+        // Can't modify the returned set; need to create a new one.
+        HashSet<String> newSet = new HashSet<>(stringVals);
+        newSet.remove(sRemove);
 
         SharedPreferences.Editor e = pref.edit();
-        e.putStringSet(prefKeyPinnedProperties, stringVals);
+        e.putStringSet(prefKeyPinnedProperties, newSet);
         e.apply();
     }
     //endregion
