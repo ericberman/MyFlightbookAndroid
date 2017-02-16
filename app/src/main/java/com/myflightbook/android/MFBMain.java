@@ -21,7 +21,6 @@ package com.myflightbook.android;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteReadOnlyDatabaseException;
@@ -92,10 +91,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     static private final String m_KeysTOSpeed = "takeoffspeed";
 
     static private final String m_TimeOfLastVacuum = "LastVacuum";
-
-    static final int DIALOG_SIGNIN = 0;
-
-    static public final int SHOW_AIRCRAFT = 1;
 
     private SharedPreferences mPrefs;
     private Boolean m_fSeenWarning = false;
@@ -264,8 +259,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
         m_mainContext = this;
         if (m_Location == null) {
-            m_Location = new MFBLocation();
-            m_Location.SetContext(this);
+            m_Location = new MFBLocation(this);
         }
 
         CustomExceptionHandler ceh = new CustomExceptionHandler(getCacheDir().getAbsolutePath(), String.format(MFBConstants.urlCrashReport, MFBConstants.szIP));
@@ -331,7 +325,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         Assert.assertNotNull("m_Location is null in MFBMain.onResume()", m_Location);
         // stop listening we aren't supposed to stay awake.
         if (!MFBMain.getNewFlightListener().shouldKeepListening())
-            m_Location.stopListening();
+            m_Location.stopListening(this);
 
         // close the writeable DB, in case it is opened.
         mDBHelper.getWritableDatabase().close();
@@ -343,7 +337,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         super.onResume();
 
         if (m_Location != null)
-            m_Location.startListening();
+            m_Location.startListening(this);
 
         // check to see if we need to refresh auth.
         AuthToken at = new AuthToken();
@@ -360,14 +354,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         // close the DB's
         mDBHelper.getWritableDatabase().close();
         mDBHelperAirports.getReadableDatabase().close();
-    }
-
-    public static boolean HasCamera() {
-        if (MFBMain.GetMainContext() == null)
-            return false;
-
-        PackageManager pm = MFBMain.GetMainContext().getPackageManager();
-        return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
     public static boolean HasGPS() {
@@ -414,10 +400,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
-    }
-
-    public void SetAircraftTab() {
-        mTabHost.setCurrentTabByTag(MFBConstants.tabAircraft);
     }
 
     private void RestoreState() {
@@ -532,10 +514,10 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         return MFBMain.m_FlightEventListener;
     }
 
-    public static void SetInProgressFlightActivity(MFBFlightListener.ListenerFragmentDelegate d) {
+    public static void SetInProgressFlightActivity(Context c, MFBFlightListener.ListenerFragmentDelegate d) {
         MFBFlightListener fl = MFBMain.getNewFlightListener().setDelegate(d);
         if (m_Location == null)
-            m_Location = new MFBLocation(GetMainContext(), fl);
+            m_Location = new MFBLocation(c, fl);
         else
             m_Location.SetListener(fl);
     }

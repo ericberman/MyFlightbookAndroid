@@ -52,7 +52,6 @@ public class MFBLocation implements LocationListener {
     }
 
     private Boolean m_fIsEnabled = true;
-    private Context m_Context = null;
     private FlightEvents m_Listener = null;
 
     private static Location m_lastSeenLoc = null; // last location we've seen
@@ -74,9 +73,9 @@ public class MFBLocation implements LocationListener {
     public static Boolean HasPendingLanding = false;
     private Boolean IsListening = false;
 
-    private void Init() {
-        if (m_Context != null) {
-            this.startListening();
+    private void Init(Context c) {
+        if (c != null) {
+            this.startListening(c);
         }
 
 		/*
@@ -90,17 +89,17 @@ public class MFBLocation implements LocationListener {
 		 */
     }
 
-    private Boolean fCheckPermissions() {
-        return m_Context != null && ContextCompat.checkSelfPermission(m_Context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    private Boolean fCheckPermissions(Context c) {
+        return c != null && ContextCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public void startListening() {
+    public void startListening(Context c) {
         if (!IsListening && MFBMain.HasGPS() && !MFBConstants.fFakeGPS) {
-            if (!fCheckPermissions())
+            if (!fCheckPermissions(c))
                 return;
 
             try {
-                LocationManager lm = (LocationManager) m_Context.getSystemService(Context.LOCATION_SERVICE);
+                LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
                 if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
                     return;
 
@@ -116,18 +115,18 @@ public class MFBLocation implements LocationListener {
                 if (m_lastSeenLoc != null)
                     InformListenerOfStatus(m_lastSeenLoc);
             } catch (IllegalArgumentException ex) {
-                MFBUtil.Alert(m_Context, m_Context.getString(R.string.errNoGPSTitle), m_Context.getString(R.string.errCantUseGPS) + ex.getMessage());
+                MFBUtil.Alert(c, c.getString(R.string.errNoGPSTitle), c.getString(R.string.errCantUseGPS) + ex.getMessage());
             } catch (SecurityException ignored) {
             }
         }
     }
 
-    public void stopListening() {
+    public void stopListening(Context c) {
         if (IsListening && MFBMain.HasGPS()) {
-            if (!fCheckPermissions())
+            if (!fCheckPermissions(c))
                 return;
 
-            LocationManager lm = (LocationManager) m_Context
+            LocationManager lm = (LocationManager) c
                     .getSystemService(Context.LOCATION_SERVICE);
             try {
                 lm.removeUpdates(this);
@@ -138,24 +137,19 @@ public class MFBLocation implements LocationListener {
         }
     }
 
-    public MFBLocation() {
+    public MFBLocation(Context c) {
         super();
-        Init();
+        Init(c);
     }
 
     public void SetListener(FlightEvents l) {
         m_Listener = l;
     }
 
-    public void SetContext(Context c) {
-        m_Context = c;
-    }
-
     public MFBLocation(Context c, FlightEvents l) {
         super();
-        m_Context = c;
         m_Listener = l;
-        Init();
+        Init(c);
     }
 
     public Location CurrentLoc() {

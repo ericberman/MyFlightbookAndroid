@@ -301,7 +301,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public void onStop() {
         super.onStop();
         if (m_le == null || m_le.IsNewFlight())
-            MFBMain.SetInProgressFlightActivity(null);
+            MFBMain.SetInProgressFlightActivity(getContext(), null);
     }
 
     @Override
@@ -381,7 +381,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (fIsNewFlight) {
             // re-use the existing in-progress flight
             m_le = MFBMain.getNewFlightListener().getInProgressFlight();
-            MFBMain.SetInProgressFlightActivity(this);
+            MFBMain.SetInProgressFlightActivity(getContext(), this);
             MFBMain.registerNotifyResetAll(this);
             SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
             Boolean fExpandCockpit = pref.getBoolean(m_KeyShowInCockpit, true);
@@ -504,7 +504,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             m_HandlerUpdateTimer.postDelayed(m_UpdateElapsedTimeTask, 1000);
 
             // And make sure we display GPS data
-            MFBMain.SetInProgressFlightActivity(this);
+            MFBMain.SetInProgressFlightActivity(getContext(), this);
         }
 
         setUpGalleryForFlight();
@@ -1321,7 +1321,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         MFBMain.GetMainLocation().setIsRecording(true); // will respect preference
         ShowRecordingIndicator();
         if (MFBConstants.fFakeGPS) {
-            MFBMain.GetMainLocation().stopListening();
+            MFBMain.GetMainLocation().stopListening(getContext());
             MFBMain.GetMainLocation().setIsRecording(true); // will respect preference
             GPSSim gpss = new GPSSim(MFBMain.GetMainLocation());
             gpss.FeedEvents();
