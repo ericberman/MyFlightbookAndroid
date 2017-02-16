@@ -206,46 +206,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             Log.e(MFBConstants.LOG_TAG, String.format("Upgrading main DB from %d to %d", oldVersion, newVersion));
             // below will attempt to migrate version to version, step by step
             // Initial release was (I believe) version 3, so anything less than that
-            while (oldVersion < newVersion) {
+            if (oldVersion < newVersion) {
+                Log.e(MFBConstants.LOG_TAG, "Slamming new main database");
                 try {
-                    switch (oldVersion) {
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                            // Upgrade from 4 (plus a few internal ones) was a significant schema change for
-                            // aircraft and images that we need to force a new aircraft download anyhow, so just go ahead
-                            // and force it for anything less than 7.n
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                        case 12:
-                        case 13:
-                        case 14:
-                        case 15:
-                        case 16:
-                            // Force an upgrade for 7->8 too (added per-user aircraft options)
-                            // 9->10 added country codes.
-                            Log.e(MFBConstants.LOG_TAG, "Slamming new main database");
-                            copyDataBase(); // just force an upgrade, always.  We need to force a download of aircraft again anyhow
-                            oldVersion = 16; // will increment below
-                            break;
-                        default:
-                            break;
-                    }
-
+                    copyDataBase(); // just force an upgrade, always.  We need to force a download of aircraft again anyhow
                 } catch (IOException e) {
                     Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
-
-                oldVersion++;
             }
-        } else // else it is the airport DB.  This is read-only, so we can ALWAYS just slam in a new copy.
+        }
+        else // else it is the airport DB.  This is read-only, so we can ALWAYS just slam in a new copy.
         {
             try {
                 Log.e(MFBConstants.LOG_TAG, String.format("Upgrading airport DB from %d to %d", oldVersion, newVersion));
