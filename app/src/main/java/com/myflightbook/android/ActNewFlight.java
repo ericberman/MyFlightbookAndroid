@@ -487,7 +487,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         LinearLayout l = (LinearLayout) findViewById(R.id.sectGPS);
         l.setVisibility(fIsNewFlight ? View.VISIBLE : View.GONE);
 
-        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBMain.HasGPS(getContext()) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBLocation.HasGPS(getContext()) ? View.VISIBLE : View.GONE);
         ImageButton btnViewFlight = (ImageButton) findViewById(R.id.btnViewOnMap);
         btnViewFlight.setVisibility((MFBMain.HasMaps()) ? View.VISIBLE : View.GONE);
 
@@ -724,18 +724,18 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     // wasn't thread safe with the database.  DB is pretty fast,
     // so we can just make sure we do all DB stuff on the main thread.
     private void AppendNearest() {
-        Assert.assertNotNull("No location object in AppendNearest", MFBMain.GetMainLocation());
+        Assert.assertNotNull("No location object in AppendNearest", MFBLocation.GetMainLocation());
 
         if (checkGPSPermissions(PERMISSION_REQUEST_NEAREST)) {
             TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
-            m_le.szRoute = Airport.AppendNearestToRoute(txtRoute.getText().toString(), MFBMain.GetMainLocation().CurrentLoc());
+            m_le.szRoute = Airport.AppendNearestToRoute(txtRoute.getText().toString(), MFBLocation.GetMainLocation().CurrentLoc());
             txtRoute.setText(m_le.szRoute);
         }
     }
 
     private void AppendAdHoc() {
-        Assert.assertNotNull("No location object in AppendNearest", MFBMain.GetMainLocation());
-        MFBLocation loc = MFBMain.GetMainLocation();
+        Assert.assertNotNull("No location object in AppendNearest", MFBLocation.GetMainLocation());
+        MFBLocation loc = MFBLocation.GetMainLocation();
 
         if (!checkGPSPermissions(PERMISSION_REQUEST_NEAREST))
             return;
@@ -1010,7 +1010,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         saveCurrentFlight();
 
         // flush any pending flight data
-        MFBMain.GetMainLocation().ResetFlightData();
+        MFBLocation.GetMainLocation().ResetFlightData();
 
         // and flush any pause/play data
         fPaused = false;
@@ -1024,7 +1024,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         Boolean fIsNew = m_le.IsNewFlight(); // hold onto this because we can change the status.
         if (fIsNew) {
-            MFBMain.GetMainLocation().setIsRecording(false);
+            MFBLocation.GetMainLocation().setIsRecording(false);
             ShowRecordingIndicator();
         }
 
@@ -1033,7 +1033,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // load the telemetry string, if it's a first submission.
         if (m_le.IsNewFlight())
-            m_le.szFlightData = MFBMain.GetMainLocation().getFlightDataString();
+            m_le.szFlightData = MFBLocation.GetMainLocation().getFlightDataString();
 
         // Save for later if offline or if fForcePending
         if (fForcePending || !MFBSoap.IsOnline(getContext())) {
@@ -1318,12 +1318,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         resetDateOfFlight();
 
         AppendNearest();
-        MFBMain.GetMainLocation().setIsRecording(true); // will respect preference
+        MFBLocation.GetMainLocation().setIsRecording(true); // will respect preference
         ShowRecordingIndicator();
         if (MFBConstants.fFakeGPS) {
-            MFBMain.GetMainLocation().stopListening(getContext());
-            MFBMain.GetMainLocation().setIsRecording(true); // will respect preference
-            GPSSim gpss = new GPSSim(MFBMain.GetMainLocation());
+            MFBLocation.GetMainLocation().stopListening(getContext());
+            MFBLocation.GetMainLocation().setIsRecording(true); // will respect preference
+            GPSSim gpss = new GPSSim(MFBLocation.GetMainLocation());
             gpss.FeedEvents();
         }
     }
@@ -1334,7 +1334,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             return;
 
         AppendNearest();
-        MFBMain.GetMainLocation().setIsRecording(false);
+        MFBLocation.GetMainLocation().setIsRecording(false);
         AutoHobbs();
         AutoTotals();
         ShowRecordingIndicator();
@@ -1349,7 +1349,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (!m_le.isKnownEngineStart())
             resetDateOfFlight();
 
-        MFBMain.GetMainLocation().setIsRecording(true);
+        MFBLocation.GetMainLocation().setIsRecording(true);
         AppendNearest();
         unPauseFlight(); // don't pause in flight
     }
@@ -1363,8 +1363,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void ShowRecordingIndicator() {
-        Assert.assertNotNull("No location object in ShowRecordingIndicator", MFBMain.GetMainLocation());
-        imgRecording.setVisibility(MFBMain.GetMainLocation().getIsRecording() ? View.VISIBLE : View.INVISIBLE);
+        Assert.assertNotNull("No location object in ShowRecordingIndicator", MFBLocation.GetMainLocation());
+        imgRecording.setVisibility(MFBLocation.GetMainLocation().getIsRecording() ? View.VISIBLE : View.INVISIBLE);
     }
 
     private SimpleDateFormat dfSunriseSunset = null;

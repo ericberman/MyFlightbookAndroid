@@ -25,7 +25,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteReadOnlyDatabaseException;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -109,14 +108,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     public static String versionName = "";
     public static int versionCode = 0;
-
-    // A single shared MFBLocation for the app
-    private static MFBLocation m_Location = null;
-
-    // TODO: shouldn't this singleton move into MFBLocation?
-    public static MFBLocation GetMainLocation() {
-        return m_Location;
-    }
 
     private static Resources m_Resources = null;
     public static String getResourceString(int id) {
@@ -266,8 +257,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         // set up for web services
         AuthToken.APPTOKEN = getString(R.string.WebServiceKey);
 
-        if (m_Location == null) {
-            m_Location = new MFBLocation(this);
+        if (MFBLocation.GetMainLocation() == null) {
+            MFBLocation.setMainLocation(new MFBLocation(this));
         }
 
         CustomExceptionHandler ceh = new CustomExceptionHandler(getCacheDir().getAbsolutePath(), String.format(MFBConstants.urlCrashReport, MFBConstants.szIP));
@@ -330,10 +321,10 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     }
 
     protected void onPause() {
-        Assert.assertNotNull("m_Location is null in MFBMain.onResume()", m_Location);
+        Assert.assertNotNull("m_Location is null in MFBMain.onResume()", MFBLocation.GetMainLocation());
         // stop listening we aren't supposed to stay awake.
         if (!MFBMain.getNewFlightListener().shouldKeepListening())
-            m_Location.stopListening(this);
+            MFBLocation.GetMainLocation().stopListening(this);
 
         // close the writeable DB, in case it is opened.
         mDBHelper.getWritableDatabase().close();
@@ -344,8 +335,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     protected void onResume() {
         super.onResume();
 
-        if (m_Location != null)
-            m_Location.startListening(this);
+        if (MFBLocation.GetMainLocation() != null)
+            MFBLocation.GetMainLocation().startListening(this);
 
         // check to see if we need to refresh auth.
         AuthToken at = new AuthToken();
@@ -362,17 +353,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         // close the DB's
         mDBHelper.getWritableDatabase().close();
         mDBHelperAirports.getReadableDatabase().close();
-    }
-
-    // TODO: Should move to MFBLocation
-    public static boolean HasGPS(Context c) {
-        try {
-            LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
-            return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (IllegalArgumentException ex) {
-            MFBUtil.Alert(c, c.getString(R.string.errNoGPSTitle), ex.getMessage());
-        }
-        return false;
     }
 
     public static boolean HasMaps() {
@@ -525,10 +505,10 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     public static void SetInProgressFlightActivity(Context c, MFBFlightListener.ListenerFragmentDelegate d) {
         MFBFlightListener fl = MFBMain.getNewFlightListener().setDelegate(d);
-        if (m_Location == null)
-            m_Location = new MFBLocation(c, fl);
+        if (MFBLocation.GetMainLocation() == null)
+            MFBLocation.setMainLocation(new MFBLocation(c, fl));
         else
-            m_Location.SetListener(fl);
+            MFBLocation.GetMainLocation().SetListener(fl);
     }
 
     public static void registerNotifyDataChange(Invalidatable o) {

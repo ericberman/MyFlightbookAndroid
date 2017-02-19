@@ -24,7 +24,6 @@ import android.location.Location;
 import android.util.Log;
 
 import com.myflightbook.android.ActNewFlight;
-import com.myflightbook.android.MFBMain;
 
 import java.util.Date;
 
@@ -51,7 +50,7 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
     }
 
     private void appendNearest() {
-        m_leNewFlight.szRoute = Airport.AppendNearestToRoute(m_leNewFlight.szRoute, MFBMain.GetMainLocation().CurrentLoc());
+        m_leNewFlight.szRoute = Airport.AppendNearestToRoute(m_leNewFlight.szRoute, MFBLocation.GetMainLocation().CurrentLoc());
     }
 
     public void TakeoffDetected(Location l, Boolean fIsNight) {
@@ -95,11 +94,10 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
                 saveCurrentFlightId(a);
         } else {
                 */
+        if (m_delegate != null) {
             m_delegate.RefreshDetectedFields();
             m_delegate.saveCurrentFlight();
-        /*
         }
-        */
     }
 
     public void LandingDetected(Location l) {

@@ -73,6 +73,9 @@ public class MFBLocation implements LocationListener {
     public static Boolean HasPendingLanding = false;
     private Boolean IsListening = false;
 
+    // A single shared MFBLocation for the app
+    private static MFBLocation m_Location = null;
+
     private void Init(Context c) {
         if (c != null) {
             this.startListening(c);
@@ -94,7 +97,7 @@ public class MFBLocation implements LocationListener {
     }
 
     public void startListening(Context c) {
-        if (!IsListening && MFBMain.HasGPS(c) && !MFBConstants.fFakeGPS) {
+        if (!IsListening && HasGPS(c) && !MFBConstants.fFakeGPS) {
             if (!fCheckPermissions(c))
                 return;
 
@@ -122,7 +125,7 @@ public class MFBLocation implements LocationListener {
     }
 
     public void stopListening(Context c) {
-        if (IsListening && MFBMain.HasGPS(c)) {
+        if (IsListening && HasGPS(c)) {
             if (!fCheckPermissions(c))
                 return;
 
@@ -158,6 +161,24 @@ public class MFBLocation implements LocationListener {
 
     public static Location LastSeenLoc() {
         return m_lastSeenLoc;
+    }
+
+    public static boolean HasGPS(Context c) {
+        try {
+            LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+            return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (IllegalArgumentException ex) {
+            MFBUtil.Alert(c, c.getString(R.string.errNoGPSTitle), ex.getMessage());
+        }
+        return false;
+    }
+
+    public static MFBLocation GetMainLocation() {
+        return m_Location;
+    }
+
+    public static void setMainLocation(MFBLocation loc) {
+        m_Location = loc;
     }
 
     public void ResetFlightData() {

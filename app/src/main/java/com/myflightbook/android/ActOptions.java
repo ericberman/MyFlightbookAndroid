@@ -76,7 +76,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         AddListener(R.id.btnSupport);
         AddListener(R.id.btnAdditionalOptions);
 
-        boolean fHasGPS = MFBMain.HasGPS(getContext());
+        boolean fHasGPS = MFBLocation.HasGPS(getContext());
         if (!fHasGPS)
             MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight = false;
 
