@@ -130,14 +130,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private class UpdateAndViewPropsTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
-        Boolean fViewProps = true;
+        FlightProperty[] rgProps = null;
 
         @Override
         protected Boolean doInBackground(Void... params) {
             FlightPropertiesSvc fpSvc = new FlightPropertiesSvc();
-            m_le.rgCustomProperties = fpSvc.PropertiesForFlight(AuthToken.m_szAuthToken, m_le.idFlight, getContext());
+            rgProps = fpSvc.PropertiesForFlight(AuthToken.m_szAuthToken, m_le.idFlight, getContext());
 
-            return m_le.rgCustomProperties != null && m_le.rgCustomProperties.length > 0;
+            return rgProps != null;
         }
 
         protected void onPreExecute() {
@@ -153,15 +153,15 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
+
             m_le.ToDB(); // need to save it to the db, in case it isn't already saved.
             // and save the properties
-            FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
-            if (fViewProps)
-                ViewPropsForFlight();
-            else {
-                m_le.SyncProperties();
-                ToView(); // refresh the properties display
+            if (b) {
+                m_le.rgCustomProperties = rgProps;
+                FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
             }
+            m_le.SyncProperties();
+            setUpPropertiesForFlight();
         }
     }
 
@@ -402,7 +402,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 if (m_le.IsExistingFlight()) {
                     if (m_le.rgCustomProperties == null) {
                         UpdateAndViewPropsTask vp = new UpdateAndViewPropsTask();
-                        vp.fViewProps = false; // don't navigate away.
                         vp.execute();
                     } else
                         m_le.SyncProperties();
