@@ -68,7 +68,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         protected Boolean doInBackground(Void... params) {
             m_acs = new AircraftSvc();
             m_acs.m_Progress = this;
-            m_acs.UpdateMaintenanceForAircraft(AuthToken.m_szAuthToken, m_ac);
+            m_acs.UpdateMaintenanceForAircraft(AuthToken.m_szAuthToken, m_ac, getContext());
             return (m_acs.getLastError().length() == 0);
         }
 
@@ -114,7 +114,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         protected MFBSoap doInBackground(Void... params) {
             m_acs = new AircraftSvc();
             m_acs.m_Progress = this;
-            m_acs.DeleteAircraftForUser(AuthToken.m_szAuthToken, m_ac.AircraftID);
+            m_acs.DeleteAircraftForUser(AuthToken.m_szAuthToken, m_ac.AircraftID, getContext());
             return m_acs;
         }
 

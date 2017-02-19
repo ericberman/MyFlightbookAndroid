@@ -91,7 +91,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         @Override
         protected MFBSoap doInBackground(Void... params) {
             AircraftSvc as = new AircraftSvc();
-            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken);
+            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken, getContext());
             return as;
         }
 

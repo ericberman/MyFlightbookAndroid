@@ -18,7 +18,8 @@
  */
 package com.myflightbook.android.WebServices;
 
-import com.myflightbook.android.MFBMain;
+import android.content.Context;
+
 import com.myflightbook.android.Marshal.MarshalDate;
 import com.myflightbook.android.Marshal.MarshalDouble;
 import com.myflightbook.android.R;
@@ -57,7 +58,7 @@ public class CommitFlightSvc extends MFBSoap {
         md.register(e);
     }
 
-    public Boolean FCommitFlight(String szAuthToken, LogbookEntry le, PostingOptions po) {
+    public Boolean FCommitFlight(String szAuthToken, LogbookEntry le, PostingOptions po, Context c) {
         SoapObject Request = setMethod("CommitFlightWithOptions");
         Request.addProperty("szAuthUserToken", szAuthToken);
         PropertyInfo piLe = new PropertyInfo();
@@ -91,7 +92,7 @@ public class CommitFlightSvc extends MFBSoap {
             throw new NullPointerException("le.rgFlightImages is null");
 
         le.rgFlightImages = new MFBImageInfo[0];
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
 
         if (result == null) {
             le.rgFlightImages = rgmfbii; // restore the images.
@@ -104,14 +105,14 @@ public class CommitFlightSvc extends MFBSoap {
 
                 int iImg = 1;
                 for (MFBImageInfo mfbii : rgmfbii) {
-                    String szFmtUploadProgress = MFBMain.GetMainContext().getString(R.string.prgUploadingImages);
+                    String szFmtUploadProgress = c.getString(R.string.prgUploadingImages);
                     String szStatus = String.format(szFmtUploadProgress, iImg, rgmfbii.length);
                     if (m_Progress != null)
                         m_Progress.NotifyProgress((iImg * 100) / rgmfbii.length, szStatus);
                     // skip anything that is already on the server.
                     if (!mfbii.IsOnServer()) {
                         mfbii.setKey(leReturn.idFlight);
-                        mfbii.UploadPendingImage(mfbii.getID());
+                        mfbii.UploadPendingImage(mfbii.getID(), c);
                     }
                     iImg++;
                 }

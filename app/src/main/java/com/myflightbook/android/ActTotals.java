@@ -72,7 +72,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         @Override
         protected MFBSoap doInBackground(Void... params) {
             TotalsSvc ts = new TotalsSvc();
-            m_Result = ts.TotalsForUser(AuthToken.m_szAuthToken);
+            m_Result = ts.TotalsForUser(AuthToken.m_szAuthToken, m_Context);
             return ts;
         }
 

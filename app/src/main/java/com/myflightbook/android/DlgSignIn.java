@@ -50,7 +50,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
         @Override
         protected MFBSoap doInBackground(String... params) {
             AircraftSvc as = new AircraftSvc();
-            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken);
+            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken, m_Context);
             return as;
         }
 
@@ -87,7 +87,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
         @Override
         protected MFBSoap doInBackground(String... params) {
-            m_Result = m_Svc.Authorize(params[0], params[1]);
+            m_Result = m_Svc.Authorize(params[0], params[1], m_Context);
             return m_Svc;
         }
 

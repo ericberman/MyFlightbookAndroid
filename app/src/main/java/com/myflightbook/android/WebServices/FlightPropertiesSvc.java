@@ -18,20 +18,22 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import org.ksoap2.serialization.SoapObject;
 
 import Model.FlightProperty;
 
 public class FlightPropertiesSvc extends MFBSoap {
 
-    public FlightProperty[] PropertiesForFlight(String szAuthToken, int idFlight) {
+    public FlightProperty[] PropertiesForFlight(String szAuthToken, int idFlight, Context c) {
         SoapObject Request = setMethod("PropertiesForFlight");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("idFlight", idFlight);
 
         FlightProperty[] rgfp = new FlightProperty[0];
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError("Error getting properties for flight - " + getLastError());
         else {
@@ -48,12 +50,12 @@ public class FlightPropertiesSvc extends MFBSoap {
         return rgfp;
     }
 
-    public void DeletePropertyForFlight(String szAuthToken, int idFlight, int propId) {
+    public void DeletePropertyForFlight(String szAuthToken, int idFlight, int propId, Context c) {
         SoapObject Request = setMethod("DeletePropertyForFlight");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("idFlight", idFlight);
         Request.addProperty("propId", propId);
 
-        Invoke();
+        Invoke(c);
     }
 }

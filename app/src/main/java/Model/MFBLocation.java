@@ -94,7 +94,7 @@ public class MFBLocation implements LocationListener {
     }
 
     public void startListening(Context c) {
-        if (!IsListening && MFBMain.HasGPS() && !MFBConstants.fFakeGPS) {
+        if (!IsListening && MFBMain.HasGPS(c) && !MFBConstants.fFakeGPS) {
             if (!fCheckPermissions(c))
                 return;
 
@@ -122,7 +122,7 @@ public class MFBLocation implements LocationListener {
     }
 
     public void stopListening(Context c) {
-        if (IsListening && MFBMain.HasGPS()) {
+        if (IsListening && MFBMain.HasGPS(c)) {
             if (!fCheckPermissions(c))
                 return;
 
@@ -253,7 +253,7 @@ public class MFBLocation implements LocationListener {
                 } else {
                     if (SpeedKts > MFBTakeoffSpeed.getTakeOffspeed()) {
                         IsFlying = true;
-                        loc.Comment = MFBMain.GetMainContext().getString(R.string.telemetryTakeOff);
+                        loc.Comment = MFBMain.getResourceString(R.string.telemetryTakeOff);
                         HasPendingLanding = false; // back in the air - can't be a FS landing
                         if (m_Listener != null) {
                             m_Listener.TakeoffDetected(newLoc, sst.IsFAANight);
@@ -266,7 +266,7 @@ public class MFBLocation implements LocationListener {
                     if (m_Listener != null)
                         m_Listener.FSLandingDetected(sst.IsFAANight);
                     Log.w(MFBConstants.LOG_TAG, "FS " + (sst.IsFAANight ? "night " : "") + "landing detected");
-                    loc.Comment = MFBMain.GetMainContext().getString(sst.IsFAANight ? R.string.telemetryFSNight : R.string.telemetryFSLanding);
+                    loc.Comment = MFBMain.getResourceString(sst.IsFAANight ? R.string.telemetryFSNight : R.string.telemetryFSLanding);
                     HasPendingLanding = false;
                 }
             }

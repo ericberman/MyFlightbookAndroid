@@ -83,7 +83,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         protected MFBSoap doInBackground(Aircraft... params) {
             AircraftSvc acs = new AircraftSvc();
             acs.m_Progress = this;
-            m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac);
+            m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac, getContext());
             return m_Svc = acs;
         }
 
@@ -129,7 +129,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         @Override
         protected MFBSoap doInBackground(Void... params) {
             MakesandModelsSvc mms = new MakesandModelsSvc();
-            AvailableMakesAndModels = mms.GetMakesAndModels();
+            AvailableMakesAndModels = mms.GetMakesAndModels(m_Context);
 
             return mms;
         }
@@ -336,7 +336,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             case R.id.menuAddAircraft:
                 fromView();
 
-                if (m_ac.FIsValid()) {
+                if (m_ac.FIsValid(getContext())) {
                     SaveAircraftTask st = new SaveAircraftTask(getActivity());
                     st.execute(m_ac);
                 } else

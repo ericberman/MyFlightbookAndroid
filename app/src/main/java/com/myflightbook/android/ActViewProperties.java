@@ -70,7 +70,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         @Override
         protected Boolean doInBackground(Void... params) {
             CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
-            m_rgcpt = cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, fAllowCache);
+            m_rgcpt = cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, fAllowCache, ActViewProperties.this);
             return m_rgcpt != null && m_rgcpt.length > 0;
         }
 
@@ -103,7 +103,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         @Override
         protected Boolean doInBackground(Void... params) {
             FlightPropertiesSvc fpsvc = new FlightPropertiesSvc();
-            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, m_idExistingId, propId);
+            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, m_idExistingId, propId, ActViewProperties.this);
             return true;
         }
 

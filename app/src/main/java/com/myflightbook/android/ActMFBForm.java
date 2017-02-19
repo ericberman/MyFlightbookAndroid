@@ -234,7 +234,7 @@ public class ActMFBForm extends Fragment {
         if (d == null || UTCDate.IsNullDate(d))
             b.setText(getString(R.string.lblTouchForNow));
         else
-            b.setText(UTCDate.formatDate(DlgDatePicker.fUseLocalTime, d, this.getActivity()));
+            b.setText(UTCDate.formatDate(DlgDatePicker.fUseLocalTime, d, getContext()));
     }
 
     protected void SetLocalDateForField(int id, Date d) {
@@ -345,7 +345,7 @@ public class ActMFBForm extends Fragment {
                                 mfbii.deleteFromDB();
                             if (mfbii.IsOnServer()) {
                                 ImagesSvc is = new ImagesSvc();
-                                is.DeleteImage(AuthToken.m_szAuthToken, mfbii);
+                                is.DeleteImage(AuthToken.m_szAuthToken, mfbii, getContext());
                             }
 
                             // Now remove this from the existing images in the source

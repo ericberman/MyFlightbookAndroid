@@ -18,18 +18,20 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import org.ksoap2.serialization.SoapObject;
 
 import Model.MakesandModels;
 
 public class MakesandModelsSvc extends MFBSoap {
 
-    public MakesandModels[] GetMakesAndModels() {
+    public MakesandModels[] GetMakesAndModels(Context c) {
         setMethod("MakesAndModels"); // no need to save the request, since nothing goes out
 
         MakesandModels[] rgMM = new MakesandModels[0];
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError("Error retrieving makes and models - " + getLastError());
         else {

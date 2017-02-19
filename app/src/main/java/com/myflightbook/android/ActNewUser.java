@@ -59,7 +59,7 @@ public class ActNewUser extends Activity implements
         @Override
         protected MFBSoap doInBackground(String... params) {
             CreateUserSvc cus = new CreateUserSvc();
-            m_Result = cus.FCreateUser(params[0], params[1], params[2], params[3], params[4], params[5]);
+            m_Result = cus.FCreateUser(params[0], params[1], params[2], params[3], params[4], params[5], m_Context);
             return m_Svc = cus;
         }
 

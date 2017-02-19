@@ -88,14 +88,18 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
     }
 
     private void SaveInProgressFlight() {
+            /*
         if (m_delegate == null) {
             m_leNewFlight.ToDB();
             if (m_leNewFlight.IsNewFlight())
-                saveCurrentFlightId();
+                saveCurrentFlightId(a);
         } else {
+                */
             m_delegate.RefreshDetectedFields();
             m_delegate.saveCurrentFlight();
+        /*
         }
+        */
     }
 
     public void LandingDetected(Location l) {
@@ -170,10 +174,10 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         return fStayAwake;
     }
 
-    public long saveCurrentFlightId() {
+    public long saveCurrentFlightId(Activity a) {
         long i = -1;
         if (m_leNewFlight != null && m_leNewFlight.IsNewFlight()) {
-            SharedPreferences mPrefs = ((Activity) MFBMain.GetMainContext()).getPreferences(Activity.MODE_PRIVATE);
+            SharedPreferences mPrefs = a.getPreferences(Activity.MODE_PRIVATE);
             SharedPreferences.Editor ed = mPrefs.edit();
             ed.putLong(keyInProgressId, m_leNewFlight.idLocalDB);
             i = m_leNewFlight.idLocalDB;
@@ -182,18 +186,18 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         return i;
     }
 
-    private static long getInProgressFlightId() {
-        SharedPreferences mPrefs = ((Activity) MFBMain.GetMainContext()).getPreferences(Activity.MODE_PRIVATE);
+    private static long getInProgressFlightId(Activity a) {
+        SharedPreferences mPrefs = a.getPreferences(Activity.MODE_PRIVATE);
         return mPrefs.getLong(keyInProgressId, LogbookEntry.ID_NEW_FLIGHT);
     }
 
-    public LogbookEntry getInProgressFlight() {
+    public LogbookEntry getInProgressFlight(Activity a) {
         if (m_leNewFlight == null) {
-            long lastNewFlightID = getInProgressFlightId();
+            long lastNewFlightID = getInProgressFlightId(a);
             m_leNewFlight = new LogbookEntry(lastNewFlightID);
 
             if (lastNewFlightID != m_leNewFlight.idLocalDB) // save the in-progress ID in case of crash, to prevent turds
-                saveCurrentFlightId();
+                saveCurrentFlightId(a);
         }
         return m_leNewFlight;
     }

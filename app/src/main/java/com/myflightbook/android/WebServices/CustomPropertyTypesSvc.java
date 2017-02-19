@@ -19,6 +19,7 @@
 package com.myflightbook.android.WebServices;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -148,7 +149,7 @@ public class CustomPropertyTypesSvc extends MFBSoap {
         return dbc.Status(TABLENAME);
     }
 
-    public CustomPropertyType[] GetCustomPropertyTypes(String szAuthToken, Boolean fAllowCache) {
+    public CustomPropertyType[] GetCustomPropertyTypes(String szAuthToken, Boolean fAllowCache, Context c) {
         CustomPropertyType[] rgcpt = new CustomPropertyType[0];
 
         DBCache.DBCacheStatus dbcs = CacheStatus();
@@ -161,7 +162,7 @@ public class CustomPropertyTypesSvc extends MFBSoap {
             SoapObject Request = setMethod("AvailablePropertyTypesForUser");
             Request.addProperty("szAuthUserToken", szAuthToken);
 
-            SoapObject result = (SoapObject) Invoke();
+            SoapObject result = (SoapObject) Invoke(c);
             if (result == null) {
                 setLastError("Failed to retrieve CustomPropertyTypes - "
                         + getLastError());

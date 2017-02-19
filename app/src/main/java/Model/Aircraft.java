@@ -18,7 +18,8 @@
  */
 package Model;
 
-import com.myflightbook.android.MFBMain;
+import android.content.Context;
+
 import com.myflightbook.android.R;
 
 import org.kobjects.isodate.IsoDate;
@@ -123,7 +124,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         return String.format(Locale.US, "%s%05d", PREFIX_ANON, ModelID);
     }
 
-    public Boolean FIsValid() {
+    public Boolean FIsValid(Context c) {
         // check to see that the tailnumber begins with a country code
 
         Boolean fStartsWithSim = TailNumber.toUpperCase(Locale.getDefault()).startsWith(PREFIX_SIM);
@@ -134,19 +135,20 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         } else if (IsReal()) {
             // Real aircraft - MUST NOT begin with SIM prefix
             if (fStartsWithSim) {
-                ErrorString = MFBMain.GetMainContext().getString(R.string.errRealAircraftCantUseSIM);
+                ErrorString = c.getString(R.string.errRealAircraftCantUseSIM);
                 return false;
             }
 
             CountryCode cc = CountryCode.BestGuessPrefixForTail(TailNumber);
             if (cc == null) {
+                // TODO: why isn't this a localized string?
                 ErrorString = "Aircraft does not begin with a valid country prefix.";
                 return false;
             }
         } else {
             // A sim MUST begin with SIM prefix
             if (!fStartsWithSim) {
-                ErrorString = MFBMain.GetMainContext().getString(R.string.errSimsMustStartWithSIM);
+                ErrorString = c.getString(R.string.errSimsMustStartWithSIM);
                 return false;
             }
         }

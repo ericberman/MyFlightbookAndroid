@@ -18,7 +18,7 @@
  */
 package Model;
 
-import android.content.Context;
+import android.content.res.Resources;
 
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.R;
@@ -68,46 +68,46 @@ public class CategoryClass extends SoapableObject implements KvmSerializable, Se
     }
 
     private String LocalizedString() {
-        Context c = MFBMain.GetMainContext();
+        Resources r = MFBMain.getAppResources();
 
         switch (IdCatClass) {
             default:
             case none:
                 return "(none)";
             case ASEL:
-                return c.getString(R.string.ccASEL);
+                return r.getString(R.string.ccASEL);
             case AMEL:
-                return c.getString(R.string.ccAMEL);
+                return r.getString(R.string.ccAMEL);
             case ASES:
-                return c.getString(R.string.ccASES);
+                return r.getString(R.string.ccASES);
             case AMES:
-                return c.getString(R.string.ccAMES);
+                return r.getString(R.string.ccAMES);
             case Glider:
-                return c.getString(R.string.ccGlider);
+                return r.getString(R.string.ccGlider);
             case Helicopter:
-                return c.getString(R.string.ccHelicopter);
+                return r.getString(R.string.ccHelicopter);
             case Gyroplane:
-                return c.getString(R.string.ccGyroplane);
+                return r.getString(R.string.ccGyroplane);
             case PoweredLift:
-                return c.getString(R.string.ccPoweredLift);
+                return r.getString(R.string.ccPoweredLift);
             case Airship:
-                return c.getString(R.string.ccAirship);
+                return r.getString(R.string.ccAirship);
             case HotAirBalloon:
-                return c.getString(R.string.ccHotAirBalloon);
+                return r.getString(R.string.ccHotAirBalloon);
             case GasBalloon:
-                return c.getString(R.string.ccGasBalloon);
+                return r.getString(R.string.ccGasBalloon);
             case PoweredParachuteLand:
-                return c.getString(R.string.ccPoweredParachuteLand);
+                return r.getString(R.string.ccPoweredParachuteLand);
             case PoweredParachuteSea:
-                return c.getString(R.string.ccPoweredParachuteSea);
+                return r.getString(R.string.ccPoweredParachuteSea);
             case WeightShiftControlLand:
-                return c.getString(R.string.ccWeightShiftControlLand);
+                return r.getString(R.string.ccWeightShiftControlLand);
             case WeightShiftControlSea:
-                return c.getString(R.string.ccWeightShiftControlSea);
+                return r.getString(R.string.ccWeightShiftControlSea);
             case UnmannedAerialSystem:
-                return c.getString(R.string.ccUAS);
+                return r.getString(R.string.ccUAS);
             case PoweredParaglider:
-                return c.getString(R.string.ccPoweredParaglider);
+                return r.getString(R.string.ccPoweredParaglider);
         }
     }
 

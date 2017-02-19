@@ -39,11 +39,13 @@ class DlgImageComment extends Dialog implements android.view.View.OnClickListene
 
     private AnnotationUpdate m_delegate = null;
     private MFBImageInfo m_mfbii = null;
+    private Context m_Context = null;
 
     DlgImageComment(Context context, MFBImageInfo mfbii, AnnotationUpdate d) {
         super(context, R.style.MFBDialog);
         m_mfbii = mfbii;
         m_delegate = d;
+        m_Context = context;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,7 @@ class DlgImageComment extends Dialog implements android.view.View.OnClickListene
                     m_mfbii.toDB();
                 if (m_mfbii.IsOnServer()) {
                     ImagesSvc is = new ImagesSvc();
-                    is.UpdateImageAnnotation(AuthToken.m_szAuthToken, m_mfbii);
+                    is.UpdateImageAnnotation(AuthToken.m_szAuthToken, m_mfbii, m_Context);
                 }
                 break;
             case R.id.btnCancel:

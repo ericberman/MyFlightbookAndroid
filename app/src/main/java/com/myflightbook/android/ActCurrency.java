@@ -65,7 +65,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         @Override
         protected MFBSoap doInBackground(Void... params) {
             CurrencySvc cs = new CurrencySvc();
-            m_Result = cs.CurrencyForUser(AuthToken.m_szAuthToken);
+            m_Result = cs.CurrencyForUser(AuthToken.m_szAuthToken, getContext());
             return cs;
         }
 

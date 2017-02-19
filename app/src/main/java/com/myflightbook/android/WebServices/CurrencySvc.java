@@ -18,6 +18,8 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import org.ksoap2.serialization.SoapObject;
 
 import Model.CurrencyStatusItem;
@@ -25,13 +27,13 @@ import Model.CurrencyStatusItem;
 
 public class CurrencySvc extends MFBSoap {
 
-    public CurrencyStatusItem[] CurrencyForUser(String szAuthToken) {
+    public CurrencyStatusItem[] CurrencyForUser(String szAuthToken, Context c) {
         SoapObject Request = setMethod("GetCurrencyForUser");
         Request.addProperty("szAuthToken", szAuthToken);
 
         CurrencyStatusItem[] rgCsi = new CurrencyStatusItem[0];
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError("Error retrieving currency - " + getLastError());
         else {

@@ -18,6 +18,8 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import com.myflightbook.android.Marshal.MarshalDouble;
 
 import org.ksoap2.serialization.SoapObject;
@@ -28,6 +30,8 @@ import Model.MFBImageInfo;
 
 public class ImagesSvc extends MFBSoap implements Runnable {
 
+    private Context mContext;
+
     @Override
     public void AddMappings(SoapSerializationEnvelope e) {
         e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
@@ -37,21 +41,23 @@ public class ImagesSvc extends MFBSoap implements Runnable {
     }
 
     public void run() {
-        Invoke();
+        Invoke(mContext);
     }
 
-    public void DeleteImage(String szAuthToken, MFBImageInfo mfbii) {
+    public void DeleteImage(String szAuthToken, MFBImageInfo mfbii, Context c) {
         SoapObject Request = setMethod("DeleteImage");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("mfbii", mfbii);
+        mContext = c;
 
         new Thread(this).start();
     }
 
-    public void UpdateImageAnnotation(String szAuthToken, MFBImageInfo mfbii) {
+    public void UpdateImageAnnotation(String szAuthToken, MFBImageInfo mfbii, Context c) {
         SoapObject Request = setMethod("UpdateImageAnnotation");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("mfbii", mfbii);
+        mContext = c;
 
         new Thread(this).start();
     }

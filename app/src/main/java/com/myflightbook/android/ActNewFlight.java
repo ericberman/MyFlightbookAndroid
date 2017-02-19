@@ -135,7 +135,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         @Override
         protected Boolean doInBackground(Void... params) {
             FlightPropertiesSvc fpSvc = new FlightPropertiesSvc();
-            m_le.rgCustomProperties = fpSvc.PropertiesForFlight(AuthToken.m_szAuthToken, m_le.idFlight);
+            m_le.rgCustomProperties = fpSvc.PropertiesForFlight(AuthToken.m_szAuthToken, m_le.idFlight, getContext());
 
             return m_le.rgCustomProperties != null && m_le.rgCustomProperties.length > 0;
         }
@@ -178,7 +178,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         protected MFBSoap doInBackground(Void... params) {
             DeleteFlightSvc dfs = new DeleteFlightSvc();
             dfs.m_Progress = this;
-            dfs.DeleteFlight(AuthToken.m_szAuthToken, m_le.idFlight);
+            dfs.DeleteFlight(AuthToken.m_szAuthToken, m_le.idFlight, getContext());
             m_Result = (dfs.getLastError().length() == 0);
 
             return m_Svc = dfs;
@@ -231,7 +231,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         protected MFBSoap doInBackground(Void... params) {
             CommitFlightSvc cf = new CommitFlightSvc();
             cf.m_Progress = this;
-            m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_po);
+            m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_po, getContext());
             return cf;
         }
 
@@ -380,7 +380,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         if (fIsNewFlight) {
             // re-use the existing in-progress flight
-            m_le = MFBMain.getNewFlightListener().getInProgressFlight();
+            m_le = MFBMain.getNewFlightListener().getInProgressFlight(getActivity());
             MFBMain.SetInProgressFlightActivity(getContext(), this);
             MFBMain.registerNotifyResetAll(this);
             SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -455,7 +455,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         if (AuthToken.FIsValid()) {
             AircraftSvc acs = new AircraftSvc();
-            m_rgac = acs.AircraftForUser(AuthToken.m_szAuthToken);
+            m_rgac = acs.AircraftForUser(AuthToken.m_szAuthToken, getContext());
 
             Spinner spnAircraft = (Spinner) findViewById(R.id.spnAircraft);
 
@@ -479,7 +479,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // Not sure why le can sometimes be empty here...
         if (m_le == null)
-            m_le = MFBMain.getNewFlightListener().getInProgressFlight();
+            m_le = MFBMain.getNewFlightListener().getInProgressFlight(getActivity());
 
         // show/hide GPS controls based on whether this is a new flight or existing.
         boolean fIsNewFlight = m_le.IsNewFlight();
@@ -487,7 +487,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         LinearLayout l = (LinearLayout) findViewById(R.id.sectGPS);
         l.setVisibility(fIsNewFlight ? View.VISIBLE : View.GONE);
 
-        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBMain.HasGPS() ? View.VISIBLE : View.GONE);
+        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBMain.HasGPS(getContext()) ? View.VISIBLE : View.GONE);
         ImageButton btnViewFlight = (ImageButton) findViewById(R.id.btnViewOnMap);
         btnViewFlight.setVisibility((MFBMain.HasMaps()) ? View.VISIBLE : View.GONE);
 
@@ -587,7 +587,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // and we only want to save the current flightID if it is a new (not pending!) flight
         if (m_le.IsNewFlight())
-            MFBMain.getNewFlightListener().saveCurrentFlightId();
+            MFBMain.getNewFlightListener().saveCurrentFlightId(getActivity());
     }
 
     public void SetLogbookEntry(LogbookEntry le) {
@@ -1036,7 +1036,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             m_le.szFlightData = MFBMain.GetMainLocation().getFlightDataString();
 
         // Save for later if offline or if fForcePending
-        if (fForcePending || !MFBSoap.IsOnline()) {
+        if (fForcePending || !MFBSoap.IsOnline(getContext())) {
             boolean fIsNewFlight = m_le.IsNewFlight();
 
             // save the flight with id of -2
@@ -1664,7 +1664,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         @Override
         protected Boolean doInBackground(Void... params) {
             FlightPropertiesSvc fpsvc = new FlightPropertiesSvc();
-            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, fp.idFlight, fp.idProp);
+            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, fp.idFlight, fp.idProp, getContext());
             return true;
         }
 

@@ -162,7 +162,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     private class FetchFlightPathTask implements Runnable {
         public void run() {
             RecentFlightsSvc rfs = new RecentFlightsSvc();
-            m_rgFlightRoute = rfs.FlightPathForFlight(AuthToken.m_szAuthToken, m_le.idFlight);
+            m_rgFlightRoute = rfs.FlightPathForFlight(AuthToken.m_szAuthToken, m_le.idFlight, ActFlightMap.this);
             if ((m_rgFlightRoute != null) && (m_rgFlightRoute.length > 0))
                 ActFlightMap.this.runOnUiThread(ActFlightMap.this::updateMapElements);
         }
@@ -404,7 +404,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             FetchFlightPathTask ffpt = new FetchFlightPathTask();
             new Thread(ffpt).start();
         } else if (idNew != 0) {
-            m_le = MFBMain.getNewFlightListener().getInProgressFlight();
+            m_le = MFBMain.getNewFlightListener().getInProgressFlight(this);
             this.m_rgFlightRoute = LocSample.flightPathFromDB();
         } else // all airports
         {

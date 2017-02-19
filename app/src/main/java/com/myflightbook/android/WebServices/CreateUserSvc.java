@@ -18,13 +18,15 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import org.ksoap2.serialization.SoapObject;
 
 
 public class CreateUserSvc extends MFBSoap {
 
     public Boolean FCreateUser(String szEmail, String szPass, String szFirst, String szLast,
-                               String szQ, String szA) {
+                               String szQ, String szA, Context c) {
         Boolean fResult = false;
         SoapObject Request = setMethod("CreateUser");
         Request.addProperty("szAppToken", AuthToken.APPTOKEN);
@@ -35,7 +37,7 @@ public class CreateUserSvc extends MFBSoap {
         Request.addProperty("szQuestion", szQ);
         Request.addProperty("szAnswer", szA);
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError("Error creating account - " + getLastError());
         else {

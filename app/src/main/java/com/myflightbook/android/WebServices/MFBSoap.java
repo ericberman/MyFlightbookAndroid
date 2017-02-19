@@ -23,7 +23,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Looper;
 
-import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.R;
 
 import org.ksoap2.HeaderProperty;
@@ -72,8 +71,7 @@ public class MFBSoap {
     public void AddMappings(SoapSerializationEnvelope e) {
     }
 
-    public static Boolean IsOnline() {
-        Context ctx = MFBMain.GetMainContext();
+    public static Boolean IsOnline(Context ctx) {
         if (ctx == null)
             return false;
 
@@ -108,12 +106,15 @@ public class MFBSoap {
         return false;
     }
 
-    public Object Invoke() {
+    protected Object Invoke(Context c) {
+        if (c == null)
+            throw new NullPointerException();
+
         setLastError("");
         Object o;
 
-        if (!IsOnline()) {
-            setLastError(MFBMain.GetMainContext().getString(R.string.errNoInternet));
+        if (!IsOnline(c)) {
+            setLastError(c.getString(R.string.errNoInternet));
             return null;
         }
 
@@ -152,7 +153,7 @@ public class MFBSoap {
         } catch (Exception e) {
             String szFault = e.getMessage();
             if (szFault == null)
-                szFault = MFBMain.GetMainContext().getString(R.string.errorSoapError);
+                szFault = c.getString(R.string.errorSoapError);
             else if (szFault.contains(MFBConstants.szFaultSeparator)) {
                 szFault = szFault.substring(szFault.lastIndexOf(MFBConstants.szFaultSeparator) + MFBConstants.szFaultSeparator.length()).replace("System.Exception: ", "");
                 int iStartStackTrace = szFault.indexOf("\n ");

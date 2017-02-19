@@ -61,7 +61,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         @Override
         protected MFBSoap doInBackground(Void... params) {
             VisitedAirportSvc vas = new VisitedAirportSvc();
-            m_Result = vas.VisitedAirportsForUser(AuthToken.m_szAuthToken);
+            m_Result = vas.VisitedAirportsForUser(AuthToken.m_szAuthToken, m_Context);
             return vas;
         }
 

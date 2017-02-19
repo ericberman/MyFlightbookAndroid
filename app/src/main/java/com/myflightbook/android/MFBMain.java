@@ -22,6 +22,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteReadOnlyDatabaseException;
 import android.location.LocationManager;
@@ -112,16 +113,22 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     // A single shared MFBLocation for the app
     private static MFBLocation m_Location = null;
 
-    // Access to the main context
-    private static Context m_mainContext = null;
-
-    public static Context GetMainContext() {
-        return m_mainContext;
-    }
-
+    // TODO: shouldn't this singleton move into MFBLocation?
     public static MFBLocation GetMainLocation() {
         return m_Location;
     }
+
+    private static Resources m_Resources = null;
+    public static String getResourceString(int id) {
+        return m_Resources == null ? "" : m_Resources.getString(id);
+    }
+
+    public static Resources getAppResources() {
+        return m_Resources;
+    }
+
+    private static String m_filesPath = null;
+    public static String getAppFilesPath() {return m_filesPath; }
 
     private class TabInfo {
         private String tag;
@@ -239,6 +246,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        m_Resources = getResources();
+        m_filesPath = getFilesDir().getAbsolutePath();
 
         // Get the version name/code for crash reports
         try {
@@ -257,7 +266,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         // set up for web services
         AuthToken.APPTOKEN = getString(R.string.WebServiceKey);
 
-        m_mainContext = this;
         if (m_Location == null) {
             m_Location = new MFBLocation(this);
         }
@@ -356,12 +364,13 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         mDBHelperAirports.getReadableDatabase().close();
     }
 
-    public static boolean HasGPS() {
+    // TODO: Should move to MFBLocation
+    public static boolean HasGPS(Context c) {
         try {
-            LocationManager lm = (LocationManager) MFBMain.GetMainContext().getSystemService(Context.LOCATION_SERVICE);
+            LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
             return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (IllegalArgumentException ex) {
-            MFBUtil.Alert(MFBMain.GetMainContext(), MFBMain.GetMainContext().getString(R.string.errNoGPSTitle), ex.getMessage());
+            MFBUtil.Alert(c, c.getString(R.string.errNoGPSTitle), ex.getMessage());
         }
         return false;
     }
@@ -382,7 +391,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
         @Override
         protected Boolean doInBackground(AuthToken... arg0) {
-            return (arg0[0]).RefreshAuthorization();
+            return (arg0[0]).RefreshAuthorization(MFBMain.this);
         }
 
         protected void onPreExecute() {

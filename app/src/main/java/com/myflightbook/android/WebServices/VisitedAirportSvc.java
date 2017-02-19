@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
 import android.location.Location;
 
 import com.myflightbook.android.Marshal.MarshalDate;
@@ -45,13 +46,13 @@ public class VisitedAirportSvc extends MFBSoap {
         md.register(e);
     }
 
-    public VisitedAirport[] VisitedAirportsForUser(String szAuthToken) {
+    public VisitedAirport[] VisitedAirportsForUser(String szAuthToken, Context c) {
         SoapObject Request = setMethod("VisitedAirports");
         Request.addProperty("szAuthToken", szAuthToken);
 
         VisitedAirport[] rgva = new VisitedAirport[0];
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError("Error retrieving visited airports - " + getLastError());
         else {

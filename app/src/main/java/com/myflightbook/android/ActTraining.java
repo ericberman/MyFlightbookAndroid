@@ -116,7 +116,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // TODO: IsOnline doesn't work from main thread.
-        if (!AuthToken.FIsValid() || !MFBSoap.IsOnline()) {
+        if (!AuthToken.FIsValid() || !MFBSoap.IsOnline(getContext())) {
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errTrainingNotAvailable));
             return;
         }

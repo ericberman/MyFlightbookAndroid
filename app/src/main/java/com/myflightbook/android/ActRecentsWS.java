@@ -182,7 +182,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             if (fClearCache)
                 RecentFlightsSvc.ClearCachedFlights();
-            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, m_rgExistingFlights.size(), cFlightsPageSize);
+            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, m_rgExistingFlights.size(), cFlightsPageSize, getContext());
 
             fCouldBeMore = (rgle != null && rgle.length >= cFlightsPageSize);
 

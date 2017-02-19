@@ -18,6 +18,8 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
@@ -49,12 +51,12 @@ public class AuthToken extends MFBSoap {
     }
 
     // checks our auth status, refreshes it if needed
-    public Boolean RefreshAuthorization() {
+    public Boolean RefreshAuthorization(Context c) {
         // if no email/password, then we MUST return false because
         // we need to display UI to the user
         // try to authorize.  This will use cache if cache is valid, but will
         // attempt a refresh if possible.  Otherwise it is silent.
-        return FHasCredentials() && Authorize(m_szEmail, m_szPass).length() > 0;
+        return FHasCredentials() && Authorize(m_szEmail, m_szPass, c).length() > 0;
     }
 
     public Boolean HasValidCache() {
@@ -66,7 +68,7 @@ public class AuthToken extends MFBSoap {
         return (dbcs == DBCache.DBCacheStatus.VALID && FIsValid());
     }
 
-    public String Authorize(String szUser, String szPass) {
+    public String Authorize(String szUser, String szPass, Context c) {
         DBCache dbc = new DBCache();
 
         DBCache.DBCacheStatus dbcs = dbc.Status(TABLE_AUTH);
@@ -96,7 +98,7 @@ public class AuthToken extends MFBSoap {
         m_szPass = szPass;
 
         try {
-            SoapPrimitive sp = (SoapPrimitive) Invoke();
+            SoapPrimitive sp = (SoapPrimitive) Invoke(c);
             m_szAuthToken = sp.toString();
 
             // success!

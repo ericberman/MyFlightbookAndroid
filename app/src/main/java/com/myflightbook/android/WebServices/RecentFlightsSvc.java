@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -51,6 +52,7 @@ public class RecentFlightsSvc extends MFBSoap {
     private static LogbookEntry[] m_CachedFlights = null;
 
     public RecentFlightsSvc() {
+
     }
 
     @Override
@@ -86,7 +88,7 @@ public class RecentFlightsSvc extends MFBSoap {
         return rgLe;
     }
 
-    public LogbookEntry[] RecentFlightsWithQueryAndOffset(String szAuthToken, int offset, int limit) {
+    public LogbookEntry[] RecentFlightsWithQueryAndOffset(String szAuthToken, int offset, int limit, Context c) {
         LogbookEntry[] rgLe;
 
         SoapObject Request = setMethod("FlightsWithQueryAndOffset");
@@ -95,7 +97,7 @@ public class RecentFlightsSvc extends MFBSoap {
         Request.addProperty("offset", offset);
         Request.addProperty("maxCount", limit);
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             rgLe = null;
         else {
@@ -122,13 +124,13 @@ public class RecentFlightsSvc extends MFBSoap {
         return rgLe;
     }
 
-    public LatLong[] FlightPathForFlight(String szAuthToken, int idFlight) {
+    public LatLong[] FlightPathForFlight(String szAuthToken, int idFlight, Context c) {
         LatLong[] rgll = new LatLong[0];
 
         SoapObject Request = setMethod("FlightPathForFlight");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("idFlight", idFlight);
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError("Failed to get path for flight - " + getLastError());
         else {

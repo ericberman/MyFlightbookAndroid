@@ -21,8 +21,6 @@ package com.myflightbook.android.WebServices;
 import android.content.Context;
 import android.text.format.DateFormat;
 
-import com.myflightbook.android.MFBMain;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,8 +58,6 @@ public class UTCDate {
 
     static public String formatDate(Boolean fLocal, Date d, Context c) {
         if (fLocal) {
-            if (c == null)
-                c = MFBMain.GetMainContext();
             java.text.DateFormat dfDate = DateFormat.getDateFormat(c);
             java.text.DateFormat dfTime = DateFormat.getTimeFormat(c);
             GregorianCalendar g = new GregorianCalendar();

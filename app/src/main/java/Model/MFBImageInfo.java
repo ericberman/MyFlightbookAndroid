@@ -61,7 +61,6 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -160,6 +159,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         }
     }
 
+    //region Constructors
     public MFBImageInfo() {
         super();
     }
@@ -179,6 +179,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         setID(id);
         setPictureDestination(pd);
     }
+    //endregion
 
     /*
      * Note that an image can be BOTH local AND on server.
@@ -340,6 +341,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         return String.format("%s%s%s", getImagePrefix(), Long.toString(m_id), getImageSuffix());
     }
 
+    private String getAbsoluteImageFile() {
+        return MFBMain.getAppFilesPath() + "/" + getImageFile();
+    }
+
     /*
      * Delete any image file matching the specified destination that is not in the specified list.
      */
@@ -387,14 +392,12 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
             // now need to save the image data, if present
             if (m_imgData != null && m_imgData.length > 0) {
-                try (FileOutputStream fos = MFBMain.GetMainContext().openFileOutput(getImageFile(), Context.MODE_PRIVATE)) {
+                try (FileOutputStream fos = new FileOutputStream(getAbsoluteImageFile())) {
                     fos.write(m_imgData);
                 } catch (IOException e) {
                     Log.e(MFBConstants.LOG_TAG, "Error saving image full file: " + e.getMessage() + Log.getStackTraceString(e));
                 }
             }
-
-            Log.v("MFBImageInfo", String.format("Saved image, row %d", m_id));
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "Error adding image: " + e.getMessage() + Log.getStackTraceString(e));
         }
@@ -404,9 +407,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         SQLiteDatabase db = MFBMain.mDBHelper.getReadableDatabase();
         try {
             db.delete(TABLENAME, "_id = ?", new String[]{String.format(Locale.US, "%d", m_id)});
-            MFBMain.GetMainContext().deleteFile(getImageFile());
-
-            Log.v("MFBImageInfo", String.format("deleting img %d, file %s", m_id, getImageFile()));
+            if (!(new File(getAbsoluteImageFile()).delete())) {
+                Log.v(MFBConstants.LOG_TAG, "unable to delete image file from DB.");
+            }
         } catch (Exception ex) {
             Log.e(MFBConstants.LOG_TAG, String.format("Unable to delete image %d: %s", m_id, ex.getMessage()));
         }
@@ -418,8 +421,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             m_imgThumb = c.getBlob(c.getColumnIndex("thmbData"));
         if (fGetFullImage) {
             m_imgData = null;
-            try {
-                FileInputStream fis = MFBMain.GetMainContext().openFileInput(getImageFile());
+            try (FileInputStream fis = new FileInputStream(getAbsoluteImageFile())) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] b = new byte[1024];
                 int bytesRead;
@@ -430,7 +432,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 } catch (IOException e) {
                     Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
@@ -636,106 +638,101 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         return m_imgThumb;
     }
 
-    public Boolean UploadPendingImage(long idImg) {
+    public Boolean UploadPendingImage(long idImg, Context c) {
         this.setID(idImg);
         fromDB(false, false);    // actual bytes could be long.
 
         // get a stream to the raw bytes
 
-        FileInputStream fis;
-        try {
-            fis = MFBMain.GetMainContext().openFileInput(getImageFile());
-            if (fis == null)
-                return false;
-        } catch (FileNotFoundException e1) {
-            return false;
-        }
-
         Boolean fResult = false;
 
-        String szBase = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? "http://" : "https://") + MFBConstants.szIP;
-        String szBoundary = "IMAGEBOUNDARY";
-        String szBoundaryDivider = String.format("--%s\r\n", szBoundary);
+        try (FileInputStream fis = new FileInputStream(getAbsoluteImageFile())) {
+            String szBase = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? "http://" : "https://") + MFBConstants.szIP;
+            String szBoundary = "IMAGEBOUNDARY";
+            String szBoundaryDivider = String.format("--%s\r\n", szBoundary);
 
-        URL url;
-        HttpURLConnection urlConnection = null;
+            URL url;
+            HttpURLConnection urlConnection = null;
 
-        OutputStream out = null;
-        InputStream in = null;
-        try {
-            if (m_key.length() == 0)
-                throw new Exception("No valid key provided");
+            OutputStream out = null;
+            InputStream in = null;
+            try {
+                if (m_key.length() == 0)
+                    throw new Exception("No valid key provided");
 
-            url = new URL(szBase + m_szURL);
-            urlConnection = (HttpURLConnection) url.openConnection();
+                url = new URL(szBase + m_szURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
 
-            urlConnection.setDoOutput(true);
-            urlConnection.setChunkedStreamingMode(0);
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", String.format("multipart/form-data; boundary=%s", szBoundary));
+                urlConnection.setDoOutput(true);
+                urlConnection.setChunkedStreamingMode(0);
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", String.format("multipart/form-data; boundary=%s", szBoundary));
 
-            out = new BufferedOutputStream(urlConnection.getOutputStream());
+                out = new BufferedOutputStream(urlConnection.getOutputStream());
 
-            out.write(szBoundaryDivider.getBytes("UTF8"));
-            out.write("Content-Disposition: form-data; name=\"txtAuthToken\"\r\n\r\n".getBytes("UTF8"));
-            out.write(String.format("%s\r\n%s", AuthToken.m_szAuthToken, szBoundaryDivider).getBytes("UTF8"));
+                out.write(szBoundaryDivider.getBytes("UTF8"));
+                out.write("Content-Disposition: form-data; name=\"txtAuthToken\"\r\n\r\n".getBytes("UTF8"));
+                out.write(String.format("%s\r\n%s", AuthToken.m_szAuthToken, szBoundaryDivider).getBytes("UTF8"));
 
-            out.write("Content-Disposition: form-data; name=\"txtComment\"\r\n\r\n".getBytes("UTF8"));
-            out.write(String.format("%s\r\n%s", Comment, szBoundaryDivider).getBytes("UTF8"));
+                out.write("Content-Disposition: form-data; name=\"txtComment\"\r\n\r\n".getBytes("UTF8"));
+                out.write(String.format("%s\r\n%s", Comment, szBoundaryDivider).getBytes("UTF8"));
 
-            out.write(String.format("Content-Disposition: form-data; name=\"%s\"\r\n\r\n", this.m_keyName).getBytes("UTF8"));
-            out.write(String.format("%s\r\n%s", this.m_key, szBoundaryDivider).getBytes("UTF8"));
+                out.write(String.format("Content-Disposition: form-data; name=\"%s\"\r\n\r\n", this.m_keyName).getBytes("UTF8"));
+                out.write(String.format("%s\r\n%s", this.m_key, szBoundaryDivider).getBytes("UTF8"));
 
-            out.write(String.format(Locale.getDefault(), "Content-Disposition: form-data; name=\"imgPicture\"; filename=\"myimage%s\"\r\n", getImageSuffix()).getBytes("UTF8"));
-            out.write(String.format(Locale.getDefault(), "Content-Type: %s\r\nContent-Transfer-Encoding: binary\r\n\r\n", IsVideo() ? "video/mp4" : "image/jpeg").getBytes("UTF8"));
+                out.write(String.format(Locale.getDefault(), "Content-Disposition: form-data; name=\"imgPicture\"; filename=\"myimage%s\"\r\n", getImageSuffix()).getBytes("UTF8"));
+                out.write(String.format(Locale.getDefault(), "Content-Type: %s\r\nContent-Transfer-Encoding: binary\r\n\r\n", IsVideo() ? "video/mp4" : "image/jpeg").getBytes("UTF8"));
 
-            byte[] b = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = fis.read(b)) != -1)
-                out.write(b, 0, bytesRead);
+                byte[] b = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = fis.read(b)) != -1)
+                    out.write(b, 0, bytesRead);
 
-            out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes("UTF8"));
+                out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes("UTF8"));
 
-            out.flush();
+                out.flush();
 
-            in = new BufferedInputStream(urlConnection.getInputStream());
-            int status = urlConnection.getResponseCode();
-            if (status != HttpURLConnection.HTTP_OK)
-                throw new Exception(String.format(Locale.US, "Bad response - status = %d", status));
+                in = new BufferedInputStream(urlConnection.getInputStream());
+                int status = urlConnection.getResponseCode();
+                if (status != HttpURLConnection.HTTP_OK)
+                    throw new Exception(String.format(Locale.US, "Bad response - status = %d", status));
 
-            byte[] rgResponse = new byte[1024];
-            int cBytes = in.read(rgResponse);
-            Log.v(MFBConstants.LOG_TAG, String.format(Locale.US, "%d bytes read in uploadpendingimage", cBytes));
+                byte[] rgResponse = new byte[1024];
+                int cBytes = in.read(rgResponse);
+                Log.v(MFBConstants.LOG_TAG, String.format(Locale.US, "%d bytes read in uploadpendingimage", cBytes));
 
-            String sz = new String(rgResponse, "UTF8");
-            if (!sz.contains("OK"))
-                throw new Exception(sz);
+                String sz = new String(rgResponse, "UTF8");
+                if (!sz.contains("OK"))
+                    throw new Exception(sz);
 
-            fResult = true;
-        } catch (Exception ex) {
-            final String szErr = ex.getMessage();
-            Log.e(MFBConstants.LOG_TAG, "Error uploading image: " + szErr);
+                fResult = true;
+            } catch (Exception ex) {
+                final String szErr = ex.getMessage();
+                Log.e(MFBConstants.LOG_TAG, "Error uploading image: " + szErr);
 
-            final Context c = MFBMain.GetMainContext();
-            Handler h = new Handler(c.getMainLooper());
-            h.post(() -> MFBUtil.Alert(c, c.getString(R.string.txtError), szErr));
-        } finally {
-            if (out != null)
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-                }
-            if (in != null)
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-                }
-            if (urlConnection != null)
-                urlConnection.disconnect();
-            m_imgData = null; // free up a potentially large block of memory
+                Handler h = new Handler(c.getMainLooper());
+                h.post(() -> MFBUtil.Alert(c, c.getString(R.string.txtError), szErr));
+            } finally {
+                if (out != null)
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                    }
+                if (in != null)
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                    }
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+                m_imgData = null; // free up a potentially large block of memory
+            }
+        } catch (IOException e) {
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         }
+
 
         return fResult;
     }

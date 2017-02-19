@@ -19,6 +19,7 @@
 package com.myflightbook.android.WebServices;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -271,7 +272,7 @@ public class AircraftSvc extends MFBSoap {
         return rgAc;
     }
 
-    public Aircraft[] AircraftForUser(String szAuthToken) {
+    public Aircraft[] AircraftForUser(String szAuthToken, Context c) {
         DBCache dbc = new DBCache();
         Aircraft[] rgAc;
 
@@ -285,7 +286,7 @@ public class AircraftSvc extends MFBSoap {
             SoapObject Request = setMethod("AircraftForUser");
             Request.addProperty("szAuthUserToken", szAuthToken);
 
-            SoapObject result = (SoapObject) Invoke();
+            SoapObject result = (SoapObject) Invoke(c);
             if (result == null) {
                 setLastError(getLastError());
                 // just return the potentially invalid cached aircraft; it's better than nothing.
@@ -298,11 +299,11 @@ public class AircraftSvc extends MFBSoap {
         return rgAc;
     }
 
-    private void UploadImagesForAircraft(Aircraft ac) {
+    private void UploadImagesForAircraft(Aircraft ac, Context c) {
         int i = 1;
         for (MFBImageInfo mfbii : ac.AircraftImages) {
             try {
-                String szFmtUploadProgress = MFBMain.GetMainContext().getString(R.string.prgUploadingImages);
+                String szFmtUploadProgress = c.getString(R.string.prgUploadingImages);
                 String szStatus = String.format(szFmtUploadProgress, i, ac.AircraftImages.length);
                 if (m_Progress != null)
                     m_Progress.NotifyProgress((i * 100) / ac.AircraftImages.length, szStatus);
@@ -310,7 +311,7 @@ public class AircraftSvc extends MFBSoap {
                 if (!mfbii.IsOnServer()) {
                     mfbii.setKey(ac.AircraftID);
                     mfbii.setTargetID(ac.AircraftID);
-                    mfbii.UploadPendingImage(mfbii.getID());
+                    mfbii.UploadPendingImage(mfbii.getID(), c);
                     mfbii.deleteFromDB(); // clean up any files.  (Had been toDB, but we actually DON'T want to persist)
                 }
             } catch (Exception ex) {
@@ -320,7 +321,7 @@ public class AircraftSvc extends MFBSoap {
         }
     }
 
-    public Aircraft[] AddAircraft(String szAuthToken, Aircraft ac) {
+    public Aircraft[] AddAircraft(String szAuthToken, Aircraft ac, Context c) {
         SoapObject Request = setMethod("AddAircraftForUser");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("szTail", ac.TailNumber);
@@ -329,7 +330,7 @@ public class AircraftSvc extends MFBSoap {
 
         Aircraft[] rgac = new Aircraft[0];
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError(getLastError());
         else {
@@ -341,10 +342,10 @@ public class AircraftSvc extends MFBSoap {
                 for (Aircraft acAdded : rgac)
                     if (szNormalTail.equalsIgnoreCase(acAdded.TailNumber.replaceAll("-", ""))) {
                         acAdded.AircraftImages = ac.AircraftImages;
-                        UploadImagesForAircraft(acAdded);
+                        UploadImagesForAircraft(acAdded, c);
 
                         // Now need to re-download the aircraft
-                        result = (SoapObject) Invoke();
+                        result = (SoapObject) Invoke(c);
                         if (result == null)
                             setLastError(getLastError());
                         else
@@ -358,23 +359,23 @@ public class AircraftSvc extends MFBSoap {
         return rgac;
     }
 
-    public void UpdateMaintenanceForAircraft(String szAuthToken, Aircraft ac) {
+    public void UpdateMaintenanceForAircraft(String szAuthToken, Aircraft ac, Context c) {
         SoapObject Request = setMethod("UpdateMaintenanceForAircraftWithFlagsAndNotes");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("ac", ac);
 
-        Invoke();
+        Invoke(c);
 
         // Now upload any new images.
-        UploadImagesForAircraft(ac);
+        UploadImagesForAircraft(ac, c);
     }
 
-    public Aircraft[] DeleteAircraftForUser(String szAuthToken, int idAircraft) {
+    public Aircraft[] DeleteAircraftForUser(String szAuthToken, int idAircraft, Context c) {
         SoapObject Request = setMethod("DeleteAircraftForUser");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("idAircraft", idAircraft);
 
-        SoapObject result = (SoapObject) Invoke();
+        SoapObject result = (SoapObject) Invoke(c);
         if (result == null) {
             setLastError(getLastError());
             return getCachedAircraft();
