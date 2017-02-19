@@ -141,8 +141,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
 
             CountryCode cc = CountryCode.BestGuessPrefixForTail(TailNumber);
             if (cc == null) {
-                // TODO: why isn't this a localized string?
-                ErrorString = "Aircraft does not begin with a valid country prefix.";
+                ErrorString = c.getString(R.string.errInvalidCountryPrefix);
                 return false;
             }
         } else {

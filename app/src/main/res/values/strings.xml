@@ -258,6 +258,7 @@
     <string name="errMustBe14">Accounts are only available for people 14 years old and older.</string>
     <string name="errRealAircraftCantUseSIM">SIM Prefix is reserved for simulators/FTDs/ATDs.</string>
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs must begin with the prefix \'SIM\'</string>
+    <string name="errInvalidCountryPrefix">Aircraft does not begin with a valid country prefix.</string>
     <string name="errNoGoogleMaps">This feature requires Google Play services, which are not installed.</string>
 
     <string name="txtUpdateRouteOnMap">Update</string>
