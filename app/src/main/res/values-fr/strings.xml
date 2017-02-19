@@ -258,7 +258,7 @@
     <string name="errMustBe14">Comptes ne sont disponibles que pour les personnes de 14 ans et plus.</string>
     <string name="errRealAircraftCantUseSIM">SIM préfixe est réservée aux simulateurs/FTDs/ATDs.</string>
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs doivent commencer par le préfixe \'SIM\'</string>
-    <string name="errInvalidCountryPrefix">L'aéronef ne commence pas par un préfixe de pays valide.</string>
+    <string name="errInvalidCountryPrefix">L\'aéronef ne commence pas par un préfixe de pays valide.</string>
     <string name="errNoGoogleMaps">Cette fonction nécessite les services de Google Play, qui ne sont pas installés.</string>
 
     <string name="txtUpdateRouteOnMap">Mise à jour</string>
