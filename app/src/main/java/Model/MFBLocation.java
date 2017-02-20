@@ -147,6 +147,7 @@ public class MFBLocation implements LocationListener {
 
     public void SetListener(FlightEvents l) {
         m_Listener = l;
+        InformListenerOfStatus(m_lastSeenLoc);
     }
 
     public MFBLocation(Context c, FlightEvents l) {

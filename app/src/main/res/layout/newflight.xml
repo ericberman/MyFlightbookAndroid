@@ -320,6 +320,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="end"
                         android:orientation="vertical">
 
                         <TextView
@@ -380,6 +381,7 @@
                         android:id="@+id/txtLatitude"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAlignment="textEnd"
                         android:text="@string/lblLatitude" />
 
                     <TextView
@@ -420,6 +422,7 @@
                         android:id="@+id/txtLongitude"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAlignment="textEnd"
                         android:text="@string/lblLongitude" />
 
                     <TextView
