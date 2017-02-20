@@ -280,6 +280,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 style="?android:attr/buttonBarStyle"
+                android:layout_marginEnd="10dp"
                 android:text="@string/lblCancel" />
 
             <Button
@@ -287,6 +288,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
                 android:text="@string/lblCreateAccount"
                 style="?android:attr/buttonBarStyle"
                 android:textStyle="bold" />
