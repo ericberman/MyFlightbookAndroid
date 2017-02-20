@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    compile 'com.google.android.gms:play-services:10.0.1'
+    compile 'com.google.android.gms:play-services:10.2.0'
     compile files('libs/annotations.jar')
     compile files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')
     compile 'com.android.support:multidex:1.0.1'
