@@ -174,6 +174,9 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
 
     public long saveCurrentFlightId(Activity a) {
         long i = -1;
+
+        if (a == null)  // shouldn't ever be, but sometimes is.
+            return i;
         if (m_leNewFlight != null && m_leNewFlight.IsNewFlight()) {
             SharedPreferences mPrefs = a.getPreferences(Activity.MODE_PRIVATE);
             SharedPreferences.Editor ed = mPrefs.edit();
