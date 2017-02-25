@@ -108,7 +108,7 @@ public class MFBSoap {
 
     protected Object Invoke(Context c) {
         if (c == null)
-            throw new NullPointerException();
+            throw new NullPointerException("null Context passed to Invoke");
 
         setLastError("");
         Object o;
