@@ -84,6 +84,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     static private final String m_KeysHasSeenWarning = "seenWarning";
     static private final String m_KeysLastTab = "lastTab3";
 
+    static private final String m_KeysShowFlightImages = "showFlightImages";
+
     static private final String m_KeysIsFlying = "isFlying";
     static private final String m_KeysIsRecording = "isRecording";
     static private final String m_KeysHasPendingFSLanding = "hasPendingLanding";
@@ -409,6 +411,9 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             Airport.fPrefIncludeHeliports = mPrefs.getBoolean(m_KeysfHeliports, false);
             DecimalEdit.DefaultHHMM = mPrefs.getBoolean(m_KeysUseHHMM, false);
             DlgDatePicker.fUseLocalTime = mPrefs.getBoolean(m_KeysUseLocal, false);
+
+            ActRecentsWS.fShowFlightImages = mPrefs.getBoolean(m_KeysShowFlightImages, true);
+
             m_fSeenWarning = mPrefs.getBoolean(m_KeysHasSeenWarning, false);
             mLastTabIndex = mPrefs.getInt(m_KeysLastTab, 0);
             mLastVacuum = mPrefs.getLong(m_TimeOfLastVacuum, new Date().getTime());
@@ -443,6 +448,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         ed.putBoolean(m_KeysUseLocal, DlgDatePicker.fUseLocalTime);
 
         ed.putBoolean(m_KeysHasSeenWarning, m_fSeenWarning);
+
+        ed.putBoolean(m_KeysShowFlightImages, ActRecentsWS.fShowFlightImages);
 
         ed.putInt(m_KeysLastTab, mTabHost.getCurrentTab());
         ed.putLong(m_TimeOfLastVacuum, mLastVacuum);

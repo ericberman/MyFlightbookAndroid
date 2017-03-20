@@ -23,6 +23,8 @@
     <string name="lblOptUseHHMM">Enter times in HH:MM format</string>
     <string name="lblOptUseLocalTime">Use Local Time</string>
     <string name="lblOptTOSpeed">Takeoff speed (Kts)</string>
+    <string name="lblImageOptions">Image Options</string>
+    <string name="lblShowFlightImages">Show images for flights</string>
 
     <string name="lblRoute">Route</string>
     <string name="lblAppendNearest">Nearest</string>

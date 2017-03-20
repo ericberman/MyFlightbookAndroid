@@ -195,6 +195,15 @@
 
         <TextView
             style="@style/DividerBar"
+            android:text="@string/lblImageOptions" />
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ckShowFlightImages"
+            android:text="@string/lblShowFlightImages" />
+
+        <TextView
+            style="@style/DividerBar"
             android:text="@string/lblAdditionalOptions" />
 
         <LinearLayout

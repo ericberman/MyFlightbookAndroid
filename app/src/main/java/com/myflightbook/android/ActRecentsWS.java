@@ -75,6 +75,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
     public static Aircraft[] m_rgac = null;
 
+    public static Boolean fShowFlightImages = true;
+
     private class FlightAdapter extends ArrayAdapter<LogbookEntry> {
         FlightAdapter(Context c, int rid,
                       LogbookEntry[] rgpp) {
@@ -125,15 +127,20 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 szRoute = le.szRoute.trim();
                 szComments = le.szComments.trim();
 
-                if (le.hasImages() || (ac != null && ac.HasImage())) {
-                    //noinspection ConstantConditions - ac.AircraftImages cannot be null because ac.HasImage() has already verified that it isn't.
-                    MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.AircraftImages[0];
-                    Bitmap b = mfbii.bitmapFromThumb();
-                    if (b != null) {
-                        ivCamera.setImageBitmap(b);
-                    }
-                } else
-                    ivCamera.setImageResource(R.drawable.noimage);
+                if (ActRecentsWS.fShowFlightImages) {
+                    ivCamera.setVisibility(View.VISIBLE);
+                    if (le.hasImages() || (ac != null && ac.HasImage())) {
+                        //noinspection ConstantConditions - ac.AircraftImages cannot be null because ac.HasImage() has already verified that it isn't.
+                        MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.AircraftImages[0];
+                        Bitmap b = mfbii.bitmapFromThumb();
+                        if (b != null) {
+                            ivCamera.setImageBitmap(b);
+                        }
+                    } else
+                        ivCamera.setImageResource(R.drawable.noimage);
+                }
+                else
+                    ivCamera.setVisibility(View.GONE);
 
                 switch (le.signatureStatus) {
                     case None:
@@ -278,7 +285,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         getListView().setSelectionFromTop(index, top);
 
         getListView().setOnItemClickListener(ActRecentsWS.this::onItemClick);
-        new Thread(new LazyThumbnailLoader(m_rgLe, (FlightAdapter) this.getListAdapter())).start();
+        if (ActRecentsWS.fShowFlightImages)
+            new Thread(new LazyThumbnailLoader(m_rgLe, (FlightAdapter) this.getListAdapter())).start();
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
