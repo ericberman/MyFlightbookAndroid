@@ -404,7 +404,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
     }
 
     public void updateDate(int id, Date dt) {
-        m_rgfpAll[id].dateValue = dt;
+        m_rgfpAll[id].dateValue = MFBUtil.removeSeconds(dt);
         if (m_idExistingId > 0 && m_rgfpAll[id].IsDefaultValue())
             DeleteDefaultedProperty(m_rgfpAll[id]);
 

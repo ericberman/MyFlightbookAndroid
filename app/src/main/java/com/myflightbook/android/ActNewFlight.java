@@ -67,7 +67,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -764,45 +763,34 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ChoosePicture();
     }
 
-    private Date removeSeconds(Date dt) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dt);
-        cal.set(Calendar.SECOND, 0);
-        return cal.getTime();
-    }
-
-    private Date nowWith0Seconds() {
-        return removeSeconds(new Date());
-    }
-
     public void onClick(View v) {
         FromView();
         int id = v.getId();
         switch (id) {
             case R.id.btnEngineStartSet:
                 if (!m_le.isKnownEngineStart()) {
-                    m_le.dtEngineStart = nowWith0Seconds();
+                    m_le.dtEngineStart = MFBUtil.nowWith0Seconds();
                     EngineStart();
                 } else
                     SetDateTime(id, m_le.dtEngineStart, this, DlgDatePicker.datePickMode.UTCDATETIME);
                 break;
             case R.id.btnEngineEndSet:
                 if (!m_le.isKnownEngineEnd()) {
-                    m_le.dtEngineEnd = nowWith0Seconds();
+                    m_le.dtEngineEnd = MFBUtil.nowWith0Seconds();
                     EngineStop();
                 } else
                     SetDateTime(id, m_le.dtEngineEnd, this, DlgDatePicker.datePickMode.UTCDATETIME);
                 break;
             case R.id.btnFlightStartSet:
                 if (!m_le.isKnownFlightStart()) {
-                    m_le.dtFlightStart = nowWith0Seconds();
+                    m_le.dtFlightStart = MFBUtil.nowWith0Seconds();
                     FlightStart();
                 } else
                     SetDateTime(id, m_le.dtFlightStart, this, DlgDatePicker.datePickMode.UTCDATETIME);
                 break;
             case R.id.btnFlightEndSet:
                 if (!m_le.isKnownFlightEnd()) {
-                    m_le.dtFlightEnd = nowWith0Seconds();
+                    m_le.dtFlightEnd = MFBUtil.nowWith0Seconds();
                     FlightStop();
                 } else
                     SetDateTime(id, m_le.dtFlightEnd, this, DlgDatePicker.datePickMode.UTCDATETIME);
@@ -938,7 +926,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         Boolean fEngineChanged = false;
         Boolean fFlightChanged = false;
 
-        dt = removeSeconds(dt);
+        dt = MFBUtil.removeSeconds(dt);
 
         switch (id) {
             case R.id.btnEngineStartSet:

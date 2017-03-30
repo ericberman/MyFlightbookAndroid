@@ -104,6 +104,18 @@ public class MFBUtil {
         return c.getTime();
     }
 
+
+    public static Date removeSeconds(Date dt) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dt);
+        cal.set(Calendar.SECOND, 0);
+        return cal.getTime();
+    }
+
+    public static Date nowWith0Seconds() {
+        return removeSeconds(new Date());
+    }
+
     static String makeLatLongString(double d) {
         d = Math.abs(d);
         int degrees = (int) d;
