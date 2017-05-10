@@ -623,6 +623,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Should never happen.
+        if (m_le == null)
+            return false;
+
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuUploadLater:
