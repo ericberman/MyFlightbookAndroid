@@ -129,6 +129,11 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         if (m_delegate != null)
             m_delegate.FromView();
 
+        if (m_leNewFlight == null) {
+            Log.e(MFBConstants.LOG_TAG, "logbookentry is NULL in FSLandingDetected");
+            return;
+        }
+
         if (fIsNight)
             ++m_leNewFlight.cNightLandings;
         else
