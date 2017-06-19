@@ -378,6 +378,7 @@
     <string name="ffApproaches">Instrument Approaches</string>
     <string name="ffHold">Holding Procedures</string>
     <string name="ffTelemetry">Telemetry Data</string>
+    <string name="ffImages">Images or videos</string>
     <string name="ffXC">Cross-country time</string>
     <string name="ffSimIMC">Simulated IMC time</string>
     <string name="ffIMC">Actual IMC time</string>

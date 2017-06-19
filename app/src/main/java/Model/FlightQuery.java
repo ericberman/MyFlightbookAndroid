@@ -65,7 +65,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		// Flight attributes - 17
 		pidIsPublic, pidHasNightLandings, pidHasFullStopLandings, pidHasLandings, pidHasApproaches,
 		pidHasHolds, pidHaxXC, pidHasSimIMCTime, pidHasGroundSim, pidHasIMC, pidHasAnyInstrument, pidHasNight, 
-		pidHasDual, pidHasCFI, pidHasSIC, pidHasPIC, pidHasTotalTime, pidHasTelemetry, pidIsSigned,
+		pidHasDual, pidHasCFI, pidHasSIC, pidHasPIC, pidHasTotalTime, pidHasTelemetry, pidHasImages, pidIsSigned,
 		
 		// Flight properties
 		pidProperties,
@@ -114,6 +114,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	@SuppressWarnings("WeakerAccess")
 	public Boolean HasTotalTime = false;
 	public Boolean HasTelemetry = false;
+	public Boolean HasImages = false;
 	public Boolean IsSigned = false;
 	
 	// Aircraft attributes - 9
@@ -232,7 +233,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     	HasSIC = 
     	HasPIC = 
     	HasTotalTime =
-    	HasTelemetry = 
+    	HasTelemetry =
+		HasImages =
     	IsComplex = 
     	HasFlaps = 
     	IsHighPerformance = 
@@ -278,7 +280,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     public Boolean HasFlightCriteria()
     {
         return IsPublic || HasApproaches || HasCFI || HasDual || HasFullStopLandings || HasLandings || HasHolds || HasIMC || HasAnyInstrument ||
-            HasNight || HasNightLandings || HasPIC || HasSIC || HasTotalTime || HasSimIMCTime || HasTelemetry || HasXC || IsSigned;
+            HasNight || HasNightLandings || HasPIC || HasSIC || HasTotalTime || HasSimIMCTime || HasTelemetry || HasImages || HasXC || IsSigned;
     }
 
     public Boolean HasCriteria()
@@ -327,6 +329,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		this.HasApproaches = Boolean.parseBoolean(so.getPropertyAsString("HasApproaches"));
 		this.HasHolds = Boolean.parseBoolean(so.getPropertyAsString("HasHolds"));
 		this.HasTelemetry = Boolean.parseBoolean(so.getPropertyAsString("HasTelemetry"));
+		this.HasImages = Boolean.parseBoolean(so.getPropertyAsString("HasImages"));
 		
 		this.HasXC = Boolean.parseBoolean(so.getPropertyAsString("HasXC"));
 		this.HasSimIMCTime = Boolean.parseBoolean(so.getPropertyAsString("HasSimIMCTime"));
@@ -490,6 +493,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			return HasTotalTime;
 		case pidHasTelemetry:
 			return HasTelemetry;
+		case pidHasImages:
+			return HasImages;
 		// Aircraft attributes
 		case pidIsComplex:
 			return IsComplex;
@@ -670,6 +675,10 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		case pidHasTelemetry:
 			pi.type = PropertyInfo.BOOLEAN_CLASS;
 			pi.name = "HasTelemetry";
+			break;
+		case pidHasImages:
+			pi.type = PropertyInfo.BOOLEAN_CLASS;
+			pi.name = "HasImages";
 			break;
 		// Aircraft attributes
 		case pidIsComplex:

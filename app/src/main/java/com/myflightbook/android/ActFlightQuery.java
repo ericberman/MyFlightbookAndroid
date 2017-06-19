@@ -301,6 +301,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         SetCheckState(R.id.ckHasSIC, CurrentQuery.HasSIC);
         SetCheckState(R.id.ckHasSimIMC, CurrentQuery.HasSimIMCTime);
         SetCheckState(R.id.ckHasTelemetry, CurrentQuery.HasTelemetry);
+        SetCheckState(R.id.ckHasImages, CurrentQuery.HasImages);
         SetCheckState(R.id.ckHasXC, CurrentQuery.HasXC);
 
         SetCheckState(R.id.ckHasFlaps, CurrentQuery.HasFlaps);
@@ -379,6 +380,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         CurrentQuery.HasSIC = CheckState(R.id.ckHasSIC);
         CurrentQuery.HasSimIMCTime = CheckState(R.id.ckHasSimIMC);
         CurrentQuery.HasTelemetry = CheckState(R.id.ckHasTelemetry);
+        CurrentQuery.HasImages = CheckState(R.id.ckHasImages);
         CurrentQuery.HasXC = CheckState(R.id.ckHasXC);
 
         CurrentQuery.HasFlaps = CheckState(R.id.ckHasFlaps);
