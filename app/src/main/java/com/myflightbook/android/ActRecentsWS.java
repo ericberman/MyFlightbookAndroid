@@ -180,16 +180,19 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     private class RefreshFlightsTask extends AsyncTask<Void, Void, Boolean> {
         private RecentFlightsSvc m_rfSvc = null;
         Boolean fClearCache = false;
+        Context c = null;
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            if (c == null)  // can't do anything without a context
+                return false;
 
             m_rfSvc = new RecentFlightsSvc();
             LogbookEntry[] rglePending = LogbookEntry.getPendingFlights();
 
             if (fClearCache)
                 RecentFlightsSvc.ClearCachedFlights();
-            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, m_rgExistingFlights.size(), cFlightsPageSize, ActRecentsWS.this.getContext());
+            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, m_rgExistingFlights.size(), cFlightsPageSize, c);
 
             fCouldBeMore = (rgle != null && rgle.length >= cFlightsPageSize);
 
@@ -201,6 +204,10 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         }
 
         protected void onPreExecute() {
+            // Set up the context here, where we are still synchronous.
+            c = ActRecentsWS.this.getContext();
+            if (c == null)
+                c = ActRecentsWS.this.getActivity().getApplicationContext();
         }
 
         protected void onPostExecute(Boolean b) {

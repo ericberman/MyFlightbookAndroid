@@ -131,17 +131,24 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private class UpdateAndViewPropsTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         FlightProperty[] rgProps = null;
+        Context c = null;
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            if (c == null)
+                return false;
+
             FlightPropertiesSvc fpSvc = new FlightPropertiesSvc();
-            rgProps = fpSvc.PropertiesForFlight(AuthToken.m_szAuthToken, m_le.idFlight, getContext());
+            rgProps = fpSvc.PropertiesForFlight(AuthToken.m_szAuthToken, m_le.idFlight, c);
 
             return rgProps != null;
         }
 
         protected void onPreExecute() {
             m_pd = MFBUtil.ShowProgress(ActNewFlight.this, ActNewFlight.this.getString(R.string.prgPropsForFlight));
+            c = getContext();
+            if (c == null)
+                c = getActivity().getApplicationContext();
         }
 
         protected void onPostExecute(Boolean b) {
