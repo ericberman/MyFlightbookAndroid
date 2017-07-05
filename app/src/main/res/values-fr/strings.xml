@@ -379,7 +379,7 @@
     <string name="ffHold">Procédures d\'attente</string>
     <string name="ffTelemetry">Données télémétriques</string>
     <string name="ffImages">Images or videos</string>
-    <string name="ffXC">Images ou vidéos</string>
+    <string name="ffXC">Temps navigation</string>
     <string name="ffSimIMC">Simulation VSV (vol sans visibilité)</string>
     <string name="ffIMC">VSV (vol sans visibilité)</string>
     <string name="ffNight">Nuit</string>
