@@ -59,7 +59,7 @@ import Model.MFBUtil;
 
 public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
-    public interface Invalidatable {
+    interface Invalidatable {
         void invalidate();
     }
 
@@ -72,6 +72,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     static private final String m_KeyszAuthToken = "authtoken";
 
     static private final String m_KeysfRecord = "recordflight";
+    static private final String m_KeysfRecordHighRes = "recordFlightHighRes";
     static private final String m_KeysfAutoDetect = "autodetect";
     static private final String m_KeysfHeliports = "heliports";
     static private final String m_KeysfRoundToTenth = "roundnearesttenth";
@@ -136,7 +137,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         }
     }
 
-    class TabFactory implements TabContentFactory {
+    private class TabFactory implements TabContentFactory {
 
         private final Context mContext;
 
@@ -400,6 +401,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             AuthToken.m_szPass = mPrefs.getString(m_KeyszPass, "");
             MFBLocation.fPrefAutoDetect = mPrefs.getBoolean(m_KeysfAutoDetect, false);
             MFBLocation.fPrefRecordFlight = mPrefs.getBoolean(m_KeysfRecord, false);
+            MFBLocation.fPrefRecordFlightHighRes = mPrefs.getBoolean(m_KeysfRecordHighRes, false);
             MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[mPrefs.getInt(m_KeysAutoHobbs, 0)];
             MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[mPrefs.getInt(m_KeysAutoTime, 0)];
             MFBLocation.fPrefRoundNearestTenth = mPrefs.getBoolean(m_KeysfRoundToTenth, false);
@@ -434,6 +436,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
         ed.putBoolean(m_KeysfAutoDetect, MFBLocation.fPrefAutoDetect);
         ed.putBoolean(m_KeysfRecord, MFBLocation.fPrefRecordFlight);
+        ed.putBoolean(m_KeysfRecordHighRes, MFBLocation.fPrefRecordFlightHighRes);
 
         ed.putInt(m_KeysAutoHobbs, MFBLocation.fPrefAutoFillHobbs.ordinal());
         ed.putInt(m_KeysAutoTime, MFBLocation.fPrefAutoFillTime.ordinal());

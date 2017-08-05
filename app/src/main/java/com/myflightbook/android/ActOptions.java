@@ -78,7 +78,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
         boolean fHasGPS = MFBLocation.HasGPS(getContext());
         if (!fHasGPS)
-            MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight = false;
+            MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight = MFBLocation.fPrefRecordFlightHighRes = false;
 
         CheckBox ck = (CheckBox) findViewById(R.id.ckAutodetect);
         ck.setOnClickListener(this);
@@ -88,6 +88,11 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         ck = (CheckBox) findViewById(R.id.ckRecord);
         ck.setOnClickListener(this);
         ck.setChecked(MFBLocation.fPrefRecordFlight);
+        ck.setEnabled(fHasGPS);
+
+        ck = (CheckBox) findViewById(R.id.ckRecordHighRes);
+        ck.setOnClickListener(this);
+        ck.setChecked(MFBLocation.fPrefRecordFlightHighRes);
         ck.setEnabled(fHasGPS);
 
         ck = (CheckBox) findViewById(R.id.ckHeliports);
@@ -360,6 +365,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                     ck.setChecked(MFBLocation.fPrefRecordFlight = false);
             }
             break;
+            case R.id.ckRecordHighRes:
+                MFBLocation.fPrefRecordFlightHighRes = ((CheckBox) v).isChecked();
+                break;
             case R.id.ckHeliports:
                 Airport.fPrefIncludeHeliports = ((CheckBox) v).isChecked();
                 break;

@@ -18,6 +18,8 @@
     <string name="createuser">Create an account…</string>
     <string name="lblOptAutoDetect">Autodetect Takeoffs and Landings</string>
     <string name="lblOptRecord">Record flight path</string>
+    <string name="lblOptRecordHiRes">Record High Resolution</string>
+    <string name="lblOptRecordHiResDesc">Slower to upload/download, but works better with apps like CloudAhoy</string>
     <string name="lblOptIncludeHeliports">Include heliports</string>
     <string name="lblOptRoundNearestTenth">Use nearest tenth of an hour</string>
     <string name="lblOptUseHHMM">Enter times in HH:MM format</string>

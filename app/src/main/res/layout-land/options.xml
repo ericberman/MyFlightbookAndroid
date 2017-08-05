@@ -127,6 +127,19 @@
             android:layout_height="wrap_content"
             android:text="@string/lblOptRecord" />
 
+        <CheckBox
+            android:id="@+id/ckRecordHighRes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptRecordHiRes" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginStart="30dp"
+            android:text="@string/lblOptRecordHiResDesc" />
+
         <TextView
             style="@style/DividerBar"
             android:text="@string/lblOptionsTime" />

@@ -18,6 +18,8 @@
     <string name="createuser">Créez un compte…</string>
     <string name="lblOptAutoDetect">Détection automatique des décollages et atterrissages</string>
     <string name="lblOptRecord">Enregistrement de la route</string>
+    <string name="lblOptRecordHiRes">Enregistrement en haute résolution</string>
+    <string name="lblOptRecordHiResDesc">Plus lent, mais fonctionne mieux avec des applications comme CloudAhoy</string>
     <string name="lblOptIncludeHeliports">Inclure les heliports</string>
     <string name="lblOptRoundNearestTenth">Utilisez dixième d\'heure</string>
     <string name="lblOptUseHHMM">Entrez durées en format hh:mm</string>

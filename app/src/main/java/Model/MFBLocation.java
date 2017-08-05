@@ -63,6 +63,7 @@ public class MFBLocation implements LocationListener {
     public enum AutoFillOptions {None, FlightTime, EngineTime, HobbsTime}
 
     static public Boolean fPrefRecordFlight = false;
+    static public Boolean fPrefRecordFlightHighRes = false;
     static public Boolean fPrefAutoDetect = false;
     static public Boolean fPrefRoundNearestTenth = false;
     static public AutoFillOptions fPrefAutoFillHobbs = AutoFillOptions.None;
@@ -239,7 +240,7 @@ public class MFBLocation implements LocationListener {
         long dt = loc.TimeStamp.getTime() - m_currentLoc.getTime();
         if ((IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_AIRBORNE) ||
                 (!IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_TAXI))
-            fValidTime = false;
+            fValidTime = fPrefRecordFlightHighRes;   // i.e., false unless we are recording high res./
 
         if (!m_fIsEnabled)
             return;
