@@ -267,6 +267,10 @@
 
     <string name="txtUpdateRouteOnMap">Update</string>
     <string name="txtShareKML">Send KML to…</string>
+    <string name="txtShareGPX">Send GPX to…</string>
+    <string name="txtFileNameExisting">Flight </string>
+    <string name="txtFileNameNew">New Flight</string>
+    <string name="txtFileNamePending">Pending Flight</string>
 
     <string name="lblPreviouslyUsed">Used</string>
 

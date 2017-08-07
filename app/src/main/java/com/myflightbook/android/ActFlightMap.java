@@ -21,12 +21,17 @@ package com.myflightbook.android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -57,8 +62,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.myflightbook.android.WebServices.AuthToken;
+import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -78,6 +89,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     private LogbookEntry m_le = null;
     private Airport[] m_rgapRoute = null;
     private LatLong[] m_rgFlightRoute = null;
+    private String m_GPXPath = null;
     private Boolean m_fHasHadLayout = false;
     private Boolean m_fShowAllAirports = false;
     private HashMap<String, Airport> m_hmAirports = new HashMap<>();
@@ -98,6 +110,34 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     public static final String NEWFLIGHTID = "com.myflightbook.android.newflightid";
     public static final String ALIASES = "com.myflightbook.android.aliases";
     public static final int REQUEST_ROUTE = 58372;
+
+    private class SendGPXTask extends AsyncTask<Void, Void, MFBSoap> {
+        private Context m_Context = null;
+        String m_Result = "";
+        int m_idFlight = -1;
+
+        SendGPXTask(Context c, int idFlight) {
+            super();
+            m_Context = c;
+            m_idFlight = idFlight;
+        }
+
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            RecentFlightsSvc rf = new RecentFlightsSvc();
+            m_Result = rf.FlightPathForFlightGPX(AuthToken.m_szAuthToken, m_idFlight, m_Context);
+            return rf;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        protected void onPostExecute(MFBSoap svc) {
+            if (m_Result != null && m_Result.length() > 0) {
+                ActFlightMap.this.sendGPX(m_Result);
+            }
+        }
+    }
 
     public boolean onMarkerClick(Marker marker) {
         Airport ap;
@@ -289,8 +329,12 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         if (m_fHasHadLayout && !fNoResize)
             autoZoom();
 
-        // Save as KML only if there is a path.
-        findViewById(R.id.btnExportKML).setVisibility(m_rgFlightRoute == null || this.m_rgFlightRoute.length == 0 ? View.GONE : View.VISIBLE);
+        // Save as GPX only if there is a path.
+        String state = Environment.getExternalStorageState();
+        Boolean fIsMounted = Environment.MEDIA_MOUNTED.equals(state);
+
+        Boolean fHasNoPath = m_rgFlightRoute == null || this.m_rgFlightRoute.length == 0;
+        findViewById(R.id.btnExportGPX).setVisibility(fHasNoPath || !fIsMounted ? View.GONE : View.VISIBLE);
     }
 
     private GoogleMap m_gMap = null;
@@ -378,7 +422,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         ImageButton b = (ImageButton) findViewById(R.id.btnUpdateMapRoute);
         b.setOnClickListener(this);
 
-        ImageButton btnExport = (ImageButton) findViewById(R.id.btnExportKML);
+        ImageButton btnExport = (ImageButton) findViewById(R.id.btnExportGPX);
         btnExport.setOnClickListener(this);
 
         ToggleButton tb = (ToggleButton) findViewById(R.id.ckShowAllAirports);
@@ -397,8 +441,10 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         if (idPending > 0) {
             m_le = new LogbookEntry(idPending);
 
-            if (m_le.IsPendingFlight())
+            if (m_le.IsPendingFlight()) {
                 this.m_rgFlightRoute = LocSample.samplesFromDataString(m_le.szFlightData);
+                m_GPXPath = LocSample.getFlightDataStringAsGPX(m_rgFlightRoute);    // initialize the GPX path
+            }
         } else if (idExisting > 0) {
             m_le = RecentFlightsSvc.GetCachedFlightByID(idExisting);
             FetchFlightPathTask ffpt = new FetchFlightPathTask();
@@ -406,6 +452,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         } else if (idNew != 0) {
             m_le = MFBMain.getNewFlightListener().getInProgressFlight(this);
             this.m_rgFlightRoute = LocSample.flightPathFromDB();
+            m_GPXPath = LocSample.getFlightDataStringAsGPX(m_rgFlightRoute);    // initialize the GPX path.
         } else // all airports
         {
             t.setVisibility(View.GONE);
@@ -420,20 +467,90 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         updateMapElements(true);
     }
 
+    protected String filenameForPath()
+    {
+        return m_le.IsExistingFlight() ?
+                String.format(Locale.getDefault(), "%s%d", getString(R.string.txtFileNameExisting), m_le.idFlight) :
+                getString(m_le.IsNewFlight() ? R.string.txtFileNameNew : R.string.txtFileNamePending);
+    }
+
+    protected void sendGPX(String szGPX) {
+        if (szGPX == null || m_le == null)
+            return;
+
+        m_GPXPath = szGPX;
+        String szBaseName = filenameForPath();
+        String szFileName = String.format(Locale.getDefault(), "%s.gpx", szBaseName);
+        File p = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        File f = new File(p, szFileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(f);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            osw.append(szGPX);
+            osw.close();
+            fos.flush();
+            fos.close();
+
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(f)));
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, szFileName);
+            sendIntent.putExtra(Intent.EXTRA_TITLE, szFileName);
+            sendIntent.setType("application/gpx+xml");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.txtShareGPX)));
+        }
+        catch (FileNotFoundException e) {
+            Log.e("Exception", "openFileOutput failed" + e.toString());
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+        catch (SecurityException e) {
+            Log.e("Exception", "Security exception writing file: " + e.toString());
+        }
+    }
+
+    private final int PERMISSION_REQUEST_WRITE_GPX = 50372;
+
+    protected Boolean checkDocPermissions(int req) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            return true;
+
+        // Should we show an explanation?
+        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, req);
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_WRITE_GPX:
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onClick(findViewById(R.id.btnExportGPX));
+                }
+                return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnUpdateMapRoute:
                 updateMapElements();
                 break;
-            case R.id.btnExportKML:
-                String szKML = LocSample.getFlightDataStringAsKML(this.m_rgFlightRoute);
+            case R.id.btnExportGPX:
+                if (!checkDocPermissions(PERMISSION_REQUEST_WRITE_GPX))
+                    return;
 
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, szKML);
-                sendIntent.putExtra(Intent.EXTRA_SUBJECT, "KML.kml");
-                sendIntent.setType("text/xml");
-                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.txtShareKML)));
+                if (m_GPXPath == null && m_le != null && !m_le.IsPendingFlight() && !m_le.IsNewFlight()) {
+                    SendGPXTask st = new SendGPXTask(this, m_le.idFlight);
+                    st.execute();
+                }
+                else
+                    sendGPX(m_GPXPath);
                 break;
         }
     }

@@ -31,6 +31,7 @@ import com.myflightbook.android.Marshal.MarshalDate;
 import com.myflightbook.android.Marshal.MarshalDouble;
 
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 
 import java.util.ArrayList;
@@ -146,6 +147,20 @@ public class RecentFlightsSvc extends MFBSoap {
         }
 
         return rgll;
+    }
+
+    public String FlightPathForFlightGPX(String szAuthToken, int idFlight, Context c) {
+        SoapObject Request = setMethod("FlightPathForFlightGPX");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("idFlight", idFlight);
+        SoapPrimitive result = (SoapPrimitive) Invoke(c);
+        if (result == null) {
+            setLastError("Failed to get GPX path for flight - " + getLastError());
+            return "";
+        }
+        else {
+            return result.toString();
+        }
     }
 
     // Flight caching

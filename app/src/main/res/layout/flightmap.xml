@@ -36,10 +36,10 @@
 
             <ImageButton
                 style="?android:attr/buttonBarStyle"
-                android:id="@+id/btnExportKML"
+                android:id="@+id/btnExportGPX"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/txtShareKML"
+                android:contentDescription="@string/txtShareGPX"
                 android:src="@drawable/ic_action_save"
                 android:text="" />
 
