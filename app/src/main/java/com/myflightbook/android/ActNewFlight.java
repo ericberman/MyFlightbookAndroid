@@ -27,12 +27,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -63,6 +66,7 @@ import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
 import junit.framework.Assert;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -299,6 +303,30 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
+    private class GetDigitizedSigTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView ivDigitizedSig;
+
+        GetDigitizedSigTask(ImageView iv) {
+            this.ivDigitizedSig = iv;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String url = urls[0];
+            Bitmap bm = null;
+            try {
+                InputStream str = new java.net.URL(url).openStream();
+                bm = BitmapFactory.decodeStream(str);
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, e.getMessage());
+            }
+            return bm;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            ivDigitizedSig.setImageBitmap(result);
+        }
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.newflight, container, false);
@@ -331,6 +359,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         AddListener(R.id.txtViewInTheCockpit);
         AddListener(R.id.txtImageHeader);
         AddListener(R.id.txtPinnedPropertiesHeader);
+        AddListener(R.id.txtSignatureHeader);
 
         enableCrossFill(R.id.txtNight);
         enableCrossFill(R.id.txtSimIMC);
@@ -857,6 +886,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
             }
             break;
+            case R.id.txtSignatureHeader: {
+                View target = findViewById(R.id.sectSignature);
+                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+            }
+            break;
             case R.id.txtPinnedPropertiesHeader: {
                 View target = findViewById(R.id.sectPinnedProperties);
                 setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
@@ -1142,6 +1176,52 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         SetDoubleForField(R.id.txtSimIMC, m_le.decSimulatedIFR);
         SetDoubleForField(R.id.txtTotal, m_le.decTotal);
         SetDoubleForField(R.id.txtXC, m_le.decXC);
+
+        Boolean fIsSigned = (m_le.signatureStatus != LogbookEntry.SigStatus.None);
+        findViewById(R.id.sectSignature).setVisibility(fIsSigned ? View.VISIBLE : View.GONE);
+        findViewById(R.id.txtSignatureHeader).setVisibility(fIsSigned ? View.VISIBLE : View.GONE);
+        if (fIsSigned)
+        {
+            ImageView imgSigStatus = (ImageView) findViewById(R.id.imgSigState);
+            switch (m_le.signatureStatus) {
+                case None:
+                    break;
+                case Valid:
+                    imgSigStatus.setImageResource(R.drawable.sigok);
+                    imgSigStatus.setContentDescription(getString(R.string.cdIsSignedValid));
+                    ((TextView) findViewById(R.id.txtSigState)).setText(getString(R.string.cdIsSignedValid));
+                    break;
+                case Invalid:
+                    imgSigStatus.setImageResource(R.drawable.siginvalid);
+                    imgSigStatus.setContentDescription(getString(R.string.cdIsSignedInvalid));
+                    ((TextView) findViewById(R.id.txtSigState)).setText(getString(R.string.cdIsSignedInvalid));
+                    break;
+            }
+
+            String szSigInfo1 = String.format(Locale.getDefault(),
+                    getString(R.string.lblSignatureTemplate1),
+                    DateFormat.getDateFormat(getActivity()).format(m_le.signatureDate),
+                    m_le.signatureCFIName);
+            String szSigInfo2 = String.format(Locale.getDefault(),
+                    getString(R.string.lblSignatureTemplate2),
+                    m_le.signatureCFICert,
+                    DateFormat.getDateFormat(getActivity()).format(m_le.signatureCFIExpiration));
+            ((TextView) findViewById(R.id.txtSigInfo1)).setText(szSigInfo1);
+            ((TextView) findViewById(R.id.txtSigInfo2)).setText(szSigInfo2);
+            ((TextView) findViewById(R.id.txtSigComment)).setText(m_le.signatureComments);
+
+            ImageView ivDigitizedSig = (ImageView) findViewById(R.id.imgDigitizedSig);
+            if (m_le.signatureHasDigitizedSig)
+            {
+                if (ivDigitizedSig.getDrawable() == null) {
+                    String szURL = String.format(Locale.US, "https://%s/Logbook/Public/ViewSig.aspx?id=%d", MFBConstants.szIP, m_le.idFlight);
+                    GetDigitizedSigTask gdst = new GetDigitizedSigTask((ImageView) findViewById(R.id.imgDigitizedSig));
+                    gdst.execute(szURL);
+                }
+            }
+            else
+                ivDigitizedSig.setVisibility(View.GONE);
+        }
 
         // Aircraft spinner
         Aircraft[] rgSelectibleAircraft = SelectibleAircraft();

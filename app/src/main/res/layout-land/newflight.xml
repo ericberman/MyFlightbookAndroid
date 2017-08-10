@@ -740,6 +740,59 @@
 
         </LinearLayout>
 
+        <!-- Signature -->
+        <TextView
+            android:id="@+id/txtSignatureHeader"
+            style="@style/DividerBar"
+            android:clickable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:text="@string/lblSignature" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/sectSignature">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:contentDescription="@string/cdIsSignedValid"
+                    android:id="@+id/imgSigState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_gravity="top" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtSigInfo1"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtSigInfo2"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtSigComment"/>
+                </LinearLayout>
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtSigState" />
+            <ImageView
+                android:contentDescription="@string/cdDigitizedSignature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgDigitizedSig"
+                android:layout_gravity="center_horizontal"/>
+        </LinearLayout>
+
         <!-- Images and Sharing -->
         <TextView
             android:id="@+id/txtImageHeader"

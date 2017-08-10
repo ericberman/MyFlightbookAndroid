@@ -65,6 +65,9 @@
     <string name="lblTwitter">Share flight on Twitter</string>
     <string name="lblMyFlightbook">Share flight on MyFlightbook</string>
     <string name="lblSetUpFacebook">Enable Twitter and Facebook support.</string>
+    <string name="lblSignature">Signature</string>
+    <string name="lblSignatureTemplate1">Signed on %1$s by %2$s</string>
+    <string name="lblSignatureTemplate2">(CFI# %1$s, Expiration %2$s)</string>
 
     <string name="lblNow">Now</string>
     <string name="lblNone">None</string>
@@ -221,6 +224,7 @@
     <string name="cdRecording">Flight Telemetry Recording</string>
     <string name="cdIsSignedValid">The signature is valid</string>
     <string name="cdIsSignedInvalid">The signature is not valid</string>
+    <string name="cdDigitizedSignature">(Digitized Signature)</string>
 
     <string name="lblAddComment">Type a comment for this image</string>
     <string name="lblAddCommentWM">Comment</string>

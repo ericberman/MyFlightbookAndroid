@@ -111,6 +111,13 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
     private String szCatClassDisplay = "";
     private Boolean fHasDataStream = false;
     public SigStatus signatureStatus = SigStatus.None;
+    public String signatureComments = "";
+    public Date signatureDate = null;
+    public String signatureCFICert = "";
+    public Date signatureCFIExpiration = null;
+    public String signatureCFIName = "";
+    public String signatureB64DigitizedSig = "";
+    public Boolean signatureHasDigitizedSig = false;
 
     private void Init() {
         this.szUser = AuthToken.m_szEmail;
@@ -792,6 +799,16 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         }
 
         signatureStatus = SigStatus.valueOf(so.getProperty("CFISignatureState").toString());
+        // Remaining fields not always present.
+        try {
+            signatureComments = so.getPropertySafelyAsString("CFIComments");
+            signatureDate = ReadNullableDate(so, "CFISignatureDate");
+            signatureCFICert = so.getPropertySafelyAsString("CFICertificate");
+            signatureCFIExpiration = ReadNullableDate(so, "CFIExpiration");
+            signatureCFIName = so.getPropertySafelyAsString("CFIName");
+            signatureHasDigitizedSig = Boolean.parseBoolean(so.getProperty("HasDigitizedSig").toString());
+        } catch (Exception ignored) {
+        }
 
         SoapObject props = (SoapObject) so.getProperty("CustomProperties");
         int cProps = props.getPropertyCount();
