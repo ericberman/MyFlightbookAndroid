@@ -279,7 +279,11 @@ public class ActMFBForm extends Fragment {
         if (headerView != null)
             headerView.setVisibility(rgMfbii.length == 0 ? View.GONE : View.VISIBLE);
 
-        LayoutInflater l = getActivity().getLayoutInflater();
+        Activity a = getActivity();
+        if (a == null)
+            return;
+
+        LayoutInflater l = a.getLayoutInflater();
         TableLayout tl = (TableLayout) findViewById(idGallery);
         if (tl == null)
             return;
