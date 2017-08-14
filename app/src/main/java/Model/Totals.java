@@ -23,7 +23,7 @@ import org.ksoap2.serialization.SoapObject;
 import java.util.Locale;
 
 public class Totals extends SoapableObject {
-    enum NumType {Integer, Decimal, Time, Currency}
+    public enum NumType {Integer, Decimal, Time, Currency}
 
     public String Description = "";
     public double Value = 0.0;
