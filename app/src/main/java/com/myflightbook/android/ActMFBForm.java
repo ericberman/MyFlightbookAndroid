@@ -78,7 +78,7 @@ import Model.MFBLocation;
 import Model.MFBUtil;
 
 public class ActMFBForm extends Fragment {
-    public interface GallerySource {
+    interface GallerySource {
         int getGalleryID();
 
         View getGalleryHeader();
@@ -94,15 +94,15 @@ public class ActMFBForm extends Fragment {
         void refreshGallery();
     }
 
-    protected static final String keyTempFileInProgress = "uriFileInProgress";
-    protected static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1483;
-    protected static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 1968;
-    protected static final int SELECT_IMAGE_ACTIVITY_REQUEST_CODE = 1849;
-    protected static final int CAMERA_PERMISSION_IMAGE = 83;
-    protected static final int CAMERA_PERMISSION_VIDEO = 84;
-    protected static final int GALLERY_PERMISSION = 85;
-    protected static final String TEMP_IMG_FILE_NAME = "takenpicture";
-    protected String m_TempFilePath = "";
+    private static final String keyTempFileInProgress = "uriFileInProgress";
+    static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1483;
+    static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 1968;
+    static final int SELECT_IMAGE_ACTIVITY_REQUEST_CODE = 1849;
+    private static final int CAMERA_PERMISSION_IMAGE = 83;
+    private static final int CAMERA_PERMISSION_VIDEO = 84;
+    private static final int GALLERY_PERMISSION = 85;
+    private static final String TEMP_IMG_FILE_NAME = "takenpicture";
+    String m_TempFilePath = "";
 
     private class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         MFBImageInfo mfbii = null;
@@ -110,13 +110,11 @@ public class ActMFBForm extends Fragment {
         Boolean fDeleteFileWhenDone = false;
         Boolean fAddToGallery = false;
         Boolean m_fVideo = false;
-        ContentResolver m_cr = null;
 
         AddCameraTask(int ActivityRequestCode, Boolean fVideo, ContentResolver cr) {
             m_fVideo = fVideo;
             fAddToGallery = fDeleteFileWhenDone = (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE || ActivityRequestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
             fGeoTag = (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-            m_cr = cr;
         }
 
         @Override
@@ -154,22 +152,22 @@ public class ActMFBForm extends Fragment {
         }
     }
 
-    protected void AddCameraImage(final String szFilename, Boolean fVideo) {
+    void AddCameraImage(final String szFilename, Boolean fVideo) {
         AddCameraTask act = new AddCameraTask(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, fVideo, this.getActivity().getContentResolver());
         act.execute(szFilename);
     }
 
     // Activity pseudo support.
-    protected View findViewById(int id) {
+    View findViewById(int id) {
         View v = getView();
         return v == null ? null : v.findViewById(id);
     }
 
-    protected void finish() {
+    void finish() {
         getActivity().finish();
     }
 
-    protected void AddGalleryImage(final Intent i) {
+    void AddGalleryImage(final Intent i) {
         Uri selectedImage = i.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA, MediaStore.Images.Media.MIME_TYPE};
 
@@ -198,38 +196,38 @@ public class ActMFBForm extends Fragment {
     }
 
     //region binding data to forms
-    protected void AddListener(int id) {
+    void AddListener(int id) {
         findViewById(id).setOnClickListener((View.OnClickListener) this);
     }
 
-    protected void SetDateTime(int id, Date d, DateTimeUpdate delegate, DlgDatePicker.datePickMode dpm) {
+    void SetDateTime(int id, Date d, DateTimeUpdate delegate, DlgDatePicker.datePickMode dpm) {
         DlgDatePicker dlg = new DlgDatePicker(this.getActivity(), dpm, d);
         dlg.m_delegate = delegate;
         dlg.m_id = id;
         dlg.show();
     }
 
-    protected Integer IntFromField(int id) {
+    Integer IntFromField(int id) {
         DecimalEdit v = (DecimalEdit) findViewById(id);
         return v.getIntValue();
     }
 
-    protected void SetIntForField(int id, int value) {
+    void SetIntForField(int id, int value) {
         DecimalEdit v = (DecimalEdit) findViewById(id);
         v.setIntValue(value);
     }
 
-    protected Double DoubleFromField(int id) {
+    Double DoubleFromField(int id) {
         DecimalEdit v = (DecimalEdit) findViewById(id);
         return v.getDoubleValue();
     }
 
-    protected void SetDoubleForField(int id, Double d) {
+    void SetDoubleForField(int id, Double d) {
         DecimalEdit v = (DecimalEdit) findViewById(id);
         v.setDoubleValue(d);
     }
 
-    protected void SetUTCDateForField(int id, Date d) {
+    void SetUTCDateForField(int id, Date d) {
         Button b = (Button) findViewById(id);
         if (d == null || UTCDate.IsNullDate(d))
             b.setText(getString(R.string.lblTouchForNow));
@@ -237,7 +235,7 @@ public class ActMFBForm extends Fragment {
             b.setText(UTCDate.formatDate(DlgDatePicker.fUseLocalTime, d, getContext()));
     }
 
-    protected void SetLocalDateForField(int id, Date d) {
+    void SetLocalDateForField(int id, Date d) {
         Button b = (Button) findViewById(id);
         if (UTCDate.IsNullDate(d))
             b.setText(getString(R.string.lblTouchForToday));
@@ -245,35 +243,35 @@ public class ActMFBForm extends Fragment {
             b.setText(DateFormat.getDateFormat(getActivity()).format(d));
     }
 
-    protected String StringFromField(int id) {
+    String StringFromField(int id) {
         EditText e = (EditText) findViewById(id);
         return e.getText().toString();
     }
 
-    protected void SetStringForField(int id, String s) {
+    void SetStringForField(int id, String s) {
         EditText e = (EditText) findViewById(id);
         e.setText(s);
     }
 
-    protected Boolean CheckState(int id) {
+    Boolean CheckState(int id) {
         CheckBox c = (CheckBox) findViewById(id);
         return c.isChecked();
     }
 
-    protected void SetCheckState(int id, Boolean f) {
+    void SetCheckState(int id, Boolean f) {
         CheckBox c = (CheckBox) findViewById(id);
         c.setChecked(f);
     }
 
-    protected void SetRadioButton(int id) {
+    void SetRadioButton(int id) {
         RadioButton rb = (RadioButton) findViewById(id);
         rb.setChecked(true);
     }
     //endregion
 
-    protected MFBImageInfo mfbiiLastClicked;
+    private MFBImageInfo mfbiiLastClicked;
 
-    protected void setUpImageGallery(int idGallery, MFBImageInfo[] rgMfbii, View headerView) {
+    void setUpImageGallery(int idGallery, MFBImageInfo[] rgMfbii, View headerView) {
         // Set up the gallery for any pictures
         if (rgMfbii == null)
             return;
@@ -316,12 +314,12 @@ public class ActMFBForm extends Fragment {
         }
     }
 
-    protected void setDecimalEditMode(int id, EditMode em) {
+    void setDecimalEditMode(int id, EditMode em) {
         DecimalEdit e = (DecimalEdit) findViewById(id);
         e.setMode(em);
     }
 
-    public boolean onImageContextItemSelected(MenuItem item, GallerySource src) {
+    boolean onImageContextItemSelected(MenuItem item, GallerySource src) {
         if (mfbiiLastClicked == null)    // should never be true
             return false;
 
@@ -418,13 +416,13 @@ public class ActMFBForm extends Fragment {
     //endregion
 
     //region image/video selection
-    public void ChoosePicture() {
+    void ChoosePicture() {
         Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         i.setType("image/* video/*");
         startActivityForResult(i, SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
-    public void TakePicture() {
+    void TakePicture() {
         File fTemp;
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         if (MFBConstants.fFakePix) {
@@ -490,7 +488,7 @@ public class ActMFBForm extends Fragment {
         }
     }
 
-    public void TakeVideo() {
+    void TakeVideo() {
         File fTemp;
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -521,7 +519,7 @@ public class ActMFBForm extends Fragment {
 
     //region expand/collapse
     // next two methods are adapted from http://stackoverflow.com/questions/19263312/how-to-achieve-smooth-expand-collapse-animation
-    public void expandView(final View v) {
+    private void expandView(final View v) {
         v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         final int targtetHeight = v.getMeasuredHeight();
 
@@ -546,7 +544,7 @@ public class ActMFBForm extends Fragment {
         v.startAnimation(a);
     }
 
-    public void collapseView(final View v) {
+    private void collapseView(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -570,11 +568,11 @@ public class ActMFBForm extends Fragment {
         v.startAnimation(a);
     }
 
-    public void setExpandedState(TextView v, View target, Boolean fExpanded) {
+    void setExpandedState(TextView v, View target, Boolean fExpanded) {
         setExpandedState(v, target, fExpanded, true);
     }
 
-    public void setExpandedState(TextView v, View target, Boolean fExpanded, Boolean fAnimated) {
+    void setExpandedState(TextView v, View target, Boolean fExpanded, Boolean fAnimated) {
         Drawable d;
         if (fExpanded) {
             if (fAnimated)

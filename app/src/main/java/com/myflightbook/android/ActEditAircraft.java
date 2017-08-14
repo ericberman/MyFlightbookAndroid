@@ -55,8 +55,8 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource {
     public final static String AIRCRAFTID = "com.myflightbook.android.aircraftID";
     public static final int BEGIN_EDIT_AIRCRAFT_REQUEST_CODE = 49521;
-    public static final int RESULT_CODE_AIRCRAFT_DELETED = 19573;
-    public static final int RESULT_CODE_AIRCRAFT_CHANGED = 19574;
+    private static final int RESULT_CODE_AIRCRAFT_DELETED = 19573;
+    private static final int RESULT_CODE_AIRCRAFT_CHANGED = 19574;
 
     private Aircraft m_ac = null;
 
@@ -232,7 +232,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         return true;
     }
 
-    void toView() {
+    private void toView() {
         if (m_ac == null) {
             finish();
             return;
@@ -280,7 +280,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         findViewById(R.id.sectMaintenance).setVisibility(m_ac.IsReal() && !m_ac.IsAnonymous() ? View.VISIBLE : View.GONE);
     }
 
-    void fromView() {
+    private void fromView() {
         // dates were changed synchronously, only need the decimal values.
         m_ac.Last100 = DoubleFromField(R.id.txt100hr);
         m_ac.LastOil = DoubleFromField(R.id.txtOilChange);

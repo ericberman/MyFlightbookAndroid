@@ -37,19 +37,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class LocSample extends LatLong {
-    public long id = -1;
-    @SuppressWarnings("WeakerAccess")
-    public int Alt = 0;
-    @SuppressWarnings("WeakerAccess")
-    public double Speed = 0.0;
-    @SuppressWarnings("WeakerAccess")
-    public double HError = 0.0;
-    @SuppressWarnings("WeakerAccess")
-    public Date TimeStamp = new Date();
-    @SuppressWarnings("WeakerAccess")
-    public int TZOffset = 0;
-    @SuppressWarnings("WeakerAccess")
-    public String Comment = "";
+    long id = -1;
+    int Alt = 0;
+    double Speed = 0.0;
+    double HError = 0.0;
+    Date TimeStamp = new Date();
+    private int TZOffset = 0;
+    String Comment = "";
 
     private static SimpleDateFormat m_df = null;
 
@@ -127,6 +121,7 @@ public class LocSample extends LatLong {
         return sb.toString();
     }
 
+    @SuppressWarnings("unused")
     public static String getFlightDataStringAsKML(LatLong[] rgloc) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault());

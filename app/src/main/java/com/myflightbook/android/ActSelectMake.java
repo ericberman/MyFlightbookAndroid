@@ -46,7 +46,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
         populateList();
     }
 
-    public void populateList() {
+    private void populateList() {
         // This maps the headers to the individual sub-lists.
         HashMap<String, HashMap<String, String>> headers = new HashMap<>();
         HashMap<String, ArrayList<HashMap<String, String>>> childrenMaps = new HashMap<>();

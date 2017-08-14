@@ -125,7 +125,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         }
     }
 
-    public void populateList() {
+    private void populateList() {
         if (visitedAirports == null || visitedAirports.length == 0)
             return;
 

@@ -58,9 +58,9 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     private AircraftRowItem[] m_aircraftRows = null;
     private Boolean m_fHasHeaders = false;
 
-    public enum RowType {DATA_ITEM, HEADER_ITEM}
+    private enum RowType {DATA_ITEM, HEADER_ITEM}
 
-    protected class AircraftRowItem implements ThumbnailedItem {
+    class AircraftRowItem implements ThumbnailedItem {
 
         Aircraft aircraftItem = null;
         String title = null;
@@ -241,7 +241,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             populateList();
     }
 
-    public void populateList() {
+    private void populateList() {
         if (m_aircraftRows == null)
             return;
         AircraftAdapter aa = new AircraftAdapter(getActivity(), R.layout.aircraft, m_aircraftRows);
@@ -260,7 +260,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         startActivityForResult(i, ActEditAircraft.BEGIN_EDIT_AIRCRAFT_REQUEST_CODE);
     }
 
-    public void AddAircraft() {
+    private void AddAircraft() {
         Intent i = new Intent(getActivity(), NewAircraftActivity.class);
         startActivityForResult(i, ActNewAircraft.BEGIN_NEW_AIRCRAFT_REQUEST_CODE);
     }

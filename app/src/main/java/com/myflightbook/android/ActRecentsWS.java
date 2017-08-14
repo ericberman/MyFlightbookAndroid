@@ -63,10 +63,10 @@ import Model.MFBUtil;
 public class ActRecentsWS extends ListFragment implements OnItemSelectedListener, ImageCacheCompleted, MFBMain.Invalidatable {
 
     private LogbookEntry[] m_rgLe = new LogbookEntry[0];
-    protected ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<>();
+    private ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<>();
 
-    protected final int cFlightsPageSize = 15;
-    protected boolean fCouldBeMore = true;
+    private final int cFlightsPageSize = 15;
+    private boolean fCouldBeMore = true;
 
     public static final String VIEWEXISTINGFLIGHTID = "com.myflightbook.android.ViewFlightID";
     public static final String VIEWEXISTINGFLIGHTLOCALID = "com.myflightbook.android.ViewFlightLocalID";
@@ -276,7 +276,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             populateList();
     }
 
-    public void populateList() {
+    private void populateList() {
         if (getView() == null)
             return;
 
@@ -296,7 +296,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             new Thread(new LazyThumbnailLoader(m_rgLe, (FlightAdapter) this.getListAdapter())).start();
     }
 
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    private void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position < 0 || position >= m_rgLe.length)
             return;
 

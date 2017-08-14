@@ -142,9 +142,9 @@ public class FixedExpandableListActivity extends Activity implements
         OnCreateContextMenuListener,
         ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupCollapseListener,
         ExpandableListView.OnGroupExpandListener {   
-    ExpandableListAdapter mAdapter;
-    ExpandableListView mList;
-    boolean mFinishedStart = false;
+    private ExpandableListAdapter mAdapter;
+    private ExpandableListView mList;
+    private boolean mFinishedStart = false;
 
     /**
      * Override this to populate the context menu when an item is long pressed. menuInfo
@@ -229,7 +229,7 @@ public class FixedExpandableListActivity extends Activity implements
     /**
      * Provide the adapter for the expandable list.
      */
-    public void setListAdapter(ExpandableListAdapter adapter) {
+    void setListAdapter(ExpandableListAdapter adapter) {
         synchronized (this) {
             ensureList();
             mAdapter = adapter;
@@ -243,7 +243,7 @@ public class FixedExpandableListActivity extends Activity implements
      * 
      * @see ExpandableListView
      */
-    public ExpandableListView getExpandableListView() {
+    ExpandableListView getExpandableListView() {
         ensureList();
         return mList;
     }

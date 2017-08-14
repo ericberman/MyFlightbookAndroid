@@ -340,6 +340,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int i, @SuppressWarnings("rawtypes") Hashtable h, PropertyInfo pi) {
         AircraftProp ap = AircraftProp.values()[i];
         switch (ap) {

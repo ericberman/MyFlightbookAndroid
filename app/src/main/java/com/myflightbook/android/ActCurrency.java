@@ -110,7 +110,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         MFBMain.registerNotifyResetAll(this);
     }
 
-    void BindTable() {
+    private void BindTable() {
         TableLayout tl = (TableLayout) findViewById(R.id.tblCurrency);
         if (tl == null)
             throw new NullPointerException("tl is null in BindTable (ActCurrency)!");
@@ -151,7 +151,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         }
     }
 
-    void Refresh(Boolean fForce) {
+    private void Refresh(Boolean fForce) {
         if (AuthToken.FIsValid() && (fForce || fNeedsRefresh || m_rgcsi == null)) {
             SoapTask ts = new SoapTask(getActivity());
             ts.execute();

@@ -93,6 +93,7 @@ public class VisitedAirport extends SoapableObject implements KvmSerializable, C
         return VisitedAirportProp.values().length;
     }
 
+    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         VisitedAirportProp vap = VisitedAirportProp.values()[i];
         switch (vap) {

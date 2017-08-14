@@ -45,7 +45,7 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
     private EditMode m_editMode = EditMode.INTEGER;
 
     public static boolean DefaultHHMM = false;
-    static DecimalFormat m_df = new DecimalFormat();
+    private static DecimalFormat m_df = new DecimalFormat();
     private CrossFillDelegate delegate = null;
 
     public Boolean forceHHMM = false;
@@ -64,7 +64,7 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
         InitFromAttributes(context, attrs);
     }
 
-    protected void InitFromAttributes(Context context, AttributeSet attrs) {
+    private void InitFromAttributes(Context context, AttributeSet attrs) {
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.DecimalEdit);
 
         CharSequence editmode = arr.getString(R.styleable.DecimalEdit_EditMode);
@@ -84,7 +84,7 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
     }
 
     // return the effective mode - if HHMM has been specified, then follow user preference.
-    public EditMode EffectiveMode() {
+    private EditMode EffectiveMode() {
         if (m_editMode == EditMode.HHMM)
             return DecimalEdit.DefaultHHMM || forceHHMM ? EditMode.HHMM : EditMode.DECIMAL;
         return m_editMode;
@@ -115,7 +115,7 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
         }
     }
 
-    public static double doubleFromString(String sz, EditMode em) {
+    private static double doubleFromString(String sz, EditMode em) {
         if (sz.length() == 0)
             return 0.0;
 

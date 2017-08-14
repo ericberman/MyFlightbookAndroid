@@ -150,6 +150,7 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
         m_rgcptCached = CustomPropertyTypesSvc.getCachedPropertyTypes();
     }
 
+    @SuppressWarnings("unused")
     public String format(Boolean fLocal, Context c) {
         // try to find the custom property type if not already filled in.  This COULD miss
         if (m_cpt == null) {
@@ -262,6 +263,7 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
         return FPProp.values().length;
     }
 
+    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int arg0, Hashtable h, PropertyInfo pi) {
         FPProp f = FPProp.values()[arg0];
         switch (f) {

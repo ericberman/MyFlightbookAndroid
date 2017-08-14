@@ -24,7 +24,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class NewAircraftActivity extends FragmentActivity {
-    ActNewAircraft newAircraft = null;
+    private ActNewAircraft newAircraft = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

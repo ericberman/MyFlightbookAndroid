@@ -73,6 +73,7 @@ public class MakeModel extends SoapableObject implements KvmSerializable, Serial
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         MakeModelProp mmp = MakeModelProp.values()[i];
         switch (mmp) {

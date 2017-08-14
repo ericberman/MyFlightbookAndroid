@@ -528,6 +528,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		return FlightQueryProp.values().length;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void getPropertyInfo(int i, Hashtable arg1, PropertyInfo pi) {
 		FlightQueryProp fqp = FlightQueryProp.values()[i];
 		switch (fqp) {

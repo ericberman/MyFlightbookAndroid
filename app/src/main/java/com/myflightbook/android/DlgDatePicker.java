@@ -111,7 +111,7 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
         }
     }
 
-    public void setDate(Date dt) {
+    private void setDate(Date dt) {
         updatePickers(m_Date = dt);
     }
 

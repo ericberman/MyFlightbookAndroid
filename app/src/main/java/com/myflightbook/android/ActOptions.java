@@ -159,7 +159,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         }
     }
 
-    protected void updateStatus() {
+    private void updateStatus() {
         // refresh sign-in status
         TextView t = (TextView) findViewById(R.id.txtSignInStatus);
         if (AuthToken.FIsValid())
@@ -193,21 +193,21 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         }
     }
 
-    public void ContactUs() {
+    private void ContactUs() {
         ActWebView.ViewURL(getActivity(), String.format(MFBConstants.urlContact, AuthToken.m_szEmail, "Comment from Android user"));
     }
 
-    public void ViewFacebook() {
+    private void ViewFacebook() {
         Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlFacebook));
         startActivity(i);
     }
 
-    public void ViewTwitter() {
+    private void ViewTwitter() {
         Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlTwitter));
         startActivity(i);
     }
 
-    public void CleanUp() {
+    private void CleanUp() {
         boolean fOrphansFound = false;
 
         // Clean up any:
@@ -282,7 +282,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     public void onNothingSelected(AdapterView<?> arg0) {
     }
 
-    public void ViewPreferences(String szTemplate) {
+    private void ViewPreferences(String szTemplate) {
         if (!AuthToken.FIsValid()) {
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.statusNotSignedIn));
             return;
@@ -320,7 +320,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    protected Boolean checkGPSPermissions(int req) {
+    private Boolean checkGPSPermissions(int req) {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
 

@@ -28,15 +28,18 @@ import java.util.TimeZone;
 public class SunriseSunsetTimes {
     public Date Sunrise;
     public Date Sunset;
+    @SuppressWarnings("WeakerAccess")
     public double Latitude;
+    @SuppressWarnings("WeakerAccess")
     public double Longitude;
+    @SuppressWarnings("WeakerAccess")
     public Date Date;
 
     // True if sun is more than 6 degrees below the horizon.
     Boolean IsCivilNight;
 
     // True if between sunset and sunrise
-    @SuppressWarnings({"unused", "WeakerAccess"})
+    @SuppressWarnings("WeakerAccess")
     Boolean IsNight;
 
     // True if between 1-hour after sunset and 1-hour before sunrise

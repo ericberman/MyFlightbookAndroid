@@ -63,16 +63,15 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     public static MakesandModels[] AvailableMakesAndModels = null;
     private static Aircraft m_ac = new Aircraft();
     private String szTailLast = "";
-    public static final int SELECT_MAKE_ACTIVITY_REQUEST_CODE = 41845;
+    private static final int SELECT_MAKE_ACTIVITY_REQUEST_CODE = 41845;
     public static final int BEGIN_NEW_AIRCRAFT_REQUEST_CODE = 49283;
     public final static String MODELFORAIRCRAFT = "com.myflightbook.android.aircraftModelID";
-    protected static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
+    private static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
 
     private class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        MFBSoap m_Svc = null;
 
         SaveAircraftTask(Context c) {
             super();
@@ -84,7 +83,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             AircraftSvc acs = new AircraftSvc();
             acs.m_Progress = this;
             m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac, getContext());
-            return m_Svc = acs;
+            return acs;
         }
 
         protected void onPreExecute() {
@@ -253,7 +252,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             newAircraft();
     }
 
-    protected void setCurrentMakeModel(MakesandModels mm) {
+    private void setCurrentMakeModel(MakesandModels mm) {
         if (mm != null) {
             m_ac.ModelID = mm.ModelId;
             Button b = (Button) findViewById(R.id.btnMakeModel);
@@ -261,7 +260,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    protected void fromView() {
+    private void fromView() {
         m_ac.TailNumber = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
         m_ac.InstanceTypeID = ((Spinner) findViewById(R.id.spnAircraftType)).getSelectedItemPosition() + 1;
 
@@ -269,7 +268,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             m_ac.TailNumber = "SIM";
     }
 
-    protected void toView() {
+    private void toView() {
         EditText et = (EditText) findViewById(R.id.txtTail);
         et.setText(m_ac.TailNumber);
         et.setSelection(m_ac.TailNumber.length());
@@ -281,12 +280,12 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         refreshGallery();
     }
 
-    protected void saveLastTail() {
+    private void saveLastTail() {
         if (m_ac.IsReal() && !m_ac.IsAnonymous())
             this.szTailLast = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
     }
 
-    protected void toggleAnonymous(CheckBox sender) {
+    private void toggleAnonymous(CheckBox sender) {
         saveLastTail();
         m_ac.TailNumber = (m_ac.IsAnonymous()) ? this.szTailLast : m_ac.anonTailNumber();
         sender.setChecked(m_ac.IsAnonymous());

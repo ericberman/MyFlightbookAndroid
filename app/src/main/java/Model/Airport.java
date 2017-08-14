@@ -44,7 +44,9 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
     public String AirportID;
     public String FacilityName;
     public String Type;
+    @SuppressWarnings("WeakerAccess")
     public double Latitude;
+    @SuppressWarnings("WeakerAccess")
     public double Longitude;
     public double Distance;
     private boolean IsPreferred;

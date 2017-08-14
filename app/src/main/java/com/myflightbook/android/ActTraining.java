@@ -43,7 +43,7 @@ import Model.MFBUtil;
 
 public class ActTraining extends ListFragment implements OnItemClickListener {
 
-    public class TrainingItem {
+    class TrainingItem {
         int idTitle;
         String szURLDest;
 
@@ -53,7 +53,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         }
     }
 
-    TrainingItem[] m_rgTrainingItems =
+    private TrainingItem[] m_rgTrainingItems =
             {
                     new TrainingItem(R.string.lblStudents, "students"),
                     new TrainingItem(R.string.lblInstructors, "instructors"),
@@ -97,18 +97,13 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         return inflater.inflate(R.layout.training, container, false);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     // update the list if our array is null
     public void onResume() {
         super.onResume();
         populateList();
     }
 
-    public void populateList() {
+    private void populateList() {
         TrainingAdapter ta = new TrainingAdapter(getActivity(), R.layout.trainingitem, m_rgTrainingItems);
         setListAdapter(ta);
         getListView().setOnItemClickListener(this);

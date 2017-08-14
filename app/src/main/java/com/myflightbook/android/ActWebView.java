@@ -35,8 +35,8 @@ import Model.MFBConstants;
 
 public class ActWebView extends Activity {
 
-    public String szURL = "";
-    public String szTempFile = "";
+    private String szURL = "";
+    private String szTempFile = "";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override

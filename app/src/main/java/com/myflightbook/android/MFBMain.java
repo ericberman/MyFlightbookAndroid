@@ -41,7 +41,6 @@ import com.myflightbook.android.WebServices.AuthToken;
 
 import junit.framework.Assert;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -107,7 +106,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     public static DataBaseHelper mDBHelper = null;
     public static DataBaseHelper mDBHelperAirports = null;
 
-    static MFBFlightListener m_FlightEventListener = null;
+    private static MFBFlightListener m_FlightEventListener = null;
 
     public static String versionName = "";
     public static int versionCode = 0;
@@ -173,11 +172,11 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         tabHost.addTab(tabSpec);
     }
 
-    protected String paddedTabLabel(int id) {
+    private String paddedTabLabel(int id) {
         return String.format(Locale.getDefault(), "  %s  ", getString(id));
     }
 
-    protected void refreshAuth() {
+    private void refreshAuth() {
         // finally, sign in if necessary.
         // a) if we're already signed in, just go to the last tab.
         // b) if we're not already signed in or need a refresh, refresh as necessary
@@ -192,7 +191,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         }
     }
 
-    protected void initDB(Boolean fRetryOnFailure) {
+    private void initDB(Boolean fRetryOnFailure) {
         SQLiteDatabase db = null;
 
         // set up the sqlite db
@@ -203,7 +202,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
             // force any upgrade.
             db = mDBHelper.getWritableDatabase();
-        } catch (IOException ioe) {
+        } catch (Error ioe) {
             MFBUtil.Alert(this, getString(R.string.txtError),
                     getString(R.string.errMainDBFailure));
         } catch (SQLiteReadOnlyDatabaseException ex) {
@@ -222,7 +221,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             mDBHelperAirports.createDataBase();
             // force any upgrade.
             db = mDBHelperAirports.getWritableDatabase();
-        } catch (IOException ioe) {
+        } catch (Error ioe) {
             MFBUtil.Alert(this, getString(R.string.txtError),
                     getString(R.string.errAirportDBFailure));
         } catch (SQLiteReadOnlyDatabaseException ex) {

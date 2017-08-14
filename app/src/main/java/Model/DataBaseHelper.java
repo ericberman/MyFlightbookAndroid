@@ -72,7 +72,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * Creates a empty database on the system and rewrites it with your own
      * database.
      */
-    public void createDataBase() throws IOException {
+    public void createDataBase() throws Error {
 
         boolean dbExist = checkDataBase();
         SQLiteDatabase db_Read = null;
@@ -199,7 +199,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (m_DBName.compareTo(DB_NAME_MAIN) == 0) {

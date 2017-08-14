@@ -40,13 +40,13 @@ public class ActAddApproach extends Activity {
     public static final String APPROACHADDTOTOTALSRESULT = "com.myflightbook.android.ApproachAddToTotalsResult";
     public static final int APPROACH_DESCRIPTION_REQUEST_CODE = 50382;
 
-    ApproachDescription approachDescription = new ApproachDescription();
+    private ApproachDescription approachDescription = new ApproachDescription();
 
-    String approachBase = "";
-    String approachSuffix = "";
-    String runwayBase = "";
-    String runwaySuffix = "";
-    String[] rgAirports = new String[0];
+    private String approachBase = "";
+    private String approachSuffix = "";
+    private String runwayBase = "";
+    private String runwaySuffix = "";
+    private String[] rgAirports = new String[0];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

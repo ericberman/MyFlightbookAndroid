@@ -105,7 +105,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public final static String PROPSFORFLIGHTID = "com.myflightbook.android.FlightPropsID";
     public final static String PROPSFORFLIGHTEXISTINGID = "com.myflightbook.android.FlightPropsIDExisting";
     public final static String PROPSFORFLIGHTCROSSFILLVALUE = "com.myflightbook.android.FlightPropsXFill";
-    protected static final int EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE = 48329;
+    private static final int EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE = 48329;
 
     // current state of pause/play and accumulated night
     public static Boolean fPaused = false;
@@ -179,7 +179,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
-        MFBSoap m_Svc;
 
         DeleteTask() {
             super();
@@ -192,7 +191,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             dfs.DeleteFlight(AuthToken.m_szAuthToken, m_le.idFlight, getContext());
             m_Result = (dfs.getLastError().length() == 0);
 
-            return m_Svc = dfs;
+            return dfs;
         }
 
         protected void onPreExecute() {
@@ -454,7 +453,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - created, m_le is %s", m_le == null ? "null" : "non-null"));
     }
 
-    protected void enableCrossFill(int id) {
+    private void enableCrossFill(int id) {
         DecimalEdit de = (DecimalEdit) findViewById(id);
         de.setDelegate(this);
     }
@@ -466,7 +465,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         FromView();
     }
 
-    protected Aircraft[] SelectibleAircraft() {
+    private Aircraft[] SelectibleAircraft() {
         if (m_rgac == null)
             return null;
 
@@ -567,7 +566,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ToView();
     }
 
-    protected void setUpGalleryForFlight() {
+    private void setUpGalleryForFlight() {
         if (m_le.rgFlightImages == null)
             m_le.getImagesForFlight();
         setUpImageGallery(getGalleryID(), m_le.rgFlightImages, getGalleryHeader());
@@ -625,7 +624,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             MFBMain.getNewFlightListener().saveCurrentFlightId(getActivity());
     }
 
-    public void SetLogbookEntry(LogbookEntry le) {
+    private void SetLogbookEntry(LogbookEntry le) {
         m_le = le;
         saveCurrentFlight();
         if (getView() == null)
@@ -749,7 +748,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    protected Boolean checkGPSPermissions(int req) {
+    private Boolean checkGPSPermissions(int req) {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
 
@@ -788,17 +787,17 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
     //endregion
 
-    public void takePictureClicked() {
+    private void takePictureClicked() {
         saveCurrentFlight();
         TakePicture();
     }
 
-    public void takeVideoClicked() {
+    private void takeVideoClicked() {
         saveCurrentFlight();
         TakeVideo();
     }
 
-    public void choosePictureClicked() {
+    private void choosePictureClicked() {
         saveCurrentFlight();
         ChoosePicture();
     }
@@ -944,7 +943,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-    public void ViewPropsForFlight() {
+    private void ViewPropsForFlight() {
         Intent i = new Intent(getActivity(), ActViewProperties.class);
         i.putExtra(PROPSFORFLIGHTID, m_le.idLocalDB);
         i.putExtra(PROPSFORFLIGHTEXISTINGID, m_le.idFlight);
@@ -952,7 +951,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         startActivityForResult(i, EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE);
     }
 
-    void onHobbsChanged(View v) {
+    private void onHobbsChanged(View v) {
         if (m_le != null && MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.HobbsTime) {
             EditText txtHobbsStart = (EditText) findViewById(R.id.txtHobbsStart);
             EditText txtHobbsEnd = (EditText) findViewById(R.id.txtHobbsEnd);
@@ -1535,7 +1534,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-    public void updateElapsedTime() {            // update the button state
+    private void updateElapsedTime() {            // update the button state
         ImageButton ib = (ImageButton) findViewById(R.id.btnPausePlay);
         // pause/play should only be visible on ground with engine running (or flight start known but engine end unknown)
         Boolean fShowPausePlay = !MFBLocation.IsFlying && (m_le.isKnownEngineStart() || m_le.isKnownFlightStart()) && !m_le.isKnownEngineEnd();
@@ -1585,13 +1584,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ShowRecordingIndicator();
     }
 
-    protected void updatePausePlayButtonState() {
+    private void updatePausePlayButtonState() {
         // update the button state
         ImageButton ib = (ImageButton) findViewById(R.id.btnPausePlay);
         ib.setImageResource(ActNewFlight.fPaused ? R.drawable.play : R.drawable.pause);
     }
 
-    protected void toggleFlightPause() {
+    private void toggleFlightPause() {
         // don't pause or play if we're not flying/engine started
         if (m_le.isKnownFlightStart() || m_le.isKnownEngineStart()) {
             if (ActNewFlight.fPaused)
@@ -1651,7 +1650,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ResetFlight(false);
     }
 
-    protected void UpdateIfChanged(int id, int value) {
+    private void UpdateIfChanged(int id, int value) {
         if (IntFromField(id) != value)
             SetIntForField(id, value);
     }
@@ -1669,7 +1668,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         SetStringForField(R.id.txtRoute, m_le.szRoute);
     }
 
-    protected void setUpPropertiesForFlight() {
+    private void setUpPropertiesForFlight() {
         LayoutInflater l = getActivity().getLayoutInflater();
         TableLayout tl = (TableLayout) findViewById(R.id.tblPinnedProperties);
         if (tl == null)

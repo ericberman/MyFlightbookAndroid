@@ -24,9 +24,9 @@ import org.ksoap2.serialization.SoapObject;
 import java.util.Date;
 import java.util.Locale;
 
-public abstract class SoapableObject {
+abstract class SoapableObject {
 
-    public SoapableObject() {
+    SoapableObject() {
         super();
     }
 
@@ -70,5 +70,5 @@ public abstract class SoapableObject {
 
     public abstract void ToProperties(SoapObject so);
 
-    public abstract void FromProperties(SoapObject so);
+    protected abstract void FromProperties(SoapObject so);
 }

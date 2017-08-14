@@ -24,7 +24,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class FlightQueryActivity extends FragmentActivity {
-    ActFlightQuery flightQuery = null;
+    private ActFlightQuery flightQuery = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

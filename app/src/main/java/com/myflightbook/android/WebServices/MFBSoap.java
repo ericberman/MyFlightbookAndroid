@@ -54,7 +54,7 @@ public class MFBSoap {
 
     static String NAMESPACE = "http://myflightbook.com/";
 
-    public MFBSoap() {
+    MFBSoap() {
         super();
     }
 
@@ -62,13 +62,13 @@ public class MFBSoap {
         return m_szLastErr;
     }
 
-    public SoapObject setMethod(String szMethod) {
+    SoapObject setMethod(String szMethod) {
         m_methodName = szMethod;
         m_request = new SoapObject(NAMESPACE, szMethod);
         return m_request;
     }
 
-    public void AddMappings(SoapSerializationEnvelope e) {
+    void AddMappings(SoapSerializationEnvelope e) {
     }
 
     public static Boolean IsOnline(Context ctx) {
@@ -106,7 +106,7 @@ public class MFBSoap {
         return false;
     }
 
-    protected Object Invoke(Context c) {
+    Object Invoke(Context c) {
         if (c == null)
             throw new NullPointerException("null Context passed to Invoke");
 
@@ -169,7 +169,7 @@ public class MFBSoap {
         return o;
     }
 
-    public void setLastError(String sz) {
+    void setLastError(String sz) {
         this.m_szLastErr = sz;
     }
 }

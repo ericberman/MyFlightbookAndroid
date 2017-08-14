@@ -270,7 +270,6 @@
     <string name="errNoGoogleMaps">Cette fonction nécessite les services de Google Play, qui ne sont pas installés.</string>
 
     <string name="txtUpdateRouteOnMap">Mise à jour</string>
-    <string name="txtShareKML">Envoyer KML pour…</string>
     <string name="txtShareGPX">Envoyer GPX pour…</string>
     <string name="txtFileNameExisting">Vol </string>
     <string name="txtFileNameNew">Nouveau vol</string>

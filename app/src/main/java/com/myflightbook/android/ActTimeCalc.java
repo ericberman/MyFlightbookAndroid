@@ -46,7 +46,7 @@ public class ActTimeCalc extends Activity implements View.OnClickListener {
     public static final String COMPUTED_TIME = "com.myflightbook.android.computedTime";
     public static final int TIME_CALC_REQUEST_CODE = 8723;
 
-    ArrayList<Double> m_values = new ArrayList<>();
+    private ArrayList<Double> m_values = new ArrayList<>();
     private double initialTime = 0.0;
 
     @Override

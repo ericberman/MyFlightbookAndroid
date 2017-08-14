@@ -26,8 +26,8 @@ import android.support.v4.app.FragmentTransaction;
 import Model.FlightQuery;
 
 public class RecentFlightsActivity extends FragmentActivity {
-    ActRecentsWS recents = null;
-    FlightQuery fqSaved = null;
+    private ActRecentsWS recents = null;
+    private FlightQuery fqSaved = null;
 
     public static final String REQUEST_FLIGHT_QUERY = "com.myflightbook.android.TempFQ";
 

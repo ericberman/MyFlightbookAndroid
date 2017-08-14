@@ -128,7 +128,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         }
     }
 
-    public class MFBExpandableListAdapter extends
+    private class MFBExpandableListAdapter extends
             SimpleExpandableListAdapter {
         MFBExpandableListAdapter(Context context,
                                         ArrayList<HashMap<String, String>> headerList, int grouprow,
@@ -204,12 +204,12 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         updateProps();
     }
 
-    public void updateProps() {
+    private void updateProps() {
         FlightProperty[] rgfpUpdated = FlightProperty.DistillList(m_rgfpAll);
         FlightProperty.RewritePropertiesForFlight(m_idFlight, rgfpUpdated);
     }
 
-    public void populateList() {
+    private void populateList() {
         // get the cross product of property types with existing properties
         if (m_rgfpAll == null)
             m_rgfpAll = FlightProperty.CrossProduct(m_rgfpIn, m_rgcpt);
@@ -328,8 +328,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         m_rgfpIn = rgfp;
     }
 
-    @SuppressWarnings("UnusedParameters")
-    public void onItemClick(View view, int position, long id) {
+    private void onItemClick(View view, int position, long id) {
         FlightProperty fp = m_rgfpAll[position];
         switch (fp.getType()) {
             case cfpDate:

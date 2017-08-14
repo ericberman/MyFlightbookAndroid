@@ -28,9 +28,9 @@ public class ExpandableListFragment extends Fragment
     ExpandableListView.OnGroupExpandListener
     {
 
-    static int INTERNAL_EMPTY_ID = View.generateViewId();
-    static int INTERNAL_PROGRESS_CONTAINER_ID = View.generateViewId();
-    static int INTERNAL_LIST_CONTAINER_ID = View.generateViewId();
+    private static int INTERNAL_EMPTY_ID = View.generateViewId();
+    private static int INTERNAL_PROGRESS_CONTAINER_ID = View.generateViewId();
+    private static int INTERNAL_LIST_CONTAINER_ID = View.generateViewId();
 
     final private Handler mHandler = new Handler();
 
@@ -43,15 +43,15 @@ public class ExpandableListFragment extends Fragment
     final private AdapterView.OnItemClickListener mOnClickListener
             = (parent, v, position, id) -> onListItemClick((ExpandableListView)parent, v, position, id);
 
-    ExpandableListAdapter mAdapter;
-    ExpandableListView mExpandableList;
-    boolean mFinishedStart = false;
-    View mEmptyView;
-    TextView mStandardEmptyView;
-    View mProgressContainer;
-    View mExpandableListContainer;
-    CharSequence mEmptyText;
-    boolean mExpandableListShown;
+    private ExpandableListAdapter mAdapter;
+    private ExpandableListView mExpandableList;
+    private boolean mFinishedStart = false;
+    private View mEmptyView;
+    private TextView mStandardEmptyView;
+    private View mProgressContainer;
+    private View mExpandableListContainer;
+    private CharSequence mEmptyText;
+    private boolean mExpandableListShown;
 
     public ExpandableListFragment() {
     }
@@ -153,15 +153,16 @@ public class ExpandableListFragment extends Fragment
 * @param v The view that was clicked within the ListView
 * @param position The position of the view in the list
 * @param id The row id of the item that was clicked
-*/
-    @SuppressWarnings("UnusedParameters")
+     */
+
+    @SuppressWarnings("EmptyMethod")
     public void onListItemClick(ExpandableListView l, View v, int position, long id) {
     }
 
     /**
 * Provide the cursor for the list view.
 */
-    public void setListAdapter(ExpandableListAdapter adapter) {
+    void setListAdapter(ExpandableListAdapter adapter) {
         boolean hadAdapter = mAdapter != null;
         mAdapter = adapter;
         if (mExpandableList != null) {
@@ -454,7 +455,7 @@ public class ExpandableListFragment extends Fragment
 *
 * @see ExpandableListView
 */
-    public ExpandableListView getExpandableListView() {
+    ExpandableListView getExpandableListView() {
         ensureList();
         return mExpandableList;
     }
