@@ -431,7 +431,6 @@
                 </TableRow>
             </TableLayout>
 
-
             <!-- Remainder of "In the Cockpit" -->
             <TableLayout
                 android:layout_width="wrap_content"

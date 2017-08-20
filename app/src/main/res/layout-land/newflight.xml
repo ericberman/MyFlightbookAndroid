@@ -244,7 +244,6 @@
             android:orientation="vertical">
 
             <!-- GPS Quality -->
-
             <TableLayout
                 android:id="@+id/sectGPS"
                 android:layout_width="match_parent"
@@ -438,16 +437,17 @@
                         mfb:EditMode="DECIMAL" />
 
                     <Button
-                        android:id="@+id/btnFlightStartSet"
+                        android:id="@+id/btnEngineStartSet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblTouchForNow" />
 
                     <Button
-                        android:id="@+id/btnEngineStartSet"
+                        android:id="@+id/btnFlightStartSet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblTouchForNow" />
+
                 </TableRow>
 
                 <TableRow
