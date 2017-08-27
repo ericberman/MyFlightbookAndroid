@@ -30,6 +30,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_weight="1"
+                android:padding="4dp"
+                android:textAlignment="gravity"
                 android:text=""
                 android:textStyle="bold" />
 
@@ -38,6 +40,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:padding="4dp"
+                android:textAlignment="gravity"
                 android:text=""
                 android:textStyle="bold" />
         </LinearLayout>
@@ -46,6 +50,8 @@
             android:id="@+id/txtCPTDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:textAlignment="textStart"
             android:text="" />
     </LinearLayout>
 
