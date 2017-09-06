@@ -66,7 +66,7 @@ public class ActWebView extends Activity {
                 mUploadMessage = uploadMsg;
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
-                i.setType("image/*");
+                i.setType("image/*|application/pdf");
                 startActivityForResult(Intent.createChooser(i, "File Browser"), FILECHOOSER_RESULTCODE);
             }
 
@@ -102,7 +102,7 @@ public class ActWebView extends Activity {
                 mUploadMessage = uploadMsg;
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("image/*");
+                intent.setType("image/*|application/pdf");
                 startActivityForResult(Intent.createChooser(intent, "File Browser"), FILECHOOSER_RESULTCODE);
             }
 
@@ -112,7 +112,7 @@ public class ActWebView extends Activity {
                 mUploadMessage = uploadMsg;
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
-                i.setType("image/*");
+                i.setType("image/*|application/pdf");
                 startActivityForResult(Intent.createChooser(i, "File Chooser"), FILECHOOSER_RESULTCODE);
             }
         });
