@@ -18,10 +18,13 @@
  */
 package com.myflightbook.android;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +46,9 @@ import Model.MFBUtil;
 
 public class ActTraining extends ListFragment implements OnItemClickListener {
 
+    private static final int GALLERY_PERMISSION = 85;
+    private static final String endorseItem = "endorse";
+
     class TrainingItem {
         int idTitle;
         String szURLDest;
@@ -57,7 +63,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
             {
                     new TrainingItem(R.string.lblStudents, "students"),
                     new TrainingItem(R.string.lblInstructors, "instructors"),
-                    new TrainingItem(R.string.lblEndorsements, "endorse"),
+                    new TrainingItem(R.string.lblEndorsements, endorseItem),
                     new TrainingItem(R.string.lbl8710, "8710"),
                     new TrainingItem(R.string.lblAchievements, "badges"),
                     new TrainingItem(R.string.lblRatingsProgress, "progress")
@@ -109,13 +115,42 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         getListView().setOnItemClickListener(this);
     }
 
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    static int lastPositionClicked = -1;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        Boolean fAllGranted = true;
+        for (int i : grantResults)
+            if (i != PackageManager.PERMISSION_GRANTED)
+                fAllGranted = false;
+
+        switch (requestCode) {
+            case GALLERY_PERMISSION:
+                if (fAllGranted && grantResults.length == 2)
+                    clickItem(lastPositionClicked);
+                break;
+        }
+    }
+
+    private  void clickItem(int position)
+    {
         // TODO: IsOnline doesn't work from main thread.
         if (!AuthToken.FIsValid() || !MFBSoap.IsOnline(getContext())) {
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errTrainingNotAvailable));
             return;
         }
 
+        if (position < 0 || position > m_rgTrainingItems.length)
+            return;
+
+        if (m_rgTrainingItems[position].szURLDest.compareToIgnoreCase(endorseItem) == 0 &&
+                ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PERMISSION);
+            return;
+        }
+
+        lastPositionClicked = -1;   // clear this out now.
         String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
         String szDest = m_rgTrainingItems[position].szURLDest;
         String szURL;
@@ -125,5 +160,10 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         } catch (UnsupportedEncodingException e) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         }
+    }
+
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        lastPositionClicked = position;
+        clickItem(position);
     }
 }
