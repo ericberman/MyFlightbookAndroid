@@ -27,79 +27,72 @@ import java.util.Hashtable;
 
 public class PostingOptions extends SoapableObject implements KvmSerializable {
 
-	public enum postingOptions {pidFacebook, pidTwitter }
-	
-	public Boolean m_fTweet = false;
-	public Boolean m_fPostFacebook = false;
+    private enum postingOptions {pidFacebook, pidTwitter}
 
-	// serialization methods
-	public int getPropertyCount()
-	{
-		return postingOptions.values().length;
-	}
-	
-	public Object getProperty(int i)
-	{
-		postingOptions po = postingOptions.values()[i];
-		Object o = null;
-		switch (po)
-		{
-		case pidFacebook:
-			return this.m_fPostFacebook;
-		case pidTwitter:
-			return this.m_fTweet;
-		default:
-			break;
-		}
-		return o;
-	}
-	
-	public void setProperty(int i, Object value)
-	{
-		postingOptions po = postingOptions.values()[i];
-		String sz = value.toString();
-		switch (po)
-		{
-		case pidFacebook:
-			this.m_fPostFacebook = Boolean.parseBoolean(sz);
-			break;
-		case pidTwitter:
-			this.m_fTweet = Boolean.parseBoolean(sz);
-			break;
-		default:
-			break;
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi)
-	{
-		postingOptions po = postingOptions.values()[i];
-		switch (po)
-		{
-		case pidTwitter:
-			pi.type = PropertyInfo.BOOLEAN_CLASS;
-			pi.name = "PostToTwitter";
-			break;
-		case pidFacebook:
-			pi.type = PropertyInfo.BOOLEAN_CLASS;
-			pi.name = "PostToFacebook";
-			break;
-		default:
-			break;
-		}
-	}
-	
-	@Override
-	public void ToProperties(SoapObject so) {
-		so.addProperty("PostToFacebook", m_fPostFacebook);
-		so.addProperty("PostToTwitter", m_fTweet);
-	}
+    public Boolean m_fTweet = false;
+    public Boolean m_fPostFacebook = false;
 
-	@Override
-	public void FromProperties(SoapObject so) {
-		m_fPostFacebook = Boolean.parseBoolean(so.getProperty("PostToFaceBook").toString());
-		m_fTweet = Boolean.parseBoolean(so.getProperty("PostToTwitter").toString());
-	}
+    // serialization methods
+    public int getPropertyCount() {
+        return postingOptions.values().length;
+    }
+
+    public Object getProperty(int i) {
+        postingOptions po = postingOptions.values()[i];
+        Object o = null;
+        switch (po) {
+            case pidFacebook:
+                return this.m_fPostFacebook;
+            case pidTwitter:
+                return this.m_fTweet;
+            default:
+                break;
+        }
+        return o;
+    }
+
+    public void setProperty(int i, Object value) {
+        postingOptions po = postingOptions.values()[i];
+        String sz = value.toString();
+        switch (po) {
+            case pidFacebook:
+                this.m_fPostFacebook = Boolean.parseBoolean(sz);
+                break;
+            case pidTwitter:
+                this.m_fTweet = Boolean.parseBoolean(sz);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
+        postingOptions po = postingOptions.values()[i];
+        switch (po) {
+            case pidTwitter:
+                pi.type = PropertyInfo.BOOLEAN_CLASS;
+                pi.name = "PostToTwitter";
+                break;
+            case pidFacebook:
+                pi.type = PropertyInfo.BOOLEAN_CLASS;
+                pi.name = "PostToFacebook";
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void ToProperties(SoapObject so) {
+        so.addProperty("PostToFacebook", m_fPostFacebook);
+        so.addProperty("PostToTwitter", m_fTweet);
+    }
+
+    @Override
+    public void FromProperties(SoapObject so) {
+        m_fPostFacebook = Boolean.parseBoolean(so.getProperty("PostToFaceBook").toString());
+        m_fTweet = Boolean.parseBoolean(so.getProperty("PostToTwitter").toString());
+    }
 
 }

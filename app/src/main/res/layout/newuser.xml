@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ScrollView01"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
@@ -10,23 +9,19 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/TextView01"
             style="@style/DividerBar"
             android:text="@string/lblNewUser" />
 
         <TableLayout
-            android:id="@+id/TableLayout01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp">
 
             <TableRow
-                android:id="@+id/TableRow01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblEmail" />
@@ -42,12 +37,10 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow02"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView03"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblEmail2" />
@@ -63,18 +56,17 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView04"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:labelFor="@+id/txtPass"
                     android:text="@string/lblPass" />
 
                 <EditText
-                    android:id="@+id/txtPass"
+                    android:id="@id/txtPass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
@@ -83,18 +75,17 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow04"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView05"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:labelFor="@+id/txtPass2"
                     android:text="@string/lblPass2" />
 
                 <EditText
-                    android:id="@+id/txtPass2"
+                    android:id="@id/txtPass2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
@@ -104,7 +95,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow05"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
@@ -115,13 +105,11 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView06"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblFirstName" />
 
                     <TextView
-                        android:id="@+id/TextView07"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblOptional"
@@ -140,7 +128,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow07"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
@@ -151,13 +138,11 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView08"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblLastName" />
 
                     <TextView
-                        android:id="@+id/TextView09"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblOptional"
@@ -176,12 +161,10 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow09"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_span="2"
@@ -189,18 +172,15 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView11"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblQuestion" />
 
                 <LinearLayout
-                    android:id="@+id/llQuestions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -224,12 +204,10 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblAnswer" />
@@ -244,12 +222,10 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView13"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblPrivacy" />
@@ -258,16 +234,15 @@
                     android:id="@+id/btnViewPrivacy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarStyle"
                     android:text="@string/lblViewWebContent" />
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblTandC" />
@@ -276,6 +251,7 @@
                     android:id="@+id/btnViewTandC"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarStyle"
                     android:text="@string/lblViewWebContent" />
             </TableRow>
         </TableLayout>
@@ -287,7 +263,6 @@
             android:text="@string/lblOver14" />
 
         <TextView
-            android:id="@+id/TextView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -300,19 +275,24 @@
             android:layout_gravity="center_horizontal">
 
             <Button
-                android:id="@+id/btnCreateUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/lblCreateAccount"
-                android:textStyle="bold" />
-
-            <Button
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
+                android:layout_marginEnd="10dp"
                 android:text="@string/lblCancel" />
+
+            <Button
+                android:id="@+id/btnCreateUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:text="@string/lblCreateAccount"
+                style="?android:attr/buttonBarStyle"
+                android:textStyle="bold" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

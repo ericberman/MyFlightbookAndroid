@@ -22,11 +22,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MFBTakeoffSpeed {
-	public final static int TOSpeedBreak = 50;
-    public final static int TOLandingSpreadHigh = 15;
-    public final static int TOLandingSpreadLow = 10;
+	private final static int TOSpeedBreak = 50;
+    private final static int TOLandingSpreadHigh = 15;
+    private final static int TOLandingSpreadLow = 10;
 
-    public static int[] rgTOSpeeds = { 20, 40, 55, 70, 85, 100 };
+    private static int[] rgTOSpeeds = { 20, 40, 55, 70, 85, 100 };
 
     public final static int DefaultTakeOffIndex = 3; // 70kts
 
@@ -63,7 +63,7 @@ public class MFBTakeoffSpeed {
     public static ArrayList<String> GetDisplaySpeeds()
     {
     	DecimalFormat df = new DecimalFormat("#,###");
-    	ArrayList<String> l = new ArrayList<String>();
+    	ArrayList<String> l = new ArrayList<>();
         for (int speed : rgTOSpeeds)
         	l.add(String.format("%sKts", df.format(speed)));
         return l;

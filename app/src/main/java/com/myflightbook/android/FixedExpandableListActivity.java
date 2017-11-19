@@ -4,19 +4,17 @@ package com.myflightbook.android;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-
-import java.util.List;
-
 import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
-import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SimpleCursorTreeAdapter;
 import android.widget.SimpleExpandableListAdapter;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,7 +74,7 @@ import java.util.Map;
  * <p>
  * <strong>Row Layout</strong>
  * </p>
- * The {@link ExpandableListAdapter} set in the {@link ExpandableListActivity}
+ * The {@link ExpandableListAdapter} set in the ExpandableListActivity
  * via {@link #setListAdapter(ExpandableListAdapter)} provides the {@link View}s
  * for each row. This adapter has separate methods for providing the group
  * {@link View}s and child {@link View}s. There are a couple provided
@@ -144,9 +142,9 @@ public class FixedExpandableListActivity extends Activity implements
         OnCreateContextMenuListener,
         ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupCollapseListener,
         ExpandableListView.OnGroupExpandListener {   
-    ExpandableListAdapter mAdapter;
-    ExpandableListView mList;
-    boolean mFinishedStart = false;
+    private ExpandableListAdapter mAdapter;
+    private ExpandableListView mList;
+    private boolean mFinishedStart = false;
 
     /**
      * Override this to populate the context menu when an item is long pressed. menuInfo
@@ -231,7 +229,7 @@ public class FixedExpandableListActivity extends Activity implements
     /**
      * Provide the adapter for the expandable list.
      */
-    public void setListAdapter(ExpandableListAdapter adapter) {
+    void setListAdapter(ExpandableListAdapter adapter) {
         synchronized (this) {
             ensureList();
             mAdapter = adapter;
@@ -245,7 +243,7 @@ public class FixedExpandableListActivity extends Activity implements
      * 
      * @see ExpandableListView
      */
-    public ExpandableListView getExpandableListView() {
+    ExpandableListView getExpandableListView() {
         ensureList();
         return mList;
     }

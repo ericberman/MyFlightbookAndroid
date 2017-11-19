@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mfb="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtEquation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/strEmpty" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tcAddTimeRangePrompt" />
+
+    <TextView
+        android:id="@+id/txtTimeCalcEquation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tcAddTimeStartPrompt" />
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tcAddTimeEndPrompt" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Model.DecimalEdit
+                android:id="@+id/decSegmentStart"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:padding="10dp"
+                mfb:EditMode="HHMM" />
+
+            <Model.DecimalEdit
+                android:id="@+id/decSegmentEnd"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:padding="10dp"
+                mfb:EditMode="HHMM" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/errTimeCalc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/btnCopySegement"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="100dp"
+            android:drawableStart="@drawable/ic_action_copy"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:text="@string/tcCopyResult" />
+
+        <Button
+            android:id="@+id/btnAddSegment"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:text="@string/tcAddSegment" />
+
+        <Button
+            android:id="@+id/btnAddAndUpdate"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:text="@string/tcAddSegmentAndUpdate" />
+    </LinearLayout>
+</LinearLayout>

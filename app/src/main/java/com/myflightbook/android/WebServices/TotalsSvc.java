@@ -18,6 +18,8 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import com.myflightbook.android.ActFlightQuery;
 import com.myflightbook.android.Marshal.MarshalDate;
 import com.myflightbook.android.Marshal.MarshalDouble;
@@ -37,53 +39,46 @@ import Model.MakeModel;
 import Model.Totals;
 
 public class TotalsSvc extends MFBSoap {
-	@Override
-	public void AddMappings(SoapSerializationEnvelope e)
-	{
-		e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
-		e.addMapping(NAMESPACE, "LatLong", LatLong.class);
-		e.addMapping(NAMESPACE, "LogbookEntry", LogbookEntry.class);
-		e.addMapping(NAMESPACE, "CustomFlightProperty", FlightProperty.class);
-		e.addMapping(NAMESPACE, "Aircraft", Aircraft.class);
-		e.addMapping(NAMESPACE, "MakeModel", MakeModel.class);
-		e.addMapping(NAMESPACE, "CategoryClass", CategoryClass.class);
-		e.addMapping(NAMESPACE, "CustomPropertyType", CustomPropertyType.class);
-		e.addMapping(NAMESPACE, "FlightQuery", FlightQuery.class);
+    @Override
+    public void AddMappings(SoapSerializationEnvelope e) {
+        e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
+        e.addMapping(NAMESPACE, "LatLong", LatLong.class);
+        e.addMapping(NAMESPACE, "LogbookEntry", LogbookEntry.class);
+        e.addMapping(NAMESPACE, "CustomFlightProperty", FlightProperty.class);
+        e.addMapping(NAMESPACE, "Aircraft", Aircraft.class);
+        e.addMapping(NAMESPACE, "MakeModel", MakeModel.class);
+        e.addMapping(NAMESPACE, "CategoryClass", CategoryClass.class);
+        e.addMapping(NAMESPACE, "CustomPropertyType", CustomPropertyType.class);
+        e.addMapping(NAMESPACE, "FlightQuery", FlightQuery.class);
 
-		MarshalDate mdt = new MarshalDate();
-		mdt.register(e);
-		MarshalDouble md = new MarshalDouble();
-		md.register(e);
-	}
-	
-	public Totals[] TotalsForUser(String szAuthToken)
-	{
-		SoapObject Request = setMethod("TotalsForUserWithQuery");
-    	Request.addProperty("szAuthToken", szAuthToken);
-    	Request.addProperty("fq", ActFlightQuery.GetCurrentQuery());
-    	
-    	Totals[] rgt = new Totals[0];
-    	
-    	SoapObject result = (SoapObject) Invoke();
-		if (result == null)
-			setLastError("Error retrieving totals - " + getLastError());
-		else
-		{
-			try
-			{
-				rgt = new Totals[result.getPropertyCount()];
-				
-				for (int i = 0; i < rgt.length; i++)
-				{
-					rgt[i] = new Totals((SoapObject) result.getProperty(i));
-				}
-			}
-			catch (Exception e)
-			{
-				setLastError(getLastError() + e.getMessage());
-			}
-		}
-			
-    	return rgt;
-	}	
+        MarshalDate mdt = new MarshalDate();
+        mdt.register(e);
+        MarshalDouble md = new MarshalDouble();
+        md.register(e);
+    }
+
+    public Totals[] TotalsForUser(String szAuthToken, Context c) {
+        SoapObject Request = setMethod("TotalsForUserWithQuery");
+        Request.addProperty("szAuthToken", szAuthToken);
+        Request.addProperty("fq", ActFlightQuery.GetCurrentQuery());
+
+        Totals[] rgt = new Totals[0];
+
+        SoapObject result = (SoapObject) Invoke(c);
+        if (result == null)
+            setLastError("Error retrieving totals - " + getLastError());
+        else {
+            try {
+                rgt = new Totals[result.getPropertyCount()];
+
+                for (int i = 0; i < rgt.length; i++) {
+                    rgt[i] = new Totals((SoapObject) result.getProperty(i));
+                }
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return rgt;
+    }
 }

@@ -56,16 +56,15 @@ import Model.MFBTakeoffSpeed;
 import Model.MFBUtil;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
-	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.options, container, false);
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         AddListener(R.id.btnSignIn);
         AddListener(R.id.btnSignOut);
         AddListener(R.id.btnCreateNewAccount);
@@ -76,340 +75,337 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         AddListener(R.id.btnCleanUp);
         AddListener(R.id.btnSupport);
         AddListener(R.id.btnAdditionalOptions);
-        
-        boolean fHasGPS = MFBMain.HasGPS();
-        if (!fHasGPS)
-        	MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight = false;
 
-        CheckBox ck = (CheckBox)findViewById(R.id.ckAutodetect);
+        boolean fHasGPS = MFBLocation.HasGPS(getContext());
+        if (!fHasGPS)
+            MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight = MFBLocation.fPrefRecordFlightHighRes = false;
+
+        CheckBox ck = (CheckBox) findViewById(R.id.ckAutodetect);
         ck.setOnClickListener(this);
         ck.setChecked(MFBLocation.fPrefAutoDetect);
         ck.setEnabled(fHasGPS);
 
-        ck = (CheckBox)findViewById(R.id.ckRecord);
+        ck = (CheckBox) findViewById(R.id.ckRecord);
         ck.setOnClickListener(this);
         ck.setChecked(MFBLocation.fPrefRecordFlight);
         ck.setEnabled(fHasGPS);
-        
-        ck = (CheckBox)findViewById(R.id.ckHeliports);
+
+        ck = (CheckBox) findViewById(R.id.ckRecordHighRes);
+        ck.setOnClickListener(this);
+        ck.setChecked(MFBLocation.fPrefRecordFlightHighRes);
+        ck.setEnabled(fHasGPS);
+
+        ck = (CheckBox) findViewById(R.id.ckHeliports);
         ck.setOnClickListener(this);
         ck.setChecked(Airport.fPrefIncludeHeliports);
         ck.setEnabled(fHasGPS);
-        
-        ck = (CheckBox)findViewById(R.id.ckUseHHMM);
+
+        ck = (CheckBox) findViewById(R.id.ckUseHHMM);
         ck.setOnClickListener(this);
         ck.setChecked(DecimalEdit.DefaultHHMM);
-        
+
         ck = (CheckBox) findViewById(R.id.ckUseLocalTime);
         ck.setOnClickListener(this);
         ck.setChecked(DlgDatePicker.fUseLocalTime);
-        
+
         ck = (CheckBox) findViewById(R.id.ckRoundNearestTenth);
         ck.setOnClickListener(this);
         ck.setChecked(MFBLocation.fPrefRoundNearestTenth);
 
+        ck = (CheckBox) findViewById(R.id.ckShowFlightImages);
+        ck.setOnClickListener(this);
+        ck.setChecked(ActRecentsWS.fShowFlightImages);
+
         // Strings for spinner
-    	String[] rgAutoHobbs = {getString(R.string.autoNone),
-    			getString(R.string.autoFlight),
-    			getString(R.string.autoEngine)
-    	};
-    	
-    	String[] rgAutoTotals = 
-    		{
-    			getString(R.string.autoNone),
-    			getString(R.string.autoFlight),
-    			getString(R.string.autoEngine),
-    			getString(R.string.autoHobbs)
-    		};
-    	
-    	Spinner sp = (Spinner)findViewById(R.id.spnAutoHobbs);
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoHobbs);
-		sp.setAdapter(adapter);
-		sp.setSelection(MFBLocation.fPrefAutoFillHobbs.ordinal());
-		sp.setOnItemSelectedListener(this);
-		sp.setPromptId(R.string.lblAutoFillOptions);
+        String[] rgAutoHobbs = {getString(R.string.autoNone),
+                getString(R.string.autoFlight),
+                getString(R.string.autoEngine)
+        };
 
-        sp = (Spinner)findViewById(R.id.spnAutoTime);
-		adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoTotals);
-		sp.setAdapter(adapter);
-		sp.setSelection(MFBLocation.fPrefAutoFillTime.ordinal());
-		sp.setOnItemSelectedListener(this);
-		sp.setPromptId(R.string.lblAutoFillOptions);
-		
-		sp = (Spinner) findViewById(R.id.spnTOSpeed);
-		adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, MFBTakeoffSpeed.GetDisplaySpeeds().toArray(new String[0]));
-		sp.setAdapter(adapter);
-		sp.setSelection(MFBTakeoffSpeed.getTakeOffSpeedIndex());
-		sp.setOnItemSelectedListener(this);
-		
-		TextView t = (TextView) findViewById(R.id.txtCopyright);
-		if (MFBConstants.fIsDebug)
-		{
-			String s = String.format("%s - DEBUG (%s)", 
-					t.getText().toString(), 
-					String.format(Locale.getDefault(), "%s %d %d", MFBConstants.szIP, MFBTakeoffSpeed.getLandingSpeed(), MFBTakeoffSpeed.getTakeOffspeed()));
-			t.setText(s);
-		}
-	}
-	
-    protected void updateStatus()
-    {
-		// refresh sign-in status
-		TextView t = (TextView) findViewById(R.id.txtSignInStatus);
-		if (AuthToken.FIsValid())
-			t.setText(String.format(this.getString(R.string.statusSignedIn), AuthToken.m_szEmail));
-		else
-			t.setText(this.getString(R.string.statusNotSignedIn));    	
-		
-		findViewById(R.id.btnSignOut).setVisibility(AuthToken.FIsValid() ? View.VISIBLE : View.GONE);
-    }
-    
-	public void onResume()
-	{
-		super.onResume();
-		updateStatus();
-	}
-        
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
-    {
-    	Spinner sp = (Spinner) parent;
-    	int i = sp.getSelectedItemPosition();
-    	switch (sp.getId())
-    	{
-    	case R.id.spnAutoHobbs:
-    		MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[i];
-    		break;
-    	case R.id.spnAutoTime:
-    		MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[i];
-    		break;
-    	case R.id.spnTOSpeed:
-    		MFBTakeoffSpeed.setTakeOffSpeedIndex(i);
-    		break;
-		default:
-			break;
-    	}
-    }
-    
-    public void ContactUs()
-    {
-    	ActWebView.ViewURL(getActivity(), String.format(MFBConstants.urlContact, AuthToken.m_szEmail, "Comment from Android user"));
-    }
-    
-    public void ViewFacebook()
-    {
-		Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlFacebook));
-		startActivity(i);    	
-    }
-    
-    public void ViewTwitter()
-    {
-		Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlTwitter));
-		startActivity(i);
-    }
-    
-    public void CleanUp()
-    {		
-    	boolean fOrphansFound = false;
-    	
-		// Clean up any:
-		//  (a) orphaned new flights (shouldn't happen, but could)
-		//  (b) any flight images that are not associated with pending or new flights
-		//  (c) any aircraft images that have not yet been posted
+        String[] rgAutoTotals =
+                {
+                        getString(R.string.autoNone),
+                        getString(R.string.autoFlight),
+                        getString(R.string.autoEngine),
+                        getString(R.string.autoHobbs)
+                };
 
-		// first make sure we're only working on one new flight at a time.
-		LogbookEntry[] rgLeNew = LogbookEntry.getNewFlights();
-		if (ActNewFlight.lastNewFlightID > 0)
-		{
-			for (LogbookEntry le : rgLeNew)
-				if (le.idLocalDB != ActNewFlight.lastNewFlightID)
-				{
-					Log.e("MFBAndroid", String.format("DELETING FOUND ORPHANED FLIGHT: %d", le.idLocalDB));
-					le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
-					le.ToDB();
-					RecentFlightsSvc.ClearCachedFlights();
-					fOrphansFound = true;
-				}
-		}
+        Spinner sp = (Spinner) findViewById(R.id.spnAutoHobbs);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoHobbs);
+        sp.setAdapter(adapter);
+        sp.setSelection(MFBLocation.fPrefAutoFillHobbs.ordinal());
+        sp.setOnItemSelectedListener(this);
+        sp.setPromptId(R.string.lblAutoFillOptions);
 
-		// Now look for orphaned flight image files.  Start with the known flight images
-		LogbookEntry[] rgLeAll = LogbookEntry.mergeFlightLists(rgLeNew, LogbookEntry.getPendingFlights());
-		ArrayList<String> alImages = new ArrayList<>();
-		for (LogbookEntry le : rgLeAll)
-		{
-			le.getImagesForFlight();
-			for (MFBImageInfo mfbii : le.rgFlightImages)
-				alImages.add(mfbii.getImageFile());
-		}
-				
-		// Now delete the flight images that are not in our list
-		MFBImageInfo.DeleteOrphansNotInList(PictureDestination.FlightImage, alImages, getActivity());
-		
+        sp = (Spinner) findViewById(R.id.spnAutoTime);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoTotals);
+        sp.setAdapter(adapter);
+        sp.setSelection(MFBLocation.fPrefAutoFillTime.ordinal());
+        sp.setOnItemSelectedListener(this);
+        sp.setPromptId(R.string.lblAutoFillOptions);
+
+        sp = (Spinner) findViewById(R.id.spnTOSpeed);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, MFBTakeoffSpeed.GetDisplaySpeeds().toArray(new String[0]));
+        sp.setAdapter(adapter);
+        sp.setSelection(MFBTakeoffSpeed.getTakeOffSpeedIndex());
+        sp.setOnItemSelectedListener(this);
+
+        TextView t = (TextView) findViewById(R.id.txtCopyright);
+        if (MFBConstants.fIsDebug) {
+            String s = String.format("%s - DEBUG (%s)",
+                    t.getText().toString(),
+                    String.format(Locale.getDefault(), "%s %d %d", MFBConstants.szIP, MFBTakeoffSpeed.getLandingSpeed(), MFBTakeoffSpeed.getTakeOffspeed()));
+            t.setText(s);
+        }
+    }
+
+    private void updateStatus() {
+        // refresh sign-in status
+        TextView t = (TextView) findViewById(R.id.txtSignInStatus);
+        if (AuthToken.FIsValid())
+            t.setText(String.format(this.getString(R.string.statusSignedIn), AuthToken.m_szEmail));
+        else
+            t.setText(this.getString(R.string.statusNotSignedIn));
+
+        findViewById(R.id.btnSignOut).setVisibility(AuthToken.FIsValid() ? View.VISIBLE : View.GONE);
+    }
+
+    public void onResume() {
+        super.onResume();
+        updateStatus();
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        Spinner sp = (Spinner) parent;
+        int i = sp.getSelectedItemPosition();
+        switch (sp.getId()) {
+            case R.id.spnAutoHobbs:
+                MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[i];
+                break;
+            case R.id.spnAutoTime:
+                MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[i];
+                break;
+            case R.id.spnTOSpeed:
+                MFBTakeoffSpeed.setTakeOffSpeedIndex(i);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ContactUs() {
+        ActWebView.ViewURL(getActivity(), String.format(MFBConstants.urlContact, AuthToken.m_szEmail, "Comment from Android user"));
+    }
+
+    private void ViewFacebook() {
+        Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlFacebook));
+        startActivity(i);
+    }
+
+    private void ViewTwitter() {
+        Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(MFBConstants.urlTwitter));
+        startActivity(i);
+    }
+
+    private void CleanUp() {
+        boolean fOrphansFound = false;
+
+        // Clean up any:
+        //  (a) orphaned new flights (shouldn't happen, but could)
+        //  (b) any flight images that are not associated with pending or new flights
+        //  (c) any aircraft images that have not yet been posted
+
+        // first make sure we're only working on one new flight at a time.
+        LogbookEntry[] rgLeNew = LogbookEntry.getNewFlights();
+        if (ActNewFlight.lastNewFlightID > 0) {
+            for (LogbookEntry le : rgLeNew)
+                if (le.idLocalDB != ActNewFlight.lastNewFlightID) {
+                    Log.e(MFBConstants.LOG_TAG, String.format("DELETING FOUND ORPHANED FLIGHT: %d", le.idLocalDB));
+                    le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
+                    le.ToDB();
+                    RecentFlightsSvc.ClearCachedFlights();
+                    fOrphansFound = true;
+                }
+        }
+
+        // Now look for orphaned flight image files.  Start with the known flight images
+        LogbookEntry[] rgLeAll = LogbookEntry.mergeFlightLists(rgLeNew, LogbookEntry.getPendingFlights());
+        ArrayList<String> alImages = new ArrayList<>();
+        for (LogbookEntry le : rgLeAll) {
+            le.getImagesForFlight();
+            for (MFBImageInfo mfbii : le.rgFlightImages)
+                alImages.add(mfbii.getImageFile());
+        }
+
+        // Now delete the flight images that are not in our list
+        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.FlightImage, alImages, getActivity());
+
         // Clean up any orphaned aircraft images
-		// We can delete ALL aircraft images - if they weren't submitted, they aren't going to be picked up.
+        // We can delete ALL aircraft images - if they weren't submitted, they aren't going to be picked up.
 
-		// First delete all of the ones that haven't been saved to the server
-		MFBImageInfo rgMfbiiAircraft[] = MFBImageInfo.getAllAircraftImages();
-		for (MFBImageInfo mfbii : rgMfbiiAircraft)
-			if (!mfbii.IsOnServer())
-				mfbii.deleteFromDB();
-		
-		// now delete any remaining aircraft images that might be in our files.
-		MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<>(), getActivity());
-		
-		MFBUtil.Alert(this, getString(R.string.lblCleanup), getString(fOrphansFound ? R.string.errCleanupOrphansFound : R.string.txtCleanupComplete));
+        // First delete all of the ones that haven't been saved to the server
+        MFBImageInfo rgMfbiiAircraft[] = MFBImageInfo.getAllAircraftImages();
+        for (MFBImageInfo mfbii : rgMfbiiAircraft)
+            if (!mfbii.IsOnServer())
+                mfbii.deleteFromDB();
+
+        // now delete any remaining aircraft images that might be in our files.
+        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<>(), getActivity());
+
+        MFBUtil.Alert(this, getString(R.string.lblCleanup), getString(fOrphansFound ? R.string.errCleanupOrphansFound : R.string.txtCleanupComplete));
     }
-    
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-	    inflater.inflate(R.menu.optionsmenu, menu);
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.menuContact:
-			ContactUs();
-			break;
-		case R.id.menuFacebook:
-			ViewFacebook();
-			break;
-		case R.id.menuTwitter:
-			ViewTwitter();
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-		return true;
-	}
-    
-	public void onNothingSelected(AdapterView<?> arg0) {
-	}
 
-	public void ViewPreferences(String szTemplate)
-	{
-		if (!AuthToken.FIsValid())
-		{
-			MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.statusNotSignedIn));
-			return;
-		}
-		
-		String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
-		String szURL;
-		try {
-			szURL = String.format(Locale.US, szTemplate, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"));
-			ActWebView.ViewURL(getActivity(), szURL);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.optionsmenu, menu);
+    }
 
-	private final int PERMISSION_REQUEST_AUTODETECT = 50382;
-	private final int PERMISSION_REQUEST_RECORD = 58325;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menuContact:
+                ContactUs();
+                break;
+            case R.id.menuFacebook:
+                ViewFacebook();
+                break;
+            case R.id.menuTwitter:
+                ViewTwitter();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode,
-										   @NonNull String permissions[], @NonNull int[] grantResults) {
-		switch (requestCode) {
-			case PERMISSION_REQUEST_AUTODETECT:
-				if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					CheckBox c = (CheckBox) findViewById(R.id.ckAutodetect);
-					c.setChecked(MFBLocation.fPrefAutoDetect = true);
-				}
-				return;
-			case PERMISSION_REQUEST_RECORD:
-				if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					CheckBox c = (CheckBox) findViewById(R.id.ckRecord);
-					c.setChecked(MFBLocation.fPrefRecordFlight = true);
-				}
-				return;
-		}
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-	}
+    public void onNothingSelected(AdapterView<?> arg0) {
+    }
 
-	protected Boolean checkGPSPermissions(int req) {
-		if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-			return true;
+    private void ViewPreferences(String szTemplate) {
+        if (!AuthToken.FIsValid()) {
+            MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.statusNotSignedIn));
+            return;
+        }
 
-		// Should we show an explanation?
-		requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, req);
-		return false;
-	}
+        String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
+        String szURL;
+        try {
+            szURL = String.format(Locale.US, szTemplate, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"));
+            ActWebView.ViewURL(getActivity(), szURL);
+        } catch (UnsupportedEncodingException ignored) {
+        }
+    }
 
-	public void onClick(View v) 
-	{
-    	switch (v.getId())
-		{
-		case R.id.btnSignIn:
-			DlgSignIn d = new DlgSignIn(getActivity());
-			d.setOnDismissListener((dialog) ->updateStatus());
-			d.show();
-			break;
-		case R.id.btnSignOut:
-			AuthToken.m_szAuthToken = AuthToken.m_szEmail = AuthToken.m_szPass = "";
-			new AuthToken().FlushCache();
-			MFBMain.invalidateAll();
-			updateStatus();
-			break;
-    	case R.id.btnCreateNewAccount:
-    	{
-			Intent i = new Intent(v.getContext(), ActNewUser.class);
-			startActivityForResult(i, 0);
-		}
-			break;
-		case R.id.ckAutodetect: {
-			CheckBox ck = (CheckBox) v;
-			Boolean newState =  ck.isChecked();
-			if (!newState || checkGPSPermissions(PERMISSION_REQUEST_AUTODETECT))
-				MFBLocation.fPrefAutoDetect = newState;
-			else
-				ck.setChecked(MFBLocation.fPrefAutoDetect = false);
-		}
-			break;
-		case R.id.ckRecord: {
-			CheckBox ck = (CheckBox) v;
-			Boolean newState = ck.isChecked();
-			if (!newState || checkGPSPermissions(PERMISSION_REQUEST_RECORD))
-				MFBLocation.fPrefRecordFlight = newState;
-			else
-				ck.setChecked(MFBLocation.fPrefRecordFlight = false);
-		}
-			break;
-		case R.id.ckHeliports:
-    		Airport.fPrefIncludeHeliports = ((CheckBox)v).isChecked();
-			break;
-		case R.id.ckUseHHMM:
-    		DecimalEdit.DefaultHHMM = ((CheckBox)v).isChecked();
-			break;
-		case R.id.ckUseLocalTime:
-			DlgDatePicker.fUseLocalTime = ((CheckBox)v).isChecked();
-			break;
-		case R.id.ckRoundNearestTenth:
-			MFBLocation.fPrefRoundNearestTenth = ((CheckBox) v).isChecked();
-			break;
-		case R.id.btnContact:
-			this.ContactUs();
-			break;
-		case R.id.btnFacebook:
-			this.ViewFacebook();
-			break;
-		case R.id.btnTwitter:
-			this.ViewTwitter();
-			break;
-		case R.id.btnCleanUp:
-			CleanUp();
-			break;
-		case R.id.btnSupport:
-			ViewPreferences(MFBConstants.urlSupport);
-			break;
-		case R.id.btnAdditionalOptions:
-			ViewPreferences(MFBConstants.urlPreferences);
-			break;
-		case R.id.btnFAQ:
-			ActWebView.ViewURL(getActivity(), MFBConstants.urlFAQ);
-			break;
-		default:
-			break;
-		}
-	}
+    private final int PERMISSION_REQUEST_AUTODETECT = 50382;
+    private final int PERMISSION_REQUEST_RECORD = 58325;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_AUTODETECT:
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    CheckBox c = (CheckBox) findViewById(R.id.ckAutodetect);
+                    c.setChecked(MFBLocation.fPrefAutoDetect = true);
+                }
+                return;
+            case PERMISSION_REQUEST_RECORD:
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    CheckBox c = (CheckBox) findViewById(R.id.ckRecord);
+                    c.setChecked(MFBLocation.fPrefRecordFlight = true);
+                }
+                return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private Boolean checkGPSPermissions(int req) {
+        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            return true;
+
+        // Should we show an explanation?
+        requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, req);
+        return false;
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnSignIn:
+                DlgSignIn d = new DlgSignIn(getActivity());
+                d.setOnDismissListener((dialog) -> updateStatus());
+                d.show();
+                break;
+            case R.id.btnSignOut:
+                AuthToken.m_szAuthToken = AuthToken.m_szEmail = AuthToken.m_szPass = "";
+                new AuthToken().FlushCache();
+                MFBMain.invalidateAll();
+                updateStatus();
+                break;
+            case R.id.btnCreateNewAccount: {
+                Intent i = new Intent(v.getContext(), ActNewUser.class);
+                startActivityForResult(i, 0);
+            }
+            break;
+            case R.id.ckAutodetect: {
+                CheckBox ck = (CheckBox) v;
+                Boolean newState = ck.isChecked();
+                if (!newState || checkGPSPermissions(PERMISSION_REQUEST_AUTODETECT))
+                    MFBLocation.fPrefAutoDetect = newState;
+                else
+                    ck.setChecked(MFBLocation.fPrefAutoDetect = false);
+            }
+            break;
+            case R.id.ckRecord: {
+                CheckBox ck = (CheckBox) v;
+                Boolean newState = ck.isChecked();
+                if (!newState || checkGPSPermissions(PERMISSION_REQUEST_RECORD))
+                    MFBLocation.fPrefRecordFlight = newState;
+                else
+                    ck.setChecked(MFBLocation.fPrefRecordFlight = false);
+            }
+            break;
+            case R.id.ckRecordHighRes:
+                MFBLocation.fPrefRecordFlightHighRes = ((CheckBox) v).isChecked();
+                break;
+            case R.id.ckHeliports:
+                Airport.fPrefIncludeHeliports = ((CheckBox) v).isChecked();
+                break;
+            case R.id.ckUseHHMM:
+                DecimalEdit.DefaultHHMM = ((CheckBox) v).isChecked();
+                break;
+            case R.id.ckUseLocalTime:
+                DlgDatePicker.fUseLocalTime = ((CheckBox) v).isChecked();
+                break;
+            case R.id.ckRoundNearestTenth:
+                MFBLocation.fPrefRoundNearestTenth = ((CheckBox) v).isChecked();
+                break;
+            case R.id.ckShowFlightImages:
+                ActRecentsWS.fShowFlightImages = ((CheckBox) v).isChecked();
+                break;
+            case R.id.btnContact:
+                this.ContactUs();
+                break;
+            case R.id.btnFacebook:
+                this.ViewFacebook();
+                break;
+            case R.id.btnTwitter:
+                this.ViewTwitter();
+                break;
+            case R.id.btnCleanUp:
+                CleanUp();
+                break;
+            case R.id.btnSupport:
+                ViewPreferences(MFBConstants.urlSupport);
+                break;
+            case R.id.btnAdditionalOptions:
+                ViewPreferences(MFBConstants.urlPreferences);
+                break;
+            case R.id.btnFAQ:
+                ActWebView.ViewURL(getActivity(), MFBConstants.urlFAQ);
+                break;
+            default:
+                break;
+        }
+    }
 }

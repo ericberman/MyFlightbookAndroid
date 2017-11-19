@@ -13,7 +13,6 @@
         android:textSize="8pt" />
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
         android:layout_width="0px"
         android:layout_height="wrap_content"
         android:layout_weight="5"

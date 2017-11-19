@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Model;
+
 import com.myflightbook.android.WebServices.UTCDate;
 
 import java.util.Calendar;
@@ -27,38 +28,32 @@ import java.util.TimeZone;
 public class SunriseSunsetTimes {
     public Date Sunrise;
     public Date Sunset;
+    @SuppressWarnings("WeakerAccess")
     public double Latitude;
+    @SuppressWarnings("WeakerAccess")
     public double Longitude;
+    @SuppressWarnings("WeakerAccess")
     public Date Date;
-    public double SolarAngle;
 
     // True if sun is more than 6 degrees below the horizon.
-    public Boolean IsCivilNight;
-    
+    Boolean IsCivilNight;
+
     // True if between sunset and sunrise
-    public Boolean IsNight;
+    @SuppressWarnings("WeakerAccess")
+    Boolean IsNight;
 
     // True if between 1-hour after sunset and 1-hour before sunrise
-    public Boolean IsFAANight;
-    
-    public SunriseSunsetTimes()
-    {
-        Date = Sunrise = Sunset = UTCDate.NullDate();
-        Latitude = Longitude = 0.0;
-    }
+    Boolean IsFAANight;
 
-    public SunriseSunsetTimes(Date dt, double latitude, double longitude)
-    {
+    public SunriseSunsetTimes(Date dt, double latitude, double longitude) {
         Date = dt;
         Sunrise = Sunset = UTCDate.NullDate();
         Latitude = latitude;
         Longitude = longitude;
-        try
-        {
-        ComputeTimesAtLocation(dt);
+        try {
+            ComputeTimesAtLocation(dt);
+        } catch (Exception ignored) {
         }
-        catch (Exception ex)
-        {}
     }
 
     /// <summary>
@@ -67,53 +62,47 @@ public class SunriseSunsetTimes {
     /// <param name="dt">Requested day (only m/d/y matter)</param>
     /// <param name="minutes"></param>
     /// <returns></returns>
-    private Date MinutesToDate(Date dt, double minutes)
-    {
-    	Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-    	cal.setTimeInMillis(dt.getTime());
-    	
-    	// reset to the start of the day
-    	cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-    	long l = cal.getTimeInMillis();
-    	        
+    private Date MinutesToDate(Date dt, double minutes) {
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        cal.setTimeInMillis(dt.getTime());
+
+        // reset to the start of the day
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        long l = cal.getTimeInMillis();
+
         long milisIntoDay = (long) (minutes * 60 * 1000);
         cal.setTimeInMillis(l + milisIntoDay);
-        
+
         return cal.getTime();
     }
-    
-    private Date AddMillis(Date dt, long millis)
-    {
-    	return new Date(dt.getTime() + millis);
+
+    private Date AddMillis(Date dt, long millis) {
+        return new Date(dt.getTime() + millis);
     }
-    
-    private Date AddHours(Date dt, int hours)
-    {
-    	return AddMillis(dt, hours * 3600 * 1000);
+
+    private Date AddHours(Date dt, int hours) {
+        return AddMillis(dt, hours * 3600 * 1000);
     }
-    
-    private Date AddDays(Date dt, int days)
-    {
-    	return AddHours(dt, days * 24);
+
+    private Date AddDays(Date dt, int days) {
+        return AddHours(dt, days * 24);
     }
-    
+
     //Return JD from a UTC date
-    private double JDFromDate(Date dt)
-    {
-    	Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-    	cal.setTimeInMillis(dt.getTime());
-    	int day = cal.get(Calendar.DAY_OF_MONTH);
-    	int month = cal.get(Calendar.MONTH) + 1;
-    	int year = cal.get(Calendar.YEAR);
-    	return Solar.calcJD(year, month, day);
+    private double JDFromDate(Date dt) {
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+        cal.setTimeInMillis(dt.getTime());
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        return Solar.calcJD(year, month, day);
     }
 
     /// <summary>
     /// Returns the sunrise/sunset times at the given location on the specified day
     /// </summary>
     /// <param name="dt">The requested date/time, utc.  Day/night will be computed based on the time</param>
-    public void ComputeTimesAtLocation(Date dt) throws Exception
-    {
+    private void ComputeTimesAtLocation(Date dt) throws Exception {
         if (Latitude > 90 || Latitude < -90)
             throw new Exception("Bad latitude");
         if (Longitude > 180 || Longitude < -180)
@@ -123,8 +112,8 @@ public class SunriseSunsetTimes {
 
         Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(dt.getTime());
-        SolarAngle = Solar.calcSolarAngle(Latitude, Longitude, JD, cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE));
-        IsCivilNight = SolarAngle <= -6.0;
+        double solarAngle = Solar.calcSolarAngle(Latitude, Longitude, JD, cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE));
+        IsCivilNight = solarAngle <= -6.0;
 
         Boolean nosunrise = false;
         double riseTimeGMT = Solar.calcSunriseUTC(JD, Latitude, -Longitude);
@@ -144,7 +133,7 @@ public class SunriseSunsetTimes {
 
         if (!nosunset)
             Sunset = MinutesToDate(dt, setTimeGMT);
-        
+
         // Update daytime/nighttime
         // 3 possible scenarios:
         // (a) time is between sunrise/sunset as computed - it's daytime or FAA daytime.
@@ -152,33 +141,27 @@ public class SunriseSunsetTimes {
         // (c) time is before sunrise - figure out the previous sunset and compare to that
         IsNight = IsCivilNight;
         IsFAANight = false;
-        if (Sunrise.compareTo(dt) <= 0 && Sunset.compareTo(dt) >= 0)
-        {
+        //noinspection StatementWithEmptyBody
+        if (Sunrise.compareTo(dt) <= 0 && Sunset.compareTo(dt) >= 0) {
             // between sunrise and sunset - it's daytime no matter how you slice it; use default values (set above)
-        }
-        else if (Sunset.compareTo(dt) < 0)
-        {
+        } else if (Sunset.compareTo(dt) < 0) {
             // get the next sunrise.  It is night if the time is between sunset and the next sunrise
             Date dtTomorrow = AddDays(dt, 1);
             JD = JDFromDate(dtTomorrow);
             double nextSunrise = Solar.calcSunriseUTC(JD, Latitude, -Longitude);
 
-            if (!Double.isNaN(nextSunrise))
-            {
+            if (!Double.isNaN(nextSunrise)) {
                 Date dtNextSunrise = MinutesToDate(dtTomorrow, nextSunrise);
                 IsNight = (dtNextSunrise.compareTo(dt) > 0); // we've already determined that we're after sunset, we just need to be before sunrise
                 IsFAANight = (AddHours(Sunset, 1).compareTo(dt) <= 0 && AddHours(dtNextSunrise, -1).compareTo(dt) >= 0);
             }
-        }
-        else if (Sunrise.compareTo(dt) > 0)
-        {
+        } else if (Sunrise.compareTo(dt) > 0) {
             // get the previous sunset.  It is night if the time is between that sunset and the sunrise
             Date dtYesterday = AddDays(dt, -1);
             JD = JDFromDate(dtYesterday);
             double prevSunset = Solar.calcSunsetUTC(JD, Latitude, -Longitude);
 
-            if (!Double.isNaN(prevSunset))
-            {
+            if (!Double.isNaN(prevSunset)) {
                 Date dtPrevSunset = MinutesToDate(dtYesterday, prevSunset);
                 IsNight = (dtPrevSunset.compareTo(dt) < 0); // we've already determined that we're before sunrise, we just need to be after sunset.
                 IsFAANight = (AddHours(dtPrevSunset, 1).compareTo(dt) <= 0 && AddHours(Sunrise, -1).compareTo(dt) >= 0);

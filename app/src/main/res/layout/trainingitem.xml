@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent"
-    android:padding="5dip" android:drawableLeft="@drawable/trainingsel" android:layout_height="wrap_content"
-    android:drawablePadding="5dip" android:gravity="center_vertical" android:id="@+id/txtTrainingItem"></TextView>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/txtTrainingItem"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:drawableStart="@drawable/trainingsel"
+    android:drawablePadding="5dip"
+    android:gravity="center_vertical"
+    android:padding="5dip" />

@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -29,32 +30,34 @@ import java.io.File;
 import Model.MFBConstants;
 
 public class ActLocalVideo extends Activity {
-	public String szURL = "";
-	public String szTempFile = "";
+    public String szURL = "";
+    public String szTempFile = "";
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.localvideo);
-		szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
-		szTempFile = this.getIntent().getStringExtra(MFBConstants.intentViewTempFile);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.localvideo);
+        szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
+        szTempFile = this.getIntent().getStringExtra(MFBConstants.intentViewTempFile);
 
-		VideoView video = (VideoView) findViewById(R.id.video);
-		// Load and start the movie
-		video.setVideoURI(Uri.parse(szURL));
-		video.start();
-	}
+        VideoView video = (VideoView) findViewById(R.id.video);
+        // Load and start the movie
+        video.setVideoURI(Uri.parse(szURL));
+        video.start();
+    }
 
-	public void onPause() {
-		super.onPause();
-		if (szTempFile != null && szTempFile.length() > 0)
-			new File(szTempFile).delete();
-	}
+    public void onPause() {
+        super.onPause();
+        if (szTempFile != null && szTempFile.length() > 0) {
+            if (!(new File(szTempFile).delete()))
+                Log.v(MFBConstants.LOG_TAG, "Local video delete failed");
+        }
+    }
 
-	public static void ViewTempFile(Activity a, File f) {
-		Intent i = new Intent(a, ActLocalVideo.class);
-		i.putExtra(MFBConstants.intentViewURL, Uri.fromFile(f).toString());
-		i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
-		a.startActivity(i);
-	}
+    public static void ViewTempFile(Activity a, File f) {
+        Intent i = new Intent(a, ActLocalVideo.class);
+        i.putExtra(MFBConstants.intentViewURL, Uri.fromFile(f).toString());
+        i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
+        a.startActivity(i);
+    }
 }

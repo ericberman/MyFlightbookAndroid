@@ -10,12 +10,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/TextView01"
             style="@style/DividerBar"
             android:text="@string/lblOptionsProfile" />
 
         <TextView
-            android:id="@+id/TextView02"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -40,23 +38,25 @@
                 android:id="@+id/btnSignIn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/szSignIn" />
 
             <Button
                 android:id="@+id/btnCreateNewAccount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/createuser" />
 
             <Button
                 android:id="@+id/btnSignOut"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/szSignOut" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/TextViewForgotPW"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
@@ -64,19 +64,16 @@
             android:text="@string/lblForgotPassword" />
 
         <TextView
-            android:id="@+id/TextView03"
             style="@style/DividerBar"
             android:text="@string/lblOptionsLocation" />
 
         <TextView
-            android:id="@+id/TextView04"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:text="@string/lblGPSDisclaimer" />
 
         <TextView
-            android:id="@+id/TextView05"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -95,14 +92,12 @@
             android:orientation="horizontal">
 
             <CheckBox
-                android:id="@+id/ckFiller"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/strEmpty"
                 android:visibility="invisible" />
 
             <TextView
-                android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="200dp"
@@ -128,8 +123,20 @@
             android:layout_height="wrap_content"
             android:text="@string/lblOptRecord" />
 
+        <CheckBox
+            android:id="@+id/ckRecordHighRes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptRecordHiRes" />
+
         <TextView
-            android:id="@+id/TextView11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginStart="30dp"
+            android:text="@string/lblOptRecordHiResDesc" />
+
+        <TextView
             style="@style/DividerBar"
             android:text="@string/lblOptionsTime" />
 
@@ -154,7 +161,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView06"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblAutoHobbs" />
@@ -172,7 +178,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/TextView07"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lblAutoTime" />
@@ -198,7 +203,15 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/txtHeaderAdditional"
+            style="@style/DividerBar"
+            android:text="@string/lblImageOptions" />
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ckShowFlightImages"
+            android:text="@string/lblShowFlightImages" />
+
+        <TextView
             style="@style/DividerBar"
             android:text="@string/lblAdditionalOptions" />
 
@@ -210,7 +223,6 @@
             android:padding="5dp">
 
             <TextView
-                android:id="@+id/txtViewAdditionalOptionsDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lblAdditionalOptionsText" />
@@ -219,11 +231,11 @@
                 android:id="@+id/btnAdditionalOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblGoToMyFlightbookOptions" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/TextView08"
             style="@style/DividerBar"
             android:text="@string/lblOptionsContact" />
 
@@ -239,12 +251,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblContactMe" />
 
             <Button
                 android:id="@+id/btnFAQ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFAQ" />
         </LinearLayout>
 
@@ -253,22 +267,28 @@
             android:layout_height="wrap_content"
             android:gravity="bottom|center_horizontal"
             android:orientation="horizontal"
+            style="?android:attr/buttonBarStyle"
             android:padding="5dp">
 
             <Button
                 android:id="@+id/btnFacebook"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/fb_f_logo"
                 android:drawablePadding="3dip"
+                android:padding="5dip"
+                android:drawableStart="@drawable/fb_f_logo"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFollowFacebook" />
 
             <Button
                 android:id="@+id/btnTwitter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/twitter_logo_blue"
+                android:padding="5dip"
+                android:layout_marginStart="10dp"
                 android:drawablePadding="3dip"
+                android:drawableStart="@drawable/twitter_logo_blue"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFollowTwitter" />
         </LinearLayout>
 
@@ -280,7 +300,6 @@
             android:padding="5dp">
 
             <TextView
-                android:id="@+id/txtViewSupport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lblSupportDescript" />
@@ -290,11 +309,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
                 android:text="@string/btnSupport" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/TextView09"
             style="@style/DividerBar"
             android:text="@string/lblOptionsOther" />
 
@@ -306,7 +325,6 @@
             android:text="@string/lblCopyright" />
 
         <TextView
-            android:id="@+id/TextView10"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -318,6 +336,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_horizontal"
+            style="?android:attr/buttonBarStyle"
             android:text="@string/lblCleanup" />
     </LinearLayout>
 </ScrollView>

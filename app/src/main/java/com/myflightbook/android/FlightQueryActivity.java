@@ -24,18 +24,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class FlightQueryActivity extends FragmentActivity {
-	ActFlightQuery flightQuery = null;
-	
+    private ActFlightQuery flightQuery = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragmenthost);
-        
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         flightQuery = new ActFlightQuery();
         fragmentTransaction.replace(android.R.id.content, flightQuery);
         fragmentTransaction.commit();
-        }
+    }
 
 }

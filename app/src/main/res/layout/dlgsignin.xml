@@ -6,7 +6,6 @@
     android:padding="5dp">
 
     <TextView
-        android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/UserName" />
@@ -20,10 +19,9 @@
         android:text="" />
 
     <TextView
-        android:id="@+id/txtLblPass"
-        android:labelFor="@+id/editPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:labelFor="@+id/editPass"
         android:text="@string/Password" />
 
     <EditText
@@ -41,15 +39,21 @@
         android:gravity="center_horizontal">
 
         <Button
-            android:id="@+id/btnSubmit"
+            android:id="@+id/btnCancel"
+            android:layout_margin="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/signin" />
+            style="?android:attr/buttonBarStyle"
+            android:layout_weight="0.5"
+            android:text="@string/lblCancel" />
 
         <Button
-            android:id="@+id/btnCancel"
+            android:id="@+id/btnSubmit"
+            android:layout_margin="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/lblCancel" />
+            style="?android:attr/buttonBarStyle"
+            android:layout_weight="0.5"
+            android:text="@string/signin" />
     </LinearLayout>
 </LinearLayout>

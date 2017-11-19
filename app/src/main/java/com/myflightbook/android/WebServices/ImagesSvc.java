@@ -18,6 +18,8 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import com.myflightbook.android.Marshal.MarshalDouble;
 
 import org.ksoap2.serialization.SoapObject;
@@ -27,36 +29,36 @@ import Model.LatLong;
 import Model.MFBImageInfo;
 
 public class ImagesSvc extends MFBSoap implements Runnable {
-	
-	@Override
-	public void AddMappings(SoapSerializationEnvelope e)
-	{
-		e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
-		e.addMapping(NAMESPACE, "LatLong", LatLong.class);
-		MarshalDouble md = new MarshalDouble();
-		md.register(e);
-	}
-	
-	public void run()
-	{
-		Invoke();
-	}
-	
-	public void DeleteImage(String szAuthToken, MFBImageInfo mfbii)
-	{
-		SoapObject Request = setMethod("DeleteImage");
-    	Request.addProperty("szAuthUserToken", szAuthToken);
-    	Request.addProperty("mfbii", mfbii);
-    	
-    	new Thread(this).start();
-	}
-	
-	public void UpdateImageAnnotation(String szAuthToken, MFBImageInfo mfbii)
-	{
-		SoapObject Request = setMethod("UpdateImageAnnotation");
-    	Request.addProperty("szAuthUserToken", szAuthToken);
-    	Request.addProperty("mfbii", mfbii);
-    	
-    	new Thread(this).start();
-	}
+
+    private Context mContext;
+
+    @Override
+    public void AddMappings(SoapSerializationEnvelope e) {
+        e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
+        e.addMapping(NAMESPACE, "LatLong", LatLong.class);
+        MarshalDouble md = new MarshalDouble();
+        md.register(e);
+    }
+
+    public void run() {
+        Invoke(mContext);
+    }
+
+    public void DeleteImage(String szAuthToken, MFBImageInfo mfbii, Context c) {
+        SoapObject Request = setMethod("DeleteImage");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("mfbii", mfbii);
+        mContext = c;
+
+        new Thread(this).start();
+    }
+
+    public void UpdateImageAnnotation(String szAuthToken, MFBImageInfo mfbii, Context c) {
+        SoapObject Request = setMethod("UpdateImageAnnotation");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("mfbii", mfbii);
+        mContext = c;
+
+        new Thread(this).start();
+    }
 }

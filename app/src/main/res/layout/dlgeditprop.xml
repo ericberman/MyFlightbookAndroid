@@ -31,6 +31,12 @@
         android:text=""
         android:textColor="#000000" />
 
+    <TextView
+        android:id="@+id/txtDescription"
+        android:layout_width="280dip"
+        android:layout_height="wrap_content"
+        android:text="" />
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -41,6 +47,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:text="@string/lblCancel" />
 
         <Button
@@ -49,12 +56,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/lblOK"
+            android:layout_weight="0.5"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtDescription"
-        android:layout_width="280dip"
-        android:layout_height="wrap_content"
-        android:text="" />
 </LinearLayout>

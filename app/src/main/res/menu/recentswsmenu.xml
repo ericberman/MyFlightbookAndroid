@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="@string/menuRecentsRefresh" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_refresh" android:id="@+id/refreshRecents"></item>
-    <item android:title="@string/menuFlightSearch" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_search" android:id="@+id/findFlights"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/refreshRecents"
+        android:icon="@drawable/ic_action_refresh"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuRecentsRefresh" />
+    <item
+        android:id="@+id/findFlights"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuFlightSearch" />
 </menu>

@@ -7,7 +7,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lblAddComment" />
@@ -22,28 +21,29 @@
 
     <ImageView
         android:id="@+id/imgPreview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dip"
+        android:layout_height="120dip"
         android:contentDescription="@string/cdImagesForFlight" />
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal">
 
         <Button
             android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
+            style="?android:attr/buttonBarStyle"
+            android:layout_weight="0.5"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:width="120dp"
             android:text="@string/lblCancel" />
 
         <Button
             android:id="@+id/btnOK"
-            android:layout_width="wrap_content"
+            style="?android:attr/buttonBarStyle"
+            android:layout_weight="0.5"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:width="120dp"
             android:text="@string/lblOK"
             android:textStyle="bold" />
     </LinearLayout>

@@ -18,38 +18,34 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import org.ksoap2.serialization.SoapObject;
 
 import Model.MakesandModels;
 
 public class MakesandModelsSvc extends MFBSoap {
 
-	public MakesandModels[] GetMakesAndModels()
-	{
-		setMethod("MakesAndModels"); // no need to save the request, since nothing goes out
-    	
-    	MakesandModels[] rgMM = new MakesandModels[0];
-    	
-    	SoapObject result = (SoapObject) Invoke();
-		if (result == null)
-			setLastError("Error retrieving makes and models - " + getLastError());
-		else
-		{
-			try
-			{
-				rgMM = new MakesandModels[result.getPropertyCount()];
-				
-				for (int i = 0; i < rgMM.length; i++)
-				{
-					rgMM[i] = new MakesandModels((SoapObject) result.getProperty(i));
-				}
-			}
-			catch (Exception e)
-			{
-				setLastError(getLastError() + e.getMessage());
-			}
-		}
-			
-    	return rgMM;
-	}
+    public MakesandModels[] GetMakesAndModels(Context c) {
+        setMethod("MakesAndModels"); // no need to save the request, since nothing goes out
+
+        MakesandModels[] rgMM = new MakesandModels[0];
+
+        SoapObject result = (SoapObject) Invoke(c);
+        if (result == null)
+            setLastError("Error retrieving makes and models - " + getLastError());
+        else {
+            try {
+                rgMM = new MakesandModels[result.getPropertyCount()];
+
+                for (int i = 0; i < rgMM.length; i++) {
+                    rgMM[i] = new MakesandModels((SoapObject) result.getProperty(i));
+                }
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return rgMM;
+    }
 }

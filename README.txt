@@ -1,4 +1,4 @@
-You will need to create a fiel called "apikeys.xml" in res/values to hold keys for the services you use.
+You will need to create a file called "apikeys.xml" in res/values to hold keys for the services you use.
 
 E.g.:
 

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/DividerBar"
+            android:text="@string/lblOptionsProfile" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/signInPrompt" />
+
+        <TextView
+            android:id="@+id/txtSignInStatus"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text=""
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSignIn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/szSignIn" />
+
+            <Button
+                android:id="@+id/btnCreateNewAccount"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/createuser" />
+
+            <Button
+                android:id="@+id/btnSignOut"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/szSignOut" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:padding="5dp"
+            android:text="@string/lblForgotPassword" />
+
+        <TextView
+            style="@style/DividerBar"
+            android:text="@string/lblOptionsLocation" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/lblGPSDisclaimer" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/lblWarning1" />
+
+        <CheckBox
+            android:id="@+id/ckAutodetect"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptAutoDetect" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="200dp"
+                android:text="@string/lblOptTOSpeed" />
+
+            <Spinner
+                android:id="@+id/spnTOSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="2sp"
+                android:paddingTop="2sp" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/strEmpty"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/ckHeliports"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptIncludeHeliports" />
+
+        <CheckBox
+            android:id="@+id/ckRecord"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptRecord" />
+
+        <CheckBox
+            android:id="@+id/ckRecordHighRes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptRecordHiRes" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginStart="30dp"
+            android:text="@string/lblOptRecordHiResDesc" />
+
+        <TextView
+            style="@style/DividerBar"
+            android:text="@string/lblOptionsTime" />
+
+        <CheckBox
+            android:id="@+id/ckUseHHMM"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptUseHHMM" />
+
+        <CheckBox
+            android:id="@+id/ckUseLocalTime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptUseLocalTime" />
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblAutoHobbs" />
+
+                <Spinner
+                    android:id="@+id/spnAutoHobbs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblAutoTime" />
+
+                <Spinner
+                    android:id="@+id/spnAutoTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:id="@+id/ckRoundNearestTenth"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblOptRoundNearestTenth" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/DividerBar"
+            android:text="@string/lblImageOptions" />
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ckShowFlightImages"
+            android:text="@string/lblShowFlightImages" />
+
+        <TextView
+            style="@style/DividerBar"
+            android:text="@string/lblAdditionalOptions" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lblAdditionalOptionsText" />
+
+            <Button
+                android:id="@+id/btnAdditionalOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/lblGoToMyFlightbookOptions" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/DividerBar"
+            android:text="@string/lblOptionsContact" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/btnContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/lblContactMe" />
+
+            <Button
+                android:id="@+id/btnFAQ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/lblFAQ" />
+
+            <Button
+                android:id="@+id/btnFacebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/fb_f_logo"
+                android:drawablePadding="3dip"
+                android:padding="5dip"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/lblFollowFacebook" />
+
+            <Button
+                android:id="@+id/btnTwitter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip"
+                style="?android:attr/buttonBarStyle"
+                android:drawableStart="@drawable/twitter_logo_blue"
+                android:drawablePadding="3dip"
+                android:text="@string/lblFollowTwitter" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lblSupportDescript" />
+
+            <Button
+                android:id="@+id/btnSupport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/btnSupport" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/DividerBar"
+            android:text="@string/lblOptionsOther" />
+
+        <TextView
+            android:id="@+id/txtCopyright"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/lblCopyright" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/lblCodeCredit" />
+
+        <Button
+            android:id="@+id/btnCleanUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            style="?android:attr/buttonBarStyle"
+            android:text="@string/lblCleanup" />
+    </LinearLayout>
+</ScrollView>

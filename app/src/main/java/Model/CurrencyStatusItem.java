@@ -17,49 +17,40 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Model;
+
 import org.ksoap2.serialization.SoapObject;
 
 
-public class CurrencyStatusItem extends SoapableObject
-{
-	public String Attribute = "";
-	public String Value = "";
-	public String Status = "";
-	public String Discrepancy = "";
-	
-	public CurrencyStatusItem()
-	{
-		super();
-	}
-	
-	public CurrencyStatusItem(SoapObject so)
-	{
-		super();
-		FromProperties(so);
-	}
-	
-	@Override
-	public String toString()
-	{
-		return String.format("%s %s %s %s", Attribute, Value, Status, Discrepancy); 
-	}
-	
-	public void ToProperties(SoapObject so)
-	{
-		so.addProperty("Attribute", Attribute);
-		so.addProperty("Value", Value);
-		so.addProperty("Status", Status);
-		so.addProperty("Discrepancy", Discrepancy);
-	}
-	
-	public void FromProperties(SoapObject so)
-	{
-		Attribute = so.getProperty("Attribute").toString();
-		Value = so.getProperty("Value").toString();
-		Status = so.getProperty("Status").toString();
-		
-		// Optional strings come through as "anyType" if they're not actually present, so check for that.
-		Discrepancy = ReadNullableString(so, "Discrepancy");
-	}
-	
+public class CurrencyStatusItem extends SoapableObject {
+    public String Attribute = "";
+    public String Value = "";
+    public String Status = "";
+    public String Discrepancy = "";
+
+    public CurrencyStatusItem(SoapObject so) {
+        super();
+        FromProperties(so);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s %s", Attribute, Value, Status, Discrepancy);
+    }
+
+    public void ToProperties(SoapObject so) {
+        so.addProperty("Attribute", Attribute);
+        so.addProperty("Value", Value);
+        so.addProperty("Status", Status);
+        so.addProperty("Discrepancy", Discrepancy);
+    }
+
+    public void FromProperties(SoapObject so) {
+        Attribute = so.getProperty("Attribute").toString();
+        Value = so.getProperty("Value").toString();
+        Status = so.getProperty("Status").toString();
+
+        // Optional strings come through as "anyType" if they're not actually present, so check for that.
+        Discrepancy = ReadNullableString(so, "Discrepancy");
+    }
+
 }

@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menuUpdateAircraft" android:titleCondensed="@string/menuUpdateAircraftShort" android:title="@string/menuUpdateAircraft" android:showAsAction="ifRoom"></item>
-	<item android:id="@+id/menuTakePicture" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_camera" android:titleCondensed="@string/menuTakePictureShort" android:title="@string/menuTakePicture"></item>
-	<item android:id="@+id/menuChoosePicture" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_picture" android:titleCondensed="@string/menuChoosePictureShort" android:title="@string/menuChoosePicture"></item>
-    <item android:title="@string/menuFlightSearch" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_search" android:id="@+id/findFlights"></item>
-	<item android:id="@+id/menuDeleteAircraft" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_discard" android:titleCondensed="@string/menuDeleteAircraftShort" android:title="@string/menuDeleteAircraft"></item>
-	<item android:id="@+id/menuViewSchedule" android:showAsAction="ifRoom" android:icon="@drawable/ic_action_go_to_today" android:title="@string/lblSchedule" android:titleCondensed="@string/lblSchedule"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuUpdateAircraft"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuUpdateAircraft"
+        android:titleCondensed="@string/menuUpdateAircraftShort" />
+    <item
+        android:id="@+id/menuTakePicture"
+        android:icon="@drawable/ic_action_camera"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuTakePicture"
+        android:titleCondensed="@string/menuTakePictureShort" />
+    <item
+        android:id="@+id/menuChoosePicture"
+        android:icon="@drawable/ic_action_picture"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuChoosePicture"
+        android:titleCondensed="@string/menuChoosePictureShort" />
+    <item
+        android:id="@+id/findFlights"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuFlightSearch" />
+    <item
+        android:id="@+id/menuDeleteAircraft"
+        android:icon="@drawable/ic_action_discard"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuDeleteAircraft"
+        android:titleCondensed="@string/menuDeleteAircraftShort" />
+    <item
+        android:id="@+id/menuViewSchedule"
+        android:icon="@drawable/ic_action_go_to_today"
+        android:showAsAction="ifRoom"
+        android:title="@string/lblSchedule"
+        android:titleCondensed="@string/lblSchedule" />
 </menu>

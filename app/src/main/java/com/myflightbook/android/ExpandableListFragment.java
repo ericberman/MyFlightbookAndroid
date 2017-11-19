@@ -19,7 +19,6 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,9 +28,9 @@ public class ExpandableListFragment extends Fragment
     ExpandableListView.OnGroupExpandListener
     {
 
-    static final int INTERNAL_EMPTY_ID = 0x00ff0001;
-    static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
-    static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
+    private static int INTERNAL_EMPTY_ID = View.generateViewId();
+    private static int INTERNAL_PROGRESS_CONTAINER_ID = View.generateViewId();
+    private static int INTERNAL_LIST_CONTAINER_ID = View.generateViewId();
 
     final private Handler mHandler = new Handler();
 
@@ -42,21 +41,17 @@ public class ExpandableListFragment extends Fragment
     };
 
     final private AdapterView.OnItemClickListener mOnClickListener
-            = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-            onListItemClick((ExpandableListView)parent, v, position, id);
-        }
-    };
+            = (parent, v, position, id) -> onListItemClick((ExpandableListView)parent, v, position, id);
 
-    ExpandableListAdapter mAdapter;
-    ExpandableListView mExpandableList;
-    boolean mFinishedStart = false;
-    View mEmptyView;
-    TextView mStandardEmptyView;
-    View mProgressContainer;
-    View mExpandableListContainer;
-    CharSequence mEmptyText;
-    boolean mExpandableListShown;
+    private ExpandableListAdapter mAdapter;
+    private ExpandableListView mExpandableList;
+    private boolean mFinishedStart = false;
+    private View mEmptyView;
+    private TextView mStandardEmptyView;
+    private View mProgressContainer;
+    private View mExpandableListContainer;
+    private CharSequence mEmptyText;
+    private boolean mExpandableListShown;
 
     public ExpandableListFragment() {
     }
@@ -158,14 +153,16 @@ public class ExpandableListFragment extends Fragment
 * @param v The view that was clicked within the ListView
 * @param position The position of the view in the list
 * @param id The row id of the item that was clicked
-*/
+     */
+
+    @SuppressWarnings("EmptyMethod")
     public void onListItemClick(ExpandableListView l, View v, int position, long id) {
     }
 
     /**
 * Provide the cursor for the list view.
 */
-    public void setListAdapter(ExpandableListAdapter adapter) {
+    void setListAdapter(ExpandableListAdapter adapter) {
         boolean hadAdapter = mAdapter != null;
         mAdapter = adapter;
         if (mExpandableList != null) {
@@ -173,7 +170,9 @@ public class ExpandableListFragment extends Fragment
             if (!mExpandableListShown && !hadAdapter) {
                 // The list was hidden, and previously didn't have an
                 // adapter. It is now time to show it.
-                setListShown(true, getView().getWindowToken() != null);
+                View v = getView();
+                if (v != null)
+                    setListShown(true, getView().getWindowToken() != null);
             }
         }
     }
@@ -182,7 +181,6 @@ public class ExpandableListFragment extends Fragment
 * Set the currently selected list item to the specified
 * position with the adapter's data
 *
-* @param position
 */
     public void setSelection(int position) {
         ensureList();
@@ -192,6 +190,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the position of the currently selected list item.
 */
+    @SuppressWarnings("unused")
     public int getSelectedItemPosition() {
         ensureList();
         return mExpandableList.getSelectedItemPosition();
@@ -200,6 +199,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the cursor row ID of the currently selected list item.
 */
+    @SuppressWarnings("unused")
     public long getSelectedItemId() {
         ensureList();
         return mExpandableList.getSelectedItemId();
@@ -208,6 +208,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the activity's list view widget.
 */
+    @SuppressWarnings("unused")
     public ExpandableListView getListView() {
         ensureList();
         return mExpandableList;
@@ -218,6 +219,7 @@ public class ExpandableListFragment extends Fragment
 * be shown when the list is empty. If you would like to have it
 * shown, call this method to supply the text it should use.
 */
+    @SuppressWarnings("unused")
     public void setEmptyText(CharSequence text) {
         ensureList();
         if (mStandardEmptyView == null) {
@@ -237,13 +239,14 @@ public class ExpandableListFragment extends Fragment
 *
 * <p>Applications do not normally need to use this themselves. The default
 * behavior of ListFragment is to start with the list not being shown, only
-* showing it once an adapter is given with {@link #setListAdapter(ListAdapter)}.
+* showing it once an adapter is given with ListAdapter.
 * If the list at that point had not been shown, when it does get shown
 * it will be do without the user ever seeing the hidden state.
 *
 * @param shown If true, the list view is shown; if false, the progress
 * indicator. The initial value is true.
 */
+    @SuppressWarnings("unused")
     public void setListShown(boolean shown) {
         setListShown(shown, true);
     }
@@ -252,6 +255,7 @@ public class ExpandableListFragment extends Fragment
 * Like {@link #setListShown(boolean)}, but no animation is used when
 * transitioning from the previous state.
 */
+    @SuppressWarnings("unused")
     public void setListShownNoAnimation(boolean shown) {
         setListShown(shown, false);
     }
@@ -305,6 +309,7 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the ListAdapter associated with this activity's ListView.
 */
+    @SuppressWarnings("unused")
     public ExpandableListAdapter getListAdapter() {
         return mAdapter;
     }
@@ -416,11 +421,14 @@ public class ExpandableListFragment extends Fragment
 * Updates the screen state (current list and other views) when the
 * content changes.
 *
-* @see Activity#onContentChanged()
 */
 
+    @SuppressWarnings("unused")
     public void onContentChanged() {
 // super.onContentChanged();
+        View v = getView();
+        if (v == null)
+            return;
         View emptyView = getView().findViewById(android.R.id.empty);
         mExpandableList = (ExpandableListView)getView().findViewById(android.R.id.list);
         if (mExpandableList == null) {
@@ -447,7 +455,7 @@ public class ExpandableListFragment extends Fragment
 *
 * @see ExpandableListView
 */
-    public ExpandableListView getExpandableListView() {
+    ExpandableListView getExpandableListView() {
         ensureList();
         return mExpandableList;
     }
@@ -456,6 +464,7 @@ public class ExpandableListFragment extends Fragment
 * Get the ExpandableListAdapter associated with this activity's
 * ExpandableListView.
 */
+    @SuppressWarnings("unused")
     public ExpandableListAdapter getExpandableListAdapter() {
         return mAdapter;
     }
@@ -465,6 +474,7 @@ public class ExpandableListFragment extends Fragment
 *
 * @return The ID of the currently selected group or child.
 */
+    @SuppressWarnings("unused")
     public long getSelectedId() {
         return mExpandableList.getSelectedId();
     }
@@ -480,6 +490,7 @@ public class ExpandableListFragment extends Fragment
 * @return A packed position representation containing the currently
 * selected group or child's position and type.
 */
+    @SuppressWarnings("unused")
     public long getSelectedPosition() {
         return mExpandableList.getSelectedPosition();
     }
@@ -495,6 +506,7 @@ public class ExpandableListFragment extends Fragment
 * it is collapsed.
 * @return Whether the selection was successfully set on the child.
 */
+    @SuppressWarnings("unused")
     public boolean setSelectedChild(int groupPosition, int childPosition, boolean shouldExpandGroup) {
         return mExpandableList.setSelectedChild(groupPosition, childPosition, shouldExpandGroup);
     }
@@ -503,6 +515,7 @@ public class ExpandableListFragment extends Fragment
 * Sets the selection to the specified group.
 * @param groupPosition The position of the group that should be selected.
 */
+    @SuppressWarnings("unused")
     public void setSelectedGroup(int groupPosition) {
         mExpandableList.setSelectedGroup(groupPosition);
     }

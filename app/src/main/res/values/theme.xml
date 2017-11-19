@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-<color name="custom_theme_color">#999999</color>
-<color name="divider_background">#555555</color>
-<color name="table_background">#FFFFFF</color>
-<style name="MFBTheme" parent="android:Theme.Light.NoTitleBar">
-    <item name="android:windowBackground">@color/custom_theme_color</item>
-    <item name="android:colorBackground">@color/custom_theme_color</item>
-	<item name="android:textSize">14sp</item>
-	<item name="android:textColor">#000000</item>
-	<item name="android:tabWidgetStyle">@style/LightTabWidget</item>
-</style>
-<style name="LightTabWidget" parent="@android:style/Widget.TabWidget">
-	<item name="android:textColor">#CCCCCC</item>
-</style>
-<style name="MFBProgress" parent="@android:style/Widget.ProgressBar">
-    <!-- 
-	<item name="android:textColor">#FFFFFF</item>
-    <item name="android:windowBackground">@color/custom_theme_color</item>
-    <item name="android:colorBackground">@color/custom_theme_color</item>
-     -->
-</style>
-<style name="MFBDialog" parent="@android:style/Theme.Dialog">
-    <item name="android:windowBackground">@color/custom_theme_color</item>
-    <item name="android:colorBackground">@color/custom_theme_color</item>
-	<item name="android:textSize">14sp</item>
-	<item name="android:textColor">#000000</item>
-</style>
-<style name="DividerBar">
-	<item name="android:colorBackground">@color/divider_background</item>
-	<item name="android:background">@color/divider_background</item>
-	<item name="android:layout_height">wrap_content</item>
-	<item name="android:layout_width">fill_parent</item>
-	<item name="android:layout_gravity">center_horizontal|center_vertical</item>
-	<item name="android:gravity">center_horizontal|center_vertical</item>
-	<item name="android:textColor">#EEEEEE</item>
-	<item name="android:textStyle">bold</item>
-	<item name="android:textSize">16sp</item>
-	<item name="android:padding">5dip</item>
-</style>
-<style name="Widget.Button.Toggle" parent="android:Widget"> 
-   <item name="android:background">@drawable/ic_toggle_airport_bg</item> 
-   <item name="android:disabledAlpha">?android:attr/disabledAlpha</item> 
-</style> 
- 
-<style name="toggleAirportButton"  parent="@android:Theme.Black"> 
-	<item name="android:buttonStyleToggle">@style/Widget.Button.Toggle</item> 
-	<item name="android:textOn"></item> 
-	<item name="android:textOff"></item>
-</style>
+    <color name="custom_theme_color">#999999</color>
+    <color name="divider_background">#555555</color>
+    <color name="table_background">#FFFFFF</color>
+
+    <style name="MFBTheme" parent="android:Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@color/custom_theme_color</item>
+        <item name="android:colorBackground">@color/custom_theme_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:tabWidgetStyle">@style/LightTabWidget</item>
+    </style>
+
+    <style name="LightTabWidget" parent="@android:style/Widget.TabWidget">
+        <item name="android:textColor">#CCCCCC</item>
+    </style>
+
+    <style name="MFBProgress" parent="@android:style/Widget.ProgressBar">
+        <!--
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:windowBackground">@color/custom_theme_color</item>
+        <item name="android:colorBackground">@color/custom_theme_color</item>
+         -->
+    </style>
+
+    <style name="MFBDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/custom_theme_color</item>
+        <item name="android:colorBackground">@color/custom_theme_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="DividerBar">
+        <item name="android:colorBackground">@color/divider_background</item>
+        <item name="android:background">@color/divider_background</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_gravity">center_horizontal|center_vertical</item>
+        <item name="android:gravity">center_horizontal|center_vertical</item>
+        <item name="android:textColor">#EEEEEE</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">5dip</item>
+    </style>
+
+    <style name="Widget.Button.Toggle" parent="android:Widget">
+        <item name="android:background">@drawable/ic_toggle_airport_bg</item>
+        <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+    </style>
 </resources>

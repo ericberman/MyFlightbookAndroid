@@ -19,6 +19,7 @@
 package com.myflightbook.android.WebServices;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -32,159 +33,147 @@ import java.util.Arrays;
 
 import Model.CustomPropertyType;
 import Model.DBCache;
+import Model.MFBConstants;
 
 public class CustomPropertyTypesSvc extends MFBSoap {
-	private static final String TABLENAME = "customproptypes";
+    private static final String TABLENAME = "customproptypes";
 
-	public static CustomPropertyType[] getCachedPropertyTypes() {
-		CustomPropertyType[] rgCpt = new CustomPropertyType[0];
+    public static CustomPropertyType[] getCachedPropertyTypes() {
+        CustomPropertyType[] rgCpt = new CustomPropertyType[0];
 
-		SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-		Cursor c = null;
+        SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+        Cursor c = null;
 
-		try {
-			c = db.query(TABLENAME, null, null, null, null, null, null);
+        try {
+            c = db.query(TABLENAME, null, null, null, null, null, null);
 
-			if (c != null) {
-				rgCpt = new CustomPropertyType[c.getCount()];
-				int i = 0;
+            if (c != null) {
+                rgCpt = new CustomPropertyType[c.getCount()];
+                int i = 0;
 
-				while (c.moveToNext()) {
-					CustomPropertyType cpt = new CustomPropertyType();
-					cpt.FromCursor(c);
-					rgCpt[i++] = cpt;
-				}
+                while (c.moveToNext()) {
+                    CustomPropertyType cpt = new CustomPropertyType();
+                    cpt.FromCursor(c);
+                    rgCpt[i++] = cpt;
+                }
 
-				Arrays.sort(rgCpt);
-			}
-		} catch (Exception ex) {
-			Log.e("MFBAndroid",
-					"Error getting cached CustomPropertyType from db");
-		} finally {
-			if (c != null)
-				c.close();
-		}
-		return rgCpt;
-	}
-	
-	public static CustomPropertyType[] getSearchableProperties()
-	{
-		CustomPropertyType[] rgCpt = getCachedPropertyTypes();
-		
-		ArrayList<CustomPropertyType> lst = new ArrayList<CustomPropertyType>();
-		for (CustomPropertyType cpt : rgCpt)
-			if (cpt.IsFavorite)
-				lst.add(cpt);
-		
-		if (lst.size() == 0)
-			return rgCpt;
-		else
-			return lst.toArray(new CustomPropertyType[lst.size()]);
-	}
+                Arrays.sort(rgCpt);
+            }
+        } catch (Exception ex) {
+            Log.e(MFBConstants.LOG_TAG,
+                    "Error getting cached CustomPropertyType from db" + Log.getStackTraceString(ex));
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return rgCpt;
+    }
 
-	public void updateCache(CustomPropertyType[] rgcpt) {
-		// note that these calls will close the db, so we do them first.
-		DBCache dbc = new DBCache();
-		dbc.flushCache(TABLENAME, true);
-		Boolean fResult = false;
+    public static CustomPropertyType[] getSearchableProperties() {
+        CustomPropertyType[] rgCpt = getCachedPropertyTypes();
 
-		// now, we get an open db
-		SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
+        ArrayList<CustomPropertyType> lst = new ArrayList<>();
+        for (CustomPropertyType cpt : rgCpt)
+            if (cpt.IsFavorite)
+                lst.add(cpt);
 
-		try {
-			// I've read that multiple inserts are much faster inside a
-			// transaction.
-			db.beginTransaction();
-			try {
-				for (CustomPropertyType cpt : rgcpt) {
-					ContentValues cv = new ContentValues();
-					cpt.ToContentValues(cv);
+        if (lst.size() == 0)
+            return rgCpt;
+        else
+            return lst.toArray(new CustomPropertyType[lst.size()]);
+    }
 
-					long l = db.insertOrThrow(TABLENAME, null, cv);
-					if (l < 0)
-						throw new Error("Error inserting CustomPropertyType");
-				}
-				db.setTransactionSuccessful();
-				fResult = true;
-			} catch (Exception ex) {
-				this.setLastError(ex.getMessage());
-			} finally {
-				db.endTransaction();
-			}
-		} catch (Exception e) {
-			this.setLastError(e.getMessage());
-		} finally {
-		}
+    private void updateCache(CustomPropertyType[] rgcpt) {
+        // note that these calls will close the db, so we do them first.
+        DBCache dbc = new DBCache();
+        dbc.flushCache(TABLENAME, true);
+        Boolean fResult = false;
 
-		if (fResult)
-			dbc.updateCache(TABLENAME);
-	}
+        // now, we get an open db
+        SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
 
-	public void FlushCache() {
-		DBCache dbc = new DBCache();
-		dbc.flushCache(TABLENAME, true);
-	}
+        try {
+            // I've read that multiple inserts are much faster inside a
+            // transaction.
+            db.beginTransaction();
+            try {
+                for (CustomPropertyType cpt : rgcpt) {
+                    ContentValues cv = new ContentValues();
+                    cpt.ToContentValues(cv);
 
-	private CustomPropertyType[] ReadResults(SoapObject result) {
-		CustomPropertyType[] rgcptCached = getCachedPropertyTypes();
-		CustomPropertyType[] rgcpt = rgcptCached;
+                    long l = db.insertOrThrow(TABLENAME, null, cv);
+                    if (l < 0)
+                        throw new Error("Error inserting CustomPropertyType");
+                }
+                db.setTransactionSuccessful();
+                fResult = true;
+            } catch (Exception ex) {
+                this.setLastError(ex.getMessage());
+            } finally {
+                db.endTransaction();
+            }
+        } catch (Exception e) {
+            this.setLastError(e.getMessage());
+        }
 
-		try {
-			rgcpt = new CustomPropertyType[result.getPropertyCount()];
+        if (fResult)
+            dbc.updateCache(TABLENAME);
+    }
 
-			for (int i = 0; i < rgcpt.length; i++)
-				rgcpt[i] = new CustomPropertyType(
-						(SoapObject) result.getProperty(i));
+    private CustomPropertyType[] ReadResults(SoapObject result) {
+        CustomPropertyType[] rgcptCached = getCachedPropertyTypes();
+        CustomPropertyType[] rgcpt;
 
-			// if we made it here, we have successfully retrieved new values.
-			// ONLY NOW should we update the cache AND only if we got at least as many
-			// as we had originally.  (Could be the same # but favorites could have changed)
-			if (rgcpt.length >= rgcptCached.length)
-				updateCache(rgcpt);
-		} catch (Exception e) {
-			setLastError(getLastError() + e.getMessage());
-			rgcpt = rgcptCached;
-		}
+        try {
+            rgcpt = new CustomPropertyType[result.getPropertyCount()];
 
-		return rgcpt;
-	}
+            for (int i = 0; i < rgcpt.length; i++)
+                rgcpt[i] = new CustomPropertyType(
+                        (SoapObject) result.getProperty(i));
 
-	public DBCache.DBCacheStatus CacheStatus() {
-		DBCache dbc = new DBCache();
-		DBCache.DBCacheStatus dbcs = dbc.Status(TABLENAME);
-		return dbcs;
-	}
+            // if we made it here, we have successfully retrieved new values.
+            // ONLY NOW should we update the cache AND only if we got at least as many
+            // as we had originally.  (Could be the same # but favorites could have changed)
+            if (rgcpt.length >= rgcptCached.length)
+                updateCache(rgcpt);
+        } catch (Exception e) {
+            setLastError(getLastError() + e.getMessage());
+            rgcpt = rgcptCached;
+        }
 
-	public CustomPropertyType[] GetCustomPropertyTypes(String szAuthToken, Boolean fAllowCache) {
-		CustomPropertyType[] rgcpt = new CustomPropertyType[0];
+        return rgcpt;
+    }
 
-		DBCache.DBCacheStatus dbcs = CacheStatus();
+    public DBCache.DBCacheStatus CacheStatus() {
+        DBCache dbc = new DBCache();
+        return dbc.Status(TABLENAME);
+    }
 
-		if (dbcs == DBCache.DBCacheStatus.VALID && fAllowCache) // return cached  CustomPropertyType
-		{
-			rgcpt = getCachedPropertyTypes();
-		} else // refresh the cache
-		{
-			SoapObject Request = setMethod("AvailablePropertyTypesForUser");
-	    	Request.addProperty("szAuthUserToken", szAuthToken);
+    public CustomPropertyType[] GetCustomPropertyTypes(String szAuthToken, Boolean fAllowCache, Context c) {
+        CustomPropertyType[] rgcpt = new CustomPropertyType[0];
 
-			SoapObject result = (SoapObject) Invoke();
-			if (result == null) {
-				setLastError("Failed to retrieve CustomPropertyTypes - "
-						+ getLastError());
-				if (dbcs == DBCache.DBCacheStatus.VALID_BUT_RETRY)
-					rgcpt = getCachedPropertyTypes();
-			} else {
-				rgcpt = ReadResults(result);
-			}
-		}
+        DBCache.DBCacheStatus dbcs = CacheStatus();
 
-		Arrays.sort(rgcpt);
-		return rgcpt;
-	}
-	
-	public CustomPropertyType[] GetCustomPropertyTypes(String szAuthToken)
-	{
-		return GetCustomPropertyTypes(szAuthToken, true);
-	}
+        if (dbcs == DBCache.DBCacheStatus.VALID && fAllowCache) // return cached  CustomPropertyType
+        {
+            rgcpt = getCachedPropertyTypes();
+        } else // refresh the cache
+        {
+            SoapObject Request = setMethod("AvailablePropertyTypesForUser");
+            Request.addProperty("szAuthUserToken", szAuthToken);
+
+            SoapObject result = (SoapObject) Invoke(c);
+            if (result == null) {
+                setLastError("Failed to retrieve CustomPropertyTypes - "
+                        + getLastError());
+                if (dbcs == DBCache.DBCacheStatus.VALID_BUT_RETRY)
+                    rgcpt = getCachedPropertyTypes();
+            } else {
+                rgcpt = ReadResults(result);
+            }
+        }
+
+        Arrays.sort(rgcpt);
+        return rgcpt;
+    }
 }

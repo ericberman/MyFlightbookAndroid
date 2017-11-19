@@ -24,17 +24,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class EditFlightActivity extends FragmentActivity {
-	ActNewFlight editFlight = null;
-	
+    private ActNewFlight editFlight = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragmenthost);
-        
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         editFlight = new ActNewFlight();
         fragmentTransaction.replace(android.R.id.content, editFlight);
         fragmentTransaction.commit();
-        }
+    }
 }

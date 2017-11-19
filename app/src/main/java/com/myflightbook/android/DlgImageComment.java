@@ -31,65 +31,58 @@ import com.myflightbook.android.WebServices.ImagesSvc;
 
 import Model.MFBImageInfo;
 
-public class DlgImageComment extends Dialog implements android.view.View.OnClickListener {
+class DlgImageComment extends Dialog implements android.view.View.OnClickListener {
 
-	public interface AnnotationUpdate {
-		public void updateAnnotation(MFBImageInfo mfbii);
-	}
+    interface AnnotationUpdate {
+        void updateAnnotation(MFBImageInfo mfbii);
+    }
 
-	public AnnotationUpdate m_delegate = null;
-	private MFBImageInfo m_mfbii = null;
-	
-	public DlgImageComment(Context context) {
-		super(context, R.style.MFBDialog);
-	}
-	
-	public DlgImageComment(Context context, MFBImageInfo mfbii, AnnotationUpdate d)
-	{
-		super(context, R.style.MFBDialog);
-		m_mfbii = mfbii;
-		m_delegate = d;
-	}
-	
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dlgaddcomment);
-		Button b = (Button)findViewById(R.id.btnOK);
-		b.setOnClickListener(this);
-		b = (Button)findViewById(R.id.btnCancel);
-		b.setOnClickListener(this);
-		
-		if (m_mfbii != null)
-		{
-			ImageView imgview = (ImageView)findViewById(R.id.imgPreview);
-			m_mfbii.LoadImageForImageView(true, imgview);
-			
-			EditText e = (EditText)findViewById(R.id.txtComment);
-			e.setText(m_mfbii.Comment);
-		}
-	}
+    private AnnotationUpdate m_delegate = null;
+    private MFBImageInfo m_mfbii = null;
+    private Context m_Context = null;
 
-	public void onClick(View v) {
-		switch (v.getId())
-		{
-		case R.id.btnOK:
-			m_mfbii.Comment = ((EditText)findViewById(R.id.txtComment)).getText().toString();
-			// Note that an image can be BOTH on the server AND local (Aircraft images).
-			if (m_mfbii.IsLocal())
-				m_mfbii.toDB();
-			if (m_mfbii.IsOnServer())
-			{
-				ImagesSvc is = new ImagesSvc();
-				is.UpdateImageAnnotation(AuthToken.m_szAuthToken, m_mfbii);
-			}
-			break;
-		case R.id.btnCancel:
-			break;
-		}
-		if (m_delegate != null)
-			m_delegate.updateAnnotation(m_mfbii);
-		dismiss();
-	}
+    DlgImageComment(Context context, MFBImageInfo mfbii, AnnotationUpdate d) {
+        super(context, R.style.MFBDialog);
+        m_mfbii = mfbii;
+        m_delegate = d;
+        m_Context = context;
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.dlgaddcomment);
+        Button b = (Button) findViewById(R.id.btnOK);
+        b.setOnClickListener(this);
+        b = (Button) findViewById(R.id.btnCancel);
+        b.setOnClickListener(this);
+
+        if (m_mfbii != null) {
+            ImageView imgview = (ImageView) findViewById(R.id.imgPreview);
+            m_mfbii.LoadImageForImageView(true, imgview);
+
+            EditText e = (EditText) findViewById(R.id.txtComment);
+            e.setText(m_mfbii.Comment);
+        }
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnOK:
+                m_mfbii.Comment = ((EditText) findViewById(R.id.txtComment)).getText().toString();
+                // Note that an image can be BOTH on the server AND local (Aircraft images).
+                if (m_mfbii.IsLocal())
+                    m_mfbii.toDB();
+                if (m_mfbii.IsOnServer()) {
+                    ImagesSvc is = new ImagesSvc();
+                    is.UpdateImageAnnotation(AuthToken.m_szAuthToken, m_mfbii, m_Context);
+                }
+                break;
+            case R.id.btnCancel:
+                break;
+        }
+        if (m_delegate != null)
+            m_delegate.updateAnnotation(m_mfbii);
+        dismiss();
+    }
 
 }

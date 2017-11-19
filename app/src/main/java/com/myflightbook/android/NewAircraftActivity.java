@@ -24,19 +24,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class NewAircraftActivity extends FragmentActivity {
-	ActNewAircraft newAircraft = null;
+    private ActNewAircraft newAircraft = null;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragmenthost);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragmenthost);
 
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager
-				.beginTransaction();
-		newAircraft = new ActNewAircraft();
-		fragmentTransaction.replace(android.R.id.content, newAircraft);
-		fragmentTransaction.commit();
-	}
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager
+                .beginTransaction();
+        newAircraft = new ActNewAircraft();
+        fragmentTransaction.replace(android.R.id.content, newAircraft);
+        fragmentTransaction.commit();
+    }
 
 }

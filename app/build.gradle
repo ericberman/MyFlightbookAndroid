@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.myflightbook.android"
         minSdkVersion 19
-        targetSdkVersion 24
+        targetSdkVersion 25
         multiDexEnabled true
 
         jackOptions {
@@ -37,8 +37,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.4.0'
-    compile 'com.google.android.gms:play-services:+'
+    compile 'com.google.android.gms:play-services:11.0.4'
     compile files('libs/annotations.jar')
     compile files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')
     compile 'com.android.support:multidex:1.0.1'

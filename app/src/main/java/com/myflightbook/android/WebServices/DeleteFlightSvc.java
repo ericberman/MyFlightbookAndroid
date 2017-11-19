@@ -18,19 +18,20 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.content.Context;
+
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
 public class DeleteFlightSvc extends MFBSoap {
 
-	public void DeleteFlight(String szAuthToken, int idFlight)
-	{
-		SoapObject Request = setMethod("DeleteLogbookEntry");
-    	Request.addProperty("szAuthUserToken", szAuthToken);
-    	Request.addProperty("idFlight", idFlight);
-    	
-    	SoapPrimitive result = (SoapPrimitive) Invoke();
-		if (result == null)
-			setLastError("Error deleting flight - " + getLastError());
-	}
+    public void DeleteFlight(String szAuthToken, int idFlight, Context c) {
+        SoapObject Request = setMethod("DeleteLogbookEntry");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("idFlight", idFlight);
+
+        SoapPrimitive result = (SoapPrimitive) Invoke(c);
+        if (result == null)
+            setLastError("Error deleting flight - " + getLastError());
+    }
 }

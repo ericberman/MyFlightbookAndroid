@@ -24,43 +24,38 @@ import android.widget.ArrayAdapter;
 import Model.MFBImageInfo.ImageCacheCompleted;
 
 public class LazyThumbnailLoader implements Runnable, ImageCacheCompleted {
-	private ThumbnailedItem[] m_rgItems;
-	@SuppressWarnings("rawtypes")
-	private ArrayAdapter m_li;
-	
-	public interface ThumbnailedItem {
-		MFBImageInfo getDefaultImage();
-	}
+    private ThumbnailedItem[] m_rgItems;
 
-	public LazyThumbnailLoader(ThumbnailedItem[] rgItems, @SuppressWarnings("rawtypes") ArrayAdapter li)
-	{
-		m_rgItems = rgItems;
-		m_li = li;
-	}
-	
-	public void getNextThumb()
-	{
-		for (ThumbnailedItem ti : m_rgItems)
-		{
-			MFBImageInfo mfbii = ti.getDefaultImage();
-			if (mfbii != null)
-			{
-				Bitmap b = mfbii.bitmapFromThumb();
-				if (b == null)
-				{
-					mfbii.LoadImageAsync(true, this);
-					return;
-				}
-			}
-		}
-	}
+    private ArrayAdapter m_li;
 
-	public void run() {
-		getNextThumb();
-	}
+    public interface ThumbnailedItem {
+        MFBImageInfo getDefaultImage();
+    }
 
-	public void imgCompleted(MFBImageInfo sender) {
-		m_li.notifyDataSetChanged();
-		getNextThumb();
-	}
+    public LazyThumbnailLoader(ThumbnailedItem[] rgItems, ArrayAdapter li) {
+        m_rgItems = rgItems;
+        m_li = li;
+    }
+
+    private void getNextThumb() {
+        for (ThumbnailedItem ti : m_rgItems) {
+            MFBImageInfo mfbii = ti.getDefaultImage();
+            if (mfbii != null) {
+                Bitmap b = mfbii.bitmapFromThumb();
+                if (b == null) {
+                    mfbii.LoadImageAsync(true, this);
+                    return;
+                }
+            }
+        }
+    }
+
+    public void run() {
+        getNextThumb();
+    }
+
+    public void imgCompleted(MFBImageInfo sender) {
+        m_li.notifyDataSetChanged();
+        getNextThumb();
+    }
 }
