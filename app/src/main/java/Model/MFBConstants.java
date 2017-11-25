@@ -26,7 +26,7 @@ public class MFBConstants {
     public static final Boolean fFakePix = false;
 
     private static String szIPDebug = "developer.myflightbook.com";
-    private static String szIPDebugRoam = "webmail.hothpark.com";
+    private static String szIPDebugRoam = "developer.hothpark.com";
     private static String szIPRelease = "myflightbook.com";
 
     // Configuration constants
