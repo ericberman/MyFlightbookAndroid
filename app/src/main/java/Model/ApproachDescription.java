@@ -32,6 +32,7 @@ public class ApproachDescription {
             "CONTACT",
             "COPTER",
             "GCA",
+            "GLS",
             "ILS",
             "ILS (Cat I)",
             "ILS (Cat II)",
