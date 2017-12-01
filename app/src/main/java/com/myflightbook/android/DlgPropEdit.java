@@ -63,19 +63,19 @@ class DlgPropEdit extends Dialog implements android.view.View.OnClickListener, C
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dlgeditprop);
-        Button b = (Button) findViewById(R.id.btnOK);
+        Button b = findViewById(R.id.btnOK);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.btnCancel);
+        b = findViewById(R.id.btnCancel);
         b.setOnClickListener(this);
 
-        m_txtField = (DecimalEdit) findViewById(R.id.txtEditProp);
-        m_txtStringVal = (AutoCompleteTextView) findViewById(R.id.txtStringVal);
-        m_ck = (CheckBox) findViewById(R.id.ckBoolValue);
+        m_txtField = findViewById(R.id.txtEditProp);
+        m_txtStringVal = findViewById(R.id.txtStringVal);
+        m_ck = findViewById(R.id.ckBoolValue);
 
-        TextView txtDesc = (TextView) findViewById(R.id.txtDescription);
+        TextView txtDesc = findViewById(R.id.txtDescription);
         txtDesc.setText(m_fp.descriptionString());
 
-        TextView txtLabel = (TextView) findViewById(R.id.txtLabel);
+        TextView txtLabel = findViewById(R.id.txtLabel);
 
         CustomPropertyType.CFPPropertyType cptType = m_fp.getType();
         Boolean fIsBasicDecimal = cptType == CustomPropertyType.CFPPropertyType.cfpDecimal && (m_fp.CustomPropertyType().cptFlag & 0x00200000) != 0;

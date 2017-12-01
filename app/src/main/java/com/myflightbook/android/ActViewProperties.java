@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -63,6 +64,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
     private HashMap<String, String> mActiveProperty = null;
     private MFBExpandableListAdapter mAdapter = null;
 
+    @SuppressLint("StaticFieldLeak")
     private class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         Boolean fAllowCache = true;
@@ -96,6 +98,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         int propId;
@@ -165,7 +168,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         @Override
         public View newChildView(boolean isLastChild, ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater) ActViewProperties.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            return layoutInflater.inflate(R.layout.cptitem, parent, false);
+            return layoutInflater == null ? null : layoutInflater.inflate(R.layout.cptitem, parent, false);
         }
 
     }
@@ -328,6 +331,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         m_rgfpIn = rgfp;
     }
 
+    @SuppressWarnings("unused")
     private void onItemClick(View view, int position, long id) {
         FlightProperty fp = m_rgfpAll[position];
         switch (fp.getType()) {

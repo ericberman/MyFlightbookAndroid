@@ -1214,7 +1214,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             {
                 if (ivDigitizedSig.getDrawable() == null) {
                     String szURL = String.format(Locale.US, "https://%s/Logbook/Public/ViewSig.aspx?id=%d", MFBConstants.szIP, m_le.idFlight);
-                    GetDigitizedSigTask gdst = new GetDigitizedSigTask((ImageView) findViewById(R.id.imgDigitizedSig));
+                    GetDigitizedSigTask gdst = new GetDigitizedSigTask(ivDigitizedSig);
                     gdst.execute(szURL);
                 }
             }
