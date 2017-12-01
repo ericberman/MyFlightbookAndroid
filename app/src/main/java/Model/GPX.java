@@ -7,7 +7,10 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by ericberman on 11/30/17.
@@ -83,4 +86,32 @@ public class GPX extends Telemetry {
 
         return lst.toArray(new LocSample[0]);
     }
+
+    public static String getFlightDataStringAsGPX(LatLong[] rgloc) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        StringBuilder sb = new StringBuilder();
+        // Hack - this is brute force writing, not proper generation of XML.  But it works...
+        // We are also assuming valid timestamps (i.e., we're using gx:Track)
+        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
+        sb.append("<gpx creator=\"http://myflightbook.com\" version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n");
+        sb.append("<trk>\r\n<name />\r\n<trkseg>\r\n");
+
+        Boolean fIsLocSample = (rgloc.length > 0 && rgloc[0] instanceof  LocSample);
+
+        for (LatLong ll : rgloc) {
+            sb.append(String.format(Locale.US, "<trkpt lat=\"%.8f\" lon=\"%.8f\">\r\n", ll.Latitude, ll.Longitude));
+            if (fIsLocSample) {
+                LocSample ls = (LocSample) ll;
+                sb.append(String.format(Locale.US, "<ele>%.8f</ele>\r\n", ls.Alt / MFBConstants.METERS_TO_FEET));
+                sb.append(String.format(Locale.US, "<time>%s</time>\r\n", sdf.format(ls.TimeStamp)));
+                sb.append(String.format(Locale.US, "<speed>%.8f</speed>\r\n", ls.Speed));
+            }
+            sb.append(("</trkpt>\r\n"));
+        }
+        sb.append("</trkseg></trk></gpx>");
+        return sb.toString();
+    }
+
 }

@@ -75,6 +75,7 @@ import java.util.Locale;
 
 import Model.Airport;
 import Model.FlightQuery;
+import Model.GPX;
 import Model.LatLong;
 import Model.LocSample;
 import Model.LogbookEntry;
@@ -443,7 +444,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
             if (m_le.IsPendingFlight()) {
                 this.m_rgFlightRoute = LocSample.samplesFromDataString(m_le.szFlightData);
-                m_GPXPath = LocSample.getFlightDataStringAsGPX(m_rgFlightRoute);    // initialize the GPX path
+                m_GPXPath = GPX.getFlightDataStringAsGPX(m_rgFlightRoute);    // initialize the GPX path
             }
         } else if (idExisting > 0) {
             m_le = RecentFlightsSvc.GetCachedFlightByID(idExisting);
@@ -452,7 +453,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         } else if (idNew != 0) {
             m_le = MFBMain.getNewFlightListener().getInProgressFlight(this);
             this.m_rgFlightRoute = LocSample.flightPathFromDB();
-            m_GPXPath = LocSample.getFlightDataStringAsGPX(m_rgFlightRoute);    // initialize the GPX path.
+            m_GPXPath = GPX.getFlightDataStringAsGPX(m_rgFlightRoute);    // initialize the GPX path.
         } else // all airports
         {
             t.setVisibility(View.GONE);

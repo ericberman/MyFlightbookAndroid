@@ -1275,7 +1275,4 @@ public class GPSSim {
 
         return le;
     }
-
-
-
 }
