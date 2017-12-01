@@ -74,6 +74,8 @@ public class MFBLocation implements LocationListener {
     public static Boolean HasPendingLanding = false;
     private Boolean IsListening = false;
 
+    public Boolean fNoRecord = false;
+
     // A single shared MFBLocation for the app
     private static MFBLocation m_Location = null;
 
@@ -294,7 +296,7 @@ public class MFBLocation implements LocationListener {
                 }
             }
 
-            if (MFBLocation.fPrefRecordFlight && IsRecording && !ActNewFlight.fPaused) {
+            if (MFBLocation.fPrefRecordFlight && IsRecording && !ActNewFlight.fPaused && !fNoRecord) {
                 SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
                 try {
                     ContentValues cv = new ContentValues();

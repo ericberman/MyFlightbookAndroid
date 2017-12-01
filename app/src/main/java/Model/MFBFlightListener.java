@@ -49,8 +49,8 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
     public MFBFlightListener() {
     }
 
-    private void appendNearest() {
-        m_leNewFlight.szRoute = Airport.AppendNearestToRoute(m_leNewFlight.szRoute, MFBLocation.GetMainLocation().CurrentLoc());
+    private void appendNearest(Location loc) {
+        m_leNewFlight.szRoute = Airport.AppendNearestToRoute(m_leNewFlight.szRoute, loc);
     }
 
     public void TakeoffDetected(Location l, Boolean fIsNight) {
@@ -77,8 +77,8 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         if (!m_leNewFlight.isKnownFlightStart()) {
             if (m_delegate != null)
                 m_delegate.FromView();
-            m_leNewFlight.dtFlightStart = new Date();
-            appendNearest();
+            m_leNewFlight.dtFlightStart = new Date(l.getTime());
+            appendNearest(l);
             fNeedsViewRefresh = true;
         }
 
@@ -112,13 +112,13 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         if (!m_leNewFlight.FlightInProgress())
             return;
 
-        m_leNewFlight.dtFlightEnd = new Date();
+        m_leNewFlight.dtFlightEnd = new Date(l.getTime());
 
         // b) increment the number of landings
         m_leNewFlight.cLandings++;
 
         // and append the nearest route
-        appendNearest();
+        appendNearest(l);
 
         Log.w(MFBConstants.LOG_TAG, String.format("Landing received, now %d", m_leNewFlight.cLandings));
 

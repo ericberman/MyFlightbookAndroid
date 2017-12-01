@@ -55,6 +55,17 @@ public class LocSample extends LatLong {
         return m_df;
     }
 
+    public Location getLocation() {
+        Location l = new Location("MFB");
+        l.setLatitude(Latitude);
+        l.setLongitude(Longitude);
+        l.setSpeed((float) (Speed / MFBConstants.MPS_TO_KNOTS));  // convert back to Meters per Second
+        l.setAltitude(Alt / MFBConstants.METERS_TO_FEET);         // Convert back to meters
+        l.setTime(TimeStamp.getTime());
+        l.setAccuracy((float)HError);
+        return l;
+    }
+
     public static LocSample[] flightPathFromDB() {
         ArrayList<LocSample> al = new ArrayList<>();
 

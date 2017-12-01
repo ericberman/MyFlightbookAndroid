@@ -18,9 +18,18 @@
  */
 package Model;
 
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.os.AsyncTask;
+
+import com.myflightbook.android.R;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class GPSSim {
 
@@ -1207,11 +1216,66 @@ public class GPSSim {
                 ft.execute(iLoc + 1);
             }
         }
-
     }
 
     public void FeedEvents() {
         FeedTask ft = new FeedTask();
         ft.execute(0);
     }
+
+    public static LogbookEntry ImportTelemetry(Context c, LocSample[] rgsamples, Uri uriOriginalTelemetry) {
+        if (rgsamples == null || rgsamples.length == 0)
+            return null;
+
+        LogbookEntry le = new LogbookEntry();
+        le.idFlight = LogbookEntry.ID_NEW_FLIGHT;
+        le.dtEngineStart = le.dtFlight = rgsamples[0].TimeStamp;
+
+        MFBFlightListener mfbFlightListener = new MFBFlightListener().setInProgressFlight(le);
+        MFBLocation mfbLocation = new MFBLocation(null, mfbFlightListener);
+        mfbLocation.fNoRecord = true;   // don't overwrite a potential real flight in progress.
+        GPSSim gpsSim = new GPSSim(mfbLocation);
+        for (LocSample l : rgsamples) {
+            gpsSim.m_ll.onLocationChanged(l.getLocation());
+        }
+
+        if (!le.isEmptyFlight()) {
+            le.dtEngineEnd = rgsamples[rgsamples.length - 1].TimeStamp;
+
+            if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.FlightTime)
+                le.decTotal = (le.dtFlightEnd.getTime() - le.dtFlightStart.getTime()) / MFBConstants.MS_PER_HOUR;
+            else
+                le.decTotal = (le.dtEngineEnd.getTime() - le.dtEngineStart.getTime()) / MFBConstants.MS_PER_HOUR;
+
+            le.decXC = (Airport.MaxDistanceForRoute(le.szRoute) > MFBConstants.NM_FOR_CROSS_COUNTRY) ? le.decTotal : 0.0;
+
+            le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
+            le.szComments = c.getString(R.string.telemetryImportDefaultComment);
+
+            if (uriOriginalTelemetry != null) {
+                File f = new File(uriOriginalTelemetry.getPath());
+                try (FileInputStream inputStream = new FileInputStream(f)) {
+                    try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                        int i;
+                        i = inputStream.read();
+                        while (i != -1) {
+                            bos.write(i);
+                            i = inputStream.read();
+                        }
+                        le.szFlightData = bos.toString();
+                    }
+                } catch (IOException ignored) {
+                }
+            }
+
+            le.ToDB();
+        }
+        else
+            le.szError = c.getString(R.string.telemetryNothingFound);
+
+        return le;
+    }
+
+
+
 }

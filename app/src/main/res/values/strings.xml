@@ -476,4 +476,12 @@
     <string name="tcAddSegment">Add</string>
     <string name="tcAddSegmentAndUpdate">Update</string>
     <string name="tcErrBadTime">Times must be between 00:00 and 24:00</string>
-</resources>
+
+    <!-- Telemetry Import -->
+    <string name="telemetryImportPrompt">Initialize a flight from the imported flight track data?</string>
+    <string name="telemetryImportProgress">Importing...</string>
+    <string name="telemetryImportDefaultComment">Flight created from GPS data</string>
+    <string name="telemetryNothingFound">Unable to detect any takeoffs/landings in the supplied data.</string>
+    <string name="telemetryImportSuccessful">Flight created; you can edit it in your recent flights</string>
+    <string name="telemetryCantIdentify">Unrecognized GPS data format.</string>
+s</resources>

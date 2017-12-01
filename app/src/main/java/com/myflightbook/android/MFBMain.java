@@ -18,15 +18,22 @@
  */
 package com.myflightbook.android;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteReadOnlyDatabaseException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -41,6 +48,9 @@ import com.myflightbook.android.WebServices.AuthToken;
 
 import junit.framework.Assert;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,11 +60,14 @@ import Model.Airport;
 import Model.CustomExceptionHandler;
 import Model.DataBaseHelper;
 import Model.DecimalEdit;
+import Model.GPSSim;
+import Model.LogbookEntry;
 import Model.MFBConstants;
 import Model.MFBFlightListener;
 import Model.MFBLocation;
 import Model.MFBTakeoffSpeed;
 import Model.MFBUtil;
+import Model.Telemetry;
 
 public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
@@ -123,6 +136,57 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     private static String m_filesPath = null;
     public static String getAppFilesPath() {return m_filesPath; }
 
+    private static final int PERMISSION_REQUEST_READ = 3385;
+
+    private class ImportTelemetryTask extends AsyncTask<Uri, Void, LogbookEntry> {
+        private ProgressDialog m_pd = null;
+        private Context c = null;
+
+        @Override
+        protected LogbookEntry doInBackground(Uri... urls) {
+            LogbookEntry leResult = null;
+            if (urls != null && urls.length > 0) {
+
+                Telemetry t = Telemetry.TelemetryFromURL(urls[0]);
+
+                if (t != null) {
+                    try {
+                        return GPSSim.ImportTelemetry(MFBMain.this, t.Samples(), urls[0]);
+                    } catch (IOException | XmlPullParserException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return leResult;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            c = MFBMain.this;
+            m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.telemetryImportProgress));
+        }
+
+        @Override
+        protected void onPostExecute(LogbookEntry le) {
+            try {
+                m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            if (le == null)
+                MFBUtil.Alert(MFBMain.this, getString(R.string.txtError), getString(R.string.telemetryCantIdentify));
+            else if (le.szError != null && le.szError.length() > 0)
+                MFBUtil.Alert(MFBMain.this, getString(R.string.txtError), le.szError);
+            else
+                MFBUtil.Alert(MFBMain.this, getString(R.string.txtSuccess), getString(R.string.telemetryImportSuccessful));
+
+            TabInfo ti = mapTabInfo.get(MFBConstants.tabRecents);
+            if (ti.fragment != null)
+                ((ActRecentsWS) ti.fragment).refreshRecentFlights(false);
+        }
+    }
+
     private class TabInfo {
         private String tag;
         private Class<?> clss;
@@ -150,7 +214,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             v.setMinimumHeight(0);
             return v;
         }
-
     }
 
     private static void addTab(MFBMain activity, TabHost tabHost, TabHost.TabSpec tabSpec, TabInfo tabInfo) {
@@ -320,6 +383,46 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         }
 
         refreshAuth();
+
+        OpenRequestedTelemetry();
+    }
+
+    protected void OpenRequestedTelemetry() {
+        Intent i = getIntent();
+        if (i != null) {
+            Uri uri = i.getData();
+
+            if (uri != null) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ);
+                    return;
+                }
+
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(R.string.lblConfirm)
+                        .setMessage(R.string.telemetryImportPrompt)
+                        .setPositiveButton(R.string.lblOK, (dialog, which) -> {
+                            new ImportTelemetryTask().execute(uri);
+                        })
+                        .setNegativeButton(R.string.lblCancel, null)
+                        .show();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_READ:
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    OpenRequestedTelemetry();
+                }
+                return;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     protected void onPause() {
