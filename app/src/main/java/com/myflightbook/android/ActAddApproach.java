@@ -54,7 +54,7 @@ public class ActAddApproach extends Activity {
         setContentView(R.layout.addapproach);
 
         // Set up the approach type spinner...
-        Spinner s = (Spinner) findViewById(R.id.spnApproachType);
+        Spinner s = findViewById(R.id.spnApproachType);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ApproachDescription.ApproachNames);
         adapter.setDropDownViewResource(R.layout.samplequestion);
         s.setAdapter(adapter);
@@ -71,7 +71,7 @@ public class ActAddApproach extends Activity {
         });
 
         // Then the approach suffix spinner
-        s = (Spinner) findViewById(R.id.spnApproachSuffix);
+        s = findViewById(R.id.spnApproachSuffix);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ApproachDescription.ApproachSuffixes);
         adapter.setDropDownViewResource(R.layout.samplequestion);
         s.setAdapter(adapter);
@@ -88,7 +88,7 @@ public class ActAddApproach extends Activity {
         });
 
         // Runway spinner...
-        s = (Spinner) findViewById(R.id.spnApproachRunway);
+        s = findViewById(R.id.spnApproachRunway);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ApproachDescription.RunwayNames);
         adapter.setDropDownViewResource(R.layout.samplequestion);
         s.setAdapter(adapter);
@@ -105,7 +105,7 @@ public class ActAddApproach extends Activity {
         });
 
         // And Runway suffix spinner.
-        s = (Spinner) findViewById(R.id.spnApproachRunwaySuffix);
+        s = findViewById(R.id.spnApproachRunwaySuffix);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ApproachDescription.RunwayModifiers);
         adapter.setDropDownViewResource(R.layout.samplequestion);
         s.setAdapter(adapter);
@@ -125,7 +125,7 @@ public class ActAddApproach extends Activity {
         rgAirports = Airport.SplitCodes(szAirports);
 
         findViewById(R.id.spnAirport).setVisibility(rgAirports.length > 1 ? View.VISIBLE : View.GONE);
-        EditText et = (EditText) findViewById(R.id.txtAirport);
+        EditText et = findViewById(R.id.txtAirport);
         et.setVisibility(rgAirports.length > 1 ? View.GONE : View.VISIBLE);
         if (rgAirports.length == 1) {
             approachDescription.airportName = rgAirports[0];
@@ -133,7 +133,7 @@ public class ActAddApproach extends Activity {
         }
 
         if (rgAirports.length > 1) {
-            s = (Spinner) findViewById(R.id.spnAirport);
+            s = findViewById(R.id.spnAirport);
 
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rgAirports);
 
@@ -151,7 +151,7 @@ public class ActAddApproach extends Activity {
             });
         }
 
-        CheckBox ckAddToTotals = (CheckBox) findViewById(R.id.ckAddToApproachTotals);
+        CheckBox ckAddToTotals = findViewById(R.id.ckAddToApproachTotals);
         ckAddToTotals.setChecked(approachDescription.addToApproachCount);
         ckAddToTotals.setOnCheckedChangeListener((buttonView,  isChecked) -> approachDescription.addToApproachCount = isChecked);
     }

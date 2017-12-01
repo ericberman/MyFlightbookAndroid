@@ -21,7 +21,7 @@ import java.util.TimeZone;
 
 public class KML extends Telemetry {
 
-    public KML(Uri uri) {
+    KML(Uri uri) {
         super(uri);
     }
 

@@ -151,7 +151,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
                 if (t != null) {
                     try {
-                        return GPSSim.ImportTelemetry(MFBMain.this, t.Samples(), urls[0]);
+                        leResult = GPSSim.ImportTelemetry(MFBMain.this, t.Samples(), urls[0]);
                     } catch (IOException | XmlPullParserException e) {
                         e.printStackTrace();
                     }
@@ -332,7 +332,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         ceh.sendPendingReports();
 
         // Set up the tabs
-        mTabHost = (TabHost) findViewById(android.R.id.tabhost);
+        mTabHost = findViewById(android.R.id.tabhost);
         mTabHost.setup();
         mTabHost.getTabWidget().setDividerDrawable(null);
         TabInfo tabInfo;

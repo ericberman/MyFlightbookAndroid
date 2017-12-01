@@ -181,8 +181,8 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             @SuppressLint("InflateParams") View v = vi.inflate(R.layout.mapimageitem, null);
             dialog.setView(v);
 
-            ImageView i = (ImageView) v.findViewById(R.id.imgMFBIIImage);
-            TextView t = (TextView) v.findViewById(R.id.txtMFBIIComment);
+            ImageView i = v.findViewById(R.id.imgMFBIIImage);
+            TextView t = v.findViewById(R.id.txtMFBIIComment);
 
             final MFBImageInfo mfbii2 = mfbii;
 
@@ -230,7 +230,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     }
 
     private void updateMapElements(Boolean fNoResize) {
-        EditText t = (EditText) findViewById(R.id.txtMapRoute);
+        EditText t = findViewById(R.id.txtMapRoute);
         GoogleMap map = getMap();
         if (map == null)
             return;
@@ -418,15 +418,15 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
         setContentView(R.layout.flightmap);
         m_gMap = getMap();
-        EditText t = (EditText) findViewById(R.id.txtMapRoute);
+        EditText t = findViewById(R.id.txtMapRoute);
 
-        ImageButton b = (ImageButton) findViewById(R.id.btnUpdateMapRoute);
+        ImageButton b = findViewById(R.id.btnUpdateMapRoute);
         b.setOnClickListener(this);
 
-        ImageButton btnExport = (ImageButton) findViewById(R.id.btnExportGPX);
+        ImageButton btnExport = findViewById(R.id.btnExportGPX);
         btnExport.setOnClickListener(this);
 
-        ToggleButton tb = (ToggleButton) findViewById(R.id.ckShowAllAirports);
+        ToggleButton tb = findViewById(R.id.ckShowAllAirports);
         tb.setOnCheckedChangeListener(this);
         tb.setSelected(m_fShowAllAirports);
 
@@ -463,7 +463,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
     private void setShowAllAirports(Boolean f) {
         m_fShowAllAirports = f;
-        LinearLayout ll = (LinearLayout) findViewById(R.id.llMapToolbar);
+        LinearLayout ll = findViewById(R.id.llMapToolbar);
         ll.setVisibility(f ? View.INVISIBLE : View.VISIBLE);
         updateMapElements(true);
     }
@@ -557,7 +557,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     }
 
     public void onMapLongClick(LatLng point) {
-        EditText t = (EditText) findViewById(R.id.txtMapRoute);
+        EditText t = findViewById(R.id.txtMapRoute);
         String szAdHoc = new LatLong(point.latitude, point.longitude).toAdHocLocString();
         t.setText((t.getText() + " " + szAdHoc).trim());
     }
