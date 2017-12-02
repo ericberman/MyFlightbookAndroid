@@ -36,9 +36,13 @@ import Model.FlightProperty;
 
 public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTimeUpdate {
 
+    interface PropertyListener {
+        void updateProperty(int id, FlightProperty fp);
+    }
+
     private FlightProperty m_fp;
     private int m_id;
-    private DlgPropEdit.PropertyListener m_pl;
+    private PropertyListener m_pl;
     private DecimalEdit.CrossFillDelegate m_cfd;
 
     private DecimalEdit m_txtNumericField;
@@ -113,7 +117,7 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
         });
     }
 
-    public void InitForProperty(FlightProperty fp, int id, DlgPropEdit.PropertyListener pl, DecimalEdit.CrossFillDelegate cfd) {
+    public void InitForProperty(FlightProperty fp, int id, PropertyListener pl, DecimalEdit.CrossFillDelegate cfd) {
         m_fp = fp;
         m_id = id;
         m_pl = pl;

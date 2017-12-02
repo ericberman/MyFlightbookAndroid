@@ -49,7 +49,7 @@ import Model.FlightProperty;
 import Model.MFBConstants;
 import Model.MFBUtil;
 
-public class ActViewProperties extends FixedExpandableListActivity implements DlgPropEdit.PropertyListener, DecimalEdit.CrossFillDelegate {
+public class ActViewProperties extends FixedExpandableListActivity implements PropertyEdit.PropertyListener, DecimalEdit.CrossFillDelegate {
 
     private FlightProperty[] m_rgfpIn = new FlightProperty[0];
     private FlightProperty[] m_rgfpAll = null;
@@ -270,7 +270,8 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
     public void onPause() {
         super.onPause();
 
-        getCurrentFocus().clearFocus();   // force any in-progress edit to commit, particularly for properties.
+        if (getCurrentFocus() != null)
+            getCurrentFocus().clearFocus();   // force any in-progress edit to commit, particularly for properties.
 
         updateProps();
     }

@@ -97,7 +97,7 @@ import Model.PostingOptions;
 import Model.SunriseSunsetTimes;
 
 public class ActNewFlight extends ActMFBForm implements android.view.View.OnClickListener, MFBFlightListener.ListenerFragmentDelegate,
-        DlgDatePicker.DateTimeUpdate, DlgPropEdit.PropertyListener, ActMFBForm.GallerySource, CrossFillDelegate, MFBMain.Invalidatable {
+        DlgDatePicker.DateTimeUpdate, PropertyEdit.PropertyListener, ActMFBForm.GallerySource, CrossFillDelegate, MFBMain.Invalidatable {
 
     private Aircraft[] m_rgac = null;
     private LogbookEntry m_le = null;
