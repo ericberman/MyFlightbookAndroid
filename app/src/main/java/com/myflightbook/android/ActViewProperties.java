@@ -24,6 +24,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.myflightbook.android.WebServices.AuthToken;
@@ -241,6 +244,18 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.expandablelist);
+        ((TextView) findViewById(R.id.txtSearchProp)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                populateList();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) { }
+        });
     }
 
     public void onResume() {
@@ -294,8 +309,13 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         ArrayList<String> alKeys = new ArrayList<>();
         String szKeyLast = "";
 
+        String szRestrict = ((EditText) findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
+
         // slice and dice into headers/first names
         for (FlightProperty fp : m_rgfpAll) {
+
+            if (szRestrict != null && szRestrict.length() > 0 && !fp.labelString().toUpperCase(Locale.getDefault()).contains(szRestrict))
+                continue;;
 
             // get the section for this property
             String szKey = (fp.CustomPropertyType().IsFavorite) ? getString(R.string.lblPreviouslyUsed) : fp.labelString().substring(0, 1).toUpperCase(Locale.getDefault());

@@ -105,7 +105,7 @@
             android:name=".ActTimeCalc"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".ActSelectMake" />
-        <activity android:name=".ActViewProperties" />
+        <activity android:name=".ActViewProperties" android:windowSoftInputMode="stateHidden" />
         <activity android:name=".ActWebView" />
         <activity android:name=".ActLocalVideo" />
 
