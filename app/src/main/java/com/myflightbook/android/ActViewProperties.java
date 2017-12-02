@@ -22,7 +22,6 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,28 +31,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.TextView;
 
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
 import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 
 import Model.CustomPropertyType;
 import Model.DBCache;
+import Model.DecimalEdit;
 import Model.FlightProperty;
 import Model.MFBConstants;
 import Model.MFBUtil;
 
-public class ActViewProperties extends FixedExpandableListActivity implements DlgDatePicker.DateTimeUpdate, DlgPropEdit.PropertyListener {
+public class ActViewProperties extends FixedExpandableListActivity implements DlgPropEdit.PropertyListener, DecimalEdit.CrossFillDelegate {
 
-    private final String IS_PINNED_FLAG = "1";
     private FlightProperty[] m_rgfpIn = new FlightProperty[0];
     private FlightProperty[] m_rgfpAll = null;
     private CustomPropertyType[] m_rgcpt = null;
@@ -61,8 +58,6 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
     private long m_idFlight = -1;
     private int m_idExistingId = 0;
     private double m_xfillValue = 0.0;
-    private HashMap<String, String> mActiveProperty = null;
-    private MFBExpandableListAdapter mAdapter = null;
 
     @SuppressLint("StaticFieldLeak")
     private class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
@@ -131,14 +126,101 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         }
     }
 
-    private class MFBExpandableListAdapter extends
-            SimpleExpandableListAdapter {
-        MFBExpandableListAdapter(Context context,
-                                        ArrayList<HashMap<String, String>> headerList, int grouprow,
-                                        String[] strings, int[] is,
-                                        ArrayList<ArrayList<HashMap<String, String>>> childrenList,
-                                        int itemrow, String[] strings2, int[] is2) {
-            super(context, headerList, grouprow, strings, is, childrenList, itemrow, strings2, is2);
+    private class ExpandablePropertyListAdapter extends BaseExpandableListAdapter {
+
+        Context m_context;
+        ArrayList<String> m_groups;
+        ArrayList<ArrayList<FlightProperty>> m_children;
+
+        ExpandablePropertyListAdapter(Context context, ArrayList<String> groups, ArrayList<ArrayList<FlightProperty>> children) {
+            m_context = context;
+            m_groups = groups;
+            m_children = children;
+        }
+
+        @Override
+        public int getGroupCount() {
+            assert  m_groups != null;
+            return m_groups.size();
+        }
+
+        @Override
+        public int getChildrenCount(int groupPos) {
+            assert m_children != null;
+            return m_children.get(groupPos).size();
+        }
+
+        @Override
+        public Object getGroup(int i) {
+            assert m_groups != null;
+            return m_groups.get(i);
+        }
+
+        @Override
+        public Object getChild(int groupPos, int childPos) {
+            assert m_groups != null;
+            assert m_children != null;
+            return m_children.get(groupPos).get(childPos);
+        }
+
+        @Override
+        public long getGroupId(int groupPos) {
+            return groupPos;
+        }
+
+        @Override
+        public long getChildId(int groupPos, int childPos) {
+            assert m_groups != null;
+            assert m_children != null;
+//            return childPos;
+            return m_children.get(groupPos).get(childPos).idPropType;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
+        @Override
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+            assert m_groups != null;
+            if (convertView == null) {
+                assert m_context != null;
+                LayoutInflater infalInflater = (LayoutInflater) m_context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                assert infalInflater != null;
+                convertView = infalInflater.inflate(R.layout.grouprow, parent, false);
+            }
+
+            TextView tv = convertView.findViewById(R.id.propertyGroup);
+            tv.setText(m_groups.get(groupPosition));
+
+            return convertView;
+        }
+
+        @Override
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+                                 View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                assert m_context != null;
+                LayoutInflater infalInflater = (LayoutInflater) m_context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                assert infalInflater != null;
+                convertView = infalInflater.inflate(R.layout.cptitem, parent, false);
+            }
+
+            FlightProperty fp = (FlightProperty) getChild(groupPosition, childPosition);
+            PropertyEdit pe = convertView.findViewById(R.id.propEdit);
+
+            // only init if it's not already set up - this avoids focus back-and-forth with edittext
+            FlightProperty fpExisting = pe.getFlightProperty();
+            if (fpExisting == null || fpExisting.idPropType != fp.idPropType)
+                pe.InitForProperty(fp, fp.idPropType, ActViewProperties.this, ActViewProperties.this);
+
+            return convertView;
+        }
+
+        @Override
+        public boolean isChildSelectable(int i, int i1) {
+            return false;
         }
 
         @Override
@@ -154,23 +236,6 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
             if (m_rgExpandedGroups != null)
                 m_rgExpandedGroups[groupPosition] = false;
         }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            final View v = super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
-
-            //noinspection unchecked
-            v.findViewById(R.id.imgFavorite).setVisibility(((HashMap<String, String>) getChild(groupPosition, childPosition)).get("IsPinned").compareTo(IS_PINNED_FLAG) == 0 ? View.VISIBLE : View.INVISIBLE);
-
-            return v;
-        }
-
-        @Override
-        public View newChildView(boolean isLastChild, ViewGroup parent) {
-            LayoutInflater layoutInflater = (LayoutInflater) ActViewProperties.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            return layoutInflater == null ? null : layoutInflater.inflate(R.layout.cptitem, parent, false);
-        }
-
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -204,6 +269,9 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
 
     public void onPause() {
         super.onPause();
+
+        getCurrentFocus().clearFocus();   // force any in-progress edit to commit, particularly for properties.
+
         updateProps();
     }
 
@@ -217,21 +285,16 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         if (m_rgfpAll == null)
             m_rgfpAll = FlightProperty.CrossProduct(m_rgfpIn, m_rgcpt);
 
-        mActiveProperty = null;
-
         // This maps the headers to the individual sub-lists.
-        HashMap<String, HashMap<String, String>> headers = new HashMap<>();
-        HashMap<String, ArrayList<HashMap<String, String>>> childrenMaps = new HashMap<>();
+        HashMap<String, String> headers = new HashMap<>();
+        HashMap<String, ArrayList<FlightProperty>> childrenMaps = new HashMap<>();
 
         // Keep a list of the keys in order
         ArrayList<String> alKeys = new ArrayList<>();
         String szKeyLast = "";
 
-        HashSet<Integer> pinnedProperties = CustomPropertyType.getPinnedProperties(ActViewProperties.this.getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, MODE_PRIVATE));
-
         // slice and dice into headers/first names
-        for (int i = 0; i < m_rgfpAll.length; i++) {
-            FlightProperty fp = m_rgfpAll[i];
+        for (FlightProperty fp : m_rgfpAll) {
 
             // get the section for this property
             String szKey = (fp.CustomPropertyType().IsFavorite) ? getString(R.string.lblPreviouslyUsed) : fp.labelString().substring(0, 1).toUpperCase(Locale.getDefault());
@@ -240,28 +303,20 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
                 szKeyLast = szKey;
             }
 
-            HashMap<String, String> hmGroups = (headers.containsKey(szKey) ? headers.get(szKey) : new HashMap<>());
-            hmGroups.put("sectionName", szKey);
-            headers.put(szKey, hmGroups);
+            if (!headers.containsKey(szKey))
+                headers.put(szKey, szKey);
 
             // Get the array-list for that key, creating it if necessary
-            ArrayList<HashMap<String, String>> alProps;
+            ArrayList<FlightProperty> alProps;
             alProps = (childrenMaps.containsKey(szKey) ? childrenMaps.get(szKey) : new ArrayList<>());
-
-            HashMap<String, String> hmProperty = new HashMap<>();
-            hmProperty.put("Name", fp.labelString());
-            hmProperty.put("Value", fp.toString(DlgDatePicker.fUseLocalTime, this));
-            hmProperty.put("Description", fp.descriptionString());
-            hmProperty.put("Position", String.format(Locale.US, "%d", i));
-            hmProperty.put("IsPinned", CustomPropertyType.isPinnedProperty(pinnedProperties, fp.idPropType) ? IS_PINNED_FLAG : "");
-            alProps.add(hmProperty);
+            alProps.add(fp);
 
             childrenMaps.put(szKey, alProps);
         }
 
         // put the above into arrayLists, but in the order that the keys were encountered.  .values() is an undefined order.
-        ArrayList<HashMap<String, String>> headerList = new ArrayList<>();
-        ArrayList<ArrayList<HashMap<String, String>>> childrenList = new ArrayList<>();
+        ArrayList<String> headerList = new ArrayList<>();
+        ArrayList<ArrayList<FlightProperty>> childrenList = new ArrayList<>();
         for (String s : alKeys) {
             headerList.add(headers.get(s));
             childrenList.add(childrenMaps.get(s));
@@ -270,57 +325,8 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         if (m_rgExpandedGroups == null)
             m_rgExpandedGroups = new boolean[alKeys.size()];
 
-        mAdapter = new MFBExpandableListAdapter(
-                this,
-                headerList,
-                R.layout.grouprow,
-                new String[]{"sectionName"},
-                new int[]{R.id.propertyGroup},
-                childrenList,
-                R.layout.cptitem,
-                new String[]{"Name", "Value", "Description"},
-                new int[]{R.id.txtName, R.id.txtValue, R.id.txtCPTDescription}
-        );
+        ExpandablePropertyListAdapter mAdapter = new ExpandablePropertyListAdapter(this, headerList, childrenList);
         setListAdapter(mAdapter);
-
-        getExpandableListView().setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
-            //noinspection unchecked
-            ActViewProperties.this.mActiveProperty = (HashMap<String, String>) ActViewProperties.this.mAdapter.getChild(groupPosition, childPosition);
-                int position = Integer.parseInt(ActViewProperties.this.mActiveProperty.get("Position"));
-                ActViewProperties.this.onItemClick(v, position, id);
-                return false;
-            });
-
-        final ExpandableListView elv = getExpandableListView();
-        elv.setOnItemLongClickListener((parent, view, position, id) -> {
-
-            long packedPosition = elv.getExpandableListPosition(position);
-
-            int itemType = ExpandableListView.getPackedPositionType(packedPosition);
-            int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
-            int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
-
-            if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                //noinspection unchecked
-                HashMap<String, String> hm = (HashMap<String, String>) ActViewProperties.this.mAdapter.getChild(groupPosition, childPosition);
-                int pos = Integer.parseInt(hm.get("Position"));
-                FlightProperty fp = m_rgfpAll[pos];
-
-                SharedPreferences pref = ActViewProperties.this.getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, MODE_PRIVATE);
-                if (CustomPropertyType.isPinnedProperty(pref, fp.idPropType)) {
-                    CustomPropertyType.removePinnedProperty(pref, fp.idPropType);
-                    hm.put("IsPinned", "");
-                }
-                else {
-                    CustomPropertyType.setPinnedProperty(pref, fp.idPropType);
-                    hm.put("IsPinned", IS_PINNED_FLAG);
-                }
-
-                mAdapter.notifyDataSetChanged();
-            }
-
-            return true;
-        });
 
         for (int i = 0; i < m_rgExpandedGroups.length; i++)
             if (m_rgExpandedGroups[i])
@@ -329,26 +335,6 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
 
     public void setProperties(FlightProperty[] rgfp) {
         m_rgfpIn = rgfp;
-    }
-
-    @SuppressWarnings("unused")
-    private void onItemClick(View view, int position, long id) {
-        FlightProperty fp = m_rgfpAll[position];
-        switch (fp.getType()) {
-            case cfpDate:
-            case cfpDateTime:
-                DlgDatePicker ddp = new DlgDatePicker(this,
-                        fp.getType() == CustomPropertyType.CFPPropertyType.cfpDate ? DlgDatePicker.datePickMode.LOCALDATEONLY : DlgDatePicker.datePickMode.UTCDATETIME,
-                        fp.dateValue == null ? new Date() : fp.dateValue);
-                ddp.m_delegate = this;
-                ddp.m_id = position;
-                ddp.show();
-                break;
-            default:
-                DlgPropEdit dpe = new DlgPropEdit(this, position, this, fp, m_xfillValue);
-                dpe.show();
-                break;
-        }
     }
 
     @Override
@@ -377,15 +363,6 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
         }
     }
 
-    private void RefreshList(FlightProperty fp) {
-        if (mActiveProperty == null || fp == null)
-            populateList();
-        else {
-            mActiveProperty.put("Value", fp.toString(DlgDatePicker.fUseLocalTime, this));
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
     private void DeleteDefaultedProperty(FlightProperty fp) {
         for (FlightProperty f : m_rgfpIn)
             if (f.idPropType == fp.idPropType && f.idProp > 0) {
@@ -395,22 +372,15 @@ public class ActViewProperties extends FixedExpandableListActivity implements Dl
             }
     }
 
-
-    /*
-     * Delegates for updating properties
-     */
+    //region Property update delegates
     public void updateProperty(int id, FlightProperty fp) {
         if (m_idExistingId > 0 && fp.IsDefaultValue())
             DeleteDefaultedProperty(fp);
-
-        RefreshList(fp);
     }
 
-    public void updateDate(int id, Date dt) {
-        m_rgfpAll[id].dateValue = MFBUtil.removeSeconds(dt);
-        if (m_idExistingId > 0 && m_rgfpAll[id].IsDefaultValue())
-            DeleteDefaultedProperty(m_rgfpAll[id]);
-
-        RefreshList(m_rgfpAll[id]);
+    //region DecimalEdit cross-fill
+    public void CrossFillRequested(DecimalEdit sender) {
+        sender.setDoubleValue(m_xfillValue);
     }
+    //endregion
 }

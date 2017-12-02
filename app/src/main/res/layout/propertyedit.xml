@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutPropEdit"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/imgFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/strEmpty"
+        android:src="@drawable/ic_action_important"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:descendantFocusability="afterDescendants"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/txtStringVal"
+            android:text="" />
+
+        <AutoCompleteTextView
+            android:id="@id/txtStringVal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@id/txtDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:paddingBottom="4pt"
+            android:paddingTop="4pt"
+            android:text="@string/lblTouchForNow"
+            android:visibility="gone"
+            android:focusable="true" />
+
+        <Model.DecimalEdit
+            android:id="@+id/txtEditNumericProp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:visibility="gone" />
+
+        <CheckBox
+            android:id="@+id/ckBoolValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#000000"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgAboutProp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/strEmpty"
+        android:src="@drawable/ic_action_about" />
+
+</LinearLayout>

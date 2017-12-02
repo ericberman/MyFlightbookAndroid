@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -124,14 +125,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     public static long lastNewFlightID = LogbookEntry.ID_NEW_FLIGHT;
 
-    private int idLastClickedPropertyType;
-
     private TextView txtQuality, txtStatus, txtSpeed, txtAltitude, txtSunrise, txtSunset, txtLatitude, txtLongitude;
     private ImageView imgRecording;
 
     private Handler m_HandlerUpdateTimer = null;
     private Runnable m_UpdateElapsedTimeTask = null;
 
+    @SuppressLint("StaticFieldLeak")
     private class UpdateAndViewPropsTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         FlightProperty[] rgProps = null;
@@ -176,6 +176,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
@@ -226,6 +227,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class SubmitTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
@@ -302,6 +304,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class GetDigitizedSigTask extends AsyncTask<String, Void, Bitmap> {
         ImageView ivDigitizedSig;
 
@@ -994,8 +997,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 m_le.dtFlight = dt;
                 break;
             default:
-                // Must be a property being edited
-                setDateForProperty(dt, idLastClickedPropertyType);
                 break;
         }
         ToView();
@@ -1066,6 +1067,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private void SubmitFlight(Boolean fForcePending) {
         FromView();
+
+        Activity a = getActivity();
+        if (a != null && a.getCurrentFocus() != null)
+            a.getCurrentFocus().clearFocus();   // force any in-progress edit to commit, particularly for properties.
 
         Boolean fIsNew = m_le.IsNewFlight(); // hold onto this because we can change the status.
         if (fIsNew) {
@@ -1704,43 +1709,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             TableRow tr = (TableRow) l.inflate(R.layout.cpttableitem, tl, false);
             tr.setId(View.generateViewId());
 
+            PropertyEdit pe = tr.findViewById(R.id.propEdit);
+            pe.InitForProperty(fp, tr.getId(), this, this);
+
             tr.findViewById(R.id.imgFavorite).setVisibility(fIsPinned ? View.VISIBLE : View.INVISIBLE);
-            ((TextView) tr.findViewById(R.id.txtName)).setText(fp.labelString());
-            // ((TextView) tr.findViewById(R.id.txtCPTDescription)).setText(fp.descriptionString());
-            ((TextView) tr.findViewById(R.id.txtValue)).setText(fp.toString(DlgDatePicker.fUseLocalTime, getContext()));
-            ((TextView) tr.findViewById(R.id.txtHdnPropTypeID)).setText(String.format(Locale.US, "%d", fp.idPropType));
-
-            tr.setOnLongClickListener(v -> {
-                int idPropType = Integer.parseInt(((TextView) v.findViewById(R.id.txtHdnPropTypeID)).getText().toString());
-                SharedPreferences pref = getActivity().getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, Activity.MODE_PRIVATE);
-                Boolean isPinned = CustomPropertyType.isPinnedProperty(pref, idPropType);
-                if (isPinned)
-                    CustomPropertyType.removePinnedProperty(pref, idPropType);
-                else
-                    CustomPropertyType.setPinnedProperty(pref, idPropType);
-
-                v.findViewById(R.id.imgFavorite).setVisibility(isPinned ? View.INVISIBLE : View.VISIBLE);
-                return true;
-            });
-
-            tr.setOnClickListener(v -> {
-                idLastClickedPropertyType = fp.idPropType;
-                switch (fp.getType()) {
-                    case cfpDate:
-                    case cfpDateTime:
-                        DlgDatePicker ddp = new DlgDatePicker(this,
-                                fp.getType() == CustomPropertyType.CFPPropertyType.cfpDate ? DlgDatePicker.datePickMode.LOCALDATEONLY : DlgDatePicker.datePickMode.UTCDATETIME,
-                                fp.dateValue == null ? new Date() : fp.dateValue);
-                        ddp.m_delegate = this;
-                        ddp.m_id = tr.getId();
-                        ddp.show();
-                        break;
-                    default:
-                        DlgPropEdit dpe = new DlgPropEdit(getContext(), tr.getId(), this, fp, m_le.decTotal);
-                        dpe.show();
-                        break;
-                }
-            });
 
             tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
@@ -1748,6 +1720,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     //region in-line property editing
+    @SuppressLint("StaticFieldLeak")
     private class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         FlightProperty fp;
@@ -1774,7 +1747,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-    private void deletDefaultedProperty(FlightProperty fp) {
+    private void deleteDefaultedProperty(FlightProperty fp) {
         if (fp.idFlight > 0 && fp.IsDefaultValue()) {
             DeletePropertyTask dpt = new DeletePropertyTask();
             dpt.fp = fp;
@@ -1791,28 +1764,16 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     @Override
     public void updateProperty(int id, FlightProperty fp) {
+        if (fp == null || m_le == null) // this can get called by PropertyEdit as it loses focus.
+            return;
+
         FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, CustomPropertyTypesSvc.getCachedPropertyTypes());
         for (int i = 0; i < rgProps.length; i++) {
             if (rgProps[i].idPropType == fp.idPropType) {
                 rgProps[i] = fp;
-                deletDefaultedProperty(fp);
+                deleteDefaultedProperty(fp);
                 FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, FlightProperty.DistillList(rgProps));
                 m_le.SyncProperties();
-                setUpPropertiesForFlight();
-                break;
-            }
-        }
-    }
-
-    private void setDateForProperty(Date dt, int idPropType) {
-        FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, CustomPropertyTypesSvc.getCachedPropertyTypes());
-        for (FlightProperty fp : rgProps) {
-            if (fp.idPropType == idPropType) {
-                fp.dateValue = dt;
-                deletDefaultedProperty(fp);
-                FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, FlightProperty.DistillList(rgProps));
-                m_le.SyncProperties();
-                setUpPropertiesForFlight();
                 break;
             }
         }
