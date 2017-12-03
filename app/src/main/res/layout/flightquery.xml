@@ -12,6 +12,7 @@
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:stretchColumns="1"
             android:padding="5dp">
 
             <TableRow
@@ -79,7 +80,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqFlightDate" />
+            android:text="@string/fqFlightDate"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectFQDates"
@@ -201,7 +203,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqAircraftFeatures" />
+            android:text="@string/fqAircraftFeatures"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectFQAircraftFeatures"
@@ -376,7 +379,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqFlightFeatures" />
+            android:text="@string/fqFlightFeatures"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectFQFlightFeatures"

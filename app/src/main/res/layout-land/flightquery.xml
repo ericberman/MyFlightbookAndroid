@@ -12,6 +12,7 @@
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:stretchColumns="1"
             android:padding="5dp">
 
             <TableRow
@@ -79,7 +80,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqFlightDate" />
+            android:text="@string/fqFlightDate"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectFQDates"
@@ -203,7 +205,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqAircraftFeatures" />
+            android:text="@string/fqAircraftFeatures"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectFQAircraftFeatures"
@@ -276,74 +279,74 @@
                     android:layout_height="wrap_content"
                     android:text="@string/afMultiEngineHeli" />
             </LinearLayout>
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbAllEngines"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afEngineAny" />
+
+                <RadioButton
+                    android:id="@+id/rbEnginePiston"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afEnginePiston" />
+
+                <RadioButton
+                    android:id="@+id/rbEngineTurboprop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afEngineTurboProp" />
+
+                <RadioButton
+                    android:id="@+id/rbEngineJet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afEngineJet" />
+
+                <RadioButton
+                    android:id="@+id/rbEngineTurbine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afEngineTurbineAny" />
+
+                <RadioButton
+                    android:id="@+id/rbEngineElectric"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afEngineElectric" />
+
+            </RadioGroup>
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbInstanceAny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afInstanceAny" />
+
+                <RadioButton
+                    android:id="@+id/rbInstanceReal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afInstanceReal" />
+
+                <RadioButton
+                    android:id="@+id/rbInstanceTraining"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afInstanceTraining" />
+            </RadioGroup>
         </LinearLayout>
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/rbAllEngines"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afEngineAny" />
-
-            <RadioButton
-                android:id="@+id/rbEnginePiston"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afEnginePiston" />
-
-            <RadioButton
-                android:id="@+id/rbEngineTurboprop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afEngineTurboProp" />
-
-            <RadioButton
-                android:id="@+id/rbEngineJet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afEngineJet" />
-
-            <RadioButton
-                android:id="@+id/rbEngineTurbine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afEngineTurbineAny" />
-
-            <RadioButton
-                android:id="@+id/rbEngineElectric"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afEngineElectric" />
-
-        </RadioGroup>
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/rbInstanceAny"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afInstanceAny" />
-
-            <RadioButton
-                android:id="@+id/rbInstanceReal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afInstanceReal" />
-
-            <RadioButton
-                android:id="@+id/rbInstanceTraining"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/afInstanceTraining" />
-        </RadioGroup>
 
         <TextView
             style="@style/DividerBar"
@@ -390,7 +393,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqFlightFeatures" />
+            android:text="@string/fqFlightFeatures"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectFQFlightFeatures"
