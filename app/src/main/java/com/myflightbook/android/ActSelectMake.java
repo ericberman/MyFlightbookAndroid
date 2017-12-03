@@ -21,7 +21,11 @@ package com.myflightbook.android;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +40,19 @@ public class ActSelectMake extends FixedExpandableListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.expandablelist);
+
+        ((TextView) findViewById(R.id.txtSearchProp)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                populateList();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) { }
+        });
     }
 
     public void onResume() {
@@ -56,11 +73,16 @@ public class ActSelectMake extends FixedExpandableListActivity {
         String szKeyLast = "";
         int expandedGroupIndex = -1;
 
+        String szRestrict = ((EditText) findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
+
         // slice and dice into headers/first names
         if (ActNewAircraft.AvailableMakesAndModels != null) // should never be non-null, but seems to happen occasionally
         {
             for (int i = 0; i < ActNewAircraft.AvailableMakesAndModels.length; i++) {
                 MakesandModels mm = ActNewAircraft.AvailableMakesAndModels[i];
+
+                if (szRestrict.length() > 0 && !mm.Description.toUpperCase(Locale.getDefault()).contains(szRestrict))
+                    continue;
 
                 // get the manufacturer for this property as the grouping key
                 String szKey = mm.getManufacturer();
