@@ -314,8 +314,8 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         // slice and dice into headers/first names
         for (FlightProperty fp : m_rgfpAll) {
 
-            if (szRestrict != null && szRestrict.length() > 0 && !fp.labelString().toUpperCase(Locale.getDefault()).contains(szRestrict))
-                continue;;
+            if (szRestrict.length() > 0 && !fp.labelString().toUpperCase(Locale.getDefault()).contains(szRestrict))
+                continue;
 
             // get the section for this property
             String szKey = (fp.CustomPropertyType().IsFavorite) ? getString(R.string.lblPreviouslyUsed) : fp.labelString().substring(0, 1).toUpperCase(Locale.getDefault());

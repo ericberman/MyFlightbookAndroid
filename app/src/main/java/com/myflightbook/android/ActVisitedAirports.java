@@ -18,18 +18,23 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
@@ -48,6 +53,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
 
     private static VisitedAirport[] visitedAirports = null;
 
+    @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;
@@ -97,6 +103,20 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         super.onActivityCreated(savedInstanceState);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
+
+        ((TextView) this.getActivity().findViewById(R.id.txtSearchProp)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                populateList();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) { }
+        });
+
     }
 
     public void onResume() {
@@ -156,9 +176,14 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         alAllAirports.add(hmAllAirports);
         childrenMaps.put(szKeyLast, alAllAirports);
 
+        String szRestrict = ((EditText) getActivity().findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
+
         // slice and dice into headers/first names
         for (int i = 0; i < visitedAirports.length; i++) {
             VisitedAirport va = visitedAirports[i];
+
+            if (szRestrict.length() > 0 && !va.airport.FacilityName.toUpperCase(Locale.getDefault()).contains(szRestrict) && !va.airport.AirportID.toUpperCase(Locale.getDefault()).contains(szRestrict))
+                continue;
 
             // get the first letter for this property as the grouping key
             String szKey = va.airport.FacilityName.substring(0, 1).toUpperCase(Locale.getDefault());
