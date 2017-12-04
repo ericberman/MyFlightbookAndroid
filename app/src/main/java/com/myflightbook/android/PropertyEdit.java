@@ -186,8 +186,8 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
             }
         });
 
-        m_ck.setOnClickListener(view -> {
-            m_fp.boolValue = m_ck.isChecked();
+        m_ck.setOnCheckedChangeListener((ck, fChecked) -> {
+            m_fp.boolValue = fChecked;
             UpdateForProperty();
             NotifyDelegate();
         });
