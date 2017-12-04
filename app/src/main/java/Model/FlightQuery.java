@@ -316,6 +316,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	public void FromProperties(SoapObject so) {
 		// Dates:
 		this.DateRange = Enum.valueOf(FlightQuery.DateRanges.class, so.getPropertyAsString("DateRange"));
+
 		this.DateMin = IsoDate.stringToDate(so.getPropertyAsString("DateMin"), IsoDate.DATE);
 		this.DateMax = IsoDate.stringToDate(so.getPropertyAsString("DateMax"), IsoDate.DATE);
 
@@ -323,28 +324,28 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		GeneralText = ReadNullableString(so, "GeneralText");
 		
 		// Flight Characteristics:
-		this.HasFullStopLandings = Boolean.parseBoolean(so.getPropertyAsString("HasFullStopLandings"));
-		this.HasNightLandings = Boolean.parseBoolean(so.getPropertyAsString("HasNightLandings"));
-		this.HasLandings = Boolean.parseBoolean(so.getPropertyAsString("HasLandings"));
-		this.HasApproaches = Boolean.parseBoolean(so.getPropertyAsString("HasApproaches"));
-		this.HasHolds = Boolean.parseBoolean(so.getPropertyAsString("HasHolds"));
-		this.HasTelemetry = Boolean.parseBoolean(so.getPropertyAsString("HasTelemetry"));
-		this.HasImages = Boolean.parseBoolean(so.getPropertyAsString("HasImages"));
+		this.HasFullStopLandings = Boolean.parseBoolean(so.getPropertySafelyAsString("HasFullStopLandings"));
+		this.HasNightLandings = Boolean.parseBoolean(so.getPropertySafelyAsString("HasNightLandings"));
+		this.HasLandings = Boolean.parseBoolean(so.getPropertySafelyAsString("HasLandings"));
+		this.HasApproaches = Boolean.parseBoolean(so.getPropertySafelyAsString("HasApproaches"));
+		this.HasHolds = Boolean.parseBoolean(so.getPropertySafelyAsString("HasHolds"));
+		this.HasTelemetry = Boolean.parseBoolean(so.getPropertySafelyAsString("HasTelemetry"));
+		this.HasImages = Boolean.parseBoolean(so.getPropertySafelyAsString("HasImages"));
 		
-		this.HasXC = Boolean.parseBoolean(so.getPropertyAsString("HasXC"));
-		this.HasSimIMCTime = Boolean.parseBoolean(so.getPropertyAsString("HasSimIMCTime"));
-		this.HasIMC = Boolean.parseBoolean(so.getPropertyAsString("HasIMC"));
-		this.HasAnyInstrument = Boolean.parseBoolean(so.getPropertyAsString("HasAnyInstrument"));
-		this.HasNight = Boolean.parseBoolean(so.getPropertyAsString("HasNight"));
-		this.IsPublic = Boolean.parseBoolean(so.getPropertyAsString("IsPublic"));
+		this.HasXC = Boolean.parseBoolean(so.getPropertySafelyAsString("HasXC"));
+		this.HasSimIMCTime = Boolean.parseBoolean(so.getPropertySafelyAsString("HasSimIMCTime"));
+		this.HasIMC = Boolean.parseBoolean(so.getPropertySafelyAsString("HasIMC"));
+		this.HasAnyInstrument = Boolean.parseBoolean(so.getPropertySafelyAsString("HasAnyInstrument"));
+		this.HasNight = Boolean.parseBoolean(so.getPropertySafelyAsString("HasNight"));
+		this.IsPublic = Boolean.parseBoolean(so.getPropertySafelyAsString("IsPublic"));
 		
-		this.HasGroundSim = Boolean.parseBoolean(so.getPropertyAsString("HasGroundSim"));
-		this.HasDual = Boolean.parseBoolean(so.getPropertyAsString("HasDual"));
-		this.HasCFI = Boolean.parseBoolean(so.getPropertyAsString("HasCFI"));
-		this.HasSIC = Boolean.parseBoolean(so.getPropertyAsString("HasSIC"));
-		this.HasPIC = Boolean.parseBoolean(so.getPropertyAsString("HasPIC"));
-		this.HasTotalTime = Boolean.parseBoolean(so.getPropertyAsString("HasTotalTime"));
-		this.IsSigned = Boolean.parseBoolean(so.getPropertyAsString("IsSigned"));
+		this.HasGroundSim = Boolean.parseBoolean(so.getPropertySafelyAsString("HasGroundSim"));
+		this.HasDual = Boolean.parseBoolean(so.getPropertySafelyAsString("HasDual"));
+		this.HasCFI = Boolean.parseBoolean(so.getPropertySafelyAsString("HasCFI"));
+		this.HasSIC = Boolean.parseBoolean(so.getPropertySafelyAsString("HasSIC"));
+		this.HasPIC = Boolean.parseBoolean(so.getPropertySafelyAsString("HasPIC"));
+		this.HasTotalTime = Boolean.parseBoolean(so.getPropertySafelyAsString("HasTotalTime"));
+		this.IsSigned = Boolean.parseBoolean(so.getPropertySafelyAsString("IsSigned"));
 
 		// Airports
 		SoapObject airports = (SoapObject) so.getProperty("AirportList");
@@ -403,15 +404,15 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		// Aircraft attributes
 		EngineType = Enum.valueOf(FlightQuery.EngineTypeRestriction.class, so.getPropertyAsString("EngineType"));
 		AircraftInstanceTypes = Enum.valueOf(FlightQuery.AircraftInstanceRestriction.class, so.getPropertyAsString("AircraftInstanceTypes"));
-	   	IsComplex = Boolean.parseBoolean(so.getPropertyAsString("IsComplex"));
-    	HasFlaps = Boolean.parseBoolean(so.getPropertyAsString("HasFlaps"));
-    	IsHighPerformance = Boolean.parseBoolean(so.getPropertyAsString("IsHighPerformance"));
-    	IsConstantSpeedProp = Boolean.parseBoolean(so.getPropertyAsString("IsConstantSpeedProp"));
-    	IsRetract = Boolean.parseBoolean(so.getPropertyAsString("IsRetract"));
-    	IsGlass = Boolean.parseBoolean(so.getPropertyAsString("IsGlass"));
-    	IsTailwheel = Boolean.parseBoolean(so.getPropertyAsString("IsTailwheel"));
-    	IsMotorglider = Boolean.parseBoolean(so.getPropertyAsString("IsMotorglider"));
-    	IsMultiEngineHeli = Boolean.parseBoolean(so.getPropertyAsString("IsMultiEngineHeli"));
+	   	IsComplex = Boolean.parseBoolean(so.getPropertySafelyAsString("IsComplex"));
+    	HasFlaps = Boolean.parseBoolean(so.getPropertySafelyAsString("HasFlaps"));
+    	IsHighPerformance = Boolean.parseBoolean(so.getPropertySafelyAsString("IsHighPerformance"));
+    	IsConstantSpeedProp = Boolean.parseBoolean(so.getPropertySafelyAsString("IsConstantSpeedProp"));
+    	IsRetract = Boolean.parseBoolean(so.getPropertySafelyAsString("IsRetract"));
+    	IsGlass = Boolean.parseBoolean(so.getPropertySafelyAsString("IsGlass"));
+    	IsTailwheel = Boolean.parseBoolean(so.getPropertySafelyAsString("IsTailwheel"));
+    	IsMotorglider = Boolean.parseBoolean(so.getPropertySafelyAsString("IsMotorglider"));
+    	IsMultiEngineHeli = Boolean.parseBoolean(so.getPropertySafelyAsString("IsMultiEngineHeli"));
 		
 		// properties list
 		SoapObject properties = (SoapObject) so.getProperty("PropertyTypes");
