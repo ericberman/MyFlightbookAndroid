@@ -46,7 +46,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -228,7 +227,7 @@ public class ActMFBForm extends Fragment {
     }
 
     void SetUTCDateForField(int id, Date d) {
-        Button b = (Button) findViewById(id);
+        TextView b = (TextView) findViewById(id);
         if (d == null || UTCDate.IsNullDate(d))
             b.setText(getString(R.string.lblTouchForNow));
         else
@@ -236,7 +235,7 @@ public class ActMFBForm extends Fragment {
     }
 
     void SetLocalDateForField(int id, Date d) {
-        Button b = (Button) findViewById(id);
+        TextView b = (TextView) findViewById(id);
         if (UTCDate.IsNullDate(d))
             b.setText(getString(R.string.lblTouchForToday));
         else

@@ -27,10 +27,12 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <Button
+                <TextView
+                    style="@style/DateButton"
                     android:id="@+id/btnFlightSet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:nextFocusDown="@+id/spnAircraft" />
@@ -242,7 +244,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/lblCatCockpit" />
+            android:text="@string/lblCatCockpit"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectInTheCockpit"
@@ -469,10 +472,13 @@
                         android:width="100dip"
                         android:text="@string/lblEngineStart" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnEngineStartSet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:text="@string/lblTouchForNow" />
                 </TableRow>
 
@@ -487,10 +493,13 @@
                         android:width="100dip"
                         android:text="@string/lblFlightStart" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnFlightStartSet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:text="@string/lblTouchForNow" />
                 </TableRow>
 
@@ -505,10 +514,13 @@
                         android:width="100dip"
                         android:text="@string/lblFlightEnd" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnFlightEndSet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:text="@string/lblTouchForNow" />
                 </TableRow>
 
@@ -523,10 +535,13 @@
                         android:width="100dip"
                         android:text="@string/lblEngineEnd" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnEngineEndSet"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:text="@string/lblTouchForNow" />
                 </TableRow>
 
@@ -818,7 +833,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/lblCatProperties" />
+            android:text="@string/lblCatProperties"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/sectPinnedProperties"
@@ -848,7 +864,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/cdImagesForFlight" />
+            android:text="@string/cdImagesForFlight"
+            android:focusable="true" />
 
         <TableLayout
             android:id="@+id/tblImageTable"
@@ -864,7 +881,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/lblSignature" />
+            android:text="@string/lblSignature"
+            android:focusable="true" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -932,7 +950,8 @@
                 android:clickable="true"
                 android:padding="5dip"
                 android:text="@string/lblSetUpFacebook"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:focusable="true" />
 
             <CheckBox
                 android:id="@+id/ckFacebook"

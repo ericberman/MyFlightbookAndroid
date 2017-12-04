@@ -41,6 +41,7 @@
 
         <TextView
             android:id="@id/txtDate"
+            style="@style/DateButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
@@ -75,5 +76,4 @@
         android:focusable="true"
         android:contentDescription="@string/strEmpty"
         android:src="@drawable/ic_action_about" />
-
 </LinearLayout>

@@ -206,6 +206,7 @@
                 android:id="@+id/sectACMaintenance"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:stretchColumns="1"
                 android:padding="5dp">
 
                 <TableRow
@@ -219,7 +220,8 @@
                         android:width="100dip"
                         android:text="@string/lblVORCheck" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnVORCheck"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -237,7 +239,8 @@
                         android:width="100dip"
                         android:text="@string/lblTransponder" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnTransponder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -255,7 +258,8 @@
                         android:width="100dip"
                         android:text="@string/lblPitotStatic" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnPitotStatic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -273,7 +277,8 @@
                         android:width="100dip"
                         android:text="@string/lblAltimeter" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnAltimeter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -291,7 +296,8 @@
                         android:width="100dip"
                         android:text="@string/lblELT" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnELT"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -309,7 +315,8 @@
                         android:width="100dip"
                         android:text="@string/lblAnnual" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnAnnual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -381,7 +388,8 @@
                         android:width="100dip"
                         android:text="@string/lblRegistration" />
 
-                    <Button
+                    <TextView
+                        style="@style/DateButton"
                         android:id="@+id/btnRegistration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

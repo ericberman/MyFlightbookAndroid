@@ -93,14 +93,17 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dip"
+                android:layout_gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/fqDateStartDate" />
 
-                <Button
+                <TextView
+                    style="@style/DateButton"
                     android:id="@+id/btnfqDateStart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -109,9 +112,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/fqDateEndDate" />
 
-                <Button
+                <TextView
+                    style="@style/DateButton"
                     android:id="@+id/btnfqDateEnd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

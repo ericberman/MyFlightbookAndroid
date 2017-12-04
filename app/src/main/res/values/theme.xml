@@ -44,6 +44,17 @@
         <item name="android:padding">5dip</item>
     </style>
 
+    <style name="DateButton">
+        <item name="android:padding">6dip</item>
+        <item name="android:textSize">8pt</item>
+        <item name="android:layout_margin">6dip</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:background">@drawable/roundedborder</item>
+    </style>
+
     <style name="Widget.Button.Toggle" parent="android:Widget">
         <item name="android:background">@drawable/ic_toggle_airport_bg</item>
         <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
