@@ -49,9 +49,10 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
         pidBoolValue, pidDecValue, pidDateValue, pidStringValue
     }
 
+    static final int ID_PROP_NEW = -1;
     private int _id = -1;
-    public int idProp = -1;
-    public int idFlight = -1;
+    public int idProp = ID_PROP_NEW;
+    public int idFlight = LogbookEntry.ID_NEW_FLIGHT;
     public int idPropType = -1;
     public int intValue = 0;
     public Boolean boolValue = false;
@@ -179,6 +180,20 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
     public FlightProperty(SoapObject so) {
         super();
         FromProperties(so);
+    }
+
+    FlightProperty(FlightProperty fp) {
+        super();
+        this.idProp = fp.idProp;
+        this.idPropType = fp.idPropType;
+        this.idFlight = fp.idFlight;
+        this.decValue = fp.decValue;
+        this.intValue = fp.intValue;
+        this.dateValue = fp.dateValue;
+        this.boolValue = fp.boolValue;
+        this.stringValue = fp.stringValue;
+        this.m_cpt = fp.m_cpt;
+
     }
 
     private FlightProperty(CustomPropertyType cpt) {

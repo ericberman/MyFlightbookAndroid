@@ -6,6 +6,10 @@
         android:showAsAction="ifRoom"
         android:title="@string/menuDeleteFlight" />
     <item
+        android:id="@+id/menuSignFlight"
+        android:showAsAction="always"
+        android:title="@string/menuSignFlight" />
+    <item
         android:id="@+id/btnUpdateFlight"
         android:showAsAction="ifRoom"
         android:title="@string/menuUpdateFlight" />
@@ -28,7 +32,11 @@
         android:title="@string/menuChoosePicture"
         android:titleCondensed="@string/menuChoosePictureShort" />
     <item
-        android:id="@+id/menuSignFlight"
-        android:showAsAction="always"
-        android:title="@string/menuSignFlight" />
+        android:id="@+id/menuRepeatFlight"
+        android:title="@string/menuRepeatFlight"
+        android:titleCondensed="@string/menuRepeatShort" />
+    <item
+        android:id="@+id/menuReverseFlight"
+        android:title="@string/menuRepeatReverseFlight"
+        android:titleCondensed="@string/menuReverseShort" />
 </menu>

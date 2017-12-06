@@ -49,6 +49,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
 
     public static final int ID_NEW_FLIGHT = -1;
     public static final int ID_PENDING_FLIGHT = -2;
+    public static final int ID_QUEUED_FLIGHT_UNSUBMITTED = -3;
 
     private enum FlightProp {
         pidFlightId, pidUser, pidFlightDate, pidCatClassOverride,
@@ -115,7 +116,6 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
     public String signatureCFICert = "";
     public Date signatureCFIExpiration = null;
     public String signatureCFIName = "";
-    public String signatureB64DigitizedSig = "";
     public Boolean signatureHasDigitizedSig = false;
 
     private void Init() {
@@ -137,9 +137,10 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         this.rgFlightImages = null;
     }
 
+    // region constructors/initialization
     // Initialize a flight from the specified ID,
     // else save a copy in the database and return that id
-    private long InitFromId(long id) {
+    private void InitFromId(long id) {
         Init();
         if (id < 0)
             ToDB();
@@ -150,7 +151,6 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
             if (this.idLocalDB < 0)
                 ToDB();
         }
-        return this.idLocalDB;
     }
 
     public LogbookEntry() {
@@ -174,6 +174,54 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         super();
         Init();
         FromProperties(so);
+    }
+    // endregion
+
+    public LogbookEntry Clone() {
+        if (this.idFlight < 0)
+            return null;
+
+        LogbookEntry leNew = new LogbookEntry(this.idLocalDB);
+
+        leNew.idFlight = ID_NEW_FLIGHT;
+        leNew.rgCustomProperties = new FlightProperty[this.rgCustomProperties == null ? 0 : this.rgCustomProperties.length];
+        if (this.rgCustomProperties != null) {
+            for (int i = 0; i < this.rgCustomProperties.length; i++) {
+                FlightProperty fp = new FlightProperty(this.rgCustomProperties[i]);
+                fp.idFlight = ID_NEW_FLIGHT;
+                fp.idProp = FlightProperty.ID_PROP_NEW;
+                leNew.rgCustomProperties[i] = fp;
+            }
+        }
+        leNew.rgFlightImages = new MFBImageInfo[0];
+
+        leNew.dtFlight = new Date();
+        leNew.dtEngineStart = UTCDate.NullDate();
+        leNew.dtEngineEnd = UTCDate.NullDate();
+        leNew.dtFlightStart = UTCDate.NullDate();
+        leNew.dtFlightEnd = UTCDate.NullDate();
+        leNew.hobbsEnd = leNew.hobbsStart = 0.0;
+        leNew.szFlightData = "";
+        leNew.rgFlightImages = new MFBImageInfo[0];
+
+        for (FlightProperty fp : leNew.rgCustomProperties) {
+            fp.idFlight = ID_NEW_FLIGHT;
+            fp.idProp = FlightProperty.ID_PROP_NEW;
+        }
+        return leNew;
+    }
+
+    public LogbookEntry CloneAndReverse() {
+        LogbookEntry leNew = Clone();
+        if (leNew.szRoute != null) {
+            String[] airports = Airport.SplitCodes(leNew.szRoute);
+            StringBuilder sb = new StringBuilder();
+            for (int i = airports.length - 1; i >= 0; i--) {
+                sb.append(airports[i]).append(" ");
+            }
+            leNew.szRoute = sb.toString();
+        }
+        return leNew;
     }
 
     public void AddImageForflight(MFBImageInfo mfbii) {
@@ -220,6 +268,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
     public Boolean IsPendingFlight() {
         return this.idFlight <= LogbookEntry.ID_PENDING_FLIGHT;
     }
+
+    public Boolean IsQueuedFlight() { return this.idFlight == ID_QUEUED_FLIGHT_UNSUBMITTED; }
 
     public Boolean IsExistingFlight() {
         return this.idFlight > 0;
@@ -757,10 +807,10 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
                 .toString());
         cLandings = Integer.parseInt(so.getProperty("Landings").toString());
         cApproaches = Integer.parseInt(so.getProperty("Approaches").toString());
-        cApproachPrecision = Integer.parseInt(so.getProperty(
-                "PrecisionApproaches").toString());
-        cApproachNonPrecision = Integer.parseInt(so.getProperty(
-                "NonPrecisionApproaches").toString());
+        String szPrecApproaches = so.getPropertySafelyAsString("PrecisionApproaches");
+        String szNonPrecApproaches = so.getPropertySafelyAsString("PrecisionApproaches");
+        cApproachPrecision = szPrecApproaches.length() > 0 ? Integer.parseInt(szPrecApproaches) : 0;
+        cApproachNonPrecision = szNonPrecApproaches.length() > 0 ? Integer.parseInt(szNonPrecApproaches) : 0;
         decXC = Double.parseDouble(so.getProperty("CrossCountry").toString());
         decNight = Double.parseDouble(so.getProperty("Nighttime").toString());
         decIMC = Double.parseDouble(so.getProperty("IMC").toString());
@@ -798,7 +848,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         } catch (Exception ignored) {
         }
 
-        signatureStatus = SigStatus.valueOf(so.getProperty("CFISignatureState").toString());
+        String szSigState = so.getPropertySafelyAsString("CFISignatureState");
+        signatureStatus = szSigState.length() > 0 ? SigStatus.valueOf(szSigState) : SigStatus.None;
         // Remaining fields not always present.
         try {
             signatureComments = so.getPropertySafelyAsString("CFIComments");
@@ -810,7 +861,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         } catch (Exception ignored) {
         }
 
-        SoapObject props = (SoapObject) so.getProperty("CustomProperties");
+        SoapObject props = (SoapObject) so.getPropertySafely("CustomProperties");
         int cProps = props.getPropertyCount();
         rgCustomProperties = new FlightProperty[cProps];
         for (int i = 0; i < cProps; i++) {
@@ -819,7 +870,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
             rgCustomProperties[i] = fp;
         }
 
-        SoapObject images = (SoapObject) so.getProperty("FlightImages");
+        SoapObject images = (SoapObject) so.getPropertySafely("FlightImages");
         if (images != null) {
             int cImages = images.getPropertyCount();
             rgFlightImages = new MFBImageInfo[cImages];
@@ -1002,14 +1053,21 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         return rglePending;
     }
 
-    public static LogbookEntry[] getPendingFlights() {
+    private static LogbookEntry[] getPendingFlights() {
         return getFlightsWithIdFlight(LogbookEntry.ID_PENDING_FLIGHT);
+    }
+
+    private static LogbookEntry[] getQueuedFlights() {
+        return getFlightsWithIdFlight(LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED);
+    }
+
+    public static LogbookEntry[] getQueuedAndPendingFlights() {
+        return mergeFlightLists(getPendingFlights(), getQueuedFlights());
     }
 
     public static LogbookEntry[] getNewFlights() {
         return getFlightsWithIdFlight(LogbookEntry.ID_NEW_FLIGHT);
     }
-
 
     public static LogbookEntry[] mergeFlightLists(LogbookEntry[] rgle1, LogbookEntry[] rgle2) {
         if (rgle1 == null && rgle2 == null)

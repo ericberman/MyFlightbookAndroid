@@ -645,6 +645,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 idMenu = R.menu.mfbexistingflightmenu;
             else if (m_le.IsNewFlight())
                 idMenu = R.menu.mfbnewflightmenu;
+            else if (m_le.IsQueuedFlight())
+                idMenu = R.menu.mfbpendingflightmenu;
             else
                 idMenu = R.menu.mfbpendingflightmenu;
             inflater.inflate(idMenu, menu);
@@ -666,7 +668,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             return false;
 
         // Handle item selection
-        switch (item.getItemId()) {
+        int menuId = item.getItemId();
+        switch (menuId) {
             case R.id.menuUploadLater:
                 SubmitFlight(true);
                 return true;
@@ -717,6 +720,25 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case R.id.menuChoosePicture:
                 choosePictureClicked();
                 return true;
+            case R.id.menuRepeatFlight:
+            case R.id.menuReverseFlight: {
+                assert m_le != null;
+                LogbookEntry leNew = (menuId == R.id.menuRepeatFlight) ? m_le.Clone() : m_le.CloneAndReverse();
+                leNew.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;
+                leNew.ToDB();
+                FlightProperty.RewritePropertiesForFlight(leNew.idLocalDB, leNew.rgCustomProperties);
+                leNew.SyncProperties();
+                RecentFlightsSvc.ClearCachedFlights();
+                new AlertDialog.Builder(ActNewFlight.this.getActivity())
+                        .setMessage(getString(R.string.txtRepeatFlightComplete))
+                        .setTitle(getString(R.string.txtSuccess))
+                        .setNegativeButton("OK", (d, id) -> {
+                            d.cancel();
+                            finish();
+                        })
+                        .create().show();
+                return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -1087,10 +1109,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // Save for later if offline or if fForcePending
         if (fForcePending || !MFBSoap.IsOnline(getContext())) {
-            boolean fIsNewFlight = m_le.IsNewFlight();
 
-            // save the flight with id of -2
-            if (fIsNewFlight)
+            // save the flight with id of -2 if it's a new flight
+            if (fIsNew)
                 m_le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
 
             // Existing flights can't be saved for later.  No good reason for that except work.
@@ -1116,7 +1137,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     // restore to being a new flight.
                     MFBUtil.Alert(this, getString(R.string.txtError), m_le.szError);
                     // restore the previous idFlight if we were saving a new flight.
-                    if (fIsNewFlight) {
+                    if (fIsNew) {
                         m_le.idFlight = LogbookEntry.ID_NEW_FLIGHT;
                         saveCurrentFlight();
                     }

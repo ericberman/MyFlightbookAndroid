@@ -236,6 +236,7 @@
     <string name="lblConfirmFlightDelete">Effacer ce vol ?  Ne peut être annulé.</string>
 
     <string name="txtSavedPendingFlight">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
+    <string name="txtRepeatFlightComplete">Le vol a été créé. Vous pouvez le modifier dans les vols récents.</string>
     <string name="txtSuccess">Succès</string>
     <string name="txtSavedFlight">Votre vol a été enregistré sur MyFlightbook.com</string>
     <string name="txtPending"> (EN COURS)</string>
@@ -313,6 +314,10 @@
     <string name="menuAddFlight">Ajouter un vol</string>
     <string name="menuAddFlightLaterShort">Ajouter plus tard</string>
     <string name="menuAddFlightLater">Ajouter plus tard</string>
+    <string name="menuRepeatFlight">Répétez ce vol</string>
+    <string name="menuRepeatReverseFlight">Répétez et inversez ce vol</string>
+    <string name="menuRepeatShort">Répétez</string>
+    <string name="menuReverseShort">Inversez</string>
     <string name="menuDeleteFlight">Effacer Vol</string>
     <string name="menuDeleteFlightShort">Effacer</string>
     <string name="menuUpdateFlight">Mettre à jour Vol</string>
@@ -479,7 +484,7 @@
 
     <!-- Telemetry Import -->
     <string name="telemetryImportPrompt">Initialiser un vol de la trajectoire de vol importé?</string>
-    <string name="telemetryImportProgress">Importer...</string>
+    <string name="telemetryImportProgress">Importer…</string>
     <string name="telemetryImportDefaultComment">Vol créé à partir des données GPS</string>
     <string name="telemetryNothingFound">Impossible de détecter les décollages / atterrissages dans les données fournies.</string>
     <string name="telemetryImportSuccessful">Vol créé vous pouvez l\'éditer dans vos récents vols</string>

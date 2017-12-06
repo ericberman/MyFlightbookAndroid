@@ -236,6 +236,7 @@
     <string name="lblConfirmFlightDelete">Delete this flight?  This cannot be undone.</string>
 
     <string name="txtSavedPendingFlight">Flight has been saved for uploading later.  You can find it in Recent flights.</string>
+    <string name="txtRepeatFlightComplete">Flight has been created. You can edit it in recent flights.</string>
     <string name="txtSuccess">Success</string>
     <string name="txtSavedFlight">Your flight has been saved on MyFlightbook.com</string>
     <string name="txtPending"> (PENDING)</string>
@@ -313,6 +314,10 @@
     <string name="menuAddFlight">Add Flight</string>
     <string name="menuAddFlightLaterShort">Add Later</string>
     <string name="menuAddFlightLater">Add Flight Later</string>
+    <string name="menuRepeatFlight">Repeat Flight</string>
+    <string name="menuRepeatReverseFlight">Repeat and Reverse Flight</string>
+    <string name="menuRepeatShort">Repeat</string>
+    <string name="menuReverseShort">Reverse</string>
     <string name="menuDeleteFlight">Delete Flight</string>
     <string name="menuDeleteFlightShort">Delete</string>
     <string name="menuUpdateFlight">Update Flight</string>
@@ -479,7 +484,7 @@
 
     <!-- Telemetry Import -->
     <string name="telemetryImportPrompt">Initialize a flight from the imported flight track data?</string>
-    <string name="telemetryImportProgress">Importing...</string>
+    <string name="telemetryImportProgress">Importing…</string>
     <string name="telemetryImportDefaultComment">Flight created from GPS data</string>
     <string name="telemetryNothingFound">Unable to detect any takeoffs/landings in the supplied data.</string>
     <string name="telemetryImportSuccessful">Flight created; you can edit it in your recent flights</string>

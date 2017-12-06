@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -65,7 +66,6 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     private LogbookEntry[] m_rgLe = new LogbookEntry[0];
     private ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<>();
 
-    private final int cFlightsPageSize = 15;
     private boolean fCouldBeMore = true;
 
     public static final String VIEWEXISTINGFLIGHTID = "com.myflightbook.android.ViewFlightID";
@@ -90,6 +90,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             View v = convertView;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                assert vi != null;
                 v = vi.inflate(R.layout.flightitem, parent, false);
             }
 
@@ -99,11 +100,11 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             LogbookEntry le = this.getItem(position);
 
-            TextView txtDate = (TextView) v.findViewById(R.id.txtDate);
-            TextView txtRoute = (TextView) v.findViewById(R.id.txtRoute);
-            TextView txtComments = (TextView) v.findViewById(R.id.txtComments);
-            ImageView ivCamera = (ImageView) v.findViewById(R.id.imgCamera);
-            ImageView ivSigState = (ImageView) v.findViewById(R.id.imgSigState);
+            TextView txtDate = v.findViewById(R.id.txtDate);
+            TextView txtRoute = v.findViewById(R.id.txtRoute);
+            TextView txtComments = v.findViewById(R.id.txtComments);
+            ImageView ivCamera = v.findViewById(R.id.imgCamera);
+            ImageView ivSigState = v.findViewById(R.id.imgSigState);
 
             if (m_rgac == null)
                 m_rgac = (new AircraftSvc()).getCachedAircraft();
@@ -177,6 +178,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class RefreshFlightsTask extends AsyncTask<Void, Void, Boolean> {
         private RecentFlightsSvc m_rfSvc = null;
         Boolean fClearCache = false;
@@ -188,10 +190,11 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 return false;
 
             m_rfSvc = new RecentFlightsSvc();
-            LogbookEntry[] rglePending = LogbookEntry.getPendingFlights();
+            LogbookEntry[] rglePending = LogbookEntry.getQueuedAndPendingFlights();
 
             if (fClearCache)
                 RecentFlightsSvc.ClearCachedFlights();
+            final int cFlightsPageSize = 15;
             LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, m_rgExistingFlights.size(), cFlightsPageSize, c);
 
             fCouldBeMore = (rgle != null && rgle.length >= cFlightsPageSize);
@@ -215,7 +218,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             populateList();
 
             if (getView() != null) {
-                TextView tv = (TextView) getView().findViewById(R.id.txtFlightQueryStatus);
+                TextView tv = getView().findViewById(R.id.txtFlightQueryStatus);
                 tv.setText(getString(ActFlightQuery.GetCurrentQuery().HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
             }
 
@@ -296,6 +299,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             new Thread(new LazyThumbnailLoader(m_rgLe, (FlightAdapter) this.getListAdapter())).start();
     }
 
+    @SuppressWarnings("unused")
     private void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position < 0 || position >= m_rgLe.length)
             return;
