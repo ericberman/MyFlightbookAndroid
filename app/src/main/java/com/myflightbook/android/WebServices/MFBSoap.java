@@ -76,6 +76,9 @@ public class MFBSoap {
             return false;
 
         ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+            return false;
+
         NetworkInfo info = cm.getActiveNetworkInfo();
         if (info == null || !info.isConnected())
             return false;
