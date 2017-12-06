@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -80,6 +81,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
@@ -171,6 +173,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.aircraft;
+                assert vi != null;
                 v = vi.inflate(layoutID, parent, false);
             }
 
@@ -178,19 +181,19 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
                 return v;
 
             if (rt == RowType.HEADER_ITEM) {
-                TextView tvSectionHeader = (TextView) v.findViewById(R.id.lblTableRowSectionHeader);
+                TextView tvSectionHeader = v.findViewById(R.id.lblTableRowSectionHeader);
                 tvSectionHeader.setText(m_aircraftRows[position].title);
                 return v;
             }
 
             Aircraft ac = m_aircraftRows[position].aircraftItem;
 
-            TextView tvTail = (TextView) v.findViewById(R.id.txtTail);
-            TextView tvModel = (TextView) v.findViewById(R.id.txtModel);
-            TextView tvModelCommonName = (TextView) v.findViewById(R.id.txtCommonName);
+            TextView tvTail = v.findViewById(R.id.txtTail);
+            TextView tvModel = v.findViewById(R.id.txtModel);
+            TextView tvModelCommonName = v.findViewById(R.id.txtCommonName);
 
             // Show the camera if the aircraft has images.
-            ImageView imgCamera = (ImageView) v.findViewById(R.id.imgCamera);
+            ImageView imgCamera = v.findViewById(R.id.imgCamera);
             if (ac.HasImage()) {
                 MFBImageInfo mfbii = ac.AircraftImages[0];
                 Bitmap b = mfbii.bitmapFromThumb();

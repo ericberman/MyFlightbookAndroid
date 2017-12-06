@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -60,6 +61,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
     private Aircraft m_ac = null;
 
+    @SuppressLint("StaticFieldLeak")
     private class SubmitTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private AircraftSvc m_acs = null;
@@ -106,6 +108,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private AircraftSvc m_acs = null;

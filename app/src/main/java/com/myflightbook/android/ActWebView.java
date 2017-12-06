@@ -56,7 +56,7 @@ public class ActWebView extends Activity {
         setContentView(R.layout.webview);
         String szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
         szTempFile = this.getIntent().getStringExtra(MFBConstants.intentViewTempFile);
-        WebView wv = (WebView) findViewById(R.id.wvMain);
+        WebView wv = findViewById(R.id.wvMain);
         wv.setWebChromeClient(new WebChromeClient() {
             // For 3.0+ Devices (Start)
             // onActivityResult attached before constructor

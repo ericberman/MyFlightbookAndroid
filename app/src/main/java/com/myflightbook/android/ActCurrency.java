@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -52,6 +53,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 
     private static CurrencyStatusItem[] m_rgcsi = null;
 
+    @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;
@@ -125,9 +127,9 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                 // TableRow tr = new TableRow(this);
 
                 TableRow tr = (TableRow) l.inflate(R.layout.currencyrow, tl, false);
-                TextView tvAttribute = (TextView) tr.findViewById(R.id.txtCsiAttribute);
-                TextView tvValue = (TextView) tr.findViewById(R.id.txtCsiValue);
-                TextView tvDiscrepancy = (TextView) tr.findViewById(R.id.txtCsiDiscrepancy);
+                TextView tvAttribute = tr.findViewById(R.id.txtCsiAttribute);
+                TextView tvValue = tr.findViewById(R.id.txtCsiValue);
+                TextView tvDiscrepancy = tr.findViewById(R.id.txtCsiDiscrepancy);
 
                 tvAttribute.setText(csi.Attribute);
                 tvValue.setText(csi.Value);

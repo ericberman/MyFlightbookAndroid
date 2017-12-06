@@ -19,6 +19,7 @@
 package com.myflightbook.android;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -138,6 +139,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     private static final int PERMISSION_REQUEST_READ = 3385;
 
+    @SuppressLint("StaticFieldLeak")
     private class ImportTelemetryTask extends AsyncTask<Uri, Void, LogbookEntry> {
         private ProgressDialog m_pd = null;
         private Context c = null;
@@ -402,9 +404,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.telemetryImportPrompt)
-                        .setPositiveButton(R.string.lblOK, (dialog, which) -> {
-                            new ImportTelemetryTask().execute(uri);
-                        })
+                        .setPositiveButton(R.string.lblOK, (dialog, which) -> new ImportTelemetryTask().execute(uri))
                         .setNegativeButton(R.string.lblCancel, null)
                         .show();
             }
@@ -471,6 +471,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class RefreshTask extends AsyncTask<AuthToken, Void, Boolean> {
         private ProgressDialog m_pd;
 
@@ -599,14 +600,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             ft.commit();
             this.getSupportFragmentManager().executePendingTransactions();
         }
-
-	    /*
-        if (!AuthToken.FIsValid())
-		{
-			if (tabId.compareTo(MFBConstants.tabOptions) != 0)
-				mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
-		}
-		*/
     }
 
     public static MFBFlightListener getNewFlightListener() {

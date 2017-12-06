@@ -88,6 +88,7 @@ public class MultiSpinner extends Spinner implements
 
     @Override
     public boolean performClick() {
+        super.performClick();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         CharSequence[] rgItemStrings = new CharSequence[items.length];
         for (int i = 0; i < items.length; i++)

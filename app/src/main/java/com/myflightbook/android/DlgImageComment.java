@@ -51,16 +51,16 @@ class DlgImageComment extends Dialog implements android.view.View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dlgaddcomment);
-        Button b = (Button) findViewById(R.id.btnOK);
+        Button b = findViewById(R.id.btnOK);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.btnCancel);
+        b = findViewById(R.id.btnCancel);
         b.setOnClickListener(this);
 
         if (m_mfbii != null) {
-            ImageView imgview = (ImageView) findViewById(R.id.imgPreview);
+            ImageView imgview = findViewById(R.id.imgPreview);
             m_mfbii.LoadImageForImageView(true, imgview);
 
-            EditText e = (EditText) findViewById(R.id.txtComment);
+            EditText e = findViewById(R.id.txtComment);
             e.setText(m_mfbii.Comment);
         }
     }

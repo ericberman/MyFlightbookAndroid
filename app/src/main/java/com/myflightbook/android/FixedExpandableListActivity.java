@@ -206,7 +206,7 @@ public class FixedExpandableListActivity extends Activity implements
         /* Issue 3443 - http://code.google.com/p/android/issues/detail?id=3443
          * Just use another id to find expandable list view
          *  */
-        mList = (ExpandableListView)findViewById(android.R.id.list);
+        mList = findViewById(android.R.id.list);
         if (mList == null) {
             throw new RuntimeException(
                     "Your content must have a ExpandableListView whose id attribute is " +

@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -37,6 +38,7 @@ import Model.MFBUtil;
 
 class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
+    @SuppressLint("StaticFieldLeak")
     private class AircraftTask extends AsyncTask<String, Void, MFBSoap> {
         private Object m_Result = null;
         private Context m_Context = null;
@@ -73,6 +75,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;
@@ -122,8 +125,8 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
         setContentView(R.layout.dlgsignin);
         setTitle("Please sign in to MyFlightbook");
 
-        EditText txtUser = (EditText) findViewById(R.id.editEmail);
-        EditText txtPass = (EditText) findViewById(R.id.editPass);
+        EditText txtUser = findViewById(R.id.editEmail);
+        EditText txtPass = findViewById(R.id.editPass);
 
         if (AuthToken.m_szEmail != null)
             txtUser.setText(AuthToken.m_szEmail);
@@ -144,8 +147,8 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
             return;
         }
 
-        EditText txtUser = (EditText) findViewById(R.id.editEmail);
-        EditText txtPass = (EditText) findViewById(R.id.editPass);
+        EditText txtUser = findViewById(R.id.editEmail);
+        EditText txtPass = findViewById(R.id.editPass);
 
         AuthToken at = new AuthToken();
         // make sure we don't use any existing credentials!!

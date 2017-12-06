@@ -1162,6 +1162,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         .create().show();
             }
         } else {
+
             new SubmitTask(m_po).execute();
         }
     }

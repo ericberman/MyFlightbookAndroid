@@ -77,8 +77,8 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
         GregorianCalendar c = getCalendar();
         c.setTime(m_Date);
 
-        dpDate = (DatePicker) findViewById(R.id.datePicker);
-        tpTime = (TimePicker) findViewById(R.id.timePicker);
+        dpDate = findViewById(R.id.datePicker);
+        tpTime = findViewById(R.id.timePicker);
 
         int y = c.get(Calendar.YEAR);
         int m = c.get(Calendar.MONTH);

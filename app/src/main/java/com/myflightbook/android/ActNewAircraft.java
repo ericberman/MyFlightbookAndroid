@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -68,6 +69,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     public final static String MODELFORAIRCRAFT = "com.myflightbook.android.aircraftModelID";
     private static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
 
+    @SuppressLint("StaticFieldLeak")
     private class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;
@@ -116,6 +118,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;

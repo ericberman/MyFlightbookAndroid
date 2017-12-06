@@ -112,6 +112,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     public static final String ALIASES = "com.myflightbook.android.aliases";
     public static final int REQUEST_ROUTE = 58372;
 
+    @SuppressLint("StaticFieldLeak")
     private class SendGPXTask extends AsyncTask<Void, Void, MFBSoap> {
         private Context m_Context = null;
         String m_Result = "";

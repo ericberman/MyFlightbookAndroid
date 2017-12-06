@@ -22,6 +22,7 @@ package com.myflightbook.android;
  */
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -103,6 +104,7 @@ public class ActMFBForm extends Fragment {
     private static final String TEMP_IMG_FILE_NAME = "takenpicture";
     String m_TempFilePath = "";
 
+    @SuppressLint("StaticFieldLeak")
     private class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         MFBImageInfo mfbii = null;
         Boolean fGeoTag = true;
@@ -171,6 +173,7 @@ public class ActMFBForm extends Fragment {
         String[] filePathColumn = {MediaStore.Images.Media.DATA, MediaStore.Images.Media.MIME_TYPE};
 
         ContentResolver cr = getActivity().getContentResolver();
+        assert selectedImage != null;
         Cursor cursor = cr.query(
                 selectedImage, filePathColumn, null, null, null);
         if (cursor != null) {
@@ -295,7 +298,7 @@ public class ActMFBForm extends Fragment {
                 TableRow tr = (TableRow) l.inflate(R.layout.imageitem, tl, false);
                 tr.setId(MFBImageInfo.idImageGalleryIdBase + i++);
 
-                ImageView iv = (ImageView) tr.findViewById(R.id.imageItemView);
+                ImageView iv = tr.findViewById(R.id.imageItemView);
                 ((TextView) tr.findViewById(R.id.imageItemComment)).setText(mfbii.Comment);
 
                 mfbii.LoadImageForImageView(true, iv);

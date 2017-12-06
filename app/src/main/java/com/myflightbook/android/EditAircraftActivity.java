@@ -24,7 +24,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class EditAircraftActivity extends FragmentActivity {
-    private ActEditAircraft editAircraft = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class EditAircraftActivity extends FragmentActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        editAircraft = new ActEditAircraft();
+        ActEditAircraft editAircraft = new ActEditAircraft();
         fragmentTransaction.replace(android.R.id.content, editAircraft);
         fragmentTransaction.commit();
     }

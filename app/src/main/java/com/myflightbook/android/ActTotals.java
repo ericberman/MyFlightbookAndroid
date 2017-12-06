@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -59,6 +60,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         fNeedsRefresh = f;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;
@@ -147,6 +149,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
             View v = convertView;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                assert vi != null;
                 v = vi.inflate(R.layout.totalsitem, parent, false);
             }
 
@@ -156,9 +159,9 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
 
             EditMode em = DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
 
-            TextView tvDescription = (TextView) v.findViewById(R.id.txtTotDescription);
-            TextView tvSubDesc = (TextView) v.findViewById(R.id.txtTotSubDescription);
-            TextView tvValue = (TextView) v.findViewById(R.id.txtTotValue);
+            TextView tvDescription = v.findViewById(R.id.txtTotDescription);
+            TextView tvSubDesc = v.findViewById(R.id.txtTotSubDescription);
+            TextView tvValue = v.findViewById(R.id.txtTotValue);
 
             tvDescription.setText(ti.Description);
             tvSubDesc.setText(ti.SubDescription);
@@ -190,7 +193,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         View v = getView();
         if (v == null)
             throw new NullPointerException("getView returned null in BindTable in ActTotals");
-        TextView tv = (TextView) v.findViewById(R.id.txtFlightQueryStatus);
+        TextView tv = v.findViewById(R.id.txtFlightQueryStatus);
         tv.setText(getString(ActFlightQuery.GetCurrentQuery().HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
 
         if (mRgti == null)

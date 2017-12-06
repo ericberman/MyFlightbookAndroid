@@ -74,7 +74,7 @@ public class MFBLocation implements LocationListener {
     public static Boolean HasPendingLanding = false;
     private Boolean IsListening = false;
 
-    public Boolean fNoRecord = false;
+    Boolean fNoRecord = false;
 
     // A single shared MFBLocation for the app
     private static MFBLocation m_Location = null;
@@ -106,6 +106,7 @@ public class MFBLocation implements LocationListener {
 
             try {
                 LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+                assert lm != null;
                 if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
                     return;
 
@@ -135,6 +136,7 @@ public class MFBLocation implements LocationListener {
             LocationManager lm = (LocationManager) c
                     .getSystemService(Context.LOCATION_SERVICE);
             try {
+                assert lm != null;
                 lm.removeUpdates(this);
                 Log.w(MFBConstants.LOG_TAG, "Stop Listening");
                 IsListening = false;
@@ -170,6 +172,7 @@ public class MFBLocation implements LocationListener {
     public static boolean HasGPS(Context c) {
         try {
             LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+            assert lm != null;
             return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (IllegalArgumentException ex) {
             MFBUtil.Alert(c, c.getString(R.string.errNoGPSTitle), ex.getMessage());

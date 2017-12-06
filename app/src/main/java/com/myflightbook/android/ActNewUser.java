@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -45,6 +46,7 @@ public class ActNewUser extends Activity implements
             txtQ, txtA;
     private CheckBox ckOver14;
 
+    @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
         private Context m_Context = null;
         private ProgressDialog m_pd = null;
@@ -87,27 +89,27 @@ public class ActNewUser extends Activity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newuser);
-        Button b = (Button) findViewById(R.id.btnCreateUser);
+        Button b = findViewById(R.id.btnCreateUser);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.btnCancel);
+        b = findViewById(R.id.btnCancel);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.btnViewPrivacy);
+        b = findViewById(R.id.btnViewPrivacy);
         b.setOnClickListener(this);
-        b = (Button) findViewById(R.id.btnViewTandC);
+        b = findViewById(R.id.btnViewTandC);
         b.setOnClickListener(this);
 
-        txtEmail = (TextView) findViewById(R.id.txtEmail);
-        txtEmail2 = (TextView) findViewById(R.id.txtEmail2);
-        txtPass = (TextView) findViewById(R.id.txtPass);
-        txtPass2 = (TextView) findViewById(R.id.txtPass2);
-        txtFirst = (TextView) findViewById(R.id.txtFirstName);
-        txtLast = (TextView) findViewById(R.id.txtLastName);
-        txtQ = (TextView) findViewById(R.id.txtQuestion);
-        txtA = (TextView) findViewById(R.id.txtAnswer);
-        ckOver14 = (CheckBox) findViewById(R.id.ckOver14);
+        txtEmail = findViewById(R.id.txtEmail);
+        txtEmail2 = findViewById(R.id.txtEmail2);
+        txtPass = findViewById(R.id.txtPass);
+        txtPass2 = findViewById(R.id.txtPass2);
+        txtFirst = findViewById(R.id.txtFirstName);
+        txtLast = findViewById(R.id.txtLastName);
+        txtQ = findViewById(R.id.txtQuestion);
+        txtA = findViewById(R.id.txtAnswer);
+        ckOver14 = findViewById(R.id.ckOver14);
 
         final String[] rgSampleQuestions = getResources().getStringArray(R.array.defaultSecurityQuestions);
-        Spinner spinner = (Spinner) findViewById(R.id.spnSampleQuestions);
+        Spinner spinner = findViewById(R.id.spnSampleQuestions);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rgSampleQuestions);
         adapter.setDropDownViewResource(R.layout.samplequestion);
@@ -115,12 +117,12 @@ public class ActNewUser extends Activity implements
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView txtQ = (TextView) findViewById(R.id.txtQuestion);
+                TextView txtQ = findViewById(R.id.txtQuestion);
                 txtQ.setText(rgSampleQuestions[i]);
             }
 
             public void onNothingSelected(AdapterView<?> adapterView) {
-                TextView txtQ = (TextView) findViewById(R.id.txtQuestion);
+                TextView txtQ = findViewById(R.id.txtQuestion);
                 txtQ.setText("");
             }
         });

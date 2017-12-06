@@ -24,7 +24,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class FlightQueryActivity extends FragmentActivity {
-    private ActFlightQuery flightQuery = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class FlightQueryActivity extends FragmentActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        flightQuery = new ActFlightQuery();
+        ActFlightQuery flightQuery = new ActFlightQuery();
         fragmentTransaction.replace(android.R.id.content, flightQuery);
         fragmentTransaction.commit();
     }

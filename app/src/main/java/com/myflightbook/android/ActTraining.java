@@ -83,6 +83,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
             View v = convertView;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                assert vi != null;
                 v = vi.inflate(R.layout.trainingitem, parent, false);
             }
 
@@ -91,7 +92,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
 
             TrainingItem ti = m_rgti[position];
 
-            TextView tvti = (TextView) v.findViewById(R.id.txtTrainingItem);
+            TextView tvti = v.findViewById(R.id.txtTrainingItem);
             tvti.setText(ActTraining.this.getString(ti.idTitle));
 
             return v;

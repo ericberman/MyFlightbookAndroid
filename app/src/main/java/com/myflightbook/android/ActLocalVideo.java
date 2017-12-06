@@ -40,7 +40,7 @@ public class ActLocalVideo extends Activity {
         szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
         szTempFile = this.getIntent().getStringExtra(MFBConstants.intentViewTempFile);
 
-        VideoView video = (VideoView) findViewById(R.id.video);
+        VideoView video = findViewById(R.id.video);
         // Load and start the movie
         video.setVideoURI(Uri.parse(szURL));
         video.start();

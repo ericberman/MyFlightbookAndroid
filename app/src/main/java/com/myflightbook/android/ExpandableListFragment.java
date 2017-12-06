@@ -325,7 +325,7 @@ public class ExpandableListFragment extends Fragment
         if (root instanceof ExpandableListView) {
             mExpandableList = (ExpandableListView)root;
         } else {
-            mStandardEmptyView = (TextView)root.findViewById(INTERNAL_EMPTY_ID);
+            mStandardEmptyView = root.findViewById(INTERNAL_EMPTY_ID);
             if (mStandardEmptyView == null) {
                 mEmptyView = root.findViewById(android.R.id.empty);
             } else {
@@ -430,7 +430,7 @@ public class ExpandableListFragment extends Fragment
         if (v == null)
             return;
         View emptyView = getView().findViewById(android.R.id.empty);
-        mExpandableList = (ExpandableListView)getView().findViewById(android.R.id.list);
+        mExpandableList = getView().findViewById(android.R.id.list);
         if (mExpandableList == null) {
             throw new RuntimeException(
                     "Your content must have a ExpandableListView whose id attribute is " +

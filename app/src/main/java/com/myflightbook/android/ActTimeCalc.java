@@ -76,7 +76,9 @@ public class ActTimeCalc extends Activity implements View.OnClickListener {
             case R.id.btnCopySegement:
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 String s = DecimalEdit.StringForMode(ComputedTotal(), DecimalEdit.DefaultHHMM ? DecimalEdit.EditMode.HHMM : DecimalEdit.EditMode.DECIMAL);
-                clipboard.setPrimaryClip(ClipData.newPlainText("total", s));
+                if (clipboard != null) {
+                    clipboard.setPrimaryClip(ClipData.newPlainText("total", s));
+                }
                 break;
             case R.id.btnAddSegment:
                 addSpecifiedTime();
@@ -159,7 +161,7 @@ public class ActTimeCalc extends Activity implements View.OnClickListener {
     }
 
     private void clearTime() {
-        DecimalEdit deStart = (DecimalEdit)findViewById(R.id.decSegmentStart);
+        DecimalEdit deStart = findViewById(R.id.decSegmentStart);
         deStart.setDoubleValue(0);
         ((DecimalEdit) findViewById(R.id.decSegmentEnd)).setDoubleValue(0);
         deStart.requestFocus();
@@ -168,7 +170,7 @@ public class ActTimeCalc extends Activity implements View.OnClickListener {
     private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         View v = getCurrentFocus();
-        if (v != null)
+        if (v != null && imm != null)
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
     //endregion
