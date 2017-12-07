@@ -1108,11 +1108,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             m_le.szFlightData = MFBLocation.GetMainLocation().getFlightDataString();
 
         // Save for later if offline or if fForcePending
-        if (fForcePending || !MFBSoap.IsOnline(getContext())) {
+        boolean fIsOnline = MFBSoap.IsOnline(getContext());
+        if (fForcePending || !fIsOnline) {
 
             // save the flight with id of -2 if it's a new flight
             if (fIsNew)
-                m_le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
+                m_le.idFlight = (fForcePending ? LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED : LogbookEntry.ID_PENDING_FLIGHT);
 
             // Existing flights can't be saved for later.  No good reason for that except work.
             if (m_le.IsExistingFlight()) {
@@ -1148,6 +1149,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
             // if we're here, save was successful (even if flight data was dropped)
             RecentFlightsSvc.ClearCachedFlights();
+            MFBMain.invalidateCachedTotals();
             if (fIsNew) {
                 ResetFlight(true);
                 MFBUtil.Alert(this, getString(R.string.txtSuccess), getString(R.string.txtSavedPendingFlight));

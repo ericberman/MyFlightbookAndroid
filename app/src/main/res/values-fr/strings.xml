@@ -200,6 +200,7 @@
     <string name="prgSigningIn">S\'identifier…</string>
     <string name="prgCreatingAccount">Créer un compte…</string>
     <string name="prgSavingFlight">Enregistrer le Vol…</string>
+    <string name="prgSavingFlights">Enregistrer le Vol %1$d sur %2$d</string>
     <string name="prgDeletingFlight">Effacer un vol…</string>
     <string name="prgNewAircraft">Enregistrer l\'Avion…</string>
     <string name="prgMakes">Récupérer les modèles et leurs constructeurs…</string>

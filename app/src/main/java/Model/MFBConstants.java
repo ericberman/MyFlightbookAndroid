@@ -20,21 +20,20 @@ package Model;
 
 public class MFBConstants {
 
-    public static final Boolean fIsDebug = false;
-    public static final Boolean fFakeGPS = false;
-    public static final Boolean fDebugLocal = false;
+    public static final Boolean fIsDebug = false;   // Set to true to use one of the debug servers specified below
+    public static final Boolean fFakeGPS = false;   // Set to true to simulate GPS when hitting "Engine Start"
+    public static final Boolean fDebugLocal = false;    // If debug, this specifies a local (IP-based or LocalHost based) debug server, thus suppressing https
     public static final Boolean fFakePix = false;
 
     private static String szIPDebug = "developer.myflightbook.com";
-    private static String szIPDebugRoam = "developer.hothpark.com";
+    private static String szIPDebugRoam = "developer.myflightbook.com";
     private static String szIPRelease = "myflightbook.com";
 
     // Configuration constants
-    //public static final String szIP = "webmail.hothpark.com";
     public static String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
 
     // DB Versioning
-    public static final int DBVersionMain = 22;
+    public static final int DBVersionMain = 23;
     public static final int DBVersionAirports = 22;
 
     // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK

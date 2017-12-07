@@ -942,6 +942,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         cv.put("hobbsStart", hobbsStart);
         cv.put("hobbsEnd", hobbsEnd);
         cv.put("szFlightData", szFlightData);
+        cv.put("szError", szError);
 
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
         try {
@@ -993,6 +994,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
             hobbsStart = c.getDouble(c.getColumnIndex("hobbsStart"));
             hobbsEnd = c.getDouble(c.getColumnIndex("hobbsEnd"));
             szFlightData = c.getString(c.getColumnIndex("szFlightData"));
+            szError = c.getString(c.getColumnIndex("szError"));
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "FromCursor failed: " + e.getLocalizedMessage());
             this.idLocalDB = -1;
@@ -1053,11 +1055,11 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         return rglePending;
     }
 
-    private static LogbookEntry[] getPendingFlights() {
+    public static LogbookEntry[] getPendingFlights() {
         return getFlightsWithIdFlight(LogbookEntry.ID_PENDING_FLIGHT);
     }
 
-    private static LogbookEntry[] getQueuedFlights() {
+    public static LogbookEntry[] getQueuedFlights() {
         return getFlightsWithIdFlight(LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED);
     }
 

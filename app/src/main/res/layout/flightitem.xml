@@ -37,6 +37,13 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="" />
+
+        <TextView
+            android:id="@+id/txtError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FF0000"
+            />
     </LinearLayout>
 
     <ImageView
