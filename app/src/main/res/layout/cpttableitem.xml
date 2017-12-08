@@ -2,7 +2,8 @@
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <com.myflightbook.android.PropertyEdit
         android:id="@+id/propEdit"

@@ -41,7 +41,9 @@ public class ActSelectMake extends FixedExpandableListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.expandablelist);
 
-        ((TextView) findViewById(R.id.txtSearchProp)).addTextChangedListener(new TextWatcher() {
+        TextView tvSearch = findViewById(R.id.txtSearchProp);
+        tvSearch.setHint(R.string.hintSearchModels);
+        tvSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 

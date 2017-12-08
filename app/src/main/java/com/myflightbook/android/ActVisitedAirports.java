@@ -104,7 +104,9 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 
-        ((TextView) this.getActivity().findViewById(R.id.txtSearchProp)).addTextChangedListener(new TextWatcher() {
+        TextView tvSearch = getActivity().findViewById(R.id.txtSearchProp);
+        tvSearch.setHint(R.string.hintSearchVisitedAirports);
+        tvSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
@@ -116,7 +118,6 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
             @Override
             public void afterTextChanged(Editable editable) { }
         });
-
     }
 
     public void onResume() {

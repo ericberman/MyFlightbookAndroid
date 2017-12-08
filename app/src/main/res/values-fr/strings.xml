@@ -490,4 +490,9 @@
     <string name="telemetryNothingFound">Impossible de détecter les décollages / atterrissages dans les données fournies.</string>
     <string name="telemetryImportSuccessful">Vol créé vous pouvez l\'éditer dans vos récents vols</string>
     <string name="telemetryCantIdentify">Format de données GPS non reconnu.</string>
+
+    <!-- Hints for expandible lists -->
+    <string name="hintSearchModels">Des modèles</string>
+    <string name="hintSearchVisitedAirports">Aéroports</string>
+    <string name="hintSearchProperties">Propriétés</string>
 </resources>

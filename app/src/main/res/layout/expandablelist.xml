@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_action_search_dark"
+        android:hint="@string/strEmpty"
         android:id="@+id/txtSearchProp"
         />
 

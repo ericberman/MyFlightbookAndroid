@@ -88,7 +88,8 @@
             android:clickable="true"
             android:text="@string/cdImagesForAircraft"
             android:drawableStart="@drawable/collapse_light"
-            android:id="@+id/txtImageHeader"/>
+            android:id="@+id/txtImageHeader"
+            android:focusable="true" />
 
         <TableLayout
             android:layout_width="match_parent"
@@ -104,7 +105,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/lblAircraftPrefsHeader" />
+            android:text="@string/lblAircraftPrefsHeader"
+            android:focusable="true" />
 
         <RadioGroup
             android:id="@+id/rbgPilotRole"
@@ -142,7 +144,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/lblNotesHeader" />
+            android:text="@string/lblNotesHeader"
+            android:focusable="true" />
 
         <TableLayout
             android:id="@+id/sectACNotes"
@@ -200,7 +203,8 @@
                 style="@style/DividerBar"
                 android:clickable="true"
                 android:drawableStart="@drawable/collapse_light"
-                android:text="@string/lblCatMaintenance" />
+                android:text="@string/lblCatMaintenance"
+                android:focusable="true" />
 
             <TableLayout
                 android:id="@+id/sectACMaintenance"

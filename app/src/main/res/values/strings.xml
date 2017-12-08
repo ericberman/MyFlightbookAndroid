@@ -490,4 +490,9 @@
     <string name="telemetryNothingFound">Unable to detect any takeoffs/landings in the supplied data.</string>
     <string name="telemetryImportSuccessful">Flight created; you can edit it in your recent flights</string>
     <string name="telemetryCantIdentify">Unrecognized GPS data format.</string>
+
+    <!-- Hints for expandible lists -->
+    <string name="hintSearchModels">Models</string>
+    <string name="hintSearchVisitedAirports">Airports</string>
+    <string name="hintSearchProperties">Properties</string>
 s</resources>
