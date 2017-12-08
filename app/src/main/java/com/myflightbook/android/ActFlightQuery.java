@@ -26,18 +26,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.myflightbook.android.MultiSpinner.MultiSpinnerListener;
 import com.myflightbook.android.WebServices.AircraftSvc;
 import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -50,7 +55,7 @@ import Model.FlightQuery.DateRanges;
 import Model.MFBUtil;
 import Model.MakeModel;
 
-public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, android.view.View.OnClickListener, DlgDatePicker.DateTimeUpdate {
+public class ActFlightQuery extends ActMFBForm implements android.view.View.OnClickListener, DlgDatePicker.DateTimeUpdate {
     static private FlightQuery CurrentQuery = null;
     private Aircraft[] m_rgac = null;
     private MakeModel[] m_rgmm = null;
@@ -136,6 +141,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 
         // Expand/collapse
         AddListener(R.id.txtFQDatesHeader);
+        AddListener(R.id.txtFQAirportsHeader);
         AddListener(R.id.txtFQACFeatures);
         AddListener(R.id.txtFQFlightFeatures);
         AddListener(R.id.txtFQAircraftHeader);
@@ -143,15 +149,18 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         AddListener(R.id.txtFQCatClassHeader);
         AddListener(R.id.txtFQPropsHeader);
 
+        setUpChecklists();
+
         setExpandCollapseState();
     }
 
     protected void setExpandCollapseState() {
         setExpandedState((TextView) findViewById(R.id.txtFQDatesHeader), findViewById(R.id.sectFQDates), CurrentQuery.DateRange != DateRanges.AllTime);
+        setExpandedState((TextView) findViewById(R.id.txtFQAirportsHeader), findViewById(R.id.tblFQAirports), CurrentQuery.AirportList.length > 0 || CurrentQuery.Distance != FlightQuery.FlightDistance.AllFlights);
         setExpandedState((TextView) findViewById(R.id.txtFQACFeatures), findViewById(R.id.sectFQAircraftFeatures), CurrentQuery.HasAircraftCriteria());
         setExpandedState((TextView) findViewById(R.id.txtFQFlightFeatures), findViewById(R.id.sectFQFlightFeatures), CurrentQuery.HasFlightCriteria());
         setExpandedState((TextView) findViewById(R.id.txtFQAircraftHeader), findViewById(R.id.tblFQAircraft), CurrentQuery.AircraftList.length >  0);
-        setExpandedState((TextView) findViewById(R.id.txtFQModelsHeader), findViewById(R.id.tblFQModels), CurrentQuery.MakeList.length > 0);
+        setExpandedState((TextView) findViewById(R.id.txtFQModelsHeader), findViewById(R.id.sectFQModels), CurrentQuery.MakeList.length > 0 || CurrentQuery.ModelName.length() > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQCatClassHeader), findViewById(R.id.tblFQCatClass), CurrentQuery.CatClassList.length > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQPropsHeader), findViewById(R.id.tblFQProps), CurrentQuery.PropertyTypes.length > 0);
     }
@@ -168,76 +177,150 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         m_rgmm = null;
     }
 
-    protected void syncSpinners() {
-        MultiSpinner msAircraft = (MultiSpinner) findViewById(R.id.multispinnerAircraft);
-        MultiSpinner msMakes = (MultiSpinner) findViewById(R.id.multispinnerModels);
-        MultiSpinner msCatClasses = (MultiSpinner) findViewById(R.id.multispinnerCategoryClasses);
-        MultiSpinner msProperties = (MultiSpinner) findViewById(R.id.multispinnerProps);
+    // region Dynamic checklists - aircraft, models, category class, and properties
+    interface CheckedTableListener {
+        // called when a checkbox item is changed. fAdded is true if it's added, otherwise it is removed.
+        void itemStateChanged(Object o, boolean fAdded);
 
-        Aircraft[] rgac = GetCurrentAircraft();
-        MakeModel[] rgmm = GetActiveMakes();
-        CategoryClass[] rgcc = CategoryClass.AllCatClasses();
-        CustomPropertyType[] rgcpt = CustomPropertyTypesSvc.getSearchableProperties();
-
-        msAircraft.setItems(rgac, getString(R.string.fqFlightAircraft), this);
-        msMakes.setItems(rgmm, getString(R.string.fqFlightModel), this);
-        msCatClasses.setItems(rgcc, getString(R.string.ccHeader), this);
-        msProperties.setItems(rgcpt, getString(R.string.fqProperties), this);
-
-        // set the relevant aircraft
-        boolean[] rgSelectedAc = msAircraft.getSelected();
-        for (int i = 0; i < rgac.length; i++) {
-            rgSelectedAc[i] = false;
-            for (Aircraft ac : CurrentQuery.AircraftList)
-                if (ac.AircraftID == rgac[i].AircraftID) {
-                    rgSelectedAc[i] = true;
-                    break;
-                }
-        }
-
-        // set the relevant models
-        boolean[] rgSelectedMakes = msMakes.getSelected();
-        for (int i = 0; i < rgmm.length; i++) {
-            rgSelectedMakes[i] = false;
-            for (MakeModel mm : CurrentQuery.MakeList)
-                if (mm.MakeModelId == rgmm[i].MakeModelId) {
-                    rgSelectedMakes[i] = true;
-                    break;
-                }
-        }
-
-        // set the relevant categories/classes
-        boolean[] rgSelectedCc = msCatClasses.getSelected();
-        for (int i = 0; i < rgcc.length; i++) {
-            rgSelectedCc[i] = false;
-            for (CategoryClass cc : CurrentQuery.CatClassList)
-                if (cc.IdCatClass == rgcc[i].IdCatClass) {
-                    rgSelectedCc[i] = true;
-                    break;
-                }
-        }
-
-        // set the relevant properties
-        boolean[] rgSelectedProperties = msProperties.getSelected();
-        for (int i = 0; i < rgSelectedProperties.length; i++) {
-            rgSelectedProperties[i] = false;
-            for (CustomPropertyType cpt : CurrentQuery.PropertyTypes)
-                if (cpt.idPropType == rgcpt[i].idPropType) {
-                    rgSelectedProperties[i] = true;
-                    break;
-                }
-        }
-
-        msAircraft.refresh();
-        msMakes.refresh();
-        msCatClasses.refresh();
-        msProperties.refresh();
+        // Tests if the object shoud initially be selected
+        boolean itemIsChecked(Object o);
     }
+
+    protected void setUpDynamicCheckList(int idTable, Object[] rgItems, CheckedTableListener listener) {
+        TableLayout tl = (TableLayout) findViewById(idTable);
+        if (tl == null)
+            return;
+        tl.removeAllViews();
+
+        LayoutInflater l = getActivity().getLayoutInflater();
+
+        assert listener != null;
+
+        if (rgItems == null)
+            rgItems = new Object[0];
+
+        for (Object o : rgItems) {
+            TableRow tr = (TableRow) l.inflate(R.layout.checkboxtableitem, tl, false);
+
+            final Object oFinal = o;
+            CheckBox ck = tr.findViewById(R.id.checkbox);
+            ck.setText(o.toString());
+            ck.setChecked(listener.itemIsChecked(o));
+            ck.setOnCheckedChangeListener((compoundButton, fChecked) -> listener.itemStateChanged(oFinal, fChecked));
+            tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        }
+    }
+
+    protected void setUpChecklists() {
+        setUpDynamicCheckList(R.id.tblFQAircraft, GetCurrentAircraft(), new CheckedTableListener() {
+            @Override
+            public void itemStateChanged(Object o, boolean fAdded) {
+                List<Aircraft> lst = new ArrayList<>(Arrays.asList(CurrentQuery.AircraftList));
+                if (fAdded)
+                    lst.add((Aircraft) o);
+                else {
+                    Iterator<Aircraft> iterator = lst.iterator();
+                    while (iterator.hasNext()) {
+                        Aircraft ac = iterator.next();
+                        if (ac.AircraftID == ((Aircraft) o).AircraftID)
+                            iterator.remove();
+                    }
+                }
+                CurrentQuery.AircraftList = lst.toArray(new Aircraft[0]);
+            }
+
+            @Override
+            public boolean itemIsChecked(Object o) {
+                for (Aircraft ac : CurrentQuery.AircraftList)
+                    if (ac.AircraftID == ((Aircraft) o).AircraftID)
+                        return true;
+                return false;
+            }
+        });
+
+        setUpDynamicCheckList(R.id.tblFQModels, GetActiveMakes(), new CheckedTableListener() {
+            @Override
+            public void itemStateChanged(Object o, boolean fAdded) {
+                List<MakeModel> lst = new ArrayList<>(Arrays.asList(CurrentQuery.MakeList));
+                if (fAdded)
+                    lst.add((MakeModel) o);
+                else {
+                    Iterator<MakeModel> iterator = lst.iterator();
+                    while (iterator.hasNext()) {
+                        MakeModel m = iterator.next();
+                        if (m.MakeModelId == ((MakeModel) o).MakeModelId)
+                            iterator.remove();
+                    }
+                }
+                CurrentQuery.MakeList = lst.toArray(new MakeModel[0]);
+            }
+
+            @Override
+            public boolean itemIsChecked(Object o) {
+                for (MakeModel m : CurrentQuery.MakeList)
+                    if (m.MakeModelId == ((MakeModel) o).MakeModelId)
+                        return true;
+                return false;
+            }
+        });
+
+        setUpDynamicCheckList(R.id.tblFQCatClass, CategoryClass.AllCatClasses(), new CheckedTableListener() {
+            @Override
+            public void itemStateChanged(Object o, boolean fAdded) {
+                List<CategoryClass> lst = new ArrayList<>(Arrays.asList(CurrentQuery.CatClassList));
+                if (fAdded)
+                    lst.add((CategoryClass) o);
+                else {
+                    Iterator<CategoryClass> iterator = lst.iterator();
+                    while (iterator.hasNext()) {
+                        CategoryClass cc = iterator.next();
+                        if (cc.IdCatClass == ((CategoryClass) o).IdCatClass)
+                            iterator.remove();
+                    }
+                }
+                CurrentQuery.CatClassList = lst.toArray(new CategoryClass[0]);
+            }
+
+            @Override
+            public boolean itemIsChecked(Object o) {
+                for (CategoryClass cc : CurrentQuery.CatClassList)
+                    if (cc.IdCatClass == ((CategoryClass) o).IdCatClass)
+                        return true;
+                return false;
+            }
+        });
+
+        setUpDynamicCheckList(R.id.tblFQProps, CustomPropertyTypesSvc.getSearchableProperties(), new CheckedTableListener() {
+            @Override
+            public void itemStateChanged(Object o, boolean fAdded) {
+                List<CustomPropertyType> lst = new ArrayList<>(Arrays.asList(CurrentQuery.PropertyTypes));
+                if (fAdded)
+                    lst.add((CustomPropertyType) o);
+                else {
+                    Iterator<CustomPropertyType> iterator = lst.iterator();
+                    while (iterator.hasNext()) {
+                        CustomPropertyType cpt = iterator.next();
+                        if (cpt.idPropType == ((CustomPropertyType) o).idPropType)
+                            iterator.remove();
+                    }
+                }
+                CurrentQuery.PropertyTypes = lst.toArray(new CustomPropertyType[0]);
+            }
+
+            @Override
+            public boolean itemIsChecked(Object o) {
+                for (CustomPropertyType cpt : CurrentQuery.PropertyTypes)
+                    if (cpt.idPropType == ((CustomPropertyType) o).idPropType)
+                        return true;
+                return false;
+            }
+        });
+    }
+    //endregion
 
     @Override
     public void onResume() {
         super.onResume();
-        syncSpinners();
         toForm();
     }
 
@@ -247,8 +330,9 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
 
     public void reset() {
         resetCriteria();
-        syncSpinners();
+        setUpChecklists();
         toForm();
+        setExpandCollapseState();
     }
 
     protected void toForm() {
@@ -418,43 +502,6 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         }
     }
 
-    public void onItemsSelected(MultiSpinner sender, boolean[] selected) {
-        switch (sender.getId()) {
-            case R.id.multispinnerAircraft:
-                ArrayList<Aircraft> alAc = new ArrayList<>();
-                Aircraft[] rgac = GetCurrentAircraft();
-                for (int i = 0; i < selected.length; i++)
-                    if (selected[i])
-                        alAc.add(rgac[i]);
-                CurrentQuery.AircraftList = alAc.toArray(new Aircraft[0]);
-                break;
-            case R.id.multispinnerModels:
-                ArrayList<MakeModel> alMm = new ArrayList<>();
-                MakeModel[] rgmm = GetActiveMakes();
-                for (int i = 0; i < selected.length; i++)
-                    if (selected[i])
-                        alMm.add(rgmm[i]);
-                CurrentQuery.MakeList = alMm.toArray(new MakeModel[0]);
-                break;
-            case R.id.multispinnerCategoryClasses:
-                ArrayList<CategoryClass> alcc = new ArrayList<>();
-                CategoryClass[] rgcc = CategoryClass.AllCatClasses();
-                for (int i = 0; i < selected.length; i++)
-                    if (selected[i])
-                        alcc.add(rgcc[i]);
-                CurrentQuery.CatClassList = alcc.toArray(new CategoryClass[0]);
-                break;
-            case R.id.multispinnerProps:
-                ArrayList<CustomPropertyType> alcpt = new ArrayList<>();
-                CustomPropertyType[] rgcpt = CustomPropertyTypesSvc.getSearchableProperties();
-                for (int i = 0; i < selected.length; i++)
-                    if (selected[i])
-                        alcpt.add(rgcpt[i]);
-                CurrentQuery.PropertyTypes = alcpt.toArray(new CustomPropertyType[alcpt.size()]);
-                break;
-        }
-    }
-
     public void updateDate(int id, Date dt) {
         switch (id) {
             case R.id.btnfqDateStart:
@@ -473,6 +520,9 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
     }
 
     private void toggleHeader(View v, int idTarget) {
+        View vFocus = getActivity().getCurrentFocus();
+        if (vFocus != null)
+            vFocus.clearFocus();  // prevent scrolling to the top (where the first text box is)
         View target = findViewById(idTarget);
         setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
     }
@@ -568,6 +618,9 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
             case R.id.txtFQDatesHeader:
                 toggleHeader(v, R.id.sectFQDates);
                 break;
+            case R.id.txtFQAirportsHeader:
+                toggleHeader(v, R.id.tblFQAirports);
+                break;
             case R.id.txtFQFlightFeatures:
                 toggleHeader(v, R.id.sectFQFlightFeatures);
                 break;
@@ -575,7 +628,7 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
                 toggleHeader(v, R.id.tblFQAircraft);
                 break;
             case R.id.txtFQModelsHeader:
-                toggleHeader(v, R.id.tblFQModels);
+                toggleHeader(v, R.id.sectFQModels);
                 break;
             case R.id.txtFQCatClassHeader:
                 toggleHeader(v, R.id.tblFQCatClass);

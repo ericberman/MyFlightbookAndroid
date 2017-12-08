@@ -5,78 +5,29 @@
     android:layout_margin="4dip">
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TableLayout
-            android:layout_width="fill_parent"
+        <!-- General Text -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="1"
-            android:padding="5dp">
+            android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fqTextContains" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fqTextContains" />
+            <EditText
+                android:id="@+id/fqGeneralText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fqTextContainsPrompt" />
+        </LinearLayout>
 
-                <EditText
-                    android:id="@+id/fqGeneralText"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/fqTextContainsPrompt" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fqAirportsVisited" />
-
-                <LinearLayout
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:orientation="vertical">
-                    <EditText
-                        android:id="@+id/fqAirports"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/fqAirportsContainsPrompt"
-                        android:inputType="textCapCharacters|textNoSuggestions" />
-                    <RadioGroup
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/rbDistanceAny"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/FlightQueryDistanceAllFlights" />
-
-                        <RadioButton
-                            android:id="@+id/rbDistanceLocal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/FlightQueryDistanceLocalFlights" />
-
-                        <RadioButton
-                            android:id="@+id/rbDistanceNonlocal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/FlightQueryDistanceNonLocalFlights" />
-                    </RadioGroup>
-                </LinearLayout>
-            </TableRow>
-        </TableLayout>
-
+        <!-- Dates -->
         <TextView
             android:id="@+id/txtFQDatesHeader"
             style="@style/DividerBar"
@@ -84,8 +35,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqFlightDate"
-            android:focusable="true" />
+            android:focusable="true"
+            android:text="@string/fqFlightDate" />
 
         <LinearLayout
             android:id="@+id/sectFQDates"
@@ -96,8 +47,8 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dip"
                 android:layout_gravity="center_vertical"
+                android:layout_margin="4dip"
                 android:orientation="horizontal">
 
                 <TextView
@@ -107,8 +58,8 @@
                     android:text="@string/fqDateStartDate" />
 
                 <TextView
-                    style="@style/DateButton"
                     android:id="@+id/btnfqDateStart"
+                    style="@style/DateButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:focusable="false" />
@@ -120,8 +71,8 @@
                     android:text="@string/fqDateEndDate" />
 
                 <TextView
-                    style="@style/DateButton"
                     android:id="@+id/btnfqDateEnd"
+                    style="@style/DateButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:focusable="false" />
@@ -194,29 +145,89 @@
             </RadioGroup>
         </LinearLayout>
 
+        <!-- Airports -->
         <TextView
+            android:id="@+id/txtFQAirportsHeader"
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txtFQAircraftHeader"
             android:clickable="true"
-            android:focusable="true"
             android:drawableStart="@drawable/collapse_light"
+            android:focusable="true"
+            android:text="@string/fqAirportsVisited" />
+
+        <TableLayout
+            android:id="@+id/tblFQAirports"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:stretchColumns="1">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fqAirportsVisited" />
+
+                <EditText
+                    android:id="@+id/fqAirports"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fqAirportsContainsPrompt"
+                    android:inputType="textCapCharacters|textNoSuggestions" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/strEmpty" />
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rbDistanceAny"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/FlightQueryDistanceAllFlights" />
+
+                    <RadioButton
+                        android:id="@+id/rbDistanceLocal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/FlightQueryDistanceLocalFlights" />
+
+                    <RadioButton
+                        android:id="@+id/rbDistanceNonlocal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/FlightQueryDistanceNonLocalFlights" />
+                </RadioGroup>
+            </TableRow>
+        </TableLayout>
+
+        <!-- Aircraft -->
+        <TextView
+            android:id="@+id/txtFQAircraftHeader"
+            style="@style/DividerBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:focusable="true"
             android:text="@string/fqFlightAircraft" />
 
         <TableLayout
+            android:id="@+id/tblFQAircraft"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tblFQAircraft">
-            <TableRow>
-                <com.myflightbook.android.MultiSpinner
-                    android:id="@+id/multispinnerAircraft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="4dip" />
-            </TableRow>
-        </TableLayout>
+            android:layout_height="wrap_content" />
 
         <!-- Aircraft Features -->
 
@@ -225,8 +236,8 @@
             style="@style/DividerBar"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqAircraftFeatures"
-            android:focusable="true" />
+            android:focusable="true"
+            android:text="@string/fqAircraftFeatures" />
 
         <LinearLayout
             android:id="@+id/sectFQAircraftFeatures"
@@ -369,62 +380,50 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/txtFQModelsHeader"
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txtFQModelsHeader"
             android:clickable="true"
-            android:focusable="true"
             android:drawableStart="@drawable/collapse_light"
+            android:focusable="true"
             android:text="@string/fqFlightModel" />
 
         <!-- Make/models -->
 
-        <TableLayout
+        <LinearLayout
+            android:id="@+id/sectFQModels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tblFQModels">
-            <TableRow>
-                <com.myflightbook.android.MultiSpinner
-                    android:id="@+id/multispinnerModels"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="4dip" />
-            </TableRow>
-            <TableRow>
-                <EditText
-                    android:id="@+id/fqModelName"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/fqFlightModelNamePrompt" />
-            </TableRow>
-        </TableLayout>
+            android:orientation="vertical">
+
+            <TableLayout
+                android:id="@+id/tblFQModels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/fqModelName"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fqFlightModelNamePrompt" />
+        </LinearLayout>
 
         <!-- Categories/Classes -->
         <TextView
+            android:id="@+id/txtFQCatClassHeader"
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txtFQCatClassHeader"
             android:clickable="true"
-            android:focusable="true"
             android:drawableStart="@drawable/collapse_light"
+            android:focusable="true"
             android:text="@string/ccHeader" />
 
         <TableLayout
+            android:id="@+id/tblFQCatClass"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tblFQCatClass">
-            <TableRow>
-                <com.myflightbook.android.MultiSpinner
-                    android:id="@+id/multispinnerCategoryClasses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="4dip" />
-            </TableRow>
-        </TableLayout>
+            android:layout_height="wrap_content" />
 
         <!-- Flight Features -->
 
@@ -436,8 +435,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableStart="@drawable/collapse_light"
-            android:text="@string/fqFlightFeatures"
-            android:focusable="true" />
+            android:focusable="true"
+            android:text="@string/fqFlightFeatures" />
 
         <LinearLayout
             android:id="@+id/sectFQFlightFeatures"
@@ -555,29 +554,19 @@
 
         <!--  Properties -->
         <TextView
+            android:id="@+id/txtFQPropsHeader"
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/txtFQPropsHeader"
             android:clickable="true"
-            android:focusable="true"
             android:drawableStart="@drawable/collapse_light"
+            android:focusable="true"
             android:text="@string/fqProperties" />
 
         <TableLayout
+            android:id="@+id/tblFQProps"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tblFQProps">
-            <TableRow>
-                <com.myflightbook.android.MultiSpinner
-                    android:id="@+id/multispinnerProps"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="4dip" />
-            </TableRow>
-        </TableLayout>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
-
 </ScrollView>
