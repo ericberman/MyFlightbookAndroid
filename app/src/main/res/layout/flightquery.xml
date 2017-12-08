@@ -40,36 +40,41 @@
                     android:layout_height="wrap_content"
                     android:text="@string/fqAirportsVisited" />
 
-                <EditText
-                    android:id="@+id/fqAirports"
-                    android:layout_width="fill_parent"
+                <LinearLayout
                     android:layout_height="wrap_content"
-                    android:hint="@string/fqAirportsContainsPrompt"
-                    android:inputType="textCapCharacters|textNoSuggestions" />
+                    android:layout_width="match_parent"
+                    android:orientation="vertical">
+                    <EditText
+                        android:id="@+id/fqAirports"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fqAirportsContainsPrompt"
+                        android:inputType="textCapCharacters|textNoSuggestions" />
+
+                    <RadioGroup
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <RadioButton
+                            android:id="@+id/rbDistanceAny"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/FlightQueryDistanceAllFlights" />
+
+                        <RadioButton
+                            android:id="@+id/rbDistanceLocal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/FlightQueryDistanceLocalFlights" />
+
+                        <RadioButton
+                            android:id="@+id/rbDistanceNonlocal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/FlightQueryDistanceNonLocalFlights" />
+                    </RadioGroup>
+                </LinearLayout>
             </TableRow>
-
-            <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:id="@+id/rbDistanceAny"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/FlightQueryDistanceAllFlights" />
-
-                <RadioButton
-                    android:id="@+id/rbDistanceLocal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/FlightQueryDistanceLocalFlights" />
-
-                <RadioButton
-                    android:id="@+id/rbDistanceNonlocal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/FlightQueryDistanceNonLocalFlights" />
-            </RadioGroup>
         </TableLayout>
 
         <!-- Dates -->
