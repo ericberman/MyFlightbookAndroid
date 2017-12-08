@@ -198,14 +198,25 @@
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/txtFQAircraftHeader"
+            android:clickable="true"
+            android:focusable="true"
+            android:drawableStart="@drawable/collapse_light"
             android:text="@string/fqFlightAircraft" />
 
-        <com.myflightbook.android.MultiSpinner
-            android:id="@+id/multispinnerAircraft"
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="4dip" />
+            android:id="@+id/tblFQAircraft">
+            <TableRow>
+                <com.myflightbook.android.MultiSpinner
+                    android:id="@+id/multispinnerAircraft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="4dip" />
+            </TableRow>
+        </TableLayout>
 
         <!-- Aircraft Features -->
 
@@ -361,36 +372,59 @@
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/txtFQModelsHeader"
+            android:clickable="true"
+            android:focusable="true"
+            android:drawableStart="@drawable/collapse_light"
             android:text="@string/fqFlightModel" />
 
         <!-- Make/models -->
 
-        <com.myflightbook.android.MultiSpinner
-            android:id="@+id/multispinnerModels"
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="4dip" />
-
-        <EditText
-            android:id="@+id/fqModelName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/fqFlightModelNamePrompt" />
+            android:id="@+id/tblFQModels">
+            <TableRow>
+                <com.myflightbook.android.MultiSpinner
+                    android:id="@+id/multispinnerModels"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="4dip" />
+            </TableRow>
+            <TableRow>
+                <EditText
+                    android:id="@+id/fqModelName"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fqFlightModelNamePrompt" />
+            </TableRow>
+        </TableLayout>
 
         <!-- Categories/Classes -->
         <TextView
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/txtFQCatClassHeader"
+            android:clickable="true"
+            android:focusable="true"
+            android:drawableStart="@drawable/collapse_light"
             android:text="@string/ccHeader" />
 
-        <com.myflightbook.android.MultiSpinner
-            android:id="@+id/multispinnerCategoryClasses"
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="4dip" />
+            android:id="@+id/tblFQCatClass">
+            <TableRow>
+                <com.myflightbook.android.MultiSpinner
+                    android:id="@+id/multispinnerCategoryClasses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="4dip" />
+            </TableRow>
+        </TableLayout>
 
         <!-- Flight Features -->
 
@@ -524,14 +558,25 @@
             style="@style/DividerBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/txtFQPropsHeader"
+            android:clickable="true"
+            android:focusable="true"
+            android:drawableStart="@drawable/collapse_light"
             android:text="@string/fqProperties" />
 
-        <com.myflightbook.android.MultiSpinner
-            android:id="@+id/multispinnerProps"
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="4dip" />
+            android:id="@+id/tblFQProps">
+            <TableRow>
+                <com.myflightbook.android.MultiSpinner
+                    android:id="@+id/multispinnerProps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="4dip" />
+            </TableRow>
+        </TableLayout>
 
     </LinearLayout>
 

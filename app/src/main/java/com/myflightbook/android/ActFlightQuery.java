@@ -138,6 +138,10 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         AddListener(R.id.txtFQDatesHeader);
         AddListener(R.id.txtFQACFeatures);
         AddListener(R.id.txtFQFlightFeatures);
+        AddListener(R.id.txtFQAircraftHeader);
+        AddListener(R.id.txtFQModelsHeader);
+        AddListener(R.id.txtFQCatClassHeader);
+        AddListener(R.id.txtFQPropsHeader);
 
         setExpandCollapseState();
     }
@@ -146,7 +150,10 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         setExpandedState((TextView) findViewById(R.id.txtFQDatesHeader), findViewById(R.id.sectFQDates), CurrentQuery.DateRange != DateRanges.AllTime);
         setExpandedState((TextView) findViewById(R.id.txtFQACFeatures), findViewById(R.id.sectFQAircraftFeatures), CurrentQuery.HasAircraftCriteria());
         setExpandedState((TextView) findViewById(R.id.txtFQFlightFeatures), findViewById(R.id.sectFQFlightFeatures), CurrentQuery.HasFlightCriteria());
-
+        setExpandedState((TextView) findViewById(R.id.txtFQAircraftHeader), findViewById(R.id.tblFQAircraft), CurrentQuery.AircraftList.length >  0);
+        setExpandedState((TextView) findViewById(R.id.txtFQModelsHeader), findViewById(R.id.tblFQModels), CurrentQuery.MakeList.length > 0);
+        setExpandedState((TextView) findViewById(R.id.txtFQCatClassHeader), findViewById(R.id.tblFQCatClass), CurrentQuery.CatClassList.length > 0);
+        setExpandedState((TextView) findViewById(R.id.txtFQPropsHeader), findViewById(R.id.tblFQProps), CurrentQuery.PropertyTypes.length > 0);
     }
 
     @Override
@@ -465,6 +472,11 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
         toForm();
     }
 
+    private void toggleHeader(View v, int idTarget) {
+        View target = findViewById(idTarget);
+        setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+    }
+
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
@@ -550,21 +562,27 @@ public class ActFlightQuery extends ActMFBForm implements MultiSpinnerListener, 
             case R.id.rbDistanceNonlocal:
                 CurrentQuery.Distance = FlightQuery.FlightDistance.NonLocalOnly;
                 break;
-            case R.id.txtFQACFeatures: {
-                View target = findViewById(R.id.sectFQAircraftFeatures);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-            }
-            break;
-            case R.id.txtFQDatesHeader: {
-                View target = findViewById(R.id.sectFQDates);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-            }
-            break;
-            case R.id.txtFQFlightFeatures: {
-                View target = findViewById(R.id.sectFQFlightFeatures);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-            }
-            break;
+            case R.id.txtFQACFeatures:
+                toggleHeader(v, R.id.sectFQAircraftFeatures);
+                break;
+            case R.id.txtFQDatesHeader:
+                toggleHeader(v, R.id.sectFQDates);
+                break;
+            case R.id.txtFQFlightFeatures:
+                toggleHeader(v, R.id.sectFQFlightFeatures);
+                break;
+            case R.id.txtFQAircraftHeader:
+                toggleHeader(v, R.id.tblFQAircraft);
+                break;
+            case R.id.txtFQModelsHeader:
+                toggleHeader(v, R.id.tblFQModels);
+                break;
+            case R.id.txtFQCatClassHeader:
+                toggleHeader(v, R.id.tblFQCatClass);
+                break;
+            case R.id.txtFQPropsHeader:
+                toggleHeader(v, R.id.tblFQProps);
+                break;
         }
 
         toForm();
