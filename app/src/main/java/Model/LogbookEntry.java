@@ -36,6 +36,7 @@ import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -45,7 +46,7 @@ import java.util.Vector;
 
 import Model.MFBImageInfo.PictureDestination;
 
-public class LogbookEntry extends SoapableObject implements KvmSerializable, LazyThumbnailLoader.ThumbnailedItem {
+public class LogbookEntry extends SoapableObject implements KvmSerializable, Serializable, LazyThumbnailLoader.ThumbnailedItem {
 
     public static final int ID_NEW_FLIGHT = -1;
     public static final int ID_PENDING_FLIGHT = -2;
@@ -181,16 +182,18 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         if (this.idFlight < 0)
             return null;
 
-        LogbookEntry leNew = new LogbookEntry(this.idLocalDB);
+        LogbookEntry leNew = MFBUtil.clone(this);
+
+        if (leNew == null)
+            return null;
 
         leNew.idFlight = ID_NEW_FLIGHT;
-        leNew.rgCustomProperties = new FlightProperty[this.rgCustomProperties == null ? 0 : this.rgCustomProperties.length];
-        if (this.rgCustomProperties != null) {
-            for (int i = 0; i < this.rgCustomProperties.length; i++) {
-                FlightProperty fp = new FlightProperty(this.rgCustomProperties[i]);
+        if (leNew.rgCustomProperties == null)
+            leNew.rgCustomProperties = new FlightProperty[0];
+        else {
+            for (FlightProperty fp : leNew.rgCustomProperties) {
                 fp.idFlight = ID_NEW_FLIGHT;
                 fp.idProp = FlightProperty.ID_PROP_NEW;
-                leNew.rgCustomProperties[i] = fp;
             }
         }
         leNew.rgFlightImages = new MFBImageInfo[0];
@@ -1059,7 +1062,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Laz
         return getFlightsWithIdFlight(LogbookEntry.ID_PENDING_FLIGHT);
     }
 
-    public static LogbookEntry[] getQueuedFlights() {
+    private static LogbookEntry[] getQueuedFlights() {
         return getFlightsWithIdFlight(LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED);
     }
 

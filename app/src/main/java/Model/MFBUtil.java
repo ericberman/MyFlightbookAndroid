@@ -23,16 +23,23 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 
 import com.myflightbook.android.R;
 import com.myflightbook.android.WebServices.UTCDate;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class MFBUtil {
 
+    // region Alerts
     public static void Alert(Context c, String szTitle, String szMessage) {
         if (c instanceof Activity && ((Activity) c).isFinishing())
             return;
@@ -48,7 +55,9 @@ public class MFBUtil {
     public static void Alert(Fragment f, String szTitle, String szMessage) {
         Alert(f.getActivity(), szTitle, szMessage);
     }
+    //endregion
 
+    // region Progress utilities
     public static ProgressDialog ShowProgress(Context c, String szMessage) {
         ProgressDialog pd = null;
 
@@ -70,7 +79,9 @@ public class MFBUtil {
     public static ProgressDialog ShowProgress(Fragment f, String szMessage) {
         return ShowProgress(f.getActivity(), szMessage);
     }
+    // endregion
 
+    // region Date utilities
     // Creates a local date that "looks" like the UTC date from which it is derived.
     // I.e., if it is a-b-c d:e UTC, this will be a-b-c d:e PST
     public static Date LocalDateFromUTCDate(Date dt) {
@@ -115,7 +126,9 @@ public class MFBUtil {
     public static Date nowWith0Seconds() {
         return removeSeconds(new Date());
     }
+    // endregion
 
+    // region Latitude/Longitude strings (for EXIF)
     static String makeLatLongString(double d) {
         d = Math.abs(d);
         int degrees = (int) d;
@@ -124,4 +137,44 @@ public class MFBUtil {
         int seconds = (int) (((remainder * 60D) - minutes) * 60D * 1000D);
         return degrees + "/1," + minutes + "/1," + seconds + "/1000";
     }
+    // endregion
+
+    // region Object serialization/deserialization
+    public static String serializeToString(Serializable o) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(o);
+            oos.flush();
+            return new String(Base64.encode(bos.toByteArray(), Base64.DEFAULT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static <T> T deserializeFromString(String s) {
+        if (s == null || s.length() == 0)
+            return null;
+
+        try {
+            byte rgb[] = Base64.decode(s, Base64.DEFAULT);
+            ByteArrayInputStream bis = new ByteArrayInputStream(rgb);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+            //noinspection unchecked
+            return (T) ois.readObject();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static <T> T clone(Serializable obj) {
+        String s = serializeToString(obj);
+        if (s == null || s.length() == 0)
+            return null;
+
+        return deserializeFromString(s);
+    }
+    // endregion
 }

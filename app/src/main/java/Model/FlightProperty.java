@@ -33,6 +33,7 @@ import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 
-public class FlightProperty extends SoapableObject implements KvmSerializable {
+public class FlightProperty extends SoapableObject implements KvmSerializable, Serializable {
 
     static final String TABLENAME = "FlightProps";
 
@@ -180,20 +181,6 @@ public class FlightProperty extends SoapableObject implements KvmSerializable {
     public FlightProperty(SoapObject so) {
         super();
         FromProperties(so);
-    }
-
-    FlightProperty(FlightProperty fp) {
-        super();
-        this.idProp = fp.idProp;
-        this.idPropType = fp.idPropType;
-        this.idFlight = fp.idFlight;
-        this.decValue = fp.decValue;
-        this.intValue = fp.intValue;
-        this.dateValue = fp.dateValue;
-        this.boolValue = fp.boolValue;
-        this.stringValue = fp.stringValue;
-        this.m_cpt = fp.m_cpt;
-
     }
 
     private FlightProperty(CustomPropertyType cpt) {
