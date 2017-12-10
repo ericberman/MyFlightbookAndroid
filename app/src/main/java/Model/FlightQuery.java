@@ -246,6 +246,10 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     	IsMotorglider = false;
     }
 
+    public FlightQuery() {
+		Init();
+	}
+
     @SuppressWarnings("unused")
 	public static String DateRangeToString(DateRanges dr)
     {

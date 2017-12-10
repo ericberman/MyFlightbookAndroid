@@ -167,7 +167,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
                         fq.AirportList = Airport.SplitCodes(szAirports.toString());
                         Intent i = new Intent(ActFlightMap.this, RecentFlightsActivity.class);
                         Bundle b = new Bundle();
-                        b.putSerializable(RecentFlightsActivity.REQUEST_FLIGHT_QUERY, fq);
+                        b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
                         i.putExtras(b);
                         ActFlightMap.this.startActivity(i);
                         dlg.dismiss();

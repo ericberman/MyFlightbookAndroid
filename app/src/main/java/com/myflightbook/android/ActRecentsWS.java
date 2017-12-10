@@ -57,6 +57,7 @@ import java.util.Arrays;
 import Model.Aircraft;
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
+import Model.FlightQuery;
 import Model.LazyThumbnailLoader;
 import Model.LogbookEntry;
 import Model.MFBConstants;
@@ -81,6 +82,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     public static Aircraft[] m_rgac = null;
 
     public static Boolean fShowFlightImages = true;
+
+    private FlightQuery currentQuery = new FlightQuery();
 
     private class FlightAdapter extends ArrayAdapter<LogbookEntry> {
         FlightAdapter(Context c, int rid,
@@ -290,7 +293,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (fClearCache)
                 RecentFlightsSvc.ClearCachedFlights();
             final int cFlightsPageSize = 15;
-            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, m_rgExistingFlights.size(), cFlightsPageSize, c);
+            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, ActRecentsWS.this.currentQuery, m_rgExistingFlights.size(), cFlightsPageSize, c);
 
             fCouldBeMore = (rgle != null && rgle.length >= cFlightsPageSize);
 
@@ -310,7 +313,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             if (getView() != null) {
                 TextView tv = getView().findViewById(R.id.txtFlightQueryStatus);
-                tv.setText(getString(ActFlightQuery.GetCurrentQuery().HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
+                tv.setText(getString(currentQuery != null && currentQuery.HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
             }
 
             Activity a = getActivity();
@@ -330,9 +333,29 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         super.onActivityCreated(savedInstanceState);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
+
+        Intent i = getActivity().getIntent();
+        if (i != null) {
+            Object o = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
+            if (o != null)
+                currentQuery = (FlightQuery) o;
+        }
+
         fCouldBeMore = true;
         if (m_rgLe.length == 0)
             refreshRecentFlights(false);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case ActFlightQuery.QUERY_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    currentQuery = (FlightQuery) data.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
+                }
+            default:
+                break;
+        }
     }
 
     public void onDestroy() {
@@ -425,7 +448,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 return true;
             case R.id.findFlights:
                 Intent i = new Intent(getActivity(), FlightQueryActivity.class);
-                startActivity(i);
+                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
+                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

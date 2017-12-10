@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -56,19 +57,11 @@ import Model.MFBUtil;
 import Model.MakeModel;
 
 public class ActFlightQuery extends ActMFBForm implements android.view.View.OnClickListener, DlgDatePicker.DateTimeUpdate {
-    static private FlightQuery CurrentQuery = null;
+    private FlightQuery CurrentQuery = null;
     private Aircraft[] m_rgac = null;
     private MakeModel[] m_rgmm = null;
-
-    public static FlightQuery GetCurrentQuery() {
-        if (CurrentQuery == null)
-            (CurrentQuery = new FlightQuery()).Init();
-        return CurrentQuery;
-    }
-
-    public static void SetCurrentQuery(FlightQuery fq) {
-        CurrentQuery = fq;
-    }
+    public static final int QUERY_REQUEST_CODE = 50382;
+    public static final String QUERY_TO_EDIT = "com.myflightbook.android.querytoedit";
 
     protected Aircraft[] GetCurrentAircraft() {
         if (m_rgac == null)
@@ -99,6 +92,11 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         return m_rgmm;
     }
 
+    public FlightQuery getCurrentQuery() {
+        fromForm();
+        return CurrentQuery;
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.flightquery, container, false);
@@ -108,7 +106,10 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        GetCurrentQuery();
+        Intent i = getActivity().getIntent();
+        CurrentQuery = (FlightQuery) i.getSerializableExtra(QUERY_TO_EDIT);
+        if (CurrentQuery == null)
+            CurrentQuery = new FlightQuery();
 
         AddListener(R.id.btnfqDateStart);
         AddListener(R.id.btnfqDateEnd);
@@ -324,12 +325,8 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         toForm();
     }
 
-    public static void resetCriteria() {
-        GetCurrentQuery().Init();
-    }
-
     public void reset() {
-        resetCriteria();
+        CurrentQuery.Init();
         setUpChecklists();
         toForm();
         setExpandCollapseState();

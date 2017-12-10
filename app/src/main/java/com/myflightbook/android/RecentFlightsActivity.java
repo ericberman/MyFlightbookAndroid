@@ -23,13 +23,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import Model.FlightQuery;
-
 public class RecentFlightsActivity extends FragmentActivity {
     private ActRecentsWS recents = null;
-    private FlightQuery fqSaved = null;
-
-    public static final String REQUEST_FLIGHT_QUERY = "com.myflightbook.android.TempFQ";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,12 +37,6 @@ public class RecentFlightsActivity extends FragmentActivity {
         recents = new ActRecentsWS();
         fragmentTransaction.replace(android.R.id.content, recents);
         fragmentTransaction.commit();
-
-        fqSaved = ActFlightQuery.GetCurrentQuery();
-
-        Bundle b = getIntent().getExtras();
-        if (b != null)
-            ActFlightQuery.SetCurrentQuery((FlightQuery) b.getSerializable(REQUEST_FLIGHT_QUERY));
     }
 
     public void onResume() {
@@ -60,7 +49,5 @@ public class RecentFlightsActivity extends FragmentActivity {
     public void onPause() {
         super.onPause();
         recents.invalidate();
-        ActFlightQuery.SetCurrentQuery(fqSaved);
     }
-
 }

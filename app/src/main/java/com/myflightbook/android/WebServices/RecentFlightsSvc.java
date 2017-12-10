@@ -24,7 +24,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.myflightbook.android.ActCurrency;
-import com.myflightbook.android.ActFlightQuery;
 import com.myflightbook.android.ActTotals;
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.Marshal.MarshalDate;
@@ -89,12 +88,12 @@ public class RecentFlightsSvc extends MFBSoap {
         return rgLe;
     }
 
-    public LogbookEntry[] RecentFlightsWithQueryAndOffset(String szAuthToken, int offset, int limit, Context c) {
+    public LogbookEntry[] RecentFlightsWithQueryAndOffset(String szAuthToken, FlightQuery fq, int offset, int limit, Context c) {
         LogbookEntry[] rgLe;
 
         SoapObject Request = setMethod("FlightsWithQueryAndOffset");
         Request.addProperty("szAuthUserToken", szAuthToken);
-        Request.addProperty("fq", ActFlightQuery.GetCurrentQuery());
+        Request.addProperty("fq", fq == null ? new FlightQuery() : fq);
         Request.addProperty("offset", offset);
         Request.addProperty("maxCount", limit);
 

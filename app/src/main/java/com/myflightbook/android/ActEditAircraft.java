@@ -462,7 +462,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
                 fq.AircraftList = new Aircraft[]{m_ac};
                 Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
                 Bundle b = new Bundle();
-                b.putSerializable(RecentFlightsActivity.REQUEST_FLIGHT_QUERY, fq);
+                b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
                 i.putExtras(b);
                 startActivity(i);
                 return true;

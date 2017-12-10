@@ -18,12 +18,16 @@
  */
 package com.myflightbook.android;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 public class FlightQueryActivity extends FragmentActivity {
+
+    private ActFlightQuery m_flightQuery;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,9 +36,18 @@ public class FlightQueryActivity extends FragmentActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        ActFlightQuery flightQuery = new ActFlightQuery();
-        fragmentTransaction.replace(android.R.id.content, flightQuery);
+        m_flightQuery = new ActFlightQuery();
+        fragmentTransaction.replace(android.R.id.content, m_flightQuery);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent mIntent = new Intent();
+        mIntent.putExtra(ActFlightQuery.QUERY_TO_EDIT, m_flightQuery.getCurrentQuery());
+        setResult(Activity.RESULT_OK, mIntent);
+        finish();
+        super.onBackPressed();
     }
 
 }

@@ -20,7 +20,6 @@ package com.myflightbook.android.WebServices;
 
 import android.content.Context;
 
-import com.myflightbook.android.ActFlightQuery;
 import com.myflightbook.android.Marshal.MarshalDate;
 import com.myflightbook.android.Marshal.MarshalDouble;
 
@@ -57,10 +56,10 @@ public class TotalsSvc extends MFBSoap {
         md.register(e);
     }
 
-    public Totals[] TotalsForUser(String szAuthToken, Context c) {
+    public Totals[] TotalsForUser(String szAuthToken, FlightQuery fq, Context c) {
         SoapObject Request = setMethod("TotalsForUserWithQuery");
         Request.addProperty("szAuthToken", szAuthToken);
-        Request.addProperty("fq", ActFlightQuery.GetCurrentQuery());
+        Request.addProperty("fq", fq == null ? new FlightQuery() : fq);
 
         Totals[] rgt = new Totals[0];
 

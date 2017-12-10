@@ -19,6 +19,7 @@
 package com.myflightbook.android;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -60,6 +61,8 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         fNeedsRefresh = f;
     }
 
+    private FlightQuery currentQuery = new FlightQuery();
+
     @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
         private Context m_Context = null;
@@ -74,7 +77,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         @Override
         protected MFBSoap doInBackground(Void... params) {
             TotalsSvc ts = new TotalsSvc();
-            m_Result = ts.TotalsForUser(AuthToken.m_szAuthToken, m_Context);
+            m_Result = ts.TotalsForUser(AuthToken.m_szAuthToken, currentQuery, m_Context);
             return ts;
         }
 
@@ -113,6 +116,24 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         super.onActivityCreated(savedInstanceState);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
+
+        Intent i = getActivity().getIntent();
+        if (i != null) {
+            Object o = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
+            if (o != null)
+                currentQuery = (FlightQuery) o;
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case ActFlightQuery.QUERY_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    currentQuery = (FlightQuery) data.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
+                }
+            default:
+                break;
+        }
     }
 
     public void onDestroy() {
@@ -131,7 +152,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         // get any airport aliases
         Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
         Bundle b = new Bundle();
-        b.putSerializable(RecentFlightsActivity.REQUEST_FLIGHT_QUERY, fq);
+        b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
         i.putExtras(b);
         startActivity(i);
     }
@@ -194,7 +215,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         if (v == null)
             throw new NullPointerException("getView returned null in BindTable in ActTotals");
         TextView tv = v.findViewById(R.id.txtFlightQueryStatus);
-        tv.setText(getString(ActFlightQuery.GetCurrentQuery().HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
+        tv.setText(getString(currentQuery != null && currentQuery.HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
 
         if (mRgti == null)
             mRgti = new Totals[0];
@@ -225,7 +246,8 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
                 return true;
             case R.id.findFlights:
                 Intent i = new Intent(getActivity(), FlightQueryActivity.class);
-                startActivity(i);
+                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
+                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
