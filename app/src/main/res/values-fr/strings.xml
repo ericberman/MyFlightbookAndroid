@@ -88,13 +88,12 @@
     <string name="lblQuestion">Question Secrète</string>
     <string name="lblAnswer">Réponse Secrète</string>
     <string name="lblOptional">(En option)</string>
-    <string name="lblOver14">J\'ai au moins 14 ans</string>
     <string name="lblPrivacy">Règle de vie privée</string>
     <string name="lblTandC">Conditions d\'utilisation</string>
     <string name="lblViewWebContent">Présentation…</string>
     <string name="lblDisclaimer">En créant un compte vous acceptez les conditions d\'utilisation</string>
     <string name="lblCreateAccount">Création du compte</string>
-    <string name="lblQuestionDescription">Dans le cas où vous avez oublié votre mot de passe, s\'il vous plaît fournir une question de sécurité et de réponse. Une bonne question de sécurité est quelque chose que:\r\n\r\n- Seulement, vous savez, et ne pas oublier\r\n- Ne change pas au fil du temps\r\n- A court, l\'orthographe sans ambiguïté et la capitalisation.\r\n\r\nVous pouvez choisir un dans la liste fournie, le modifier, ou faire un de vos propres.</string>
+    <string name="lblQuestionDescription">Dans le cas où vous avez oublié votre mot de passe, s\'il vous plaît fournir une question de sécurité et de réponse. Une bonne question de sécurité est quelque chose que:\n\n- Seulement, vous savez, et ne pas oublier\n- Ne change pas au fil du temps\n- A court, l\'orthographe sans ambiguïté et la capitalisation.\n\nVous pouvez choisir un dans la liste fournie, le modifier, ou faire un de vos propres.</string>
     <string-array name="defaultSecurityQuestions">
         <item /><!-- Allows type-in -->
         <item>Quel était le nom de votre premier animal de compagnie?</item>
@@ -265,7 +264,6 @@
     <string name="errTypeEmailTwice">S\'il vous plaît entrez votre adresse e-mail deux fois pour éviter les fautes de frappe.</string>
     <string name="errTypePasswordTwice">S\'il vous plaît entrez votre mot de passe deux fois pour éviter les fautes de frappe</string>
     <string name="errNeedQandA">S\'il vous plaît fournir une question secrète et sa réponse au cas où vous oubliez votre mot de passe.</string>
-    <string name="errMustBe14">Comptes ne sont disponibles que pour les personnes de 14 ans et plus.</string>
     <string name="errRealAircraftCantUseSIM">SIM préfixe est réservée aux simulateurs/FTDs/ATDs.</string>
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs doivent commencer par le préfixe \'SIM\'</string>
     <string name="errInvalidCountryPrefix">L\'aéronef ne commence pas par un préfixe de pays valide.</string>

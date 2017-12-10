@@ -88,13 +88,12 @@
     <string name="lblQuestion">Secret Question</string>
     <string name="lblAnswer">Secret Answer</string>
     <string name="lblOptional">(Optional)</string>
-    <string name="lblOver14">I am at least 14 years old</string>
     <string name="lblPrivacy">Privacy Policy</string>
     <string name="lblTandC">Terms and Conditions</string>
     <string name="lblViewWebContent">View…</string>
     <string name="lblDisclaimer">By creating an account, you are agreeing to the terms and conditions.</string>
     <string name="lblCreateAccount">Create Account</string>
-    <string name="lblQuestionDescription">In case you forget your password, please provide a security question and answer.\r\n\r\nA good security question is something that:\r\n\r\n - Only you know, and will not forget\r\n - Does not change over time\r\n - Has short, unambiguous spelling and capitalization.\r\n\r\nYou can choose one from the provided list, edit it, or make up one of your own.</string>
+    <string name="lblQuestionDescription">In case you forget your password, please provide a security question and answer.\n\nA good security question is something that:\n\n - Only you know, and will not forget\n - Does not change over time\n - Has short, unambiguous spelling and capitalization.\n\nYou can choose one from the provided list, edit it, or make up one of your own.</string>
     <string-array name="defaultSecurityQuestions">
         <item /><!-- Allows type-in -->
         <item>What was the name of your first pet?</item>
@@ -124,7 +123,7 @@
     <string name="lblFollowFacebook">Facebook</string>
     <string name="lblFollowTwitter">Twitter</string>
     <string name="lblWarning1">USE IN FLIGHT COULD VIOLATE REGULATIONS AND BE A DISTRACTION.  YOU ARE RESPONSIBLE FOR ANY CONSEQUENCES OF DOING SO!  SEE 14 CFR 91.21 and 47 CFR 22.925 IN PARTICULAR</string>
-    <string name="lblWarning2">Use of this during flight could be a distraction and could violate regulations, including 14 CFR 91.21 and 47 CFR 22.925.\r\nYou are responsible for the consequences of any use of this software.</string>
+    <string name="lblWarning2">Use of this during flight could be a distraction and could violate regulations, including 14 CFR 91.21 and 47 CFR 22.925.\nYou are responsible for the consequences of any use of this software.</string>
     <string name="lblGPSDisclaimer">On appropriate hardware, MyFlightbook for Android can auto-detect take-offs and landings, and can record flight data for later analysis on MyFlightbook.com.  Android is not an aviation-quality GPS, so these features are imperfect.</string>
     <string name="lblAutoHobbs">Auto-fill ending Hobbs</string>
     <string name="lblAutoTime">Auto-fill total time</string>
@@ -265,7 +264,6 @@
     <string name="errTypeEmailTwice">Please type your email address twice to avoid typos.</string>
     <string name="errTypePasswordTwice">Please type your password twice to avoid typos.</string>
     <string name="errNeedQandA">Please provide a secret question and answer in case you forget your password.</string>
-    <string name="errMustBe14">Accounts are only available for people 14 years old and older.</string>
     <string name="errRealAircraftCantUseSIM">SIM Prefix is reserved for simulators/FTDs/ATDs.</string>
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs must begin with the prefix \'SIM\'</string>
     <string name="errInvalidCountryPrefix">Aircraft does not begin with a valid country prefix.</string>

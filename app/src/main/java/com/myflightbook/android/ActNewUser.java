@@ -30,7 +30,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -44,7 +43,6 @@ public class ActNewUser extends Activity implements
         android.view.View.OnClickListener {
     private TextView txtEmail, txtEmail2, txtPass, txtPass2, txtFirst, txtLast,
             txtQ, txtA;
-    private CheckBox ckOver14;
 
     @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
@@ -106,7 +104,6 @@ public class ActNewUser extends Activity implements
         txtLast = findViewById(R.id.txtLastName);
         txtQ = findViewById(R.id.txtQuestion);
         txtA = findViewById(R.id.txtAnswer);
-        ckOver14 = findViewById(R.id.ckOver14);
 
         final String[] rgSampleQuestions = getResources().getStringArray(R.array.defaultSecurityQuestions);
         Spinner spinner = findViewById(R.id.spnSampleQuestions);
@@ -143,11 +140,6 @@ public class ActNewUser extends Activity implements
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errNeedQandA));
             return false;
         }
-        if (!ckOver14.isChecked()) {
-            MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errMustBe14));
-            return false;
-        }
-
         return true;
 
     }
