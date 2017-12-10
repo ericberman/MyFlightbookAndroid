@@ -62,7 +62,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
     private static final int minAirportCodeLength = 3;
     private static final int maxCodeLength = 6; // because of navaids, now allow up to 5 letters.
 
-    private static final String szRegAdHocFix = szNavaidPrefix + "\\b\\d{1,2}(?:[\\.,]\\d*)?[NS]\\d{1,3}(?:[\\.,]\\d*)?[EW]\\b";  // Must have a digit on the left side of the decimal
+    private static final String szRegAdHocFix = szNavaidPrefix + "\\b\\d{1,2}(?:[.,]\\d*)?[NS]\\d{1,3}(?:[\\.,]\\d*)?[EW]\\b";  // Must have a digit on the left side of the decimal
     private static final String szRegexAirports = String.format(Locale.US, "((?:%s)|(?:@?\\b[A-Z0-9]{%d,%d}\\b))", szRegAdHocFix, Math.min(minNavaidCodeLength, minAirportCodeLength), maxCodeLength);
 
     public Airport() {
@@ -80,6 +80,14 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
             return -1;
         if (!IsPreferred && ap.IsPreferred)
             return 1;
+
+        int l1 = AirportID.length();
+        int l2 = ap.AirportID.length();
+        if (l1 > l2)
+            return -1;
+        if (l2 > l1)
+            return 1;
+
         return 0;
     }
 
