@@ -43,7 +43,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         cfpDateTime, cfpString, cfpCurrency
     }
 
-    private enum cptPropID {pidIDPropType, pidType, pidTitle, pidFormatString, pidDescription, pidFlags, pidFavorite, pidPreviousValues}
+    private enum cptPropID {pidIDPropType, pidType, pidTitle, pidSortKey, pidFormatString, pidDescription, pidFlags, pidFavorite, pidPreviousValues}
 
     // known custom property types
     static final int idPropTypeNightTakeOff = 73;
@@ -52,6 +52,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     // DB Column names
     private static final String COL_IDPROPTYPE = "idPropType";
     private static final String COL_TITLE = "Title";
+    private static final String COL_SORTKEY = "SortKey";
     private static final String COL_FORMATSTRING = "FormatString";
     private static final String COL_TYPE = "Type";
     private static final String COL_FLAGS = "Flags";
@@ -61,6 +62,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
 
     public int idPropType = -1;
     String szTitle = "";
+    private String szSortKey = "";
     String szDescription = "";
     String szFormatString = "";
     CFPPropertyType cptType = CFPPropertyType.cfpInteger;
@@ -88,7 +90,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public int compareTo(@NonNull CustomPropertyType cpt) {
         // Favorites go before title
         if (this.IsFavorite == cpt.IsFavorite)
-            return this.szTitle.compareTo(cpt.szTitle);
+            return this.szSortKey.compareTo(cpt.szSortKey);
         else
             return this.IsFavorite ? -1 : 1;
     }
@@ -101,6 +103,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public void FromCursor(Cursor c) {
         idPropType = c.getInt(c.getColumnIndex(COL_IDPROPTYPE));
         szTitle = c.getString(c.getColumnIndex(COL_TITLE));
+        szSortKey = c.getString(c.getColumnIndex(COL_SORTKEY));
         szFormatString = c.getString(c.getColumnIndex(COL_FORMATSTRING));
         szDescription = (c.getString(c.getColumnIndex(COL_DESCRIPTION)));
         if (szDescription == null)
@@ -115,6 +118,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public void ToContentValues(ContentValues cv) {
         cv.put(COL_IDPROPTYPE, idPropType);
         cv.put(COL_TITLE, szTitle);
+        cv.put(COL_SORTKEY, szSortKey);
         cv.put(COL_FORMATSTRING, szFormatString);
         cv.put(COL_DESCRIPTION, szDescription);
         cv.put(COL_TYPE, cptType.ordinal());
@@ -128,6 +132,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public void ToProperties(SoapObject so) {
         so.addProperty("PropTypeID", idPropType);
         so.addProperty("Title", szTitle);
+        so.addProperty("SortKey", szSortKey);
         so.addProperty("FormatString", szFormatString);
         so.addProperty("Description", szDescription);
         so.addProperty("Type", cptType.toString());
@@ -140,6 +145,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public void FromProperties(SoapObject so) {
         idPropType = Integer.parseInt(so.getProperty("PropTypeID").toString());
         szTitle = so.getProperty("Title").toString();
+        szSortKey = so.getPropertySafelyAsString("SortKey");
         szFormatString = so.getProperty("FormatString").toString();
         szDescription = ReadNullableString(so, "Description");
         cptType = CFPPropertyType.valueOf(so.getProperty("Type").toString());
@@ -159,6 +165,8 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
                 return this.idPropType;
             case pidTitle:
                 return this.szTitle;
+            case pidSortKey:
+                return this.szSortKey;
             case pidFormatString:
                 return this.szFormatString;
             case pidDescription:
@@ -209,6 +217,10 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
                 pi.type = PropertyInfo.STRING_CLASS;
                 pi.name = "Title";
                 break;
+            case pidSortKey:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "SortKey";
+                break;
             case pidType:
                 pi.type = PropertyInfo.STRING_CLASS;
                 pi.name = "Type";
@@ -244,6 +256,9 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
                 break;
             case pidTitle:
                 this.szTitle = sz;
+                break;
+            case pidSortKey:
+                this.szSortKey = sz;
                 break;
             case pidIDPropType:
                 this.idPropType = Integer.parseInt(sz);

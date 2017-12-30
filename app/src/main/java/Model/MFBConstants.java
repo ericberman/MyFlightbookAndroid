@@ -33,7 +33,7 @@ public class MFBConstants {
     public static String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
 
     // DB Versioning
-    public static final int DBVersionMain = 23;
+    public static final int DBVersionMain = 24;
     public static final int DBVersionAirports = 22;
 
     // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
