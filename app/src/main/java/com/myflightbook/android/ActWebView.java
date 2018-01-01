@@ -33,6 +33,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
@@ -54,8 +55,14 @@ public class ActWebView extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
+
+        Button btnBack = findViewById(R.id.btnWebBack);
+        Button btnForward = findViewById(R.id.btnWebForward);
+        Button btnRefresh = findViewById(R.id.btnWebRefresh);
+
         String szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
         szTempFile = this.getIntent().getStringExtra(MFBConstants.intentViewTempFile);
+
         WebView wv = findViewById(R.id.wvMain);
         wv.setWebChromeClient(new WebChromeClient() {
             // For 3.0+ Devices (Start)
@@ -137,6 +144,20 @@ public class ActWebView extends Activity {
             }
         });
         wv.loadUrl(szURL);
+
+        btnBack.setOnClickListener(view -> {
+            if (wv.canGoBack())
+                wv.goBack();
+            else
+                finish();
+        });
+
+        btnForward.setOnClickListener(view -> {
+            if (wv.canGoForward())
+                wv.goForward();
+        });
+
+        btnRefresh.setOnClickListener(view -> wv.reload());
     }
 
     public void onPause() {
