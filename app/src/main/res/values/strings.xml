@@ -127,7 +127,7 @@
     <string name="lblGPSDisclaimer">On appropriate hardware, MyFlightbook for Android can auto-detect take-offs and landings, and can record flight data for later analysis on MyFlightbook.com.  Android is not an aviation-quality GPS, so these features are imperfect.</string>
     <string name="lblAutoHobbs">Auto-fill ending Hobbs</string>
     <string name="lblAutoTime">Auto-fill total time</string>
-    <string name="lblCopyright">© 2012&#8211;2016 MyFlightbook LLC</string>
+    <string name="lblCopyright">© 2012&#8211;2018 MyFlightbook LLC</string>
     <string name="lblCodeCredit">Portions of this code use the KSoap2 library at http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Thanks folks!</string>
     <string name="lblContactMe">Contact Us</string>
     <string name="lblCleanup">Clean Up</string>

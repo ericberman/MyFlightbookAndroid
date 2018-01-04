@@ -127,7 +127,7 @@
     <string name="lblGPSDisclaimer">Avec certains matériels, MyFlightbook pour Android est capable de détecter automatiquement les décollages et atterissages. Le logiciel peut enregistrer les données de vol pour une analyse ultérieure. Android n\'est pas confome aux standards aéronautiques pour la fonction GPS, donc ces fonctions sont imparfaites.</string>
     <string name="lblAutoHobbs">Saisie automatique du Hobbs d\'arrivée</string>
     <string name="lblAutoTime">Saisie automatique du Temps Total</string>
-    <string name="lblCopyright">© 2012&#8211;2016 MyFlightbook LLC</string>
+    <string name="lblCopyright">© 2012&#8211;2018 MyFlightbook LLC</string>
     <string name="lblCodeCredit">Une partie du code utilise en partie la librairie KSoap2 library disponible sur http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Un grand merci!</string>
     <string name="lblContactMe">Contactez nous </string>
     <string name="lblCleanup">Nettoyage</string>
