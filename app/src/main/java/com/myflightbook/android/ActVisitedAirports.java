@@ -239,6 +239,16 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         );
         setListAdapter(adapter);
 
+        // Auto-expand if 5 or fewer groups.
+        boolean[] m_rgExpandedGroups = new boolean[alKeys.size()];
+        if (m_rgExpandedGroups.length <= 5)
+            for (int i = 0; i < m_rgExpandedGroups.length; i++)
+                m_rgExpandedGroups[i] = true;
+
+        for (int i = 0; i < m_rgExpandedGroups.length; i++)
+            if (m_rgExpandedGroups[i])
+                getExpandableListView().expandGroup(i);
+
         getExpandableListView().setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
 
             if (!MFBMain.HasMaps())

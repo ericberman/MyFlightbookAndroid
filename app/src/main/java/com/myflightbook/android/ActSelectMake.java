@@ -114,6 +114,13 @@ public class ActSelectMake extends FixedExpandableListActivity {
             }
         }
 
+        boolean[] m_rgExpandedGroups = new boolean[alKeys.size()];
+        if (expandedGroupIndex > 0 && expandedGroupIndex < alKeys.size())
+            m_rgExpandedGroups[expandedGroupIndex] = true;
+        if (m_rgExpandedGroups.length <= 5)
+            for (int i = 0; i < m_rgExpandedGroups.length; i++)
+                m_rgExpandedGroups[i] = true;
+
         // put the above into arrayLists, but in the order that the keys were encountered.  .values() is an undefined order.
         ArrayList<HashMap<String, String>> headerList = new ArrayList<>();
         ArrayList<ArrayList<HashMap<String, String>>> childrenList = new ArrayList<>();
@@ -135,8 +142,9 @@ public class ActSelectMake extends FixedExpandableListActivity {
         );
         setListAdapter(adapter);
 
-        if (expandedGroupIndex >= 0)
-            getExpandableListView().expandGroup(expandedGroupIndex);
+        for (int i = 0; i < m_rgExpandedGroups.length; i++)
+            if (m_rgExpandedGroups[i])
+            getExpandableListView().expandGroup(i);
 
         getExpandableListView().setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
                 @SuppressWarnings("unchecked")
