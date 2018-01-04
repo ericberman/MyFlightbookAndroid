@@ -347,6 +347,12 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
 
         if (m_rgExpandedGroups == null)
             m_rgExpandedGroups = new boolean[alKeys.size()];
+        else if (m_rgExpandedGroups.length != alKeys.size()) {
+            m_rgExpandedGroups = new boolean[alKeys.size()];
+            if (m_rgExpandedGroups.length <= 5) // autoexpand if fewer than 5 groups.
+                for (int i = 0; i < m_rgExpandedGroups.length; i++)
+                    m_rgExpandedGroups[i] = true;
+        }
 
         ExpandablePropertyListAdapter mAdapter = new ExpandablePropertyListAdapter(this, headerList, childrenList);
         setListAdapter(mAdapter);
