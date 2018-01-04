@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -134,11 +135,13 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         Context m_context;
         ArrayList<String> m_groups;
         ArrayList<ArrayList<FlightProperty>> m_children;
+        private SparseArray<View> m_cachedViews = null;
 
         ExpandablePropertyListAdapter(Context context, ArrayList<String> groups, ArrayList<ArrayList<FlightProperty>> children) {
             m_context = context;
             m_groups = groups;
             m_children = children;
+            m_cachedViews = new SparseArray<>();
         }
 
         @Override
@@ -161,7 +164,6 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
 
         @Override
         public Object getChild(int groupPos, int childPos) {
-            assert m_groups != null;
             assert m_children != null;
             return m_children.get(groupPos).get(childPos);
         }
@@ -173,7 +175,6 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
 
         @Override
         public long getChildId(int groupPos, int childPos) {
-            assert m_groups != null;
             assert m_children != null;
 //            return childPos;
             return m_children.get(groupPos).get(childPos).idPropType;
@@ -181,7 +182,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
 
         @Override
         public boolean hasStableIds() {
-            return true;
+            return false;
         }
 
         @Override
@@ -203,14 +204,18 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                                  View convertView, ViewGroup parent) {
+            FlightProperty fp = (FlightProperty) getChild(groupPosition, childPosition);
+
+            // ignore passed-in value of convert view; keep these all around all the time.
+            convertView = m_cachedViews.get(fp.CustomPropertyType().idPropType);
             if (convertView == null) {
                 assert m_context != null;
                 LayoutInflater infalInflater = (LayoutInflater) m_context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 assert infalInflater != null;
                 convertView = infalInflater.inflate(R.layout.cptitem, parent, false);
+                m_cachedViews.put(fp.CustomPropertyType().idPropType, convertView);
             }
 
-            FlightProperty fp = (FlightProperty) getChild(groupPosition, childPosition);
             PropertyEdit pe = convertView.findViewById(R.id.propEdit);
 
             // only init if it's not already set up - this avoids focus back-and-forth with edittext
@@ -258,10 +263,6 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
             @Override
             public void afterTextChanged(Editable editable) { }
         });
-    }
-
-    public void onResume() {
-        super.onResume();
 
         Intent i = getIntent();
         m_idFlight = i.getLongExtra(ActNewFlight.PROPSFORFLIGHTID, -1);

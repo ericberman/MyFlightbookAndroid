@@ -133,9 +133,11 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
         m_ck.setText(m_fp.labelString());
         m_ck.setChecked(m_fp.boolValue);
         m_tvLabel.setText(m_fp.labelString());
+        UpdateLabelTypefaceForProperty();
 
         SharedPreferences pref = getContext().getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, Activity.MODE_PRIVATE);
         m_fIsPinned = CustomPropertyType.isPinnedProperty(pref, m_fp.idPropType);
+
 
         findViewById(R.id.layoutPropEdit).setOnLongClickListener(v -> {
             HandlePinClick();
@@ -212,10 +214,13 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
         requestLayout();
     }
 
-    private void UpdateForProperty() {
+    private void UpdateLabelTypefaceForProperty() {
         TextView txtLabel = findViewById(R.id.txtLabel);
-        txtLabel.setTypeface(txtLabel.getTypeface(), m_fp.IsDefaultValue() ? Typeface.NORMAL : Typeface.BOLD);
+        txtLabel.setTypeface(null, m_fp.IsDefaultValue() ? Typeface.NORMAL : Typeface.BOLD);
+    }
 
+    private void UpdateForProperty() {
+        UpdateLabelTypefaceForProperty();
         CustomPropertyType.CFPPropertyType cptType = m_fp.getType();
         Boolean fIsBasicDecimal = cptType == CustomPropertyType.CFPPropertyType.cfpDecimal && (m_fp.CustomPropertyType().cptFlag & 0x00200000) != 0;
 
