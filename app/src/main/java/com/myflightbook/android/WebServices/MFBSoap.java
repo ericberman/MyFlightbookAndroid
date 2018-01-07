@@ -169,6 +169,10 @@ public class MFBSoap {
             o = null;
         }
 
+        // Un-comment one or the other lines above - if debug is true - to view raw XML:
+//        String sRequestDump = androidHttpTransport.requestDump;
+//        String sResponseDump = androidHttpTransport.responseDump;
+
         return o;
     }
 
