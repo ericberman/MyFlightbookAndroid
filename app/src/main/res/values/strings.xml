@@ -359,10 +359,11 @@
     <string name="fqAirportsVisited">Airports:</string>
     <string name="fqTextContainsPrompt">Text to find</string>
     <string name="fqAirportsContainsPrompt">Airports visited</string>
+    <string name="fqFlightDate">Dates for flights:</string>
     <string name="fqFlightAircraft">Flight Aircraft</string>
+    <string name="fqShowAllAircraft">Show All Aircraft</string>
     <string name="fqFlightModel">Flight aircraft model</string>
     <string name="fqFlightModelNamePrompt">Model name</string>
-    <string name="fqFlightDate">Dates for flights:</string>
     <string name="FlightQueryDistanceAllFlights">All flights</string>
     <string name="FlightQueryDistanceLocalFlights">Local flights only</string>
     <string name="FlightQueryDistanceNonLocalFlights">Non-local flights only</string>

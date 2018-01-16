@@ -27,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.TableLayout;
@@ -59,21 +60,48 @@ import Model.MakeModel;
 public class ActFlightQuery extends ActMFBForm implements android.view.View.OnClickListener, DlgDatePicker.DateTimeUpdate {
     private FlightQuery CurrentQuery = null;
     private Aircraft[] m_rgac = null;
+    private Aircraft[] m_rgacAll = null;
     private MakeModel[] m_rgmm = null;
+    private Boolean fShowAllAircraft = false;
     public static final int QUERY_REQUEST_CODE = 50382;
     public static final String QUERY_TO_EDIT = "com.myflightbook.android.querytoedit";
 
+    // We are going to return only active aircraft UNLESS:
+    // a) fShowAllAircraft is true
+    // b) all aircraft are active, or
+    // c) the query references an inactive aircraft.
+    // if b or c is true, we will set (a) to true.
     protected Aircraft[] GetCurrentAircraft() {
         if (m_rgac == null)
-            m_rgac = new AircraftSvc().getCachedAircraft();
+            m_rgac = m_rgacAll = new AircraftSvc().getCachedAircraft();
+
+        if (fShowAllAircraft)
+            m_rgac = m_rgacAll;
+        else
+        {
+            ArrayList<Aircraft> lst = new ArrayList<>();
+            for (Aircraft ac : m_rgac)
+                if (!ac.HideFromSelection)
+                    lst.add(ac);
+
+            if (lst.size() == m_rgac.length)
+                fShowAllAircraft = true;
+            else if (CurrentQuery != null && CurrentQuery.AircraftList != null) {
+                for (Aircraft ac : CurrentQuery.AircraftList)
+                    if (ac.HideFromSelection)
+                        fShowAllAircraft = true;
+                if (!fShowAllAircraft)
+                    m_rgac = lst.toArray(new Aircraft[0]);
+            }
+        }
         return m_rgac;
     }
 
     protected MakeModel[] GetActiveMakes() {
         if (m_rgmm == null) {
-            Aircraft[] rgac = GetCurrentAircraft();
+            GetCurrentAircraft();
             Map<String, MakeModel> htmm = new HashMap<>();
-            for (Aircraft ac : rgac) {
+            for (Aircraft ac : m_rgacAll) {
                 if (!htmm.containsKey(ac.ModelDescription)) {
                     MakeModel mm = new MakeModel();
                     mm.MakeModelId = ac.ModelID;
@@ -160,10 +188,18 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         setExpandedState((TextView) findViewById(R.id.txtFQAirportsHeader), findViewById(R.id.tblFQAirports), CurrentQuery.AirportList.length > 0 || CurrentQuery.Distance != FlightQuery.FlightDistance.AllFlights);
         setExpandedState((TextView) findViewById(R.id.txtFQACFeatures), findViewById(R.id.sectFQAircraftFeatures), CurrentQuery.HasAircraftCriteria());
         setExpandedState((TextView) findViewById(R.id.txtFQFlightFeatures), findViewById(R.id.sectFQFlightFeatures), CurrentQuery.HasFlightCriteria());
-        setExpandedState((TextView) findViewById(R.id.txtFQAircraftHeader), findViewById(R.id.tblFQAircraft), CurrentQuery.AircraftList.length >  0);
+        setExpandedState((TextView) findViewById(R.id.txtFQAircraftHeader), findViewById(R.id.llfqAircraft), CurrentQuery.AircraftList.length >  0);
         setExpandedState((TextView) findViewById(R.id.txtFQModelsHeader), findViewById(R.id.sectFQModels), CurrentQuery.MakeList.length > 0 || CurrentQuery.ModelName.length() > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQCatClassHeader), findViewById(R.id.tblFQCatClass), CurrentQuery.CatClassList.length > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQPropsHeader), findViewById(R.id.tblFQProps), CurrentQuery.PropertyTypes.length > 0);
+
+        Button btnShowAll = (Button) findViewById(R.id.btnShowAllAircraft);
+        btnShowAll.setOnClickListener(view -> {
+            fromForm();
+            fShowAllAircraft = true;
+            setUpAircraftChecklist();
+            toForm();
+        });
     }
 
     @Override
@@ -212,7 +248,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    protected void setUpChecklists() {
+    protected void setUpAircraftChecklist() {
         setUpDynamicCheckList(R.id.tblFQAircraft, GetCurrentAircraft(), new CheckedTableListener() {
             @Override
             public void itemStateChanged(Object o, boolean fAdded) {
@@ -238,6 +274,11 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 return false;
             }
         });
+        findViewById(R.id.btnShowAllAircraft).setVisibility(fShowAllAircraft ? View.GONE : View.VISIBLE);
+    }
+
+    protected void setUpChecklists() {
+        setUpAircraftChecklist();
 
         setUpDynamicCheckList(R.id.tblFQModels, GetActiveMakes(), new CheckedTableListener() {
             @Override
@@ -622,7 +663,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 toggleHeader(v, R.id.sectFQFlightFeatures);
                 break;
             case R.id.txtFQAircraftHeader:
-                toggleHeader(v, R.id.tblFQAircraft);
+                toggleHeader(v, R.id.llfqAircraft);
                 break;
             case R.id.txtFQModelsHeader:
                 toggleHeader(v, R.id.sectFQModels);

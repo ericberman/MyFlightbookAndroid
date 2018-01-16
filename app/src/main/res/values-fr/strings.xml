@@ -361,6 +361,7 @@
     <string name="fqAirportsContainsPrompt">Aéroports visités</string>
     <string name="fqFlightDate">Sélection par Dates ou Période:</string>
     <string name="fqFlightAircraft">Type d\'aéronef</string>
+    <string name="fqShowAllAircraft">Afficher tous les aéronefs</string>
     <string name="fqFlightModel">Constructeur et modèle</string>
     <string name="fqFlightModelNamePrompt">Nom de modèle</string>
     <string name="FlightQueryDistanceAllFlights">Tous les vols</string>
