@@ -440,6 +440,7 @@
     <string name="lblAchievements">Réalisations</string>
     <string name="lblRatingsProgress">Progrès vers la certification</string>
     <string name="lbl8710">8710 Forme</string>
+    <string name="lblReqSigs">Demander des signatures</string>
     <string name="errTrainingNotAvailable">Vous devez être connecté et avoir accès à Internet pour afficher les éléments de formation.</string>
 
     <!--  Category Class -->

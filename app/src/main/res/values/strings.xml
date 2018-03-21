@@ -440,6 +440,7 @@
     <string name="lblAchievements">Achievements</string>
     <string name="lblRatingsProgress">Ratings Progress</string>
     <string name="lbl8710">8710 Form</string>
+    <string name="lblReqSigs">Request Signatures</string>
     <string name="errTrainingNotAvailable">You must be signed in and have access to the Internet to view training items.</string>
 
     <!--  Category Class -->
