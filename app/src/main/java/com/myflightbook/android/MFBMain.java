@@ -99,6 +99,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     static private final String m_KeysLastTab = "lastTab3";
 
     static private final String m_KeysShowFlightImages = "showFlightImages";
+    static private final String m_KeysShowFlightTimes = "showFlightTimes";
 
     static private final String m_KeysIsFlying = "isFlying";
     static private final String m_KeysIsRecording = "isRecording";
@@ -518,6 +519,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             DlgDatePicker.fUseLocalTime = mPrefs.getBoolean(m_KeysUseLocal, false);
 
             ActRecentsWS.fShowFlightImages = mPrefs.getBoolean(m_KeysShowFlightImages, true);
+            ActRecentsWS.fShowFlightTimes = mPrefs.getBoolean(m_KeysShowFlightTimes, true);
 
             m_fSeenWarning = mPrefs.getBoolean(m_KeysHasSeenWarning, false);
             mLastTabIndex = mPrefs.getInt(m_KeysLastTab, 0);
@@ -556,6 +558,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         ed.putBoolean(m_KeysHasSeenWarning, m_fSeenWarning);
 
         ed.putBoolean(m_KeysShowFlightImages, ActRecentsWS.fShowFlightImages);
+        ed.putBoolean(m_KeysShowFlightTimes, ActRecentsWS.fShowFlightTimes);
 
         ed.putInt(m_KeysLastTab, mTabHost.getCurrentTab());
         ed.putLong(m_TimeOfLastVacuum, mLastVacuum);

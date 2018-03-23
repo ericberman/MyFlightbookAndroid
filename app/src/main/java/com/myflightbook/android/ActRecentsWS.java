@@ -31,6 +31,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +55,7 @@ import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 import Model.Aircraft;
 import Model.DecimalEdit;
@@ -82,6 +85,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     public static Aircraft[] m_rgac = null;
 
     public static Boolean fShowFlightImages = true;
+    public static Boolean fShowFlightTimes = true;
 
     private FlightQuery currentQuery = new FlightQuery();
 
@@ -89,6 +93,14 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         FlightAdapter(Context c, int rid,
                       LogbookEntry[] rgpp) {
             super(c, rid, rgpp);
+        }
+
+        private String formattedTimeForLabel(int idLabel, double val, EditMode em) {
+            return (val == 0) ? "" : String.format(Locale.getDefault(), "<b>%s:</b> %s ", getString(idLabel), DecimalEdit.StringForMode(val, em));
+        }
+
+        private String formattedTimeForLabel(int idLabel, int val) {
+            return (val == 0) ? "" : String.format(Locale.getDefault(), "<b>%s:</b> %d ", getString(idLabel), val);
         }
 
         @Override
@@ -107,10 +119,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 ActRecentsWS.this.refreshRecentFlights(false);
 
             LogbookEntry le = this.getItem(position);
+            assert le != null;
 
-            TextView txtDate = v.findViewById(R.id.txtDate);
-            TextView txtRoute = v.findViewById(R.id.txtRoute);
-            TextView txtComments = v.findViewById(R.id.txtComments);
             TextView txtError = v.findViewById(R.id.txtError);
             ImageView ivCamera = v.findViewById(R.id.imgCamera);
             ImageView ivSigState = v.findViewById(R.id.imgSigState);
@@ -118,71 +128,84 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (m_rgac == null)
                 m_rgac = (new AircraftSvc()).getCachedAircraft();
 
-            String szDate = "";
-            String szRoute = "";
-            String szComments = "";
-            Boolean fIsPending = false;
+            Boolean fIsPending;
 
-            if (le != null) {
-                Aircraft ac = Aircraft.getAircraftById(le.idAircraft, m_rgac);
-                EditMode em = DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
-                String szTime = String.format("(%s%s) ",
-                        DecimalEdit.StringForMode(le.decTotal, em),
-                        (em == EditMode.DECIMAL ? getString(R.string.abbrevHours) : ""));
-                szDate = String.format("%s %s%s%s",
-                        DateFormat.getDateFormat(this.getContext()).format(le.dtFlight),
-                        le.decTotal > 0 ? szTime : "",
-                        le.szTailNumDisplay,
-                        le.IsPendingFlight() ? getString(R.string.txtPending) : "");
-                szRoute = le.szRoute.trim();
-                szComments = le.szComments.trim();
+            Aircraft ac = Aircraft.getAircraftById(le.idAircraft, m_rgac);
+            EditMode em = DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
 
-                if (ActRecentsWS.fShowFlightImages) {
-                    ivCamera.setVisibility(View.VISIBLE);
-                    if (le.hasImages() || (ac != null && ac.HasImage())) {
-                        //noinspection ConstantConditions - ac.AircraftImages cannot be null because ac.HasImage() has already verified that it isn't.
-                        MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.AircraftImages[0];
-                        Bitmap b = mfbii.bitmapFromThumb();
-                        if (b != null) {
-                            ivCamera.setImageBitmap(b);
-                        }
-                    } else
-                        ivCamera.setImageResource(R.drawable.noimage);
-                }
-                else
-                    ivCamera.setVisibility(View.GONE);
+            if (ActRecentsWS.fShowFlightImages) {
+                ivCamera.setVisibility(View.VISIBLE);
+                if (le.hasImages() || (ac != null && ac.HasImage())) {
+                    //noinspection ConstantConditions - ac.AircraftImages cannot be null because ac.HasImage() has already verified that it isn't.
+                    MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.AircraftImages[0];
+                    Bitmap b = mfbii.bitmapFromThumb();
+                    if (b != null) {
+                        ivCamera.setImageBitmap(b);
+                    }
+                } else
+                    ivCamera.setImageResource(R.drawable.noimage);
+            }
+            else
+                ivCamera.setVisibility(View.GONE);
 
-                switch (le.signatureStatus) {
-                    case None:
-                        ivSigState.setVisibility(View.GONE);
-                        break;
-                    case Valid:
-                        ivSigState.setVisibility(View.VISIBLE);
-                        ivSigState.setImageResource(R.drawable.sigok);
-                        ivSigState.setContentDescription(getString(R.string.cdIsSignedValid));
-                        break;
-                    case Invalid:
-                        ivSigState.setVisibility(View.VISIBLE);
-                        ivSigState.setImageResource(R.drawable.siginvalid);
-                        ivSigState.setContentDescription(getString(R.string.cdIsSignedInvalid));
-                        break;
-                }
-
-                fIsPending = le.IsPendingFlight();
-
-                txtError.setText(le.szError);
-                txtError.setVisibility(le.szError != null && le.szError.length() > 0 ? View.VISIBLE : View.GONE);
+            switch (le.signatureStatus) {
+                case None:
+                    ivSigState.setVisibility(View.GONE);
+                    break;
+                case Valid:
+                    ivSigState.setVisibility(View.VISIBLE);
+                    ivSigState.setImageResource(R.drawable.sigok);
+                    ivSigState.setContentDescription(getString(R.string.cdIsSignedValid));
+                    break;
+                case Invalid:
+                    ivSigState.setVisibility(View.VISIBLE);
+                    ivSigState.setImageResource(R.drawable.siginvalid);
+                    ivSigState.setContentDescription(getString(R.string.cdIsSignedInvalid));
+                    break;
             }
 
-            txtRoute.setVisibility(szRoute.length() == 0 ? View.GONE : View.VISIBLE);
-            txtComments.setVisibility(szComments.length() == 0 ? View.GONE : View.VISIBLE);
-            txtDate.setText(szDate);
-            txtRoute.setText(szRoute);
-            txtComments.setText(szComments);
+            fIsPending = le.IsPendingFlight();
+
+            txtError.setText(le.szError);
+            txtError.setVisibility(le.szError != null && le.szError.length() > 0 ? View.VISIBLE : View.GONE);
+
+            String szTailNumber = ((le.szTailNumDisplay == null || le.szTailNumDisplay.length() == 0) && ac != null) ? ac.displayTailNumber() : le.szTailNumDisplay;
+            assert szTailNumber != null;
+
+            TextView txtHeader = v.findViewById(R.id.txtFlightHeader);
+            String szHeaderHTML = String.format(Locale.getDefault(),
+                    "<strong><big>%s</big> %s (%s)</strong> <i><font color='gray'>%s</font></i>",
+                    TextUtils.htmlEncode(DateFormat.getDateFormat(this.getContext()).format(le.dtFlight)),
+                    (le.IsPendingFlight() ? (" " + getString(R.string.txtPending)) : ""),
+                    TextUtils.htmlEncode(szTailNumber.trim()),
+                    TextUtils.htmlEncode(le.szRoute.trim()));
+            txtHeader.setText(Html.fromHtml(szHeaderHTML));
+
+            TextView txtComments = v.findViewById(R.id.txtComments);
+            txtComments.setVisibility(le.szComments.length() == 0 ? View.GONE : View.VISIBLE);
+            txtComments.setText(le.szComments);
+
+            TextView txtFlightTimes = v.findViewById(R.id.txtFlightTimes);
+            StringBuilder sb = new StringBuilder();
+            if (fShowFlightTimes) {
+                sb.append(formattedTimeForLabel(R.string.lblLandingsAlt, le.cLandings));
+                sb.append(formattedTimeForLabel(R.string.lblApproaches, le.cApproaches));
+                sb.append(formattedTimeForLabel(R.string.lblNight, le.decNight, em));
+                sb.append(formattedTimeForLabel(R.string.lblSimIMC, le.decSimulatedIFR, em));
+                sb.append(formattedTimeForLabel(R.string.lblIMC, le.decIMC, em));
+                sb.append(formattedTimeForLabel(R.string.lblNight, le.decXC, em));
+                sb.append(formattedTimeForLabel(R.string.lblDual, le.decDual, em));
+                sb.append(formattedTimeForLabel(R.string.lblGround, le.decGrndSim, em));
+                sb.append(formattedTimeForLabel(R.string.lblCFI, le.decCFI, em));
+                sb.append(formattedTimeForLabel(R.string.lblSIC, le.decSIC, em));
+                sb.append(formattedTimeForLabel(R.string.lblPIC, le.decPIC, em));
+                sb.append(formattedTimeForLabel(R.string.lblTotal, le.decTotal, em));
+            }
+            txtFlightTimes.setVisibility(sb.length() == 0 ? View.GONE : View.VISIBLE);
+            txtFlightTimes.setText(Html.fromHtml(sb.toString()));
 
             // show pending flights different from others.
             Typeface tf = Typeface.DEFAULT;
-            txtRoute.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
             txtComments.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
             v.setBackgroundColor(fIsPending ? Color.LTGRAY : Color.WHITE);
 

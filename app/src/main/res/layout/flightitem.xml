@@ -20,23 +20,20 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txtDate"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtRoute"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="" />
+            android:id="@+id/txtFlightHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"  />
 
         <TextView
             android:id="@+id/txtComments"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="" />
+
+        <TextView
+            android:id="@+id/txtFlightTimes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/txtError"

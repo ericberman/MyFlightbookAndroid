@@ -116,6 +116,10 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         ck.setOnClickListener(this);
         ck.setChecked(ActRecentsWS.fShowFlightImages);
 
+        ck = (CheckBox) findViewById(R.id.ckShowFlightTimes);
+        ck.setOnClickListener(this);
+        ck.setChecked(ActRecentsWS.fShowFlightTimes);
+
         // Strings for spinner
         String[] rgAutoHobbs = {getString(R.string.autoNone),
                 getString(R.string.autoFlight),
@@ -382,6 +386,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 break;
             case R.id.ckShowFlightImages:
                 ActRecentsWS.fShowFlightImages = ((CheckBox) v).isChecked();
+                break;
+            case R.id.ckShowFlightTimes:
+                ActRecentsWS.fShowFlightTimes = ((CheckBox) v).isChecked();
                 break;
             case R.id.btnContact:
                 this.ContactUs();

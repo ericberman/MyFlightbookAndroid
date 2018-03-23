@@ -215,6 +215,12 @@
             android:id="@+id/ckShowFlightImages"
             android:text="@string/lblShowFlightImages" />
 
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ckShowFlightTimes"
+            android:text="@string/lblShowFlightTimes" />
+
         <TextView
             style="@style/DividerBar"
             android:text="@string/lblAdditionalOptions" />
