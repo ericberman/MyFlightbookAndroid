@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -103,12 +103,21 @@ public class RecentFlightsSvc extends MFBSoap {
         else {
             rgLe = ReadResults(result);
 
-            // null out the properties, since these come without properties
             if (rgLe == null)
                 rgLe = new LogbookEntry[0];
 
-            for (LogbookEntry le : rgLe)
-                le.rgCustomProperties = null;
+            // Update high-watermark hobbs/tach for the aircraft
+            for (LogbookEntry le : rgLe) {
+                Aircraft.updateHobbsForAircraft(le.hobbsEnd, le.idAircraft);
+                if (le.rgCustomProperties != null && le.rgCustomProperties.length > 0) {
+                    for (FlightProperty fp : le.rgCustomProperties) {
+                        if (fp.idPropType == CustomPropertyType.idPropTypeTachEnd) {
+                            Aircraft.updateTachForAircraft(fp.decValue, le.idAircraft);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         ArrayList<LogbookEntry> alle = new ArrayList<>();

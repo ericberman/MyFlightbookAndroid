@@ -62,6 +62,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
     private long m_idFlight = -1;
     private int m_idExistingId = 0;
     private double m_xfillValue = 0.0;
+    private double m_xfillTachStart = 0.0;
 
     @SuppressLint("StaticFieldLeak")
     private class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
@@ -221,7 +222,12 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
             // only init if it's not already set up - this avoids focus back-and-forth with edittext
             FlightProperty fpExisting = pe.getFlightProperty();
             if (fpExisting == null || fpExisting.idPropType != fp.idPropType)
-                pe.InitForProperty(fp, fp.idPropType, ActViewProperties.this, ActViewProperties.this);
+                pe.InitForProperty(fp, fp.idPropType, ActViewProperties.this, fp.idPropType == CustomPropertyType.idPropTypeTachStart ?
+                        (DecimalEdit.CrossFillDelegate) sender -> {
+                            if (ActViewProperties.this.m_xfillTachStart > 0)
+                                sender.setDoubleValue(ActViewProperties.this.m_xfillTachStart);
+                        }
+                        : ActViewProperties.this);
 
             return convertView;
         }
@@ -274,6 +280,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         m_idExistingId = i.getIntExtra(ActNewFlight.PROPSFORFLIGHTEXISTINGID, 0);
 
         m_xfillValue = i.getDoubleExtra(ActNewFlight.PROPSFORFLIGHTCROSSFILLVALUE, 0.0);
+        m_xfillTachStart = i.getDoubleExtra(ActNewFlight.TACHFORCROSSFILLVALUE, 0.0);
 
         CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
         if (cptSvc.CacheStatus() == DBCache.DBCacheStatus.VALID) {

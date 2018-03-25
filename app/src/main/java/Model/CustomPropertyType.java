@@ -48,6 +48,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     // known custom property types
     static final int idPropTypeNightTakeOff = 73;
     static final int idPropTypeTachStart = 95;
+    public static final int idPropTypeTachEnd = 96;
 
     // DB Column names
     private static final String COL_IDPROPTYPE = "idPropType";

@@ -430,4 +430,29 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         }
         return null;
     }
+
+    public static Hashtable<Integer, Double> hashHighWaterHobbs = new Hashtable<Integer, Double>();
+    public static Hashtable<Integer, Double> hashHighWaterTach = new Hashtable<Integer, Double>();
+
+    public static void updateHobbsForAircraft(Double hobbs, Integer idAircraft) {
+        if (!hashHighWaterHobbs.containsKey(idAircraft))
+            hashHighWaterHobbs.put(idAircraft, hobbs);
+
+        hashHighWaterHobbs.put(idAircraft, Math.max(hashHighWaterHobbs.get(idAircraft), hobbs));
+    }
+
+    public static void updateTachForAircraft(Double tach, Integer idAircraft) {
+        if (!hashHighWaterTach.containsKey(idAircraft))
+            hashHighWaterTach.put(idAircraft, tach);
+
+        hashHighWaterTach.put(idAircraft, Math.max(hashHighWaterTach.get(idAircraft), tach));
+    }
+
+    public static Double getHighWaterHobbsForAircraft(Integer idAircraft) {
+        return hashHighWaterHobbs.containsKey(idAircraft) ? hashHighWaterHobbs.get(idAircraft) : 0.0;
+    }
+
+    public static Double getHighWaterTachForAircraft(Integer idAircraft) {
+        return hashHighWaterTach.containsKey(idAircraft) ? hashHighWaterTach.get(idAircraft) : 0.0;
+    }
 }

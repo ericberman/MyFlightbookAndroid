@@ -106,6 +106,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public final static String PROPSFORFLIGHTID = "com.myflightbook.android.FlightPropsID";
     public final static String PROPSFORFLIGHTEXISTINGID = "com.myflightbook.android.FlightPropsIDExisting";
     public final static String PROPSFORFLIGHTCROSSFILLVALUE = "com.myflightbook.android.FlightPropsXFill";
+    public final static String TACHFORCROSSFILLVALUE = "com.myflightbook.android.TachStartXFill";
     private static final int EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE = 48329;
 
     // current state of pause/play and accumulated night
@@ -372,6 +373,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         enableCrossFill(R.id.txtCFI);
         enableCrossFill(R.id.txtSIC);
         enableCrossFill(R.id.txtPIC);
+        enableCrossFill(R.id.txtHobbsStart);
 
         findViewById(R.id.txtTotal).setOnLongClickListener(v -> {
             Intent i = new Intent(getActivity(), ActTimeCalc.class);
@@ -463,7 +465,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     public void CrossFillRequested(DecimalEdit sender) {
         FromView();
-        if (m_le.decTotal > 0)
+        if (sender.getId() == R.id.txtHobbsStart) {
+            Double d = Aircraft.getHighWaterHobbsForAircraft(m_le.idAircraft);
+            if (d > 0)
+                sender.setDoubleValue(d);
+        }
+        else if (m_le.decTotal > 0)
             sender.setDoubleValue(m_le.decTotal);
         FromView();
     }
@@ -973,6 +980,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         i.putExtra(PROPSFORFLIGHTID, m_le.idLocalDB);
         i.putExtra(PROPSFORFLIGHTEXISTINGID, m_le.idFlight);
         i.putExtra(PROPSFORFLIGHTCROSSFILLVALUE, m_le.decTotal);
+        i.putExtra(TACHFORCROSSFILLVALUE, Aircraft.getHighWaterTachForAircraft(m_le.idAircraft));
         startActivityForResult(i, EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE);
     }
 
@@ -1314,15 +1322,20 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         m_le.szRoute = StringFromField(R.id.txtRoute);
 
         // Aircraft spinner
-        Aircraft[] rgSelectibleAircraft = SelectibleAircraft();
-        if (rgSelectibleAircraft != null && rgSelectibleAircraft.length > 0) {
-            Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
-            m_le.idAircraft = ((Aircraft) sp.getSelectedItem()).AircraftID;
-        }
+        m_le.idAircraft = selectedAircraftID();
 
         // Posting options
         m_po.m_fPostFacebook = CheckState(R.id.ckFacebook);
         m_po.m_fTweet = CheckState(R.id.ckTwitter);
+    }
+
+    int selectedAircraftID() {
+        Aircraft[] rgSelectibleAircraft = SelectibleAircraft();
+        if (rgSelectibleAircraft != null && rgSelectibleAircraft.length > 0) {
+            Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
+            return ((Aircraft) sp.getSelectedItem()).AircraftID;
+        }
+        return -1;
     }
 
     private void AutoTotals() {
@@ -1734,7 +1747,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             tr.setId(View.generateViewId());
 
             PropertyEdit pe = tr.findViewById(R.id.propEdit);
-            pe.InitForProperty(fp, tr.getId(), this, this);
+            pe.InitForProperty(fp, tr.getId(), this, (fp.CustomPropertyType().idPropType == CustomPropertyType.idPropTypeTachStart) ? (CrossFillDelegate) sender -> {
+                Double d = Aircraft.getHighWaterTachForAircraft(selectedAircraftID());
+                if (d > 0)
+                    sender.setDoubleValue(d);
+            } : this);
 
             tr.findViewById(R.id.imgFavorite).setVisibility(fIsPinned ? View.VISIBLE : View.INVISIBLE);
 
