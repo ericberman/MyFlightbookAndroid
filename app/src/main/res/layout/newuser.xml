@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:width="170dip"
                     android:hint="@string/lblFirstName"
-                    android:inputType="textPersonName"
+                    android:inputType="textPersonName|textCapWords"
                     android:nextFocusDown="@+id/txtLastName"
                     android:nextFocusUp="@+id/txtFirstName" />
             </TableRow>
@@ -155,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:width="170dip"
                     android:hint="@string/lblLastName"
-                    android:inputType="textPersonName"
+                    android:inputType="textPersonName|textCapWords"
                     android:nextFocusDown="@+id/txtQuestion"
                     android:nextFocusUp="@+id/txtFirstName" />
             </TableRow>
@@ -191,6 +191,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:width="170dip"
+                        android:inputType="text|textCapSentences"
                         android:hint="@string/lblQuestionHint"
                         android:nextFocusDown="@+id/txtAnswer"
                         android:nextFocusUp="@+id/txtLastName" />
@@ -218,6 +219,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
+                    android:inputType="text|textCapSentences"
                     android:hint="@string/lblAnswerHint"
                     android:nextFocusUp="@+id/txtQuestion" />
             </TableRow>

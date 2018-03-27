@@ -28,7 +28,6 @@
         android:id="@id/editPass"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint=""
         android:inputType="textPassword"
         android:maxLines="1"
         android:text="" />

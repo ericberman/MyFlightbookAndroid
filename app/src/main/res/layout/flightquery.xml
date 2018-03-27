@@ -23,6 +23,7 @@
                 android:id="@+id/fqGeneralText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="text"
                 android:hint="@string/fqTextContainsPrompt" />
         </LinearLayout>
 
@@ -404,6 +405,7 @@
                 android:id="@+id/fqModelName"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:inputType="text"
                 android:hint="@string/fqFlightModelNamePrompt" />
         </LinearLayout>
 
