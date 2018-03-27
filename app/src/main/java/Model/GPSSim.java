@@ -1230,7 +1230,7 @@ public class GPSSim {
             return null;
 
         LogbookEntry le = new LogbookEntry();
-        le.idFlight = LogbookEntry.ID_NEW_FLIGHT;
+        le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;
         le.dtEngineStart = le.dtFlight = rgsamples[0].TimeStamp;
 
         MFBFlightListener mfbFlightListener = new MFBFlightListener().setInProgressFlight(le);
@@ -1251,7 +1251,7 @@ public class GPSSim {
 
             le.decXC = (Airport.MaxDistanceForRoute(le.szRoute) > MFBConstants.NM_FOR_CROSS_COUNTRY) ? le.decTotal : 0.0;
 
-            le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
+            le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;
             le.szComments = c.getString(R.string.telemetryImportDefaultComment);
 
             if (uriOriginalTelemetry != null) {
