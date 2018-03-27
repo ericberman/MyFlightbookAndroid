@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -97,12 +97,12 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     private HashMap<String, MFBImageInfo> m_hmImages = new HashMap<>();
     private String m_passedAliases = "";
 
-    static final int DimensionImageOverlay = 60;
-    static final int RadiusImage = 10;
-    static final int BorderImage = 3;
+    private static final int DimensionImageOverlay = 60;
+    private static final int RadiusImage = 10;
+    private static final int BorderImage = 3;
 
-    static final int ZOOM_LEVEL_AIRPORT = 13;
-    static final int ZOOM_LEVEL_AREA = 8;
+    private static final int ZOOM_LEVEL_AIRPORT = 13;
+    private static final int ZOOM_LEVEL_AREA = 8;
 
     // intent keys
     public static final String ROUTEFORFLIGHT = "com.myflightbook.android.RouteForFlight";
@@ -114,9 +114,9 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
     @SuppressLint("StaticFieldLeak")
     private class SendGPXTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context = null;
+        private Context m_Context;
         String m_Result = "";
-        int m_idFlight = -1;
+        int m_idFlight;
 
         SendGPXTask(Context c, int idFlight) {
             super();
@@ -469,14 +469,14 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         updateMapElements(true);
     }
 
-    protected String filenameForPath()
+    private String filenameForPath()
     {
         return m_le.IsExistingFlight() ?
                 String.format(Locale.getDefault(), "%s%d", getString(R.string.txtFileNameExisting), m_le.idFlight) :
                 getString(m_le.IsNewFlight() ? R.string.txtFileNameNew : R.string.txtFileNamePending);
     }
 
-    protected void sendGPX(String szGPX) {
+    private void sendGPX(String szGPX) {
         if (szGPX == null || m_le == null)
             return;
 
@@ -516,7 +516,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
     private final int PERMISSION_REQUEST_WRITE_GPX = 50372;
 
-    protected Boolean checkDocPermissions(int req) {
+    private Boolean checkDocPermissions(int req) {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             return true;
 

@@ -15,6 +15,7 @@
             android:layout_margin="4dp"
             android:background="@color/table_background"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:padding="5dip"
             android:text="@string/CurrencyDisclaimer"

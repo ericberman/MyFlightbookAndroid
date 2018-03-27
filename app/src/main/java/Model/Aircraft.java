@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -431,8 +431,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         return null;
     }
 
-    public static Hashtable<Integer, Double> hashHighWaterHobbs = new Hashtable<Integer, Double>();
-    public static Hashtable<Integer, Double> hashHighWaterTach = new Hashtable<Integer, Double>();
+    private static Hashtable<Integer, Double> hashHighWaterHobbs = new Hashtable<Integer, Double>();
+    private static Hashtable<Integer, Double> hashHighWaterTach = new Hashtable<Integer, Double>();
 
     public static void updateHobbsForAircraft(Double hobbs, Integer idAircraft) {
         if (!hashHighWaterHobbs.containsKey(idAircraft))

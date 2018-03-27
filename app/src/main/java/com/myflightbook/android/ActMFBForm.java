@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -107,10 +107,10 @@ public class ActMFBForm extends Fragment {
     @SuppressLint("StaticFieldLeak")
     private class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         MFBImageInfo mfbii = null;
-        Boolean fGeoTag = true;
-        Boolean fDeleteFileWhenDone = false;
-        Boolean fAddToGallery = false;
-        Boolean m_fVideo = false;
+        Boolean fGeoTag;
+        Boolean fDeleteFileWhenDone;
+        Boolean fAddToGallery;
+        Boolean m_fVideo;
 
         AddCameraTask(int ActivityRequestCode, Boolean fVideo, ContentResolver cr) {
             m_fVideo = fVideo;

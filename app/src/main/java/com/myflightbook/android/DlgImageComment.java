@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,9 +37,9 @@ class DlgImageComment extends Dialog implements android.view.View.OnClickListene
         void updateAnnotation(MFBImageInfo mfbii);
     }
 
-    private AnnotationUpdate m_delegate = null;
-    private MFBImageInfo m_mfbii = null;
-    private Context m_Context = null;
+    private AnnotationUpdate m_delegate;
+    private MFBImageInfo m_mfbii;
+    private Context m_Context;
 
     DlgImageComment(Context context, MFBImageInfo mfbii, AnnotationUpdate d) {
         super(context, R.style.MFBDialog);

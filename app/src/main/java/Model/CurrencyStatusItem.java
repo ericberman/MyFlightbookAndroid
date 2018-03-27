@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public class CurrencyStatusItem extends SoapableObject {
         so.addProperty("Discrepancy", Discrepancy);
     }
 
-    public void FromProperties(SoapObject so) {
+    protected void FromProperties(SoapObject so) {
         Attribute = so.getProperty("Attribute").toString();
         Value = so.getProperty("Value").toString();
         Status = so.getProperty("Status").toString();

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
     private static final int minAirportCodeLength = 3;
     private static final int maxCodeLength = 6; // because of navaids, now allow up to 5 letters.
 
-    private static final String szRegAdHocFix = szNavaidPrefix + "\\b\\d{1,2}(?:[.,]\\d*)?[NS]\\d{1,3}(?:[\\.,]\\d*)?[EW]\\b";  // Must have a digit on the left side of the decimal
+    private static final String szRegAdHocFix = szNavaidPrefix + "\\b\\d{1,2}(?:[.,]\\d*)?[NS]\\d{1,3}(?:[.,]\\d*)?[EW]\\b";  // Must have a digit on the left side of the decimal
     private static final String szRegexAirports = String.format(Locale.US, "((?:%s)|(?:@?\\b[A-Z0-9]{%d,%d}\\b))", szRegAdHocFix, Math.min(minNavaidCodeLength, minAirportCodeLength), maxCodeLength);
 
     public Airport() {

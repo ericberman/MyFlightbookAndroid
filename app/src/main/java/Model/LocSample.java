@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class LocSample extends LatLong {
-    long id = -1;
+    private long id = -1;
     int Alt = 0;
     double Speed = 0.0;
     double HError = 0.0;

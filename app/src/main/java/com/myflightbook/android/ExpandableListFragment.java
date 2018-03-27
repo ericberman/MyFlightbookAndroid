@@ -156,7 +156,7 @@ public class ExpandableListFragment extends Fragment
      */
 
     @SuppressWarnings("EmptyMethod")
-    public void onListItemClick(ExpandableListView l, View v, int position, long id) {
+    private void onListItemClick(ExpandableListView l, View v, int position, long id) {
     }
 
     /**

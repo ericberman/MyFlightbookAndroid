@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         Context m_context;
         ArrayList<String> m_groups;
         ArrayList<ArrayList<FlightProperty>> m_children;
-        private SparseArray<View> m_cachedViews = null;
+        private SparseArray<View> m_cachedViews;
 
         ExpandablePropertyListAdapter(Context context, ArrayList<String> groups, ArrayList<ArrayList<FlightProperty>> children) {
             m_context = context;

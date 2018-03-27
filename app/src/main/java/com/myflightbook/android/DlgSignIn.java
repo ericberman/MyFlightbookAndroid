@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
     @SuppressLint("StaticFieldLeak")
     private class AircraftTask extends AsyncTask<String, Void, MFBSoap> {
         private Object m_Result = null;
-        private Context m_Context = null;
+        private Context m_Context;
         private ProgressDialog m_pd = null;
 
         AircraftTask(Context c) {
@@ -77,10 +77,10 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
     @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
-        private Context m_Context = null;
+        private Context m_Context;
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        AuthToken m_Svc = null;
+        AuthToken m_Svc;
 
         SoapTask(Context c, AuthToken at) {
             super();
@@ -117,7 +117,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
         }
     }
 
-    private Context m_CallingContext = null;
+    private Context m_CallingContext;
 
     DlgSignIn(Context context) {
         super(context, R.style.MFBDialog);

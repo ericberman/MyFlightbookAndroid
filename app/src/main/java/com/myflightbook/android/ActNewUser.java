@@ -46,7 +46,7 @@ public class ActNewUser extends Activity implements
 
     @SuppressLint("StaticFieldLeak")
     private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
-        private Context m_Context = null;
+        private Context m_Context;
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
 

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -299,7 +299,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     private class RefreshFlightsTask extends AsyncTask<Void, Void, Boolean> {
         private RecentFlightsSvc m_rfSvc = null;
         Boolean fClearCache = false;
-        Context c = null;
+        Context c;
 
         RefreshFlightsTask(Context context) {
             c = context;

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,14 +30,13 @@ import java.io.File;
 import Model.MFBConstants;
 
 public class ActLocalVideo extends Activity {
-    public String szURL = "";
-    public String szTempFile = "";
+    private String szTempFile = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.localvideo);
-        szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
+        String szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
         szTempFile = this.getIntent().getStringExtra(MFBConstants.intentViewTempFile);
 
         VideoView video = findViewById(R.id.video);

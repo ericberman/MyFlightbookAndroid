@@ -79,7 +79,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
 
     @SuppressLint("StaticFieldLeak")
     private class GetCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context = null;
+        private Context m_Context;
 
         GetCannedQueryTask(Context c) {
             super();
@@ -104,13 +104,14 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
 
     @SuppressLint("StaticFieldLeak")
     private class AddCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context = null;
-        private String m_name = null;
-        private FlightQuery m_fq = null;
+        private Context m_Context;
+        private String m_name;
+        private FlightQuery m_fq;
 
         AddCannedQueryTask(Context c, FlightQuery fq, String szName) {
             super();
             m_Context = c;
+            m_fq = null;
             m_fq = fq;
             m_name = szName;
         }
@@ -131,12 +132,13 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
 
     @SuppressLint("StaticFieldLeak")
     private class DeleteCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context = null;
-        private CannedQuery m_fq = null;
+        private Context m_Context;
+        private CannedQuery m_fq;
 
         DeleteCannedQueryTask(Context c, CannedQuery fq) {
             super();
             m_Context = c;
+            m_fq = null;
             m_fq = fq;
         }
 

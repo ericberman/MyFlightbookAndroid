@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 package Model;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -1186,13 +1187,14 @@ public class GPSSim {
             new LocSample(47.90479256, -122.28139693, 589, 4.4, 5, "2010-10-27 11:22:10")
     };
 
-    private LocationListener m_ll = null;
+    private LocationListener m_ll;
 
     public GPSSim(LocationListener ll) {
         super();
         m_ll = ll;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class FeedTask extends AsyncTask<Integer, Void, Integer> {
         private Location m_Loc;
 
