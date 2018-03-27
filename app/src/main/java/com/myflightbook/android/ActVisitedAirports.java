@@ -261,7 +261,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
             String szAlias = "";
             if (position < 0) // all airports
                 szRoute = VisitedAirport.toRoute(visitedAirports);
-            else if (position >= 0 && position < visitedAirports.length) {
+            else if (position < visitedAirports.length) {
                 szRoute = visitedAirports[position].Code;
                 szAlias = visitedAirports[position].Aliases;
             }

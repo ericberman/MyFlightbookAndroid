@@ -83,12 +83,8 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
 
         int l1 = AirportID.length();
         int l2 = ap.AirportID.length();
-        if (l1 > l2)
-            return -1;
-        if (l2 > l1)
-            return 1;
+        return Integer.compare(l2, l1);
 
-        return 0;
     }
 
     @Override

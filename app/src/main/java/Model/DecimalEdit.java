@@ -122,28 +122,30 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
         try {
             if (em == EditMode.HHMM) {
                 String[] rgsz = sz.split(":");
-                if (rgsz.length == 1)
-                    return (double) Integer.parseInt(sz);
-                else if (rgsz.length == 2) {
-                    if (rgsz[0].length() == 0)
-                        rgsz[0] = "0";
-                    switch (rgsz[1].length()) {
-                        case 0:
-                            rgsz[1] = "00";
-                            break;
-                        case 1:
-                            rgsz[1] = String.format("%s0", rgsz[1]);
-                            break;
-                        case 2:
-                            break;
-                        default:
-                            rgsz[1] = rgsz[1].substring(0, 2);
-                    }
-                    int h = Integer.parseInt(rgsz[0]);
-                    int m = Integer.parseInt(rgsz[1]);
-                    return h + (m / 60.0);
-                } else
-                    return 0.0;
+                switch (rgsz.length) {
+                    case 1:
+                        return (double) Integer.parseInt(sz);
+                    case 2:
+                        if (rgsz[0].length() == 0)
+                            rgsz[0] = "0";
+                        switch (rgsz[1].length()) {
+                            case 0:
+                                rgsz[1] = "00";
+                                break;
+                            case 1:
+                                rgsz[1] = String.format("%s0", rgsz[1]);
+                                break;
+                            case 2:
+                                break;
+                            default:
+                                rgsz[1] = rgsz[1].substring(0, 2);
+                        }
+                        int h = Integer.parseInt(rgsz[0]);
+                        int m = Integer.parseInt(rgsz[1]);
+                        return h + (m / 60.0);
+                    default:
+                        return 0.0;
+                }
             } else {
                 // TODO: remove this when Android bug 2626 is fixed. See http://code.google.com/p/android/issues/detail?id=2626&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars.
                 DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());

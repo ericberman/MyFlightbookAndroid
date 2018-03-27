@@ -32,10 +32,14 @@ public class GPX extends Telemetry {
     }
 
     private void readEle(LocSample sample, XmlPullParser parser) throws IOException, XmlPullParserException {
+        if (sample == null)
+            return;
         sample.Alt = (int) (Double.parseDouble(readText(parser)) * MFBConstants.METERS_TO_FEET);
     }
 
     private void readTime(LocSample sample, XmlPullParser parser) throws IOException, XmlPullParserException {
+        if (sample == null)
+            return;
         try {
             sample.TimeStamp = ParseUTCDate(readText(parser));
         } catch (ParseException ignored) {
@@ -43,6 +47,8 @@ public class GPX extends Telemetry {
     }
 
     private void readSpeed(LocSample sample, XmlPullParser parser) throws IOException, XmlPullParserException {
+        if (sample == null)
+            return;
         sample.Speed = Double.parseDouble(readText(parser)) * MFBConstants.MPS_TO_KNOTS;
     }
 

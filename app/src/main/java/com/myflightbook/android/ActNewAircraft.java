@@ -241,14 +241,18 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_IMAGE_ACTIVITY_REQUEST_CODE)
-                AddGalleryImage(data);
-            else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
-                AddCameraImage(m_TempFilePath, false);
-            else if (requestCode == SELECT_MAKE_ACTIVITY_REQUEST_CODE) {
-                int selectedMakeIndex = data.getIntExtra(MODELFORAIRCRAFT, 0);
-                if (AvailableMakesAndModels != null && AvailableMakesAndModels.length > selectedMakeIndex)
-                    setCurrentMakeModel(AvailableMakesAndModels[selectedMakeIndex]);
+            switch (requestCode) {
+                case SELECT_IMAGE_ACTIVITY_REQUEST_CODE:
+                    AddGalleryImage(data);
+                    break;
+                case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
+                    AddCameraImage(m_TempFilePath, false);
+                    break;
+                case SELECT_MAKE_ACTIVITY_REQUEST_CODE:
+                    int selectedMakeIndex = data.getIntExtra(MODELFORAIRCRAFT, 0);
+                    if (AvailableMakesAndModels != null && AvailableMakesAndModels.length > selectedMakeIndex)
+                        setCurrentMakeModel(AvailableMakesAndModels[selectedMakeIndex]);
+                    break;
             }
         }
         if (requestCode == BEGIN_NEW_AIRCRAFT_REQUEST_CODE)

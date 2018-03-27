@@ -431,8 +431,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         return null;
     }
 
-    private static Hashtable<Integer, Double> hashHighWaterHobbs = new Hashtable<Integer, Double>();
-    private static Hashtable<Integer, Double> hashHighWaterTach = new Hashtable<Integer, Double>();
+    private static Hashtable<Integer, Double> hashHighWaterHobbs = new Hashtable<>();
+    private static Hashtable<Integer, Double> hashHighWaterTach = new Hashtable<>();
 
     public static void updateHobbsForAircraft(Double hobbs, Integer idAircraft) {
         if (!hashHighWaterHobbs.containsKey(idAircraft))
