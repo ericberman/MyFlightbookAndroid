@@ -418,6 +418,11 @@
     <string name="fqDateEndDate">End Date</string>
     <string name="fqDateCustom">Custom</string>
     <string name="fqProperties">Properties</string>
+    <string name="fqQueryNameHeaderDesc">Provide a name for this query, or select from previously named queries</string>
+    <string name="fqQueryNamePrompt">Name</string>
+    <string name="fqQueryNameHeader">Saved Queries</string>
+    <string name="fqQueryDeleteConfirm">Are you sure you want to delete this query?  This cannot be undone</string>
+    <string name="fqQueryDeleteShort">Delete</string>
 
     <string name="menuFlightSearch">Find Flights</string>
     <string name="fqStatusAllFlights">(All flights included)</string>

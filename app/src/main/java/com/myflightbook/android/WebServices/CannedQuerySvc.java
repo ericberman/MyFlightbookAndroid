@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,9 +36,8 @@ import Model.LatLong;
 import Model.LogbookEntry;
 import Model.MFBImageInfo;
 import Model.MakeModel;
-import Model.Totals;
 
-public class TotalsSvc extends MFBSoap {
+public class CannedQuerySvc extends MFBSoap {
     @Override
     public void AddMappings(SoapSerializationEnvelope e) {
         e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
@@ -58,28 +57,76 @@ public class TotalsSvc extends MFBSoap {
         md.register(e);
     }
 
-    public Totals[] TotalsForUser(String szAuthToken, FlightQuery fq, Context c) {
-        SoapObject Request = setMethod("TotalsForUserWithQuery");
-        Request.addProperty("szAuthToken", szAuthToken);
-        Request.addProperty("fq", fq == null ? new FlightQuery() : fq);
+    private CannedQuery[] QueriesFromResult(SoapObject result) {
+        CannedQuery[] rgcq = new CannedQuery[result.getPropertyCount()];
 
-        Totals[] rgt = new Totals[0];
+        for (int i = 0; i < rgcq.length; i++) {
+            rgcq[i] = new CannedQuery();
+            rgcq[i].FromProperties((SoapObject) result.getProperty(i));
+        }
+        return rgcq;
+    }
+
+    public CannedQuery[] GetNamedQueriesForUser(String szAuthToken, Context c) {
+        SoapObject Request = setMethod("GetNamedQueriesForUser");
+        Request.addProperty("szAuthToken", szAuthToken);
+
+        CannedQuery[] rgcq = new CannedQuery[0];
 
         SoapObject result = (SoapObject) Invoke(c);
         if (result == null)
             setLastError("Error retrieving totals - " + getLastError());
         else {
             try {
-                rgt = new Totals[result.getPropertyCount()];
-
-                for (int i = 0; i < rgt.length; i++) {
-                    rgt[i] = new Totals((SoapObject) result.getProperty(i));
-                }
+                rgcq = QueriesFromResult(result);
             } catch (Exception e) {
                 setLastError(getLastError() + e.getMessage());
             }
         }
 
-        return rgt;
+        return rgcq;
+    }
+
+    public CannedQuery[] DeleteNamedQueryForUser(String szAuthToken, CannedQuery cq, Context c) {
+        SoapObject Request = setMethod("DeleteNamedQueryForUser");
+        Request.addProperty("szAuthToken", szAuthToken);
+        Request.addProperty("cq", cq);
+
+        CannedQuery[] rgcq = new CannedQuery[0];
+
+        SoapObject result = (SoapObject) Invoke(c);
+        if (result == null)
+            setLastError("Error retrieving totals - " + getLastError());
+        else {
+            try {
+                rgcq = QueriesFromResult(result);
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return rgcq;
+    }
+
+    public CannedQuery[] AddNamedQueryForUser(String szAuthToken, String szName, FlightQuery fq, Context c) {
+        SoapObject Request = setMethod("AddNamedQueryForUser");
+        Request.addProperty("szAuthToken", szAuthToken);
+        Request.addProperty("fq", fq);
+        Request.addProperty("szName", szName);
+
+        CannedQuery[] rgcq = new CannedQuery[0];
+
+        SoapObject result = (SoapObject) Invoke(c);
+        if (result == null)
+            setLastError("Error retrieving totals - " + getLastError());
+        else {
+            try {
+                rgcq = QueriesFromResult(result);
+            } catch (Exception e) {
+                setLastError(getLastError() + e.getMessage());
+            }
+        }
+
+        return rgcq;
     }
 }

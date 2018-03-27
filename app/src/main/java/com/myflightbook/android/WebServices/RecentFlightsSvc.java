@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import Model.Aircraft;
+import Model.CannedQuery;
 import Model.CategoryClass;
 import Model.CustomPropertyType;
 import Model.FlightProperty;
@@ -66,6 +67,7 @@ public class RecentFlightsSvc extends MFBSoap {
         e.addMapping(NAMESPACE, "CategoryClass", CategoryClass.class);
         e.addMapping(NAMESPACE, "CustomPropertyType", CustomPropertyType.class);
         e.addMapping(NAMESPACE, "FlightQuery", FlightQuery.class);
+        e.addMapping(NAMESPACE, "CannedQuery", CannedQuery.class);
 
         MarshalDate mdt = new MarshalDate();
         mdt.register(e);

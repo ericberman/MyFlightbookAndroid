@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ import java.util.Vector;
 
 public class FlightQuery extends SoapableObject implements KvmSerializable, Serializable {
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
 	public enum DateRanges {
 		none,
@@ -72,7 +72,9 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		
 		// Aircraft attributes
 		pidIsComplex, pidHasFlaps, pidIsHighPerformance, pidIsConstantSpeedProp, pidMotorGlider, pidMultiEngineHeli,
-		pidIsRetract, pidIsGlass, pidIsTailwheel, pidEngineType, pidInstanceType}
+		pidIsRetract, pidIsGlass, pidIsTailwheel, pidEngineType, pidInstanceType,
+		pidQueryName
+	}
 
 	// Whoo boy, lots of properties here.
 	public DateRanges DateRange;
@@ -127,7 +129,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	public Boolean IsTailwheel = false;
 	public Boolean IsMotorglider = false;
 	public Boolean IsMultiEngineHeli = false;
-	
+	public String QueryName = "";
+
 	public AircraftInstanceRestriction AircraftInstanceTypes = AircraftInstanceRestriction.AllAircraft;
 	public EngineTypeRestriction EngineType = EngineTypeRestriction.AllEngines;
 	
@@ -206,7 +209,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
         AircraftList = new Aircraft[0];
         AirportList = new String[0];
         SetDateRange(DateRanges.AllTime);
-        GeneralText = ModelName = "";
+        GeneralText = ModelName = QueryName = "";
         TypeNames = new String[0];
         MakeList = new MakeModel[0];
         CatClassList = new CategoryClass[0];
@@ -428,6 +431,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			cpt.FromProperties((SoapObject) properties.getProperty(i));
 			PropertyTypes[i] = cpt;
 		}
+
+		QueryName = so.getPropertySafelyAsString("QueryName");
  	}
 
 	public Object getProperty(int i) {
@@ -523,6 +528,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			return EngineType.toString();
 		case pidInstanceType:
 			return AircraftInstanceTypes.toString();
+		case pidQueryName:
+			return QueryName;
 		default:
 			break;
 		}
@@ -730,6 +737,10 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		case pidInstanceType:
 			pi.type = PropertyInfo.STRING_CLASS;
 			pi.name = "AircraftInstanceTypes";
+			break;
+		case pidQueryName:
+			pi.type = PropertyInfo.STRING_CLASS;
+			pi.name = "QueryName";
 			break;
 		default:
 			break;

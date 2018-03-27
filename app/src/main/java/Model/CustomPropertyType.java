@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
 
     // known custom property types
     static final int idPropTypeNightTakeOff = 73;
-    static final int idPropTypeTachStart = 95;
+    public static final int idPropTypeTachStart = 95;
     public static final int idPropTypeTachEnd = 96;
 
     // DB Column names
@@ -148,7 +148,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         szTitle = so.getProperty("Title").toString();
         szSortKey = so.getPropertySafelyAsString("SortKey");
         szFormatString = so.getProperty("FormatString").toString();
-        szDescription = ReadNullableString(so, "Description");
+        szDescription = so.getPropertySafelyAsString("Description");
         cptType = CFPPropertyType.valueOf(so.getProperty("Type").toString());
         cptFlag = Integer.parseInt(so.getProperty("Flags").toString());
         IsFavorite = Boolean.parseBoolean(so.getProperty("IsFavorite").toString());

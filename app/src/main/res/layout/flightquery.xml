@@ -554,5 +554,38 @@
             android:layout_height="wrap_content"
             android:id="@+id/tblFQProps">
         </TableLayout>
+
+        <!--  Named Queries -->
+        <TextView
+            style="@style/DividerBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtFQNamedQueryHeader"
+            android:clickable="true"
+            android:focusable="true"
+            android:drawableStart="@drawable/collapse_light"
+            android:text="@string/fqQueryNameHeader" />
+
+        <LinearLayout
+            android:id="@+id/sectFQNamedQueries"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fqQueryNameHeaderDesc" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:hint="@string/fqQueryNamePrompt"
+                android:id="@+id/txtNameForQuery" />
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tblFQNamedQueries">
+            </TableLayout>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

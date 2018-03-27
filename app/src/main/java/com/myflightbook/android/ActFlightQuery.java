@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,12 @@
  */
 package com.myflightbook.android;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -29,13 +34,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.myflightbook.android.WebServices.AircraftSvc;
+import com.myflightbook.android.WebServices.AuthToken;
+import com.myflightbook.android.WebServices.CannedQuerySvc;
 import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
+import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
 import java.util.ArrayList;
@@ -50,6 +59,7 @@ import java.util.Map;
 
 import Model.Aircraft;
 import Model.Airport;
+import Model.CannedQuery;
 import Model.CategoryClass;
 import Model.CustomPropertyType;
 import Model.FlightQuery;
@@ -63,9 +73,92 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     private Aircraft[] m_rgacAll = null;
     private MakeModel[] m_rgmm = null;
     private Boolean fShowAllAircraft = false;
+    private Boolean fCannedQueryClicked = false;
     public static final int QUERY_REQUEST_CODE = 50382;
     public static final String QUERY_TO_EDIT = "com.myflightbook.android.querytoedit";
 
+    @SuppressLint("StaticFieldLeak")
+    private class GetCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
+        private Context m_Context = null;
+
+        GetCannedQueryTask(Context c) {
+            super();
+            m_Context = c;
+        }
+
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            CannedQuerySvc cqSVC = new CannedQuerySvc();
+            CannedQuery.setCannedQueries(cqSVC.GetNamedQueriesForUser(AuthToken.m_szAuthToken, m_Context));
+            return cqSVC;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        protected void onPostExecute(MFBSoap svc) {
+            if (svc != null && svc.getLastError().length() == 0)
+                ActFlightQuery.this.setUpNamedQueries();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class AddCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
+        private Context m_Context = null;
+        private String m_name = null;
+        private FlightQuery m_fq = null;
+
+        AddCannedQueryTask(Context c, FlightQuery fq, String szName) {
+            super();
+            m_Context = c;
+            m_fq = fq;
+            m_name = szName;
+        }
+
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            CannedQuerySvc cqSVC = new CannedQuerySvc();
+            CannedQuery.setCannedQueries(cqSVC.AddNamedQueryForUser(AuthToken.m_szAuthToken, m_name, m_fq, m_Context));
+            return cqSVC;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        protected void onPostExecute(MFBSoap svc) {
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class DeleteCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
+        private Context m_Context = null;
+        private CannedQuery m_fq = null;
+
+        DeleteCannedQueryTask(Context c, CannedQuery fq) {
+            super();
+            m_Context = c;
+            m_fq = fq;
+        }
+
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            CannedQuerySvc cqSVC = new CannedQuerySvc();
+            CannedQuery.setCannedQueries(cqSVC.DeleteNamedQueryForUser(AuthToken.m_szAuthToken, m_fq, m_Context));
+            return cqSVC;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        protected void onPostExecute(MFBSoap svc) {
+            if (svc != null) {
+                if (svc.getLastError().length() == 0)
+                    ActFlightQuery.this.setUpNamedQueries();
+                else
+                    MFBUtil.Alert(m_Context, m_Context.getString(R.string.txtError), svc.getLastError());
+            }
+        }
+    }
     // We are going to return only active aircraft UNLESS:
     // a) fShowAllAircraft is true
     // b) all aircraft are active, or
@@ -139,6 +232,11 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         if (CurrentQuery == null)
             CurrentQuery = new FlightQuery();
 
+        if (CannedQuery.getCannedQueries() == null)
+            new GetCannedQueryTask(getActivity()).execute();
+        else
+            setUpNamedQueries();
+
         AddListener(R.id.btnfqDateStart);
         AddListener(R.id.btnfqDateEnd);
 
@@ -177,6 +275,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         AddListener(R.id.txtFQModelsHeader);
         AddListener(R.id.txtFQCatClassHeader);
         AddListener(R.id.txtFQPropsHeader);
+        AddListener(R.id.txtFQNamedQueryHeader);
 
         setUpChecklists();
 
@@ -192,6 +291,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         setExpandedState((TextView) findViewById(R.id.txtFQModelsHeader), findViewById(R.id.sectFQModels), CurrentQuery.MakeList.length > 0 || CurrentQuery.ModelName.length() > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQCatClassHeader), findViewById(R.id.tblFQCatClass), CurrentQuery.CatClassList.length > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQPropsHeader), findViewById(R.id.tblFQProps), CurrentQuery.PropertyTypes.length > 0);
+        setExpandedState((TextView) findViewById(R.id.txtFQNamedQueryHeader), findViewById(R.id.sectFQNamedQueries), CannedQuery.getCannedQueries() != null && CannedQuery.getCannedQueries().length > 0);
 
         Button btnShowAll = (Button) findViewById(R.id.btnShowAllAircraft);
         btnShowAll.setOnClickListener(view -> {
@@ -205,9 +305,14 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     @Override
     public void onPause() {
         super.onPause();
-        fromForm();
+        if (!fCannedQueryClicked)
+            fromForm();
         ActTotals.SetNeedsRefresh(true);
         RecentFlightsSvc.ClearCachedFlights();
+
+        String szQueryName = StringFromField(R.id.txtNameForQuery);
+        if (CurrentQuery.HasCriteria() && szQueryName.length() >0)
+            new AddCannedQueryTask(getActivity(), CurrentQuery, szQueryName).execute();
 
         // in case things change before next time, clear out the cached arrays.
         m_rgac = null;
@@ -360,10 +465,47 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
     //endregion
 
+    protected void setUpNamedQueries() {
+        CannedQuery[] rgItems = CannedQuery.getCannedQueries();
+        TableLayout tl = (TableLayout) findViewById(R.id.tblFQNamedQueries);
+        if (tl == null)
+            return;
+        tl.removeAllViews();
+
+        LayoutInflater l = getActivity().getLayoutInflater();
+
+        if (rgItems == null)
+            rgItems = new CannedQuery[0];
+
+        for (CannedQuery o : rgItems) {
+            TableRow tr = (TableRow) l.inflate(R.layout.namedquerytableitem, tl, false);
+            TextView tv = tr.findViewById(R.id.lblSavedQuery);
+            tv.setText(o.QueryName);
+            tv.setOnClickListener(view -> {
+                CurrentQuery = o;
+                fCannedQueryClicked = true;
+                Intent i = new Intent();
+                i.putExtra(QUERY_TO_EDIT, o);
+                getActivity().setResult(Activity.RESULT_OK, i);
+                getActivity().finish();
+            });
+            ImageButton btnDelete = tr.findViewById(R.id.btnDeleteNamedQuery);
+            btnDelete.setOnClickListener(view -> new AlertDialog.Builder(getActivity())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle(R.string.lblConfirm)
+                    .setMessage(R.string.fqQueryDeleteConfirm)
+                    .setPositiveButton(R.string.lblOK, (dialog, which) -> new DeleteCannedQueryTask(getContext(), o).execute())
+                    .setNegativeButton(R.string.lblCancel, null)
+                    .show());
+            tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         toForm();
+        fCannedQueryClicked = false;
     }
 
     public void reset() {
@@ -673,6 +815,9 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 break;
             case R.id.txtFQPropsHeader:
                 toggleHeader(v, R.id.tblFQProps);
+                break;
+            case R.id.txtFQNamedQueryHeader:
+                toggleHeader(v, R.id.sectFQNamedQueries);
                 break;
         }
 
