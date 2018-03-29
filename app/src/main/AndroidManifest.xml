@@ -59,7 +59,25 @@
                 <data android:scheme="file" />
                 <data android:host="*" />
                 <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.KML" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.gpx" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.GPX" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
