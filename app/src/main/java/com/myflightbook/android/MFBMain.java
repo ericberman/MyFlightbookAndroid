@@ -186,6 +186,11 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             else
                 MFBUtil.Alert(MFBMain.this, getString(R.string.txtSuccess), getString(R.string.telemetryImportSuccessful));
 
+            // clear the URL from the intent.
+            Intent i = getIntent();
+            if (i != null)
+                i.setData(null);
+
             TabInfo ti = mapTabInfo.get(MFBConstants.tabRecents);
             if (ti.fragment != null)
                 ((ActRecentsWS) ti.fragment).refreshRecentFlights(false);
