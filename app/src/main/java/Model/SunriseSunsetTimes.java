@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,21 +39,37 @@ public class SunriseSunsetTimes {
     Boolean IsCivilNight;
 
     // True if between sunset and sunrise
-    @SuppressWarnings("WeakerAccess")
     Boolean IsNight;
 
-    // True if between 1-hour after sunset and 1-hour before sunrise
+    // True if between 1-hour (or offset specified by NightLandingOffset) after sunset and 1-hour before sunrise
     Boolean IsFAANight;
 
-    public SunriseSunsetTimes(Date dt, double latitude, double longitude) {
+    // True if between Sunset + NightFlightOffset and Sunrise - NightFlightOffset
+    Boolean IsWithinNightOffset;
+
+    // The offset from sunrise/sunset (in minutes) needed for night currency (i.e., in computing IsFAANight
+    // 1 hour by default (i.e., landings need to be between sunset + 1 hour and sunrise - 1 hour to count
+    private int NightLandingOffset = 60;
+
+    // The offset from sunrise/sunset (in minutes) needed for night flight, if that's how night flight is computed
+    // Default is 0.0, since default for night flight is IsCivilNight
+    private int NightFlightOffset = 0;
+
+    SunriseSunsetTimes(Date dt, double latitude, double longitude, int nightFlightOffset) {
         Date = dt;
         Sunrise = Sunset = UTCDate.NullDate();
         Latitude = latitude;
         Longitude = longitude;
+        NightLandingOffset = 60;
+        NightFlightOffset = nightFlightOffset;
         try {
             ComputeTimesAtLocation(dt);
         } catch (Exception ignored) {
         }
+    }
+
+    public SunriseSunsetTimes(Date dt, double latitude, double longitude) {
+        this(dt, latitude, longitude, 0);
     }
 
     /// <summary>
@@ -82,6 +98,10 @@ public class SunriseSunsetTimes {
 
     private Date AddHours(Date dt, int hours) {
         return AddMillis(dt, hours * 3600 * 1000);
+    }
+
+    private Date AddMinutes(Date dt, int minutes) {
+        return AddMillis(dt, minutes * 60 * 1000);
     }
 
     private Date AddDays(Date dt, int days) {
@@ -141,6 +161,7 @@ public class SunriseSunsetTimes {
         // (c) time is before sunrise - figure out the previous sunset and compare to that
         IsNight = IsCivilNight;
         IsFAANight = false;
+        IsWithinNightOffset = false;
         //noinspection StatementWithEmptyBody
         if (Sunrise.compareTo(dt) <= 0 && Sunset.compareTo(dt) >= 0) {
             // between sunrise and sunset - it's daytime no matter how you slice it; use default values (set above)
@@ -153,7 +174,8 @@ public class SunriseSunsetTimes {
             if (!Double.isNaN(nextSunrise)) {
                 Date dtNextSunrise = MinutesToDate(dtTomorrow, nextSunrise);
                 IsNight = (dtNextSunrise.compareTo(dt) > 0); // we've already determined that we're after sunset, we just need to be before sunrise
-                IsFAANight = (AddHours(Sunset, 1).compareTo(dt) <= 0 && AddHours(dtNextSunrise, -1).compareTo(dt) >= 0);
+                IsFAANight = (AddMinutes(Sunset, NightLandingOffset).compareTo(dt) <= 0 && AddMinutes(dtNextSunrise, -NightLandingOffset).compareTo(dt) >= 0);
+                IsWithinNightOffset = (AddMinutes(Sunset, NightFlightOffset).compareTo(dt) <= 0 && AddMinutes(dtNextSunrise, -NightFlightOffset).compareTo(dt) >= 0);
             }
         } else if (Sunrise.compareTo(dt) > 0) {
             // get the previous sunset.  It is night if the time is between that sunset and the sunrise
@@ -164,7 +186,8 @@ public class SunriseSunsetTimes {
             if (!Double.isNaN(prevSunset)) {
                 Date dtPrevSunset = MinutesToDate(dtYesterday, prevSunset);
                 IsNight = (dtPrevSunset.compareTo(dt) < 0); // we've already determined that we're before sunrise, we just need to be after sunset.
-                IsFAANight = (AddHours(dtPrevSunset, 1).compareTo(dt) <= 0 && AddHours(Sunrise, -1).compareTo(dt) >= 0);
+                IsFAANight = (AddMinutes(dtPrevSunset, NightLandingOffset).compareTo(dt) <= 0 && AddMinutes(Sunrise, -NightLandingOffset).compareTo(dt) >= 0);
+                IsWithinNightOffset = (AddMinutes(dtPrevSunset, NightFlightOffset).compareTo(dt) <= 0 && AddMinutes(Sunrise, -NightFlightOffset).compareTo(dt) >= 0);
             }
         }
     }

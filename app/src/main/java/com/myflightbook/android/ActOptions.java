@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -154,6 +154,29 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setSelection(MFBTakeoffSpeed.getTakeOffSpeedIndex());
         sp.setOnItemSelectedListener(this);
 
+        sp = (Spinner) findViewById(R.id.spnNightDef);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+                getString(R.string.lblOptNightDefinitionCivilTwilight),
+                getString(R.string.lblOptNightDefinitionSunset),
+                getString(R.string.lblOptNightDefinitionSunsetPlus15),
+                getString(R.string.lblOptNightDefinitionSunsetPlus30),
+                getString(R.string.lblOptNightDefinitionSunsetPlus60)
+        });
+        sp.setAdapter(adapter);
+        sp.setSelection(MFBLocation.NightPref.ordinal());
+        sp.setOnItemSelectedListener(this);
+        sp.setPromptId(R.string.lblAutoFillOptions);
+
+        sp = (Spinner) findViewById(R.id.spnNightLandingDef);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+                getString(R.string.lblOptNightLandingsSunsetPlus1hour),
+                getString(R.string.lblOptNightLandingsNight)
+        });
+        sp.setAdapter(adapter);
+        sp.setSelection(MFBLocation.NightLandingPref.ordinal());
+        sp.setOnItemSelectedListener(this);
+        sp.setPromptId(R.string.lblAutoFillOptions);
+
         TextView t = (TextView) findViewById(R.id.txtCopyright);
         if (MFBConstants.fIsDebug) {
             String s = String.format("%s - DEBUG (%s)",
@@ -191,6 +214,12 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 break;
             case R.id.spnTOSpeed:
                 MFBTakeoffSpeed.setTakeOffSpeedIndex(i);
+                break;
+            case R.id.spnNightDef:
+                MFBLocation.NightPref = MFBLocation.NightCriteria.values()[i];
+                break;
+            case R.id.spnNightLandingDef:
+                MFBLocation.NightLandingPref = MFBLocation.NightLandingCriteria.values()[i];
                 break;
             default:
                 break;

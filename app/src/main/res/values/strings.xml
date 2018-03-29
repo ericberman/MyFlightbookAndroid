@@ -25,6 +25,15 @@
     <string name="lblOptUseHHMM">Enter times in HH:MM format</string>
     <string name="lblOptUseLocalTime">Use Local Time</string>
     <string name="lblOptTOSpeed">Takeoff speed (Kts)</string>
+    <string name="lblOptNightDefinition">Night flight starts:</string>
+    <string name="lblOptNightDefinitionSunset">Sunset</string>
+    <string name="lblOptNightDefinitionSunsetPlus15">15 minutes after sunset</string>
+    <string name="lblOptNightDefinitionSunsetPlus30">30 minutes after sunset</string>
+    <string name="lblOptNightDefinitionSunsetPlus60">1 hour after sunset</string>
+    <string name="lblOptNightDefinitionCivilTwilight">End of civil twilight</string>
+    <string name="lblOptNightLandingsDefinition">Night landings occur:</string>
+    <string name="lblOptNightLandingsNight">During  night flight</string>
+    <string name="lblOptNightLandingsSunsetPlus1hour">1 hour after sunset</string>
     <string name="lblImageOptions">Flight display Options</string>
     <string name="lblShowFlightImages">Show images for flights</string>
     <string name="lblShowFlightTimes">Show times for flights</string>

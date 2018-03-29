@@ -25,6 +25,15 @@
     <string name="lblOptUseHHMM">Entrez durées en format hh:mm</string>
     <string name="lblOptUseLocalTime">Utiliser l\'heure locale</string>
     <string name="lblOptTOSpeed">La vitesse de décollage (Kts)</string>
+    <string name="lblOptNightDefinition">Le vol de nuit commence:</string>
+    <string name="lblOptNightDefinitionSunset">Le coucher du soleil</string>
+    <string name="lblOptNightDefinitionSunsetPlus15">15 minutes après le coucher du soleil</string>
+    <string name="lblOptNightDefinitionSunsetPlus30">30 minutes après le coucher du soleil</string>
+    <string name="lblOptNightDefinitionSunsetPlus60">1 heure après le coucher du soleil</string>
+    <string name="lblOptNightDefinitionCivilTwilight">Fin du crépuscule civil</string>
+    <string name="lblOptNightLandingsDefinition">Atterrissages de nuit se produisent:</string>
+    <string name="lblOptNightLandingsNight">Pendant le vol de nuit</string>
+    <string name="lblOptNightLandingsSunsetPlus1hour">1 heure après le coucher du soleil</string>
     <string name="lblImageOptions">Affichage du vol</string>
     <string name="lblShowFlightImages">Afficher les images pour les vols</string>
     <string name="lblShowFlightTimes">Afficher les heures de vol</string>

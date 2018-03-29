@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,12 +62,17 @@ public class MFBLocation implements LocationListener {
 
     public enum AutoFillOptions {None, FlightTime, EngineTime, HobbsTime}
 
+    public enum NightCriteria { EndOfCivilTwilight, Sunset, SunsetPlus15, SunsetPlus30, SunsetPlus60 }
+    public enum NightLandingCriteria { SunsetPlus60, Night}
+
     static public Boolean fPrefRecordFlight = false;
     static public Boolean fPrefRecordFlightHighRes = false;
     static public Boolean fPrefAutoDetect = false;
     static public Boolean fPrefRoundNearestTenth = false;
     static public AutoFillOptions fPrefAutoFillHobbs = AutoFillOptions.None;
     static public AutoFillOptions fPrefAutoFillTime = AutoFillOptions.None;
+    static public NightCriteria NightPref = NightCriteria.EndOfCivilTwilight;
+    static public NightLandingCriteria NightLandingPref = NightLandingCriteria.SunsetPlus60;
 
     public static Boolean IsRecording = false;
     public static Boolean IsFlying = false;
@@ -226,6 +231,39 @@ public class MFBLocation implements LocationListener {
         m_Listener.UpdateStatus(q, IsFlying, newLoc, IsRecording);
     }
 
+    // determines if the sample is night for purposes of logging
+    private boolean IsNightForFlight(SunriseSunsetTimes sst) {
+        // short-circuit if we know it's day
+        if (!sst.IsNight)
+            return false;
+
+        switch (NightPref) {
+            case EndOfCivilTwilight:
+                return sst.IsCivilNight;
+            case Sunset:
+                return true;    // since we short-circuited above, sst.IsNight must be true!
+            case SunsetPlus15:
+            case SunsetPlus30:
+            case SunsetPlus60:
+                return sst.IsWithinNightOffset;
+        }
+        return false;
+    }
+
+    private int NightFlightSunsetOffset() {
+        switch (NightPref) {
+            default:
+            case Sunset:
+            case EndOfCivilTwilight:
+            case SunsetPlus60:
+                return 60;
+            case SunsetPlus15:
+                return 15;
+            case SunsetPlus30:
+                return 30;
+        }
+    }
+
     public void onLocationChanged(Location newLoc) {
         LocSample loc = new LocSample(newLoc);
 
@@ -252,17 +290,21 @@ public class MFBLocation implements LocationListener {
 
         // only do detection/recording with quality samples
         if ((++cSamplesSinceWaking > MFBConstants.BOGUS_SAMPLE_COUNT) && fValidSpeed && fValidQuality && fValidTime) {
-            SunriseSunsetTimes sst = new SunriseSunsetTimes(loc.TimeStamp, loc.Latitude, loc.Longitude);
+            SunriseSunsetTimes sst = new SunriseSunsetTimes(loc.TimeStamp, loc.Latitude, loc.Longitude, NightFlightSunsetOffset());
 
             // it's a good sample - use it
             m_currentLoc = newLoc;
 
-            if (PreviousLoc != null && fPreviousLocWasNight && sst.IsCivilNight && MFBLocation.fPrefAutoDetect) {
+            boolean fIsNightForFlight = IsNightForFlight(sst);
+            boolean fIsNightForLandings = (NightLandingPref == NightLandingCriteria.Night) ? fIsNightForFlight : sst.IsFAANight;
+
+            if (PreviousLoc != null && fPreviousLocWasNight && fIsNightForFlight && MFBLocation.fPrefAutoDetect) {
                 double t = (newLoc.getTime() - PreviousLoc.getTime()) / 3600000.0;
                 if (t < .5 && m_Listener != null)    // limit of half an hour between samples for night time
                     m_Listener.AddNightTime(t);
             }
-            fPreviousLocWasNight = sst.IsCivilNight;
+            fPreviousLocWasNight =fIsNightForFlight;
+
             PreviousLoc = newLoc;
 
             // detect takeoffs/landings  These are different speeds to prevent bouncing
@@ -284,7 +326,7 @@ public class MFBLocation implements LocationListener {
                         loc.Comment = MFBMain.getResourceString(R.string.telemetryTakeOff);
                         HasPendingLanding = false; // back in the air - can't be a FS landing
                         if (m_Listener != null) {
-                            m_Listener.TakeoffDetected(newLoc, sst.IsFAANight);
+                            m_Listener.TakeoffDetected(newLoc, fIsNightForLandings);
                         }
                     }
                 }
@@ -292,9 +334,9 @@ public class MFBLocation implements LocationListener {
                 // see if we've had a full-stop landing
                 if (SpeedKts < MFBConstants.FULL_STOP_SPEED && HasPendingLanding) {
                     if (m_Listener != null)
-                        m_Listener.FSLandingDetected(sst.IsFAANight);
-                    Log.w(MFBConstants.LOG_TAG, "FS " + (sst.IsFAANight ? "night " : "") + "landing detected");
-                    loc.Comment = MFBMain.getResourceString(sst.IsFAANight ? R.string.telemetryFSNight : R.string.telemetryFSLanding);
+                        m_Listener.FSLandingDetected(fIsNightForLandings);
+                    Log.w(MFBConstants.LOG_TAG, "FS " + (fIsNightForLandings ? "night " : "") + "landing detected");
+                    loc.Comment = MFBMain.getResourceString(fIsNightForLandings ? R.string.telemetryFSNight : R.string.telemetryFSLanding);
                     HasPendingLanding = false;
                 }
             }

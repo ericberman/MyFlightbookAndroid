@@ -106,6 +106,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     static private final String m_KeysHasPendingFSLanding = "hasPendingLanding";
 
     static private final String m_KeysTOSpeed = "takeoffspeed";
+    static private final String m_KeysNightFlightOption = "nightFlightOption";
+    static private final String m_KeysNightLandingOption = "nightLandingOption";
 
     static private final String m_TimeOfLastVacuum = "LastVacuum";
 
@@ -513,6 +515,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             MFBLocation.IsFlying = MFBLocation.IsFlying || mPrefs.getBoolean(m_KeysIsFlying, false);
             MFBLocation.IsRecording = MFBLocation.IsRecording || mPrefs.getBoolean(m_KeysIsRecording, false);
             MFBLocation.HasPendingLanding = mPrefs.getBoolean(m_KeysHasPendingFSLanding, false);
+            MFBLocation.NightPref = MFBLocation.NightCriteria.values()[mPrefs.getInt(m_KeysNightFlightOption, MFBLocation.NightCriteria.EndOfCivilTwilight.ordinal())];
+            MFBLocation.NightLandingPref = MFBLocation.NightLandingCriteria.values()[mPrefs.getInt(m_KeysNightLandingOption, MFBLocation.NightLandingCriteria.SunsetPlus60.ordinal())];
 
             Airport.fPrefIncludeHeliports = mPrefs.getBoolean(m_KeysfHeliports, false);
             DecimalEdit.DefaultHHMM = mPrefs.getBoolean(m_KeysUseHHMM, false);
@@ -550,6 +554,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         ed.putBoolean(m_KeysIsFlying, MFBLocation.IsFlying);
         ed.putBoolean(m_KeysIsRecording, MFBLocation.IsRecording);
         ed.putBoolean(m_KeysHasPendingFSLanding, MFBLocation.HasPendingLanding);
+        ed.putInt(m_KeysNightFlightOption, MFBLocation.NightPref.ordinal());
+        ed.putInt(m_KeysNightLandingOption, MFBLocation.NightLandingPref.ordinal());
 
         ed.putBoolean(m_KeysfHeliports, Airport.fPrefIncludeHeliports);
         ed.putBoolean(m_KeysUseHHMM, DecimalEdit.DefaultHHMM);
