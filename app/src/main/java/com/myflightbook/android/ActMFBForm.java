@@ -129,7 +129,7 @@ public class ActMFBForm extends Fragment {
             // Add the image/video to the gallery if necessary (i.e., if from the camera)
             if (fAddToGallery) {
                 File f = new File(szFilename);
-                Uri uriSource = FileProvider.getUriForFile(ActMFBForm.this.getContext(), "com.example.android.fileprovider", f);
+                Uri uriSource = FileProvider.getUriForFile(ActMFBForm.this.getContext(), BuildConfig.APPLICATION_ID + ".provider", f);
                 ActMFBForm.this.getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
             }
 
@@ -484,7 +484,7 @@ public class ActMFBForm extends Fragment {
             ed.apply();
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri uriImage = FileProvider.getUriForFile(this.getContext(), "com.example.android.fileprovider", fTemp);
+            Uri uriImage = FileProvider.getUriForFile(this.getContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -510,7 +510,7 @@ public class ActMFBForm extends Fragment {
             ed.putString(keyTempFileInProgress, m_TempFilePath);
             ed.apply();
 
-            Uri uriImage = FileProvider.getUriForFile(this.getContext(), "com.example.android.fileprovider", fTemp);
+            Uri uriImage = FileProvider.getUriForFile(this.getContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
 
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);

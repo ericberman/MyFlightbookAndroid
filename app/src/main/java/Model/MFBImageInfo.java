@@ -1010,7 +1010,8 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
             // Write the full image to a file
             try {
-                File fTemp = File.createTempFile("tempView", getImageSuffix(), Environment.getExternalStorageDirectory());
+                File fTemp = File.createTempFile("tempView", getImageSuffix(), a.getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+                fTemp.deleteOnExit();
                 FileOutputStream fos = new FileOutputStream(fTemp);
                 try {
                     fos.write(m_imgData);

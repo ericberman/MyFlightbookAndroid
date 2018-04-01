@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -171,7 +172,7 @@ public class ActWebView extends Activity {
 
     public static void ViewTempFile(Activity a, File f) {
         Intent i = new Intent(a, ActWebView.class);
-        i.putExtra(MFBConstants.intentViewURL, Uri.fromFile(f).toString());
+        i.putExtra(MFBConstants.intentViewURL, FileProvider.getUriForFile(a, BuildConfig.APPLICATION_ID + ".provider", f).toString());
         i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
         a.startActivity(i);
     }

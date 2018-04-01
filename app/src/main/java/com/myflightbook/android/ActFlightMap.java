@@ -34,6 +34,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -481,9 +482,10 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             return;
 
         m_GPXPath = szGPX;
+
         String szBaseName = filenameForPath();
         String szFileName = String.format(Locale.getDefault(), "%s.gpx", szBaseName);
-        File p = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        File p = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File f = new File(p, szFileName);
         try {
             FileOutputStream fos = new FileOutputStream(f);
@@ -493,14 +495,16 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             fos.flush();
             fos.close();
 
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(f)));
+            Uri uriFile = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", f);
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriFile));
 
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+            sendIntent.putExtra(Intent.EXTRA_STREAM, uriFile);
             sendIntent.putExtra(Intent.EXTRA_SUBJECT, szFileName);
             sendIntent.putExtra(Intent.EXTRA_TITLE, szFileName);
             sendIntent.setType("application/gpx+xml");
+            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.txtShareGPX)));
         }
         catch (FileNotFoundException e) {

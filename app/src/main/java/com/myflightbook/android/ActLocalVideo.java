@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.VideoView;
 
@@ -55,7 +56,7 @@ public class ActLocalVideo extends Activity {
 
     public static void ViewTempFile(Activity a, File f) {
         Intent i = new Intent(a, ActLocalVideo.class);
-        i.putExtra(MFBConstants.intentViewURL, Uri.fromFile(f).toString());
+        i.putExtra(MFBConstants.intentViewURL, FileProvider.getUriForFile(a, BuildConfig.APPLICATION_ID + ".provider", f).toString());
         i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
         a.startActivity(i);
     }
