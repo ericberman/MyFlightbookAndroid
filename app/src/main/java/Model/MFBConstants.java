@@ -99,15 +99,12 @@ public class MFBConstants {
     public static final String urlSign = "%s://%s/logbook/public/SignEntry.aspx?idFlight=%d&auth=%s&naked=1";
     public static final String urlFacebook = "http://www.facebook.com/pages/MyFlightbook/145794653106";
     public static final String urlTwitter = "http://twitter.com/myflightbook";
-    public static final String urlProfile = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
     public static final String urlCrashReport = "http://%s/logbook/public/CrashReport.aspx";
     public static final String urlSupport = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=donate";
-    public static final String urlPreferences = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=profile";
+    public static final String urlPreferences = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=profile&naked=1";
     public static final String urlTraining = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
     public static final String urlAircraftSchedule = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=aircraftschedule&naked=1&ac=%d";
     public static final String urlFAQ = "http://myflightbook.com/logbook/public/FAQ.aspx?naked=1";
-
-    public static final String destProfile = "profile";
 
     // Formatting strings
     static final String TIMESTAMP = "yyyy-MM-dd HH:mm:ss";

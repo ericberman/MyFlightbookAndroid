@@ -321,10 +321,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             return;
         }
 
-        String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
         String szURL;
         try {
-            szURL = String.format(Locale.US, szTemplate, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"));
+            szURL = String.format(Locale.US, szTemplate, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"));
             ActWebView.ViewURL(getActivity(), szURL);
         } catch (UnsupportedEncodingException ignored) {
         }

@@ -928,7 +928,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             }
             break;
             case R.id.txtSocialNetworkHint: {
-                String szURLProfile = String.format(MFBConstants.urlProfile, MFBConstants.szIP, AuthToken.m_szEmail, AuthToken.m_szPass, MFBConstants.destProfile);
+                String szURLProfile = String.format(MFBConstants.urlPreferences, MFBConstants.szIP, AuthToken.m_szEmail, AuthToken.m_szPass) + "&pane=social";
                 ActWebView.ViewURL(getActivity(), szURLProfile);
             }
             default:
