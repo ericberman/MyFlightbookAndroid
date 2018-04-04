@@ -133,51 +133,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private Runnable m_UpdateElapsedTimeTask = null;
 
     @SuppressLint("StaticFieldLeak")
-    private class UpdateAndViewPropsTask extends AsyncTask<Void, Void, Boolean> {
-        private ProgressDialog m_pd = null;
-        FlightProperty[] rgProps = null;
-        Context c = null;
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            if (c == null)
-                return false;
-
-            FlightPropertiesSvc fpSvc = new FlightPropertiesSvc();
-            rgProps = fpSvc.PropertiesForFlight(AuthToken.m_szAuthToken, m_le.idFlight, c);
-
-            return rgProps != null;
-        }
-
-        protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActNewFlight.this, ActNewFlight.this.getString(R.string.prgPropsForFlight));
-            c = getContext();
-            if (c == null)
-                c = getActivity().getApplicationContext();
-        }
-
-        protected void onPostExecute(Boolean b) {
-            if (!isAdded() || getActivity().isFinishing())
-                return;
-
-            try {
-                m_pd.dismiss();
-            } catch (Exception e) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-            }
-
-            m_le.ToDB(); // need to save it to the db, in case it isn't already saved.
-            // and save the properties
-            if (b) {
-                m_le.rgCustomProperties = rgProps;
-                FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
-            }
-            m_le.SyncProperties();
-            setUpPropertiesForFlight();
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
     private class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
@@ -436,16 +391,18 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errCannotFindFlight));
                     finish();
                     return;
+                } else {
+                    if (m_le.IsExistingFlight()) {
+                        m_le.ToDB();    // ensure that this is in the database - above call could have pulled from cache
+                        FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
+                    }
                 }
 
+                setUpPropertiesForFlight();
+
                 // get any existing props, if they're on the server
-                if (m_le.IsExistingFlight()) {
-                    if (m_le.rgCustomProperties == null) {
-                        UpdateAndViewPropsTask vp = new UpdateAndViewPropsTask();
-                        vp.execute();
-                    } else
-                        m_le.SyncProperties();
-                }
+                if (m_le.IsExistingFlight())
+                    m_le.SyncProperties();
             } else {
                 m_le = new LogbookEntry(idLocalFlightToView);
                 m_le.SyncProperties();
@@ -873,11 +830,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 dlg.show();
                 break;
             case R.id.btnProps:
-                if (m_le.IsExistingFlight() && m_le.rgCustomProperties == null) {
-                    UpdateAndViewPropsTask vp = new UpdateAndViewPropsTask();
-                    vp.execute();
-                } else
-                    ViewPropsForFlight();
+                ViewPropsForFlight();
                 break;
             case R.id.btnAppendNearest:
                 AppendNearest();
