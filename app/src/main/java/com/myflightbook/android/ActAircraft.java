@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -61,7 +60,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 
     private enum RowType {DATA_ITEM, HEADER_ITEM}
 
-    class AircraftRowItem implements ThumbnailedItem {
+    static class AircraftRowItem implements ThumbnailedItem {
 
         Aircraft aircraftItem = null;
         String title = null;
@@ -81,36 +80,46 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
+    private static class RefreshAircraftTask extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
+        AsyncWeakContext<ActAircraft> m_ctxt;
 
-        SoapTask() {
+        RefreshAircraftTask(Context c, ActAircraft aa) {
             super();
+            m_ctxt = new AsyncWeakContext<>(c, aa);
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             AircraftSvc as = new AircraftSvc();
-            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken, getContext());
+            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
             return as;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActAircraft.this, ActAircraft.this.getString(R.string.prgAircraft));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgAircraft));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (!isAdded() || getActivity().isFinishing())
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActAircraft aa = m_ctxt.getCallingActivity();
+
+            if (aa == null)
                 return;
 
             Aircraft[] rgac = (Aircraft[]) m_Result;
             if (rgac == null)
-                MFBUtil.Alert(ActAircraft.this, getString(R.string.txtError), svc.getLastError());
+                MFBUtil.Alert(aa, aa.getString(R.string.txtError), svc.getLastError());
             else {
                 if (rgac.length == 0)
-                    MFBUtil.Alert(ActAircraft.this, getString(R.string.txtError), getString(R.string.errNoAircraftFound));
+                    MFBUtil.Alert(aa, aa.getString(R.string.txtError), aa.getString(R.string.errNoAircraftFound));
                 ArrayList<Aircraft> lstFavorite = new ArrayList<>();
                 ArrayList<Aircraft> lstArchived = new ArrayList<>();
                 for (Aircraft ac : rgac) {
@@ -120,28 +129,22 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
                         lstFavorite.add(ac);
                 }
 
-                m_fHasHeaders = (lstArchived.size() > 0 && lstFavorite.size() > 0);
+                aa.m_fHasHeaders = (lstArchived.size() > 0 && lstFavorite.size() > 0);
 
                 ArrayList<AircraftRowItem> arRows = new ArrayList<>();
 
-                if (m_fHasHeaders)
-                    arRows.add(new AircraftRowItem(getString(R.string.lblFrequentlyUsedAircraft)));
+                if (aa.m_fHasHeaders)
+                    arRows.add(new AircraftRowItem(aa.getString(R.string.lblFrequentlyUsedAircraft)));
                 for (Aircraft ac : lstFavorite)
                     arRows.add(new AircraftRowItem(ac));
-                if (m_fHasHeaders)
-                    arRows.add(new AircraftRowItem(getString(R.string.lblArchivedAircraft)));
+                if (aa.m_fHasHeaders)
+                    arRows.add(new AircraftRowItem(aa.getString(R.string.lblArchivedAircraft)));
                 for (Aircraft ac : lstArchived)
                     arRows.add(new AircraftRowItem(ac));
 
-                m_aircraftRows = arRows.toArray(new AircraftRowItem[arRows.size()]);
+                aa.m_aircraftRows = arRows.toArray(new AircraftRowItem[arRows.size()]);
 
-                populateList();
-            }
-
-            try {
-                m_pd.dismiss();
-            } catch (Exception e) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                aa.populateList();
             }
         }
     }
@@ -238,7 +241,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     public void onResume() {
         super.onResume();
         if (AuthToken.FIsValid() && m_aircraftRows == null) {
-            SoapTask st = new SoapTask();
+            RefreshAircraftTask st = new RefreshAircraftTask(getActivity(), this);
             st.execute();
         } else
             populateList();
@@ -286,7 +289,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             case R.id.menuRefreshAircraft: {
                 AircraftSvc ac = new AircraftSvc();
                 ac.FlushCache();
-                SoapTask st = new SoapTask();
+                RefreshAircraftTask st = new RefreshAircraftTask(getActivity(), this);
                 st.execute();
             }
             return true;

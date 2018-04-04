@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -63,45 +62,50 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
 
     private FlightQuery currentQuery = new FlightQuery();
 
-    @SuppressLint("StaticFieldLeak")
-    private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class RefreshTotals extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
+        private AsyncWeakContext<ActTotals> m_ctxt;
 
-        SoapTask(Context c) {
+        RefreshTotals(Context c, ActTotals at) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, at);
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             TotalsSvc ts = new TotalsSvc();
-            m_Result = ts.TotalsForUser(AuthToken.m_szAuthToken, currentQuery, m_Context);
+            Context c = m_ctxt.getContext();
+            ActTotals at = m_ctxt.getCallingActivity();
+            if (c != null && at != null)
+                m_Result = ts.TotalsForUser(AuthToken.m_szAuthToken, at.currentQuery, c);
             return ts;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgTotals));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgTotals));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (!isAdded() || getActivity().isFinishing())
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActTotals at = m_ctxt.getCallingActivity();
+            if (at == null)
                 return;
 
             Totals[] rgti = (Totals[]) m_Result;
 
             if (rgti == null || svc.getLastError().length() > 0) {
-                MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
+                MFBUtil.Alert(at, at.getString(R.string.txtError), svc.getLastError());
             } else {
                 SetNeedsRefresh(false);
                 mRgti = rgti;
-                ActTotals.this.BindTable();
-            }
-            try {
-                m_pd.dismiss();
-            } catch (Exception e) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                at.BindTable();
             }
         }
     }
@@ -226,7 +230,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
 
     private void Refresh(Boolean fForce) {
         if (AuthToken.FIsValid() && (fForce || fNeedsRefresh || mRgti == null)) {
-            SoapTask st = new SoapTask(getActivity());
+            RefreshTotals st = new RefreshTotals(getActivity(), this);
             st.execute();
         } else
             BindTable();

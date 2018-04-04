@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -53,45 +52,46 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 
     private static CurrencyStatusItem[] m_rgcsi = null;
 
-    @SuppressLint("StaticFieldLeak")
-    private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class RefreshCurrency extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
+        AsyncWeakContext<ActCurrency> m_ctxt;
 
-        SoapTask(Context c) {
+        RefreshCurrency(Context c, ActCurrency ac) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, ac);
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             CurrencySvc cs = new CurrencySvc();
-            m_Result = cs.CurrencyForUser(AuthToken.m_szAuthToken, getContext());
+            m_Result = cs.CurrencyForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
             return cs;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgCurrency));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgCurrency));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (!isAdded() || getActivity().isFinishing())
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActCurrency ac = m_ctxt.getCallingActivity();
+            if (ac == null)
                 return;
 
             m_rgcsi = (CurrencyStatusItem[]) m_Result;
 
             if (m_rgcsi == null || svc.getLastError().length() > 0) {
-                MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
+                MFBUtil.Alert(ac, ac.getString(R.string.txtError), svc.getLastError());
             } else {
                 SetNeedsRefresh(false);
-                BindTable();
-            }
-
-            try {
-                m_pd.dismiss();
-            } catch (Exception e) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                ac.BindTable();
             }
         }
     }
@@ -155,7 +155,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 
     private void Refresh(Boolean fForce) {
         if (AuthToken.FIsValid() && (fForce || fNeedsRefresh || m_rgcsi == null)) {
-            SoapTask ts = new SoapTask(getActivity());
+            RefreshCurrency ts = new RefreshCurrency(getActivity(), this);
             ts.execute();
         } else
             BindTable();
