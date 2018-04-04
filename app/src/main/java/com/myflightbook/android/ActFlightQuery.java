@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -77,19 +76,18 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     public static final int QUERY_REQUEST_CODE = 50382;
     public static final String QUERY_TO_EDIT = "com.myflightbook.android.querytoedit";
 
-    @SuppressLint("StaticFieldLeak")
-    private class GetCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class GetCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
+        private AsyncWeakContext<ActFlightQuery> m_afq;
 
-        GetCannedQueryTask(Context c) {
+        GetCannedQueryTask(Context c, ActFlightQuery afq) {
             super();
-            m_Context = c;
+            m_afq = new AsyncWeakContext<>(c, afq);
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             CannedQuerySvc cqSVC = new CannedQuerySvc();
-            CannedQuery.setCannedQueries(cqSVC.GetNamedQueriesForUser(AuthToken.m_szAuthToken, m_Context));
+            CannedQuery.setCannedQueries(cqSVC.GetNamedQueriesForUser(AuthToken.m_szAuthToken, m_afq.getContext()));
             return cqSVC;
         }
 
@@ -97,20 +95,20 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (svc != null && svc.getLastError().length() == 0)
-                ActFlightQuery.this.setUpNamedQueries();
+            ActFlightQuery afq = m_afq.getCallingActivity();
+            if (svc != null && svc.getLastError().length() == 0 && afq != null)
+                afq.setUpNamedQueries();
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class AddCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class AddCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
+        private AsyncWeakContext<FlightQuery> m_ctxt;
         private String m_name;
         private FlightQuery m_fq;
 
         AddCannedQueryTask(Context c, FlightQuery fq, String szName) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, null);
             m_fq = null;
             m_fq = fq;
             m_name = szName;
@@ -119,7 +117,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         @Override
         protected MFBSoap doInBackground(Void... params) {
             CannedQuerySvc cqSVC = new CannedQuerySvc();
-            CannedQuery.setCannedQueries(cqSVC.AddNamedQueryForUser(AuthToken.m_szAuthToken, m_name, m_fq, m_Context));
+            CannedQuery.setCannedQueries(cqSVC.AddNamedQueryForUser(AuthToken.m_szAuthToken, m_name, m_fq, m_ctxt.getContext()));
             return cqSVC;
         }
 
@@ -130,14 +128,13 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class DeleteCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class DeleteCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
+        private AsyncWeakContext<ActFlightQuery> m_ctxt;
         private CannedQuery m_fq;
 
-        DeleteCannedQueryTask(Context c, CannedQuery fq) {
+        DeleteCannedQueryTask(Context c, CannedQuery fq, ActFlightQuery afq) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, afq);
             m_fq = null;
             m_fq = fq;
         }
@@ -145,7 +142,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         @Override
         protected MFBSoap doInBackground(Void... params) {
             CannedQuerySvc cqSVC = new CannedQuerySvc();
-            CannedQuery.setCannedQueries(cqSVC.DeleteNamedQueryForUser(AuthToken.m_szAuthToken, m_fq, m_Context));
+            CannedQuery.setCannedQueries(cqSVC.DeleteNamedQueryForUser(AuthToken.m_szAuthToken, m_fq, m_ctxt.getContext()));
             return cqSVC;
         }
 
@@ -154,10 +151,16 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
 
         protected void onPostExecute(MFBSoap svc) {
             if (svc != null) {
-                if (svc.getLastError().length() == 0)
-                    ActFlightQuery.this.setUpNamedQueries();
-                else
-                    MFBUtil.Alert(m_Context, m_Context.getString(R.string.txtError), svc.getLastError());
+                if (svc.getLastError().length() == 0) {
+                    ActFlightQuery afq = m_ctxt.getCallingActivity();
+                    if (afq != null)
+                        afq.setUpNamedQueries();
+                }
+                else {
+                    Context c = m_ctxt.getContext();
+                    if (c != null)
+                        MFBUtil.Alert(c, c.getString(R.string.txtError), svc.getLastError());
+                }
             }
         }
     }
@@ -235,7 +238,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
             CurrentQuery = new FlightQuery();
 
         if (CannedQuery.getCannedQueries() == null)
-            new GetCannedQueryTask(getActivity()).execute();
+            new GetCannedQueryTask(getActivity(), this).execute();
         else
             setUpNamedQueries();
 
@@ -496,7 +499,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(R.string.lblConfirm)
                     .setMessage(R.string.fqQueryDeleteConfirm)
-                    .setPositiveButton(R.string.lblOK, (dialog, which) -> new DeleteCannedQueryTask(getContext(), o).execute())
+                    .setPositiveButton(R.string.lblOK, (dialog, which) -> new DeleteCannedQueryTask(getContext(), o, this).execute())
                     .setNegativeButton(R.string.lblCancel, null)
                     .show());
             tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));

@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -132,43 +131,50 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private Handler m_HandlerUpdateTimer = null;
     private Runnable m_UpdateElapsedTimeTask = null;
 
-    @SuppressLint("StaticFieldLeak")
-    private class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
+    private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
+        private int m_idFlight;
+        private AsyncWeakContext<ActNewFlight> m_ctxt;
 
-        DeleteTask() {
+        DeleteTask(Context c, ActNewFlight act, int idFlight) {
             super();
+            m_ctxt = new AsyncWeakContext<>(c, act);
+            m_idFlight = idFlight;
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             DeleteFlightSvc dfs = new DeleteFlightSvc();
             dfs.m_Progress = this;
-            dfs.DeleteFlight(AuthToken.m_szAuthToken, m_le.idFlight, getContext());
+            dfs.DeleteFlight(AuthToken.m_szAuthToken, m_idFlight, m_ctxt.getContext());
             m_Result = (dfs.getLastError().length() == 0);
 
             return dfs;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActNewFlight.this, ActNewFlight.this.getString(R.string.prgDeletingFlight));
+            Context c = m_ctxt.getContext();
+            if (c != null)
+                m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgDeletingFlight));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (!isAdded() || getActivity().isFinishing())
+            ActNewFlight act = m_ctxt.getCallingActivity();
+            if (act == null)
                 return;
 
             if ((Boolean) m_Result) {
                 RecentFlightsSvc.ClearCachedFlights();
                 MFBMain.invalidateCachedTotals();
-                finish();
+                act.finish();
             } else {
-                MFBUtil.Alert(ActNewFlight.this, getString(R.string.txtError), svc.getLastError());
+                MFBUtil.Alert(act, act.getString(R.string.txtError), svc.getLastError());
             }
 
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
@@ -183,69 +189,78 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class SubmitTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
+    private static class SubmitTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
         private PostingOptions m_po;
         private LogbookEntry lelocal = null;
+        private LogbookEntry m_le;
+        private AsyncWeakContext<ActNewFlight> m_ctxt;
 
-        SubmitTask(PostingOptions po) {
+        SubmitTask(Context c, ActNewFlight act, PostingOptions po, LogbookEntry le) {
             super();
+            m_ctxt = new AsyncWeakContext<>(c, act);
             m_po = po;
+            m_le = le;
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             CommitFlightSvc cf = new CommitFlightSvc();
             cf.m_Progress = this;
-            m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_po, getContext());
+            m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_po, m_ctxt.getContext());
             return cf;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActNewFlight.this, ActNewFlight.this.getString(R.string.prgSavingFlight));
+            Context c = m_ctxt.getContext();
+            if (c != null)
+                m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgSavingFlight));
             lelocal = m_le; // hold onto a reference to m_le.
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (isAdded() && !getActivity().isFinishing()) {
-                if ((Boolean) m_Result) {
-                    MFBMain.invalidateCachedTotals();
+            ActNewFlight act = m_ctxt.getCallingActivity();
+            Context c = m_ctxt.getContext();
+            if (act == null || c == null)
+                return;
 
-                    // success, so we our cached recents are invalid
-                    RecentFlightsSvc.ClearCachedFlights();
-                    DialogInterface.OnClickListener ocl;
+            if ((Boolean) m_Result) {
+                MFBMain.invalidateCachedTotals();
 
-                    Boolean fIsNew = lelocal.IsNewFlight(); // save this, since deletePendingFlight will reset the ID of the flight
+                // success, so we our cached recents are invalid
+                RecentFlightsSvc.ClearCachedFlights();
+                DialogInterface.OnClickListener ocl;
 
-                    // the flight was successfully saved, so delete any local copy regardless
-                    lelocal.DeletePendingFlight();
+                Boolean fIsNew = lelocal.IsNewFlight(); // save this, since deletePendingFlight will reset the ID of the flight
 
-                    if (fIsNew) {
-                        // Reset the flight and we stay on this page
-                        ResetFlight(true);
-                        ocl = (d, id) -> d.cancel();
-                    } else {
-                        // no need to reset the current flight because we will finish.
-                        ocl = (d, id) -> {
-                            d.cancel();
-                            finish();
-                        };
-                        lelocal = m_le = null; // so that onPause won't cause it to be saved on finish() call.
-                    }
-                    new AlertDialog.Builder(ActNewFlight.this.getActivity())
-                            .setMessage(getString(R.string.txtSavedFlight))
-                            .setTitle(getString(R.string.txtSuccess))
-                            .setNegativeButton("OK", ocl)
-                            .create().show();
+                // the flight was successfully saved, so delete any local copy regardless
+                lelocal.DeletePendingFlight();
+
+                if (fIsNew) {
+                    // Reset the flight and we stay on this page
+                    act.ResetFlight(true);
+                    ocl = (d, id) -> d.cancel();
                 } else {
-                    MFBUtil.Alert(ActNewFlight.this, getString(R.string.txtError), svc.getLastError());
+                    // no need to reset the current flight because we will finish.
+                    ocl = (d, id) -> {
+                        d.cancel();
+                        act.finish();
+                    };
+                    lelocal = m_le = null; // so that onPause won't cause it to be saved on finish() call.
                 }
+                new AlertDialog.Builder(act.getActivity())
+                        .setMessage(c.getString(R.string.txtSavedFlight))
+                        .setTitle(c.getString(R.string.txtSuccess))
+                        .setNegativeButton("OK", ocl)
+                        .create().show();
+            } else {
+                MFBUtil.Alert(act, c.getString(R.string.txtError), svc.getLastError());
             }
 
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
@@ -260,12 +275,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class GetDigitizedSigTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView ivDigitizedSig;
+    private static class GetDigitizedSigTask extends AsyncTask<String, Void, Bitmap> {
+        AsyncWeakContext<ImageView> m_ctxt;
 
         GetDigitizedSigTask(ImageView iv) {
-            this.ivDigitizedSig = iv;
+            m_ctxt = new AsyncWeakContext<>(null, iv);
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -281,7 +295,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
 
         protected void onPostExecute(Bitmap result) {
-            ivDigitizedSig.setImageBitmap(result);
+            ImageView iv = m_ctxt.getCallingActivity();
+            if (iv != null)
+                iv.setImageBitmap(result);
         }
     }
 
@@ -664,7 +680,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                                 RecentFlightsSvc.ClearCachedFlights();
                                 finish();
                             } else if (m_le.IsExistingFlight()) {
-                                DeleteTask dt = new DeleteTask();
+                                DeleteTask dt = new DeleteTask(getContext(), this, m_le.idFlight);
                                 dt.execute();
                             }
                         })
@@ -1027,7 +1043,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         return idAircraftToUse;
     }
 
-    private void ResetFlight(Boolean fCarryHobbs) {
+    public void ResetFlight(Boolean fCarryHobbs) {
         // start up a new flight with the same aircraft ID and public setting.
         // first, validate that the aircraft is still OK for the user
         double hobbsEnd = m_le.hobbsEnd;
@@ -1126,7 +1142,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             }
         } else {
 
-            new SubmitTask(m_po).execute();
+            new SubmitTask(getContext(), this, m_po, m_le).execute();
         }
     }
 
@@ -1714,38 +1730,44 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     //region in-line property editing
-    @SuppressLint("StaticFieldLeak")
-    private class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
+    private static class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
-        FlightProperty fp;
+        private FlightProperty m_fp;
+        private AsyncWeakContext<ActNewFlight> m_ctxt;
+
+        DeletePropertyTask(Context c, ActNewFlight act, FlightProperty fp) {
+            m_ctxt = new AsyncWeakContext<>(c, act);
+            m_fp = fp;
+        }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             FlightPropertiesSvc fpsvc = new FlightPropertiesSvc();
-            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, fp.idFlight, fp.idProp, getContext());
+            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, m_fp.idFlight, m_fp.idProp, m_ctxt.getContext());
             return true;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActNewFlight.this, ActNewFlight.this.getString(R.string.prgDeleteProp));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getCallingActivity(), m_ctxt.getContext().getString(R.string.prgDeleteProp));
         }
 
         protected void onPostExecute(Boolean b) {
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
 
-            setUpPropertiesForFlight();
+            ActNewFlight act = m_ctxt.getCallingActivity();
+            if (act != null)
+                act.setUpPropertiesForFlight();
         }
     }
 
     private void deleteDefaultedProperty(FlightProperty fp) {
         if (fp.idFlight > 0 && fp.IsDefaultValue()) {
-            DeletePropertyTask dpt = new DeletePropertyTask();
-            dpt.fp = fp;
-            dpt.execute();
+            new DeletePropertyTask(getContext(), this, fp).execute();
             return;
         }
 
