@@ -24,6 +24,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 
 import com.myflightbook.android.R;
 import com.myflightbook.android.WebServices.UTCDate;
@@ -71,7 +72,8 @@ public class MFBUtil {
             pd.isIndeterminate();
             pd.setMessage(szMessage);
             pd.show();
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex));
         }
         return pd;
     }

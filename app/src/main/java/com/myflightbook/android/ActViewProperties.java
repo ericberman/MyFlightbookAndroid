@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -64,70 +63,96 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
     private double m_xfillValue = 0.0;
     private double m_xfillTachStart = 0.0;
 
-    @SuppressLint("StaticFieldLeak")
-    private class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
+    private static class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         Boolean fAllowCache = true;
+        CustomPropertyType[] m_rgcpt;
+        AsyncWeakContext<ActViewProperties> m_ctxt;
+
+        RefreshCPTTask(Context c, ActViewProperties avp) {
+            m_ctxt = new AsyncWeakContext<>(c, avp);
+        }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
-            m_rgcpt = cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, fAllowCache, ActViewProperties.this);
+            m_rgcpt = cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, fAllowCache, m_ctxt.getContext());
             return m_rgcpt != null && m_rgcpt.length > 0;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActViewProperties.this, ActViewProperties.this.getString(R.string.prgCPT));
+            Context c = m_ctxt.getContext();
+            if (c != null)
+                m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgCPT));
         }
 
         protected void onPostExecute(Boolean b) {
-            if (b) {
-                // Refresh the CPT's for each item in the full array
-                if (m_rgfpAll != null) {
-                    FlightProperty.RefreshPropCache();
-                    for (FlightProperty fp : m_rgfpAll)
-                        fp.RefreshPropType();
-                }
-                populateList();
-            }
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActViewProperties avp = m_ctxt.getCallingActivity();
+            if (avp == null)
+                return;
+
+            avp.m_rgcpt = this.m_rgcpt;
+            if (b) {
+                // Refresh the CPT's for each item in the full array
+                if (avp.m_rgfpAll != null) {
+                    FlightProperty.RefreshPropCache();
+                    for (FlightProperty fp : avp.m_rgfpAll)
+                        fp.RefreshPropType();
+                }
+                avp.populateList();
             }
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
+    private static class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         int propId;
+        int m_idExistingId;
+        AsyncWeakContext<ActViewProperties> m_ctxt;
+
+        DeletePropertyTask(Context c, ActViewProperties avp, int idExisting) {
+            m_ctxt = new AsyncWeakContext<>(c, avp);
+            m_idExistingId = idExisting;
+        }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             FlightPropertiesSvc fpsvc = new FlightPropertiesSvc();
-            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, m_idExistingId, propId, ActViewProperties.this);
+            fpsvc.DeletePropertyForFlight(AuthToken.m_szAuthToken, m_idExistingId, propId, m_ctxt.getContext());
             return true;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActViewProperties.this, ActViewProperties.this.getString(R.string.prgDeleteProp));
+            Context c = m_ctxt.getContext();
+            if (c != null)
+                m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgDeleteProp));
         }
 
         protected void onPostExecute(Boolean b) {
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
+            ActViewProperties avp = m_ctxt.getCallingActivity();
+            if (avp == null)
+                return;
 
             // Now recreate m_rgPropIn without the specfied property.
             ArrayList<FlightProperty> alNew = new ArrayList<>();
-            for (FlightProperty fp : m_rgfpIn)
+            for (FlightProperty fp : avp.m_rgfpIn)
                 if (fp.idProp != propId)
                     alNew.add(fp);
 
-            m_rgfpIn = alNew.toArray(new FlightProperty[0]);
+            avp.m_rgfpIn = alNew.toArray(new FlightProperty[0]);
         }
     }
 
@@ -287,7 +312,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
             m_rgcpt = CustomPropertyTypesSvc.getCachedPropertyTypes();
             populateList();
         } else {
-            RefreshCPTTask rt = new RefreshCPTTask();
+            RefreshCPTTask rt = new RefreshCPTTask(this, this);
             rt.execute();
         }
     }
@@ -391,7 +416,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
                 return true;
             case R.id.menuRefreshProperties:
                 updateProps();    // preserve current user edits
-                RefreshCPTTask rt = new RefreshCPTTask();
+                RefreshCPTTask rt = new RefreshCPTTask(this, this);
                 rt.fAllowCache = false;
                 rt.execute();
                 return true;
@@ -403,7 +428,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
     private void DeleteDefaultedProperty(FlightProperty fp) {
         for (FlightProperty f : m_rgfpIn)
             if (f.idPropType == fp.idPropType && f.idProp > 0) {
-                DeletePropertyTask dpt = new DeletePropertyTask();
+                DeletePropertyTask dpt = new DeletePropertyTask(this, this, m_idExistingId);
                 dpt.propId = f.idProp;
                 dpt.execute();
             }

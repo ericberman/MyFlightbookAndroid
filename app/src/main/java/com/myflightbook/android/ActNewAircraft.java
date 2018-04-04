@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -69,44 +68,46 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     public final static String MODELFORAIRCRAFT = "com.myflightbook.android.aircraftModelID";
     private static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
 
-    @SuppressLint("StaticFieldLeak")
-    private class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
-        private Context m_Context;
+    private static class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
+        private AsyncWeakContext<ActNewAircraft> m_ctxt;
 
-        SaveAircraftTask(Context c) {
+        SaveAircraftTask(Context c, ActNewAircraft ana) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, ana);
         }
 
         @Override
         protected MFBSoap doInBackground(Aircraft... params) {
             AircraftSvc acs = new AircraftSvc();
             acs.m_Progress = this;
-            m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac, getContext());
+            m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac, m_ctxt.getContext());
             return acs;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgNewAircraft));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgNewAircraft));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (!isAdded() || getActivity().isFinishing())
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActNewAircraft ana = m_ctxt.getCallingActivity();
+
+            if (ana == null)
                 return;
 
             Aircraft[] rgac = (Aircraft[]) m_Result;
             if (rgac == null || rgac.length == 0)
-                MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
+                MFBUtil.Alert(ana, ana.getString(R.string.txtError), svc.getLastError());
             else
-                Dismiss(RESULT_CODE_AIRCRAFT_CREATED);
-
-            try {
-                m_pd.dismiss();
-            } catch (Exception e) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-            }
+                ana.Dismiss(RESULT_CODE_AIRCRAFT_CREATED);
         }
 
         protected void onProgressUpdate(String... msg) {
@@ -118,39 +119,44 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
+        private AsyncWeakContext<ActNewAircraft> m_ctxt;
 
-        GetMakesTask(Context c) {
+        GetMakesTask(Context c, ActNewAircraft ana) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, ana);
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             MakesandModelsSvc mms = new MakesandModelsSvc();
-            AvailableMakesAndModels = mms.GetMakesAndModels(m_Context);
+            AvailableMakesAndModels = mms.GetMakesAndModels(m_ctxt.getContext());
 
             return mms;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgMakes));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgMakes));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (AvailableMakesAndModels == null || AvailableMakesAndModels.length == 0) {
-                MFBUtil.Alert(m_Context, getString(R.string.txtError), getString(R.string.errCannotRetrieveMakes));
-                Cancel();
-                return;
-            }
-
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActNewAircraft ana = m_ctxt.getCallingActivity();
+            Context c = m_ctxt.getContext();
+
+            if (ana == null || c == null)
+                return;
+
+            if (AvailableMakesAndModels == null || AvailableMakesAndModels.length == 0) {
+                MFBUtil.Alert(c, c.getString(R.string.txtError), c.getString(R.string.errCannotRetrieveMakes));
+                ana.Cancel();
             }
         }
     }
@@ -194,7 +200,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         // Get available makes/models, but only if we have none.  Can refresh.
         // This avoids getting makes/models when just getting a picture.
         if (AvailableMakesAndModels == null || AvailableMakesAndModels.length == 0) {
-            GetMakesTask gt = new GetMakesTask(this.getActivity());
+            GetMakesTask gt = new GetMakesTask(this.getActivity(), this);
             gt.execute();
         }
 
@@ -343,7 +349,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
                 fromView();
 
                 if (m_ac.FIsValid(getContext())) {
-                    SaveAircraftTask st = new SaveAircraftTask(getActivity());
+                    SaveAircraftTask st = new SaveAircraftTask(getActivity(), this);
                     st.execute(m_ac);
                 } else
                     MFBUtil.Alert(this, getString(R.string.txtError), m_ac.ErrorString);

@@ -19,7 +19,6 @@
 package com.myflightbook.android;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -142,10 +141,13 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     private static final int PERMISSION_REQUEST_READ = 3385;
 
-    @SuppressLint("StaticFieldLeak")
-    private class ImportTelemetryTask extends AsyncTask<Uri, Void, LogbookEntry> {
+    private static class ImportTelemetryTask extends AsyncTask<Uri, Void, LogbookEntry> {
         private ProgressDialog m_pd = null;
-        private Context c = null;
+        private AsyncWeakContext<MFBMain> m_ctxt;
+
+        ImportTelemetryTask(Context c, MFBMain m) {
+            m_ctxt = new AsyncWeakContext<>(c, m);
+        }
 
         @Override
         protected LogbookEntry doInBackground(Uri... urls) {
@@ -156,7 +158,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
                 if (t != null) {
                     try {
-                        leResult = GPSSim.ImportTelemetry(MFBMain.this, t.Samples(), urls[0]);
+                        leResult = GPSSim.ImportTelemetry(m_ctxt.getCallingActivity(), t.Samples(), urls[0]);
                     } catch (IOException | XmlPullParserException e) {
                         e.printStackTrace();
                     }
@@ -167,31 +169,42 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
         @Override
         protected void onPreExecute() {
-            c = MFBMain.this;
-            m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.telemetryImportProgress));
+            Context c = m_ctxt.getContext();
+            if (c != null)
+                m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.telemetryImportProgress));
         }
 
         @Override
         protected void onPostExecute(LogbookEntry le) {
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
 
+            Context c = m_ctxt.getContext();
+            MFBMain m = m_ctxt.getCallingActivity();
+
+            if (c == null)
+                return;
+
             if (le == null)
-                MFBUtil.Alert(MFBMain.this, getString(R.string.txtError), getString(R.string.telemetryCantIdentify));
+                MFBUtil.Alert(c, c.getString(R.string.txtError), c.getString(R.string.telemetryCantIdentify));
             else if (le.szError != null && le.szError.length() > 0)
-                MFBUtil.Alert(MFBMain.this, getString(R.string.txtError), le.szError);
+                MFBUtil.Alert(c, c.getString(R.string.txtError), le.szError);
             else
-                MFBUtil.Alert(MFBMain.this, getString(R.string.txtSuccess), getString(R.string.telemetryImportSuccessful));
+                MFBUtil.Alert(c, c.getString(R.string.txtSuccess), c.getString(R.string.telemetryImportSuccessful));
+
+            if (m == null)
+                return;
 
             // clear the URL from the intent.
-            Intent i = getIntent();
+            Intent i = m.getIntent();
             if (i != null)
                 i.setData(null);
 
-            TabInfo ti = mapTabInfo.get(MFBConstants.tabRecents);
+            TabInfo ti = m.mapTabInfo.get(MFBConstants.tabRecents);
             if (ti.fragment != null)
                 ((ActRecentsWS) ti.fragment).refreshRecentFlights(false);
         }
@@ -258,7 +271,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         if (!auth.HasValidCache()) {
             mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
             if (auth.FHasCredentials()) {
-                RefreshTask rt = new RefreshTask();
+                RefreshTask rt = new RefreshTask(getApplicationContext(), this);
                 rt.execute(auth);
             }
         }
@@ -412,7 +425,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.telemetryImportPrompt)
-                        .setPositiveButton(R.string.lblOK, (dialog, which) -> new ImportTelemetryTask().execute(uri))
+                        .setPositiveButton(R.string.lblOK, (dialog, which) -> new ImportTelemetryTask(this, this).execute(uri))
                         .setNegativeButton(R.string.lblCancel, null)
                         .show();
             }
@@ -454,7 +467,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         // check to see if we need to refresh auth.
         AuthToken at = new AuthToken();
         if (!at.HasValidCache()) {
-            RefreshTask rt = new RefreshTask();
+            RefreshTask rt = new RefreshTask(getApplicationContext(), this);
             rt.execute(at);
         }
     }
@@ -479,26 +492,35 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class RefreshTask extends AsyncTask<AuthToken, Void, Boolean> {
+    private static class RefreshTask extends AsyncTask<AuthToken, Void, Boolean> {
         private ProgressDialog m_pd;
+        AsyncWeakContext<MFBMain> m_ctxt;
+
+        RefreshTask(Context c, MFBMain m) {
+            m_ctxt = new AsyncWeakContext<>(c, m);
+        }
 
         @Override
         protected Boolean doInBackground(AuthToken... arg0) {
-            return (arg0[0]).RefreshAuthorization(MFBMain.this);
+            return (arg0[0]).RefreshAuthorization(m_ctxt.getCallingActivity());
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(MFBMain.this, MFBMain.this.getString(R.string.prgSigningIn));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getCallingActivity(), m_ctxt.getContext().getString(R.string.prgSigningIn));
         }
 
         protected void onPostExecute(Boolean f) {
+            MFBMain m = m_ctxt.getCallingActivity();
+            if (m == null)
+                return;
+
             if (f)
-                MFBMain.this.mTabHost.setCurrentTabByTag(mLastTab.tag);
+                m.mTabHost.setCurrentTabByTag(m.mLastTab.tag);
             else
-                MFBMain.this.mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
+                m.mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }

@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -38,79 +37,87 @@ import Model.MFBUtil;
 
 class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
-    @SuppressLint("StaticFieldLeak")
-    private class AircraftTask extends AsyncTask<String, Void, MFBSoap> {
+    private static class AircraftTask extends AsyncTask<String, Void, MFBSoap> {
         private Object m_Result = null;
-        private Context m_Context;
         private ProgressDialog m_pd = null;
+        AsyncWeakContext<DlgSignIn> m_ctxt;
 
-        AircraftTask(Context c) {
+        AircraftTask(Context c, DlgSignIn d) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, d);
         }
 
         @Override
         protected MFBSoap doInBackground(String... params) {
             AircraftSvc as = new AircraftSvc();
-            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken, m_Context);
+            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
             return as;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgAircraft));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgAircraft));
         }
 
         protected void onPostExecute(MFBSoap svc) {
             Aircraft[] rgac = (Aircraft[]) m_Result;
-            if (rgac == null || svc.getLastError().length() > 0) {
-                MFBUtil.Alert(m_Context, m_Context.getString(R.string.txtError), svc.getLastError());
+            Context c = m_ctxt.getContext();
+            DlgSignIn d = m_ctxt.getCallingActivity();
+            if (c != null && (rgac == null || svc.getLastError().length() > 0)) {
+                MFBUtil.Alert(c, c.getString(R.string.txtError), svc.getLastError());
             }
+            if (d != null)
+                d.dismiss();
 
-            dismiss();
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
-        private Context m_Context;
+    private static class SignInTask extends AsyncTask<String, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
         AuthToken m_Svc;
+        AsyncWeakContext<DlgSignIn> m_ctxt;
 
-        SoapTask(Context c, AuthToken at) {
+        SignInTask(Context c, DlgSignIn d, AuthToken at) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, d);
             m_Svc = at;
         }
 
         @Override
         protected MFBSoap doInBackground(String... params) {
-            m_Result = m_Svc.Authorize(params[0], params[1], m_Context);
+            m_Result = m_Svc.Authorize(params[0], params[1], m_ctxt.getContext());
             return m_Svc;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgSigningIn));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgSigningIn));
         }
 
         protected void onPostExecute(MFBSoap svc) {
+            Context c = m_ctxt.getContext();
+            DlgSignIn d = m_ctxt.getCallingActivity();
+            if (c == null)
+                return;
+
             if (((String) m_Result).length() == 0) {
-                MFBUtil.Alert(getContext(), getContext().getString(R.string.txtError), svc.getLastError());
+                MFBUtil.Alert(c, c.getString(R.string.txtError), svc.getLastError());
+                d.dismiss();
             } else {
                 MFBMain.invalidateAll();
                 // now download aircraft
-                AircraftTask act = new AircraftTask(m_Context);
+                AircraftTask act = new AircraftTask(c, d);
                 act.execute();
-                dismiss();
             }
 
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
@@ -158,7 +165,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
         AircraftSvc ac = new AircraftSvc();
         ac.FlushCache();
 
-        SoapTask st = new SoapTask(m_CallingContext == null ? this.getContext() : m_CallingContext, at);
+        SignInTask st = new SignInTask(m_CallingContext == null ? this.getContext() : m_CallingContext, this, at);
         st.execute(txtUser.getText().toString(), txtPass.getText().toString());
     }
 }

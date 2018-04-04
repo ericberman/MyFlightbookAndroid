@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -61,41 +61,52 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
     private Aircraft m_ac = null;
 
-    @SuppressLint("StaticFieldLeak")
-    private class SubmitTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
+    private static class SubmitTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private AircraftSvc m_acs = null;
+        private AsyncWeakContext<ActEditAircraft> m_ctxt;
+
+        SubmitTask(Context c, ActEditAircraft aea) {
+            m_ctxt = new AsyncWeakContext<>(c, aea);
+        }
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            Context c = m_ctxt.getContext();
+            ActEditAircraft aea = m_ctxt.getCallingActivity();
+            if (c == null || aea == null)
+                return false;
             m_acs = new AircraftSvc();
             m_acs.m_Progress = this;
-            m_acs.UpdateMaintenanceForAircraft(AuthToken.m_szAuthToken, m_ac, getContext());
+            m_acs.UpdateMaintenanceForAircraft(AuthToken.m_szAuthToken, aea.m_ac, c);
             return (m_acs.getLastError().length() == 0);
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActEditAircraft.this, ActEditAircraft.this.getString(R.string.prgUpdatingAircraft));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getCallingActivity(), m_ctxt.getContext().getString(R.string.prgUpdatingAircraft));
         }
 
         protected void onPostExecute(Boolean b) {
-            if (isAdded() && !getActivity().isFinishing()) {
-                if (b) {
-                    // force a refresh.
-                    m_acs.FlushCache();
-                    MFBMain.invalidateCachedTotals();    // could have updated maintenance, leading currency to be invalid.
-                    Intent i = new Intent();
-                    getActivity().setResult(RESULT_CODE_AIRCRAFT_CHANGED, i);
-                    finish();
-                } else {
-                    MFBUtil.Alert(ActEditAircraft.this, getString(R.string.txtError), m_acs.getLastError());
-                }
-            }
-
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActEditAircraft aea = m_ctxt.getCallingActivity();
+            if (aea == null)
+                return;
+
+            if (b) {
+                // force a refresh.
+                m_acs.FlushCache();
+                MFBMain.invalidateCachedTotals();    // could have updated maintenance, leading currency to be invalid.
+                Intent i = new Intent();
+                aea.getActivity().setResult(RESULT_CODE_AIRCRAFT_CHANGED, i);
+                aea.finish();
+            } else {
+                MFBUtil.Alert(aea, aea.getString(R.string.txtError), m_acs.getLastError());
             }
         }
 
@@ -108,40 +119,47 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
+    private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private AircraftSvc m_acs = null;
+        private AsyncWeakContext<ActEditAircraft> m_ctxt;
+
+        DeleteTask(Context c, ActEditAircraft aea) {
+            m_ctxt = new AsyncWeakContext<>(c, aea);
+        }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             m_acs = new AircraftSvc();
             m_acs.m_Progress = this;
-            m_acs.DeleteAircraftForUser(AuthToken.m_szAuthToken, m_ac.AircraftID, getContext());
+            m_acs.DeleteAircraftForUser(AuthToken.m_szAuthToken, m_ctxt.getCallingActivity().m_ac.AircraftID, m_ctxt.getContext());
             return m_acs;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(ActEditAircraft.this, ActEditAircraft.this.getString(R.string.prgDeletingAircraft));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getCallingActivity(), m_ctxt.getContext().getString(R.string.prgDeletingAircraft));
         }
 
         protected void onPostExecute(MFBSoap acs) {
-            if (!getActivity().isFinishing()) {
-                if (acs != null) {
-                    if (acs.getLastError().length() == 0) {
-                        Intent i = new Intent();
-                        getActivity().setResult(RESULT_CODE_AIRCRAFT_DELETED, i);
-                        finish();
-                    } else
-                        MFBUtil.Alert(ActEditAircraft.this, getString(R.string.txtError), acs.getLastError());
-                }
-            }
-
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
+
+            Context c = m_ctxt.getContext();
+            ActEditAircraft aea = m_ctxt.getCallingActivity();
+
+            if (c == null || aea == null || acs == null)
+                return;
+
+            if (acs.getLastError().length() == 0) {
+                Intent i = new Intent();
+                aea.getActivity().setResult(RESULT_CODE_AIRCRAFT_DELETED, i);
+                aea.finish();
+            } else
+                MFBUtil.Alert(aea, c.getString(R.string.txtError), acs.getLastError());
         }
 
         protected void onProgressUpdate(String... msg) {
@@ -423,7 +441,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
     private void updateAircraft() {
         fromView();
-        SubmitTask st = new SubmitTask();
+        SubmitTask st = new SubmitTask(getContext(), this);
         st.execute();
     }
 
@@ -446,7 +464,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
                 updateAircraft();
                 return true;
             case R.id.menuDeleteAircraft:
-                (new DeleteTask()).execute();
+                (new DeleteTask(getContext(), this)).execute();
                 return true;
             case R.id.menuViewSchedule:
                 String szURL;
