@@ -66,6 +66,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -119,11 +120,21 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         void imgCompleted(MFBImageInfo sender);
     }
 
-    private class AsyncLoadURL extends AsyncTask<Void, Void, Drawable> {
-        String m_URL = "";
-        ImageView imgView = null;
-        Boolean mFIsThumbnail = true;
-        ImageCacheCompleted m_icc = null;
+    private static class AsyncLoadURL extends AsyncTask<Void, Void, Drawable> {
+        private String m_URL;
+        private WeakReference<ImageView> imgView;
+        private Boolean mFIsThumbnail;
+        private ImageCacheCompleted m_icc;
+        private WeakReference<MFBImageInfo>  m_mfbii;
+
+        AsyncLoadURL(ImageView iv, String url, Boolean fIsThumnbnail, ImageCacheCompleted icc, MFBImageInfo mfbii) {
+            super();
+            imgView = new WeakReference<>(iv);
+            m_mfbii = new WeakReference<>(mfbii);
+            m_URL = url;
+            mFIsThumbnail = fIsThumnbnail;
+            m_icc = icc;
+        }
 
         @Override
         protected Drawable doInBackground(Void... params) {
@@ -142,19 +153,24 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
         protected void onPostExecute(Drawable d) {
             if (d != null) {
-                if (imgView != null)
-                    imgView.setImageDrawable(d);
-                BitmapDrawable bd = (BitmapDrawable) d;
-                Bitmap bmp = bd.getBitmap();
-                ByteArrayOutputStream s = new ByteArrayOutputStream();
-                bmp.compress(Bitmap.CompressFormat.JPEG, 100, s);
-                if (mFIsThumbnail)
-                    m_imgThumb = s.toByteArray();
-                else
-                    m_imgData = s.toByteArray();
+                ImageView iv = imgView.get();
+                MFBImageInfo mfbii = m_mfbii.get();
+                if (iv != null)
+                    iv.setImageDrawable(d);
 
-                if (m_icc != null)
-                    m_icc.imgCompleted(MFBImageInfo.this);
+                if (mfbii != null) {
+                    BitmapDrawable bd = (BitmapDrawable) d;
+                    Bitmap bmp = bd.getBitmap();
+                    ByteArrayOutputStream s = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, s);
+                    if (mFIsThumbnail)
+                        mfbii.m_imgThumb = s.toByteArray();
+                    else
+                        mfbii.m_imgData = s.toByteArray();
+
+                    if (m_icc != null)
+                        m_icc.imgCompleted(mfbii);
+                }
             }
         }
     }
@@ -909,11 +925,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         if (!fThumbnail && this.m_imgData != null && this.m_imgData.length > 0)
             return;
 
-        AsyncLoadURL alu = new AsyncLoadURL();
-        alu.imgView = null;
-        alu.m_icc = delegate;
-        alu.mFIsThumbnail = fThumbnail;
-        alu.m_URL = (fThumbnail) ? getURLThumbnail() : getURLFullImage();
+        AsyncLoadURL alu = new AsyncLoadURL(null, (fThumbnail) ? getURLThumbnail() : getURLFullImage(), fThumbnail, delegate, this);
         alu.execute();
     }
 
@@ -935,10 +947,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             return;
         }
 
-        AsyncLoadURL alu = new AsyncLoadURL();
-        alu.imgView = i;
-        alu.mFIsThumbnail = fThumbnail;
-        alu.m_URL = (fThumbnail) ? getURLThumbnail() : getURLFullImage();
+        AsyncLoadURL alu = new AsyncLoadURL(i, (fThumbnail) ? getURLThumbnail() : getURLFullImage(), fThumbnail, null, this);
         alu.execute();
     }
 
