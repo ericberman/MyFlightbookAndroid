@@ -279,6 +279,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         AsyncWeakContext<ImageView> m_ctxt;
 
         GetDigitizedSigTask(ImageView iv) {
+            super();
             m_ctxt = new AsyncWeakContext<>(null, iv);
         }
 
@@ -1736,6 +1737,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         private AsyncWeakContext<ActNewFlight> m_ctxt;
 
         DeletePropertyTask(Context c, ActNewFlight act, FlightProperty fp) {
+            super();
             m_ctxt = new AsyncWeakContext<>(c, act);
             m_fp = fp;
         }

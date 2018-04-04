@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -213,17 +212,16 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class SubmitPendingFlightsTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
+    private static class SubmitPendingFlightsTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
-        private Context m_context;
+        private AsyncWeakContext<ActRecentsWS> m_ctxt;
         private LogbookEntry[] m_rgle;
         boolean m_fErrorsFound = false;
         boolean m_fFlightsPosted = false;
 
-        SubmitPendingFlightsTask(Context c, LogbookEntry[] rgle) {
+        SubmitPendingFlightsTask(Context c, ActRecentsWS arws, LogbookEntry[] rgle) {
             super();
-            m_context = c;
+            m_ctxt = new AsyncWeakContext<>(c, arws);
             m_rgle = rgle;
         }
 
@@ -234,19 +232,20 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             m_fErrorsFound = m_fFlightsPosted = false;
 
+            Context c = m_ctxt.getContext();
             PostingOptions po = new PostingOptions();
             CommitFlightSvc cf = new CommitFlightSvc();
             cf.m_Progress = this;
             int cFlights = m_rgle.length;
             int iFlight = 1;
-            String szFmtUploadProgress = m_context.getString(R.string.prgSavingFlights);
+            String szFmtUploadProgress = c.getString(R.string.prgSavingFlights);
             for (LogbookEntry le : m_rgle) {
                 String szStatus = String.format(szFmtUploadProgress, iFlight, cFlights);
                 if (m_pd != null)
                     NotifyProgress((iFlight * 100) / cFlights, szStatus);
                 iFlight++;
                 le.SyncProperties();    // pull in the properties for the flight.
-                if (cf.FCommitFlight(AuthToken.m_szAuthToken, le, po, m_context)) {
+                if (cf.FCommitFlight(AuthToken.m_szAuthToken, le, po, c)) {
                     m_fFlightsPosted = true;
                     le.DeletePendingFlight();
                 } else {
@@ -261,7 +260,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_context, m_context.getString(R.string.prgSavingFlight));
+            Context c = m_ctxt.getContext();
+            m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgSavingFlight));
         }
 
         protected void onPostExecute(Boolean fResult) {
@@ -275,14 +275,19 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (!fResult)   // nothing changed - nothing to do.
                 return;
 
+            ActRecentsWS arws = m_ctxt.getCallingActivity();
+
+            if (arws == null)
+                return;
+
             if (m_fFlightsPosted) {  // flight was added/updated, so invalidate stuff.
 
                 MFBMain.invalidateCachedTotals();
-                ActRecentsWS.this.refreshRecentFlights(true);
+                arws.refreshRecentFlights(true);
             }
             else if (m_fErrorsFound) {
-                m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndPendingFlights(), m_rgExistingFlights.toArray(new LogbookEntry[m_rgExistingFlights.size()]));
-                ActRecentsWS.this.populateList();
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndPendingFlights(), arws.m_rgExistingFlights.toArray(new LogbookEntry[arws.m_rgExistingFlights.size()]));
+                arws.populateList();
             }
         }
 
@@ -295,19 +300,21 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class RefreshFlightsTask extends AsyncTask<Void, Void, Boolean> {
+    private static class RefreshFlightsTask extends AsyncTask<Void, Void, Boolean> {
         private RecentFlightsSvc m_rfSvc = null;
         Boolean fClearCache = false;
-        Context c;
+        private AsyncWeakContext<ActRecentsWS> m_ctxt;
 
-        RefreshFlightsTask(Context context) {
-            c = context;
+        RefreshFlightsTask(Context c, ActRecentsWS arws) {
+            super();
+            m_ctxt = new AsyncWeakContext<>(c, arws);
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            if (c == null)  // can't do anything without a context
+            Context c = m_ctxt.getContext();
+            ActRecentsWS arws = m_ctxt.getCallingActivity();
+            if (c == null || arws == null)  // can't do anything without a context
                 return false;
 
             m_rfSvc = new RecentFlightsSvc();
@@ -316,13 +323,13 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (fClearCache)
                 RecentFlightsSvc.ClearCachedFlights();
             final int cFlightsPageSize = 15;
-            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, ActRecentsWS.this.currentQuery, m_rgExistingFlights.size(), cFlightsPageSize, c);
+            LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, arws.currentQuery, arws.m_rgExistingFlights.size(), cFlightsPageSize, c);
 
-            fCouldBeMore = (rgle != null && rgle.length >= cFlightsPageSize);
+            arws.fCouldBeMore = (rgle != null && rgle.length >= cFlightsPageSize);
 
             if (rgle != null) {
-                m_rgExistingFlights.addAll(Arrays.asList(rgle));
-                m_rgLe = LogbookEntry.mergeFlightLists(rglePending, m_rgExistingFlights.toArray(new LogbookEntry[m_rgExistingFlights.size()]));
+                arws.m_rgExistingFlights.addAll(Arrays.asList(rgle));
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(rglePending, arws.m_rgExistingFlights.toArray(new LogbookEntry[arws.m_rgExistingFlights.size()]));
             }
             return rgle != null;
         }
@@ -332,16 +339,20 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
         protected void onPostExecute(Boolean b) {
             m_fIsRefreshing = false;
-            populateList();
+            Context c = m_ctxt.getContext();
+            ActRecentsWS arws = m_ctxt.getCallingActivity();
+            if (c == null || arws == null)  // can't do anything without a context
+                return;
 
-            if (getView() != null) {
-                TextView tv = getView().findViewById(R.id.txtFlightQueryStatus);
-                tv.setText(getString(currentQuery != null && currentQuery.HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
+            arws.populateList();
+
+            if (arws.getView() != null) {
+                TextView tv = arws.getView().findViewById(R.id.txtFlightQueryStatus);
+                tv.setText(c.getString(arws.currentQuery != null && arws.currentQuery.HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
             }
 
-            Activity a = getActivity();
-            if (a != null && !a.isFinishing() && !b && m_rfSvc != null) {
-                MFBUtil.Alert(ActRecentsWS.this, getString(R.string.txtError), m_rfSvc.getLastError());
+            if (!b && m_rfSvc != null) {
+                MFBUtil.Alert(arws, c.getString(R.string.txtError), m_rfSvc.getLastError());
             }
         }
     }
@@ -403,7 +414,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (!m_fIsRefreshing) {
                 m_fIsRefreshing = true; // don't refresh if already in progress.
                 Log.d(MFBConstants.LOG_TAG, "ActRecentsWS - Refreshing From Server");
-                RefreshFlightsTask rft = new RefreshFlightsTask(getContext());
+                RefreshFlightsTask rft = new RefreshFlightsTask(getContext(), this);
                 rft.fClearCache = fClearAll;
                 rft.execute();
             }
@@ -452,7 +463,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
         LogbookEntry[] rglePending = LogbookEntry.getPendingFlights();
         if (rglePending != null && rglePending.length > 0 && MFBSoap.IsOnline(getContext())) {
-            SubmitPendingFlightsTask spft = new SubmitPendingFlightsTask(getContext(), rglePending);
+            SubmitPendingFlightsTask spft = new SubmitPendingFlightsTask(getContext(), this, rglePending);
             spft.execute();
         }
     }

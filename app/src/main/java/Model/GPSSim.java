@@ -18,7 +18,6 @@
  */
 package Model;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -1194,9 +1193,14 @@ public class GPSSim {
         m_ll = ll;
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class FeedTask extends AsyncTask<Integer, Void, Integer> {
+    private static class FeedTask extends AsyncTask<Integer, Void, Integer> {
         private Location m_Loc;
+        LocationListener m_ll;
+
+        FeedTask(LocationListener ll) {
+            super();
+            m_ll = ll;
+        }
 
         @Override
         protected Integer doInBackground(Integer... params) {
@@ -1214,14 +1218,14 @@ public class GPSSim {
         protected void onPostExecute(Integer iLoc) {
             m_ll.onLocationChanged(m_Loc);
             if (iLoc < m_rgSamples.length - 1) {
-                FeedTask ft = new FeedTask();
+                FeedTask ft = new FeedTask(m_ll);
                 ft.execute(iLoc + 1);
             }
         }
     }
 
     public void FeedEvents() {
-        FeedTask ft = new FeedTask();
+        FeedTask ft = new FeedTask(m_ll);
         ft.execute(0);
     }
 

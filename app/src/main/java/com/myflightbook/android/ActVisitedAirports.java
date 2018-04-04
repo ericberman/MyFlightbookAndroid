@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -53,42 +52,44 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
 
     private static VisitedAirport[] visitedAirports = null;
 
-    @SuppressLint("StaticFieldLeak")
-    private class SoapTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class RefreshVisitedAirports extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
+        private AsyncWeakContext<ActVisitedAirports> m_ctxt;
 
-        SoapTask(Context c) {
+        RefreshVisitedAirports(Context c, ActVisitedAirports ava) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, ava);
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             VisitedAirportSvc vas = new VisitedAirportSvc();
-            m_Result = vas.VisitedAirportsForUser(AuthToken.m_szAuthToken, m_Context);
+            m_Result = vas.VisitedAirportsForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
             return vas;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgVisitedAirports));
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgVisitedAirports));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (!isAdded() || getActivity().isFinishing())
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception ignored) {
+            }
+
+            ActVisitedAirports ava = m_ctxt.getCallingActivity();
+            if (ava == null)
                 return;
 
             ActVisitedAirports.visitedAirports = (VisitedAirport[]) m_Result;
 
             if (ActVisitedAirports.visitedAirports == null || svc.getLastError().length() > 0)
-                MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
+                MFBUtil.Alert(ava, ava.getString(R.string.txtError), svc.getLastError());
             else
-                ActVisitedAirports.this.populateList();
-            try {
-                m_pd.dismiss();
-            } catch (Exception ignored) {
-            }
+                ava.populateList();
         }
     }
 
@@ -123,7 +124,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
     public void onResume() {
         super.onResume();
         if (visitedAirports == null)
-            new SoapTask(getActivity()).execute();
+            new RefreshVisitedAirports(getActivity(), this).execute();
         else
             populateList();
     }
@@ -139,7 +140,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuRefresh:
-                new SoapTask(getActivity()).execute();
+                new RefreshVisitedAirports(getActivity(), this).execute();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

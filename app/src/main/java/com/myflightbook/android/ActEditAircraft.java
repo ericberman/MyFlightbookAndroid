@@ -67,6 +67,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         private AsyncWeakContext<ActEditAircraft> m_ctxt;
 
         SubmitTask(Context c, ActEditAircraft aea) {
+            super();
             m_ctxt = new AsyncWeakContext<>(c, aea);
         }
 
@@ -125,6 +126,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         private AsyncWeakContext<ActEditAircraft> m_ctxt;
 
         DeleteTask(Context c, ActEditAircraft aea) {
+            super();
             m_ctxt = new AsyncWeakContext<>(c, aea);
         }
 

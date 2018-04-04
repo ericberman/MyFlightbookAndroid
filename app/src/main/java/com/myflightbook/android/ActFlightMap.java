@@ -113,22 +113,21 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     public static final String ALIASES = "com.myflightbook.android.aliases";
     public static final int REQUEST_ROUTE = 58372;
 
-    @SuppressLint("StaticFieldLeak")
-    private class SendGPXTask extends AsyncTask<Void, Void, MFBSoap> {
-        private Context m_Context;
+    private static class SendGPXTask extends AsyncTask<Void, Void, MFBSoap> {
         String m_Result = "";
         int m_idFlight;
+        private AsyncWeakContext<ActFlightMap> m_ctxt;
 
-        SendGPXTask(Context c, int idFlight) {
+        SendGPXTask(Context c, ActFlightMap afm, int idFlight) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, afm);
             m_idFlight = idFlight;
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
             RecentFlightsSvc rf = new RecentFlightsSvc();
-            m_Result = rf.FlightPathForFlightGPX(AuthToken.m_szAuthToken, m_idFlight, m_Context);
+            m_Result = rf.FlightPathForFlightGPX(AuthToken.m_szAuthToken, m_idFlight, m_ctxt.getContext());
             return rf;
         }
 
@@ -136,8 +135,9 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if (m_Result != null && m_Result.length() > 0) {
-                ActFlightMap.this.sendGPX(m_Result);
+            ActFlightMap afm = m_ctxt.getCallingActivity();
+            if (m_Result != null && m_Result.length() > 0 && afm != null) {
+                afm.sendGPX(m_Result);
             }
         }
     }
@@ -552,7 +552,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
                     return;
 
                 if (m_GPXPath == null && m_le != null && !m_le.IsPendingFlight() && !m_le.IsNewFlight()) {
-                    SendGPXTask st = new SendGPXTask(this, m_le.idFlight);
+                    SendGPXTask st = new SendGPXTask(this, this, m_le.idFlight);
                     st.execute();
                 }
                 else

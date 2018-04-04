@@ -70,6 +70,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         AsyncWeakContext<ActViewProperties> m_ctxt;
 
         RefreshCPTTask(Context c, ActViewProperties avp) {
+            super();
             m_ctxt = new AsyncWeakContext<>(c, avp);
         }
 
@@ -118,6 +119,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         AsyncWeakContext<ActViewProperties> m_ctxt;
 
         DeletePropertyTask(Context c, ActViewProperties avp, int idExisting) {
+            super();
             m_ctxt = new AsyncWeakContext<>(c, avp);
             m_idExistingId = idExisting;
         }

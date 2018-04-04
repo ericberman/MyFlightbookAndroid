@@ -146,6 +146,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         private AsyncWeakContext<MFBMain> m_ctxt;
 
         ImportTelemetryTask(Context c, MFBMain m) {
+            super();
             m_ctxt = new AsyncWeakContext<>(c, m);
         }
 
@@ -497,6 +498,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         AsyncWeakContext<MFBMain> m_ctxt;
 
         RefreshTask(Context c, MFBMain m) {
+            super();
             m_ctxt = new AsyncWeakContext<>(c, m);
         }
 

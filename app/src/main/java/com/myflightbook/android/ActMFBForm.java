@@ -22,7 +22,6 @@ package com.myflightbook.android;
  */
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -104,15 +103,17 @@ public class ActMFBForm extends Fragment {
     private static final String TEMP_IMG_FILE_NAME = "takenpicture";
     String m_TempFilePath = "";
 
-    @SuppressLint("StaticFieldLeak")
-    private class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
+    private static class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         MFBImageInfo mfbii = null;
         Boolean fGeoTag;
         Boolean fDeleteFileWhenDone;
         Boolean fAddToGallery;
         Boolean m_fVideo;
+        AsyncWeakContext<ActMFBForm> m_ctxt;
 
-        AddCameraTask(int ActivityRequestCode, Boolean fVideo, ContentResolver cr) {
+        AddCameraTask(int ActivityRequestCode, Boolean fVideo, ActMFBForm frm) {
+            super();
+            m_ctxt = new AsyncWeakContext<>(frm.getContext(), frm);
             m_fVideo = fVideo;
             fAddToGallery = fDeleteFileWhenDone = (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE || ActivityRequestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
             fGeoTag = (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -129,11 +130,11 @@ public class ActMFBForm extends Fragment {
             // Add the image/video to the gallery if necessary (i.e., if from the camera)
             if (fAddToGallery) {
                 File f = new File(szFilename);
-                Uri uriSource = FileProvider.getUriForFile(ActMFBForm.this.getContext(), BuildConfig.APPLICATION_ID + ".provider", f);
-                ActMFBForm.this.getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
+                Uri uriSource = FileProvider.getUriForFile(m_ctxt.getContext(), BuildConfig.APPLICATION_ID + ".provider", f);
+                m_ctxt.getCallingActivity().getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
             }
 
-            GallerySource gs = (GallerySource) ActMFBForm.this;
+            GallerySource gs = (GallerySource) m_ctxt.getCallingActivity();
             mfbii = new MFBImageInfo(gs.getDestination());
             return mfbii.initFromCamera(szFilename, fGeoTag ? MFBLocation.LastSeenLoc() : null, m_fVideo, fDeleteFileWhenDone);
         }
@@ -142,8 +143,12 @@ public class ActMFBForm extends Fragment {
         }
 
         protected void onPostExecute(Boolean b) {
+            ActMFBForm frm = m_ctxt.getCallingActivity();
+
+            if (frm == null)
+                return;
             if (b && mfbii != null) {
-                GallerySource gs = (GallerySource) ActMFBForm.this;
+                GallerySource gs = (GallerySource) frm;
                 gs.newImage(mfbii);
                 gs.refreshGallery();
             }
@@ -154,7 +159,7 @@ public class ActMFBForm extends Fragment {
     }
 
     void AddCameraImage(final String szFilename, Boolean fVideo) {
-        AddCameraTask act = new AddCameraTask(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, fVideo, this.getActivity().getContentResolver());
+        AddCameraTask act = new AddCameraTask(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, fVideo, this);
         act.execute(szFilename);
     }
 
@@ -184,7 +189,7 @@ public class ActMFBForm extends Fragment {
             Boolean fIsVideo = szMimeType.toLowerCase(Locale.getDefault()).startsWith("video");
             cursor.close();
 
-            AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo, cr);
+            AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo, this);
             act.execute(szFilename);
         }
     }

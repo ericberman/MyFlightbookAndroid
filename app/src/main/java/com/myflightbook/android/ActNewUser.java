@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -44,41 +43,46 @@ public class ActNewUser extends Activity implements
     private TextView txtEmail, txtEmail2, txtPass, txtPass2, txtFirst, txtLast,
             txtQ, txtA;
 
-    @SuppressLint("StaticFieldLeak")
-    private class SoapTask extends AsyncTask<String, Void, MFBSoap> {
-        private Context m_Context;
+    private static class AddUserTask extends AsyncTask<String, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
+        private AsyncWeakContext<ActNewUser> m_ctxt;
 
-        SoapTask(Context c) {
+        AddUserTask(Context c, ActNewUser anu) {
             super();
-            m_Context = c;
+            m_ctxt = new AsyncWeakContext<>(c, anu);
         }
 
         @Override
         protected MFBSoap doInBackground(String... params) {
             CreateUserSvc cus = new CreateUserSvc();
-            m_Result = cus.FCreateUser(params[0], params[1], params[2], params[3], params[4], params[5], m_Context);
+            m_Result = cus.FCreateUser(params[0], params[1], params[2], params[3], params[4], params[5], m_ctxt.getContext());
             return cus;
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_Context, m_Context.getString(R.string.prgCreatingAccount));
+            Context c = m_ctxt.getContext();
+            m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgCreatingAccount));
         }
 
         protected void onPostExecute(MFBSoap svc) {
-            if ((Boolean) m_Result) {
-                Intent i = new Intent();
-                setResult(RESULT_OK, i);
-                finish();
-            } else {
-                MFBUtil.Alert(m_Context, getString(R.string.txtError), svc.getLastError());
-            }
-
             try {
-                m_pd.dismiss();
+                if (m_pd != null)
+                    m_pd.dismiss();
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActNewUser anu = m_ctxt.getCallingActivity();
+            if (anu == null)
+                return;
+
+            if ((Boolean) m_Result) {
+                Intent i = new Intent();
+                anu.setResult(RESULT_OK, i);
+                anu.finish();
+            } else {
+                MFBUtil.Alert(anu, anu.getString(R.string.txtError), svc.getLastError());
             }
         }
     }
@@ -148,7 +152,7 @@ public class ActNewUser extends Activity implements
         switch (v.getId()) {
             case R.id.btnCreateUser:
                 if (FIsValid()) {
-                    SoapTask st = new SoapTask(this);
+                    AddUserTask st = new AddUserTask(this, this);
                     st.execute(txtEmail.getText().toString(), txtPass
                                     .getText().toString(), txtFirst.getText().toString(),
                             txtLast.getText().toString(),
