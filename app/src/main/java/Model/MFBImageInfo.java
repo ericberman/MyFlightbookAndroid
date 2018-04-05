@@ -36,12 +36,12 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.media.ExifInterface;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ImageView;
@@ -566,8 +566,8 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             if (ei != null) {
                 try {
                     if (curLoc != null) {
-                        double[] rglatlon = ei.getLatLong();
-                        if (rglatlon == null) {
+                        float[] rglatlon = new float[2];
+                        if (!ei.getLatLong(rglatlon)) {
                             ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, MFBUtil.makeLatLongString(curLoc.getLatitude()));
                             ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, MFBUtil.makeLatLongString(curLoc.getLongitude()));
                         }
