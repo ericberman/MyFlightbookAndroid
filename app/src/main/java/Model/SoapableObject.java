@@ -35,6 +35,7 @@ abstract class SoapableObject {
         FromProperties(so);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     SoapObject AddNullableDate(SoapObject so, String propName, Date dt) {
         if (dt == null)
             return so.addProperty(propName, "");
@@ -42,6 +43,7 @@ abstract class SoapableObject {
             return so.addProperty(propName, IsoDate.dateToString(dt, IsoDate.DATE_TIME));
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     SoapObject AddDouble(SoapObject so, String propName, Double d) {
         return so.addProperty(propName, String.format(Locale.US, "%.2f", d));
     }
