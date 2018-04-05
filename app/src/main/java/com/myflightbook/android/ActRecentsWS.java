@@ -173,10 +173,11 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             TextView txtHeader = v.findViewById(R.id.txtFlightHeader);
             String szHeaderHTML = String.format(Locale.getDefault(),
-                    "<strong><big>%s</big> %s (%s)</strong> <i><font color='gray'>%s</font></i>",
+                    "<strong><big>%s %s %s</big></strong>%s <i><font color='gray'>%s</font></i>",
                     TextUtils.htmlEncode(DateFormat.getDateFormat(this.getContext()).format(le.dtFlight)),
                     (le.IsPendingFlight() ? (" " + getString(R.string.txtPending)) : ""),
                     TextUtils.htmlEncode(szTailNumber.trim()),
+                    TextUtils.htmlEncode(ac == null ? "" : String.format(Locale.getDefault(), " (%s)", ac.ModelDescription)),
                     TextUtils.htmlEncode(le.szRoute.trim()));
             txtHeader.setText(Html.fromHtml(szHeaderHTML));
 
