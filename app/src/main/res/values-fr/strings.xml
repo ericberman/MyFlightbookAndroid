@@ -216,7 +216,6 @@
     <string name="prgMakes">Récupérer les modèles et leurs constructeurs…</string>
     <string name="prgVisitedAirports">Récupération des aéroports visités…</string>
     <string name="prgCPT">Mise à jour de la liste des propriétés de vol disponibles…</string>
-    <string name="prgPropsForFlight">Récupération des propriétés de vol disponibles…</string>
     <string name="prgDeleteProp">Suppression propriété de vol…</string>
     <string name="prgUploadingImages">Téléchargement image %1$d sur %2$d</string>
     <string name="prgUpdatingAircraft">Mise à jour de l\'avion…</string>
@@ -239,8 +238,6 @@
 
     <string name="lblAddComment">Ecrire un commentaire pour cette image</string>
     <string name="lblAddCommentWM">Commentaire</string>
-
-    <string name="lblEditPropertyTitle">Propriétés du Vol</string>
 
     <string name="lblAutoFillOptions">Critères d\'auto remplissage</string>
     <string name="lblConfirmImageDelete">Effacer cette image?  Ne peut être annulé.</string>
@@ -362,7 +359,6 @@
     <string name="menuDeleteAircraftShort">Effacer</string>
 
     <!-- Abbreviations -->
-    <string name="abbrevHours">hrs</string>
     <string name="abbrevNauticalMiles">nm</string>
 
     <!-- Search -->

@@ -216,7 +216,6 @@
     <string name="prgMakes">Retrieving available makes and models…</string>
     <string name="prgVisitedAirports">Getting Visited Airports…</string>
     <string name="prgCPT">Updating list of available properties…</string>
-    <string name="prgPropsForFlight">Retrieving properties for flight…</string>
     <string name="prgDeleteProp">Deleting Property…</string>
     <string name="prgUploadingImages">Uploading image %1$d of %2$d</string>
     <string name="prgUpdatingAircraft">Updating Aircraft…</string>
@@ -239,8 +238,6 @@
 
     <string name="lblAddComment">Type a comment for this image</string>
     <string name="lblAddCommentWM">Comment</string>
-
-    <string name="lblEditPropertyTitle">Flight Property</string>
 
     <string name="lblAutoFillOptions">Auto-fill criteria</string>
     <string name="lblConfirmImageDelete">Delete this image?  This cannot be undone.</string>
@@ -362,7 +359,6 @@
     <string name="menuDeleteAircraftShort">Delete</string>
 
     <!-- Abbreviations -->
-    <string name="abbrevHours">hrs</string>
     <string name="abbrevNauticalMiles">nm</string>
 
     <!-- Search -->
