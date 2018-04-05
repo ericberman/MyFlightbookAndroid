@@ -311,7 +311,8 @@ public class AircraftSvc extends MFBSoap {
                 if (!mfbii.IsOnServer()) {
                     mfbii.setKey(ac.AircraftID);
                     mfbii.setTargetID(ac.AircraftID);
-                    mfbii.UploadPendingImage(mfbii.getID(), c);
+                    if (!mfbii.UploadPendingImage(mfbii.getID(), c))
+                        Log.w(MFBConstants.LOG_TAG, "Image Upload failed");
                     mfbii.deleteFromDB(); // clean up any files.  (Had been toDB, but we actually DON'T want to persist)
                 }
             } catch (Exception ex) {
@@ -370,16 +371,13 @@ public class AircraftSvc extends MFBSoap {
         UploadImagesForAircraft(ac, c);
     }
 
-    public Aircraft[] DeleteAircraftForUser(String szAuthToken, int idAircraft, Context c) {
+    public void DeleteAircraftForUser(String szAuthToken, int idAircraft, Context c) {
         SoapObject Request = setMethod("DeleteAircraftForUser");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("idAircraft", idAircraft);
 
         SoapObject result = (SoapObject) Invoke(c);
-        if (result == null) {
+        if (result == null)
             setLastError(getLastError());
-            return getCachedAircraft();
-        } else
-            return ReadResults(result, true);
     }
 }

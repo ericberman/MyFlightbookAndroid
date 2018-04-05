@@ -177,19 +177,15 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         return fStayAwake;
     }
 
-    public long saveCurrentFlightId(Activity a) {
-        long i = -1;
-
+    public void saveCurrentFlightId(Activity a) {
         if (a == null)  // shouldn't ever be, but sometimes is.
-            return i;
+            return;
         if (m_leNewFlight != null && m_leNewFlight.IsNewFlight()) {
             SharedPreferences mPrefs = a.getPreferences(Activity.MODE_PRIVATE);
             SharedPreferences.Editor ed = mPrefs.edit();
             ed.putLong(keyInProgressId, m_leNewFlight.idLocalDB);
-            i = m_leNewFlight.idLocalDB;
             ed.apply();
         }
-        return i;
     }
 
     private static long getInProgressFlightId(Activity a) {

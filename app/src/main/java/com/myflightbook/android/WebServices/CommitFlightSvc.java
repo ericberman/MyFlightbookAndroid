@@ -19,6 +19,7 @@
 package com.myflightbook.android.WebServices;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.myflightbook.android.Marshal.MarshalDate;
 import com.myflightbook.android.Marshal.MarshalDouble;
@@ -33,6 +34,7 @@ import java.util.Date;
 import Model.FlightProperty;
 import Model.LatLong;
 import Model.LogbookEntry;
+import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBUtil;
 import Model.PostingOptions;
@@ -112,7 +114,8 @@ public class CommitFlightSvc extends MFBSoap {
                     // skip anything that is already on the server.
                     if (!mfbii.IsOnServer()) {
                         mfbii.setKey(leReturn.idFlight);
-                        mfbii.UploadPendingImage(mfbii.getID(), c);
+                        if (!mfbii.UploadPendingImage(mfbii.getID(), c))
+                            Log.w(MFBConstants.LOG_TAG, "Image Upload failed");
                     }
                     iImg++;
                 }
