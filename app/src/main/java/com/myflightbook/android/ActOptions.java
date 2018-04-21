@@ -131,7 +131,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                         getString(R.string.autoNone),
                         getString(R.string.autoFlight),
                         getString(R.string.autoEngine),
-                        getString(R.string.autoHobbs)
+                        getString(R.string.autoHobbs),
+                        getString(R.string.autoBlock),
+                        getString(R.string.autoFlightStartEngineEnd)
                 };
 
         Spinner sp = (Spinner) findViewById(R.id.spnAutoHobbs);

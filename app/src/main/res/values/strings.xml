@@ -299,6 +299,8 @@
     <string name="autoEngine">Engine Time</string>
     <string name="autoFlight">Flight Time</string>
     <string name="autoHobbs">Hobbs Time</string>
+    <string name="autoBlock">Block Time</string>
+    <string name="autoFlightStartEngineEnd">Flight Start to Engine End</string>
 
     <!-- Tab names -->
     <string name="tabNew">New</string>

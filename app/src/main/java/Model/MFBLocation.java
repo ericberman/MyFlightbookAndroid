@@ -60,7 +60,7 @@ public class MFBLocation implements LocationListener {
     private Boolean fPreviousLocWasNight = false;
     private Location PreviousLoc = null;
 
-    public enum AutoFillOptions {None, FlightTime, EngineTime, HobbsTime}
+    public enum AutoFillOptions {None, FlightTime, EngineTime, HobbsTime, BlockTime, FlightStartToEngineEnd}
 
     public enum NightCriteria { EndOfCivilTwilight, Sunset, SunsetPlus15, SunsetPlus30, SunsetPlus60 }
     public enum NightLandingCriteria { SunsetPlus60, Night}

@@ -299,6 +299,8 @@
     <string name="autoEngine">Temps moteur</string>
     <string name="autoFlight">Temps de vol</string>
     <string name="autoHobbs">Temps Hobbs</string>
+    <string name="autoBlock">Temps Bloc</string>
+    <string name="autoFlightStartEngineEnd">Démarrage du vol jusqu\'à l'arrêt du moteur</string>
 
     <!-- Tab names -->
     <string name="tabNew">Nouveau</string>

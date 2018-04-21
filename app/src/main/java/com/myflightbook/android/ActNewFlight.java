@@ -547,6 +547,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (!m_le.isKnownEngineStart() && !m_le.isKnownFlightStart())
             resetDateOfFlight();
 
+        if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime && m_le.rgCustomProperties != null)
+            AutoTotals();
+
         ToView();
     }
 
@@ -1027,6 +1030,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case HobbsTime:
                 // Should have been caught by autohobbs above
                 break;
+            case FlightStartToEngineEnd:
+                AutoTotals();
+                break;
             default:
                 break;
         }
@@ -1309,36 +1315,45 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void AutoTotals() {
-        double dtHobbs = 0;
         double dtTotal = 0;
-        double dtFlight = 0;
-        double dtEngine = 0;
 
         FromView();
-
-        // compute the flight time, in hours, if known
-        if (m_le.isKnownFlightTime())
-            dtFlight = (m_le.dtFlightEnd.getTime() - m_le.dtFlightStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
-
-        if (m_le.isKnownEngineTime())
-            dtEngine = (m_le.dtEngineEnd.getTime() - m_le.dtEngineStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
-
-        // NOTE: we do NOT subtract totalTimePaused here because hobbs should already have subtracted pause time,
-        // whether from being entered by user (hobbs on airplane pauses on ground or with engine stopped)
-        // or from this being called by autohobbs (which has already subtracted it)
-        if (m_le.hobbsStart > 0 && m_le.hobbsEnd > m_le.hobbsStart)
-            dtHobbs = m_le.hobbsEnd - m_le.hobbsStart; // hobbs is already in hours
 
         // do autotime
         switch (MFBLocation.fPrefAutoFillTime) {
             case EngineTime:
-                dtTotal = dtEngine;
+                if (m_le.isKnownEngineTime())
+                    dtTotal = (m_le.dtEngineEnd.getTime() - m_le.dtEngineStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
                 break;
             case FlightTime:
-                dtTotal = dtFlight;
+                if (m_le.isKnownFlightTime())
+                    dtTotal = (m_le.dtFlightEnd.getTime() - m_le.dtFlightStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
                 break;
             case HobbsTime:
-                dtTotal = dtHobbs;
+                // NOTE: we do NOT subtract totalTimePaused here because hobbs should already have subtracted pause time,
+                // whether from being entered by user (hobbs on airplane pauses on ground or with engine stopped)
+                // or from this being called by autohobbs (which has already subtracted it)
+                if (m_le.hobbsStart > 0 && m_le.hobbsEnd > m_le.hobbsStart)
+                    dtTotal = m_le.hobbsEnd - m_le.hobbsStart; // hobbs is already in hours
+                break;
+            case BlockTime: {
+                long blockOut = 0;
+                long blockIn = 0;
+                if (m_le.rgCustomProperties != null) {
+                    for (FlightProperty fp : m_le.rgCustomProperties) {
+                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockIn)
+                            blockIn = MFBUtil.removeSeconds(fp.dateValue).getTime();
+                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut)
+                            blockOut = MFBUtil.removeSeconds(fp.dateValue).getTime();
+                    }
+                    if (blockIn > 0 && blockOut > 0)
+                        dtTotal = (blockIn - blockOut - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
+                }
+            }
+                break;
+            case FlightStartToEngineEnd:
+                if (m_le.isKnownFlightStart() && m_le.isKnownEngineEnd())
+                    dtTotal = (m_le.dtEngineEnd.getTime() - m_le.dtFlightStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
                 break;
             default:
                 break;
@@ -1795,6 +1810,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 break;
             }
         }
+
+        if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime &&
+                (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn))
+            AutoTotals();
     }
     //endregion
 }

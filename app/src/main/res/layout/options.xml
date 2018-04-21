@@ -218,12 +218,20 @@
             android:layout_height="wrap_content"
             android:text="@string/lblOptUseLocalTime" />
 
+        <CheckBox
+            android:id="@+id/ckRoundNearestTenth"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblOptRoundNearestTenth" />
+
         <TableLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="5sp"
+            android:stretchColumns="1" >
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -240,7 +248,7 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -254,17 +262,6 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="2sp"
                     android:paddingTop="2sp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <CheckBox
-                    android:id="@+id/ckRoundNearestTenth"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/lblOptRoundNearestTenth" />
             </TableRow>
         </TableLayout>
 
