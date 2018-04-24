@@ -412,6 +412,7 @@
     <string name="ffCFI">Instruction</string>
     <string name="ffSIC">Copilote</string>
     <string name="ffPIC">Commandant de Bord</string>
+    <string name="ffTotal">Total</string>
     <string name="fqDateAllTime">Sélection complète</string>
     <string name="fqDate12Months">12 derniers mois</string>
     <string name="fqDate6Months">6 derniers mois</string>

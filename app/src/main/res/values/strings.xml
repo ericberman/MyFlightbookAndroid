@@ -412,6 +412,7 @@
     <string name="ffCFI">Flight has CFI time</string>
     <string name="ffSIC">Flight has SIC time</string>
     <string name="ffPIC">Flight has PIC time</string>
+    <string name="ffTotal">Flight has Total time</string>
     <string name="fqDateAllTime">All Time</string>
     <string name="fqDate12Months">Trailing 12 Months</string>
     <string name="fqDate6Months">Trailing 6 Months</string>

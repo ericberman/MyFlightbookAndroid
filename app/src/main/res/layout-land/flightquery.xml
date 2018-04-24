@@ -565,6 +565,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ffPIC" />
+
+                <CheckBox
+                    android:id="@+id/ckHasTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ffTotal" />
             </LinearLayout>
         </LinearLayout>
 

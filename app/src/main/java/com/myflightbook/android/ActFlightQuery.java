@@ -574,6 +574,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         SetCheckState(R.id.ckHasIMC, CurrentQuery.HasIMC);
         SetCheckState(R.id.ckHasNight, CurrentQuery.HasNight);
         SetCheckState(R.id.ckHasPIC, CurrentQuery.HasPIC);
+        SetCheckState(R.id.ckHasTotal, CurrentQuery.HasTotalTime);
         SetCheckState(R.id.ckHasSIC, CurrentQuery.HasSIC);
         SetCheckState(R.id.ckHasSimIMC, CurrentQuery.HasSimIMCTime);
         SetCheckState(R.id.ckHasTelemetry, CurrentQuery.HasTelemetry);
@@ -653,6 +654,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         CurrentQuery.HasIMC = CheckState(R.id.ckHasIMC);
         CurrentQuery.HasNight = CheckState(R.id.ckHasNight);
         CurrentQuery.HasPIC = CheckState(R.id.ckHasPIC);
+        CurrentQuery.HasTotalTime = CheckState(R.id.ckHasTotal);
         CurrentQuery.HasSIC = CheckState(R.id.ckHasSIC);
         CurrentQuery.HasSimIMCTime = CheckState(R.id.ckHasSimIMC);
         CurrentQuery.HasTelemetry = CheckState(R.id.ckHasTelemetry);
