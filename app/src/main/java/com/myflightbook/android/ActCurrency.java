@@ -20,7 +20,9 @@ package com.myflightbook.android;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +40,10 @@ import android.widget.TextView;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.CurrencySvc;
 import com.myflightbook.android.WebServices.MFBSoap;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Locale;
 
 import Model.CurrencyStatusItem;
 import Model.MFBConstants;
@@ -105,11 +111,19 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         TextView tvDisclaimer = (TextView) findViewById(R.id.lnkCurrencyDisclaimer);
-        tvDisclaimer.setOnClickListener((v) -> ActWebView.ViewURL(getActivity(), "http://myflightbook.com/logbook/public/CurrencyDisclaimer.aspx?naked=1"));
+        tvDisclaimer.setOnClickListener((v) -> ActWebView.ViewURL(getActivity(), "https://myflightbook.com/logbook/public/CurrencyDisclaimer.aspx?naked=1"));
 
         Refresh(fNeedsRefresh);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
+    }
+
+    private void RedirectTo(String szDest) {
+        try {
+            String szURL = String.format(Locale.US, "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1", MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), szDest);
+            ActWebView.ViewURL(getActivity(), szURL);
+        } catch (UnsupportedEncodingException ignored) {
+        }
     }
 
     private void BindTable() {
@@ -139,14 +153,58 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 
                 tvAttribute.setTextColor(Color.BLACK);
                 tvDiscrepancy.setTextColor(Color.BLACK);
-                if (csi.Status.compareTo("NotCurrent") == 0)
+                if (csi.Status.compareTo("NotCurrent") == 0) {
                     tvValue.setTextColor(Color.RED);
-                else if (csi.Status.compareTo("GettingClose") == 0)
+                    tvValue.setTypeface(tvValue.getTypeface(), Typeface.BOLD);
+                } else if (csi.Status.compareTo("GettingClose") == 0) {
                     tvValue.setTextColor(Color.BLUE);
+                    tvValue.setTypeface(tvValue.getTypeface(), Typeface.BOLD);
+                } else if (csi.Status.compareTo("NoDate") == 0) {
+                    tvValue.setTextColor(Color.BLACK);
+                    tvValue.setTypeface(tvValue.getTypeface(), Typeface.BOLD);
+                }
                 else
                     tvValue.setTextColor(Color.argb(255, 0, 128, 0));
 
                 tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
+                tr.setOnClickListener(v -> {
+                    switch (csi.CurrencyGroup) {
+                        default:
+                        case None:
+                        case FlightExperience:
+                            break;
+                        case Aircraft: {
+                            Intent i = new Intent(getActivity(), EditAircraftActivity.class);
+                            i.putExtra(ActEditAircraft.AIRCRAFTID, csi.AssociatedResourceID);
+                            startActivityForResult(i, ActEditAircraft.BEGIN_EDIT_AIRCRAFT_REQUEST_CODE);
+                        }
+                            break;
+                        case Medical:
+                            RedirectTo("MEDICAL");
+                            break;
+                        case Deadline:
+                            RedirectTo("DEADLINE");
+                            break;
+                        case Certificates:
+                            RedirectTo("CERTIFICATES");
+                            break;
+                        case FlightReview:
+                            RedirectTo("FLIGHTREVIEW");
+                            break;
+                        case CustomCurrency:
+                            if (csi.Query == null)
+                                RedirectTo("CUSTOMCURRENCY");
+                            else {
+                                Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
+                                Bundle b = new Bundle();
+                                b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, csi.Query);
+                                i.putExtras(b);
+                                startActivity(i);
+                            }
+                            break;
+                    }
+                });
             } catch (NullPointerException ex) { // should never happen.
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex));
             }

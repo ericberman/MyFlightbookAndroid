@@ -22,10 +22,15 @@ import org.ksoap2.serialization.SoapObject;
 
 
 public class CurrencyStatusItem extends SoapableObject {
+    public enum  CurrencyGroups {None, FlightExperience, FlightReview, Aircraft, Certificates, Medical, Deadline, CustomCurrency}
+
     public String Attribute = "";
     public String Value = "";
     public String Status = "";
     public String Discrepancy = "";
+    public int AssociatedResourceID = 0;
+    public CurrencyGroups CurrencyGroup = CurrencyGroups.None;
+    public FlightQuery Query = null;
 
     public CurrencyStatusItem(SoapObject so) {
         super();
@@ -42,6 +47,9 @@ public class CurrencyStatusItem extends SoapableObject {
         so.addProperty("Value", Value);
         so.addProperty("Status", Status);
         so.addProperty("Discrepancy", Discrepancy);
+        so.addProperty("AssociatedResourceID", AssociatedResourceID);
+        so.addProperty("CurrencyGroup", CurrencyGroup);
+        so.addProperty("Query", Query);
     }
 
     protected void FromProperties(SoapObject so) {
@@ -51,6 +59,25 @@ public class CurrencyStatusItem extends SoapableObject {
 
         // Optional strings come through as "anyType" if they're not actually present, so check for that.
         Discrepancy = ReadNullableString(so, "Discrepancy");
-    }
 
+        try {
+            AssociatedResourceID = Integer.parseInt(so.getPropertySafelyAsString("AssociatedResourceID"));
+        }
+        catch (NumberFormatException | NullPointerException ignored) {
+            AssociatedResourceID = 0;
+        }
+
+        try {
+            CurrencyGroup = CurrencyGroups.valueOf(so.getPropertySafelyAsString("CurrencyGroup"));
+        }
+        catch (IllegalArgumentException | NullPointerException ignored) {
+            CurrencyGroup = CurrencyGroups.None;
+        }
+
+        if (so.hasProperty("Query")) {
+            SoapObject q = (SoapObject) so.getProperty("Query");
+            Query = new FlightQuery();
+            Query.FromProperties(q);
+        }
+    }
 }

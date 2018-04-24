@@ -8,14 +8,13 @@
         android:id="@+id/txtCsiAttribute"
         android:layout_width="0px"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
         android:text=""
-        android:textSize="8pt" />
+        android:textStyle="bold"
+        android:textSize="6pt" />
 
     <LinearLayout
         android:layout_width="0px"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
         android:orientation="vertical">
 
         <TextView
