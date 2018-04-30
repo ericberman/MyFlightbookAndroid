@@ -193,7 +193,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 sb.append(formattedTimeForLabel(R.string.lblNight, le.decNight, em));
                 sb.append(formattedTimeForLabel(R.string.lblSimIMC, le.decSimulatedIFR, em));
                 sb.append(formattedTimeForLabel(R.string.lblIMC, le.decIMC, em));
-                sb.append(formattedTimeForLabel(R.string.lblNight, le.decXC, em));
+                sb.append(formattedTimeForLabel(R.string.lblXC, le.decXC, em));
                 sb.append(formattedTimeForLabel(R.string.lblDual, le.decDual, em));
                 sb.append(formattedTimeForLabel(R.string.lblGround, le.decGrndSim, em));
                 sb.append(formattedTimeForLabel(R.string.lblCFI, le.decCFI, em));
