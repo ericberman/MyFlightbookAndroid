@@ -103,7 +103,7 @@ public class MFBConstants {
     public static final String urlFacebook = "http://www.facebook.com/pages/MyFlightbook/145794653106";
     public static final String urlTwitter = "http://twitter.com/myflightbook";
     public static final String urlCrashReport = "http://%s/logbook/public/CrashReport.aspx";
-    public static final String urlSupport = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=donate";
+    public static final String urlSupport = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=donate&naked=1";
     public static final String urlPreferences = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=profile&naked=1";
     public static final String urlTraining = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
     public static final String urlAircraftSchedule = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=aircraftschedule&naked=1&ac=%d";
