@@ -382,7 +382,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		for (int i = 0; i < cTypeNames; i++)
 		{
 			String s = ReadNullableString(typeNames, i);
-			if (s.length() > 0)
+			if (s != null)
 				alTypes.add(s);
 		}
 		TypeNames = alTypes.toArray(new String[alTypes.size()]);
