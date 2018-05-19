@@ -110,8 +110,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             }
 
             ActAircraft aa = m_ctxt.getCallingActivity();
-
-            if (aa == null)
+            if (aa == null || !aa.isAdded() || aa.isDetached() || aa.getActivity() == null)
                 return;
 
             Aircraft[] rgac = (Aircraft[]) m_Result;
