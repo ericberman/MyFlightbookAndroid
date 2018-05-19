@@ -250,7 +250,10 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     private void populateList() {
         if (m_aircraftRows == null)
             return;
-        AircraftAdapter aa = new AircraftAdapter(getActivity(), R.layout.aircraft, m_aircraftRows);
+        Activity a = getActivity();
+        if (a == null)
+            return;
+        AircraftAdapter aa = new AircraftAdapter(a, R.layout.aircraft, m_aircraftRows);
         setListAdapter(aa);
         getListView().setOnItemClickListener(this);
         new Thread(new LazyThumbnailLoader(m_aircraftRows, aa)).start();
