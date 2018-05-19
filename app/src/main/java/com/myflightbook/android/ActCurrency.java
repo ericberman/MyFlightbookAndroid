@@ -88,7 +88,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
             }
 
             ActCurrency ac = m_ctxt.getCallingActivity();
-            if (ac == null)
+            if (ac == null || !ac.isAdded() || ac.isDetached() || ac.getActivity() == null)
                 return;
 
             m_rgcsi = (CurrencyStatusItem[]) m_Result;

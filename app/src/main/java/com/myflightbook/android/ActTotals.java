@@ -95,7 +95,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
             }
 
             ActTotals at = m_ctxt.getCallingActivity();
-            if (at == null)
+            if (at == null || !at.isAdded() || at.isDetached() || at.getActivity() == null)
                 return;
 
             Totals[] rgti = (Totals[]) m_Result;
