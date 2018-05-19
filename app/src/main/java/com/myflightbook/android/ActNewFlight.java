@@ -222,7 +222,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         protected void onPostExecute(MFBSoap svc) {
             ActNewFlight act = m_ctxt.getCallingActivity();
             Context c = m_ctxt.getContext();
-            if (act == null || c == null)
+            if (act == null || c == null || act.getActivity() == null || !act.isAdded() || act.isDetached())
                 return;
 
             if ((Boolean) m_Result) {
