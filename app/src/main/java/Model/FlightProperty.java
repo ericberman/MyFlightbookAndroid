@@ -195,6 +195,9 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
     public static FlightProperty[] CrossProduct(FlightProperty[] rgfpInitial, CustomPropertyType[] rgcpt) {
         // this can probably be made faster, but the lists should be small enough that it doesn't make much difference.
         int i = 0;
+        if (rgcpt == null)
+            return new FlightProperty[0];
+
         FlightProperty[] rgfpReturn = new FlightProperty[rgcpt.length];
 
         for (CustomPropertyType cpt : rgcpt) {

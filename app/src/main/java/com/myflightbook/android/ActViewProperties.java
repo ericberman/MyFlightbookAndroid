@@ -335,6 +335,8 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
 
     private void populateList() {
         // get the cross product of property types with existing properties
+        if (m_rgcpt == null)
+            m_rgcpt = CustomPropertyTypesSvc.getCachedPropertyTypes();  // try to avoid passing null
         if (m_rgfpAll == null)
             m_rgfpAll = FlightProperty.CrossProduct(m_rgfpIn, m_rgcpt);
 
