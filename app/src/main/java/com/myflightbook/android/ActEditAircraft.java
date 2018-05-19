@@ -96,7 +96,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
             }
 
             ActEditAircraft aea = m_ctxt.getCallingActivity();
-            if (aea == null)
+            if (aea == null || !aea.isAdded() || aea.getActivity() == null)
                 return;
 
             if (b) {
@@ -153,7 +153,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
             Context c = m_ctxt.getContext();
             ActEditAircraft aea = m_ctxt.getCallingActivity();
 
-            if (c == null || aea == null || acs == null)
+            if (c == null || aea == null || acs == null || aea.getActivity() == null || !aea.isAdded())
                 return;
 
             if (acs.getLastError().length() == 0) {
