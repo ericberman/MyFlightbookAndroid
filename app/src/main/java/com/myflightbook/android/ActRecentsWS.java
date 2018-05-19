@@ -278,7 +278,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             ActRecentsWS arws = m_ctxt.getCallingActivity();
 
-            if (arws == null)
+            if (arws == null || !arws.isAdded() || arws.isDetached() || arws.getActivity() == null)
                 return;
 
             if (m_fFlightsPosted) {  // flight was added/updated, so invalidate stuff.
@@ -342,7 +342,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             m_fIsRefreshing = false;
             Context c = m_ctxt.getContext();
             ActRecentsWS arws = m_ctxt.getCallingActivity();
-            if (c == null || arws == null)  // can't do anything without a context
+            if (c == null || arws == null || !arws.isAdded() || arws.isDetached() || arws.getActivity() == null)  // can't do anything without a context
                 return;
 
             arws.populateList();
