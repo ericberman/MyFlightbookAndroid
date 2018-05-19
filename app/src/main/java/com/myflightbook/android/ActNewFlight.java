@@ -1696,7 +1696,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void setUpPropertiesForFlight() {
-        LayoutInflater l = getActivity().getLayoutInflater();
+        Activity a = getActivity();
+        if (a == null)
+            return;
+        LayoutInflater l = a.getLayoutInflater();
         TableLayout tl = (TableLayout) findViewById(R.id.tblPinnedProperties);
         if (tl == null)
             return;
