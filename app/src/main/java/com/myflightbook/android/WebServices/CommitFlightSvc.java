@@ -104,6 +104,7 @@ public class CommitFlightSvc extends MFBSoap {
                 LogbookEntry leReturn = new LogbookEntry();
                 leReturn.FromProperties(result);
                 le.szError = leReturn.szError;
+                le.idFlight = leReturn.idFlight;
 
                 int iImg = 1;
                 for (MFBImageInfo mfbii : rgmfbii) {
