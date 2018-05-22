@@ -196,6 +196,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         private LogbookEntry lelocal = null;
         private LogbookEntry m_le;
         private AsyncWeakContext<ActNewFlight> m_ctxt;
+        private Boolean fIsNew = false;
 
         SubmitTask(Context c, ActNewFlight act, PostingOptions po, LogbookEntry le) {
             super();
@@ -217,6 +218,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             if (c != null)
                 m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgSavingFlight));
             lelocal = m_le; // hold onto a reference to m_le.
+            fIsNew = lelocal.IsNewFlight(); // cache this because after being successfully saved, it will no longer be new!
         }
 
         protected void onPostExecute(MFBSoap svc) {
@@ -230,9 +232,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
                 // success, so we our cached recents are invalid
                 RecentFlightsSvc.ClearCachedFlights();
-                DialogInterface.OnClickListener ocl;
 
-                Boolean fIsNew = lelocal.IsNewFlight(); // save this, since deletePendingFlight will reset the ID of the flight
+                DialogInterface.OnClickListener ocl;
 
                 // the flight was successfully saved, so delete any local copy regardless
                 lelocal.DeletePendingFlight();
