@@ -1489,6 +1489,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     public void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc,
                              Boolean fRecording) {
+        if (!isAdded() || isDetached() || getActivity() == null)
+            return;
+
         ShowRecordingIndicator();
 
         Resources res = getResources();
