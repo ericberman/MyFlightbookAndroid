@@ -203,9 +203,14 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     }
 
     private class FetchFlightPathTask implements Runnable {
+        private int m_idFlight;
+
+        public FetchFlightPathTask(int idFlight) {
+            m_idFlight = idFlight;
+        }
         public void run() {
             RecentFlightsSvc rfs = new RecentFlightsSvc();
-            m_rgFlightRoute = rfs.FlightPathForFlight(AuthToken.m_szAuthToken, m_le.idFlight, ActFlightMap.this);
+            m_rgFlightRoute = rfs.FlightPathForFlight(AuthToken.m_szAuthToken, m_idFlight, ActFlightMap.this);
             if ((m_rgFlightRoute != null) && (m_rgFlightRoute.length > 0))
                 ActFlightMap.this.runOnUiThread(ActFlightMap.this::updateMapElements);
         }
@@ -450,8 +455,10 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             }
         } else if (idExisting > 0) {
             m_le = RecentFlightsSvc.GetCachedFlightByID(idExisting);
-            FetchFlightPathTask ffpt = new FetchFlightPathTask();
-            new Thread(ffpt).start();
+            if (m_le != null) {
+                FetchFlightPathTask ffpt = new FetchFlightPathTask(idExisting);
+                new Thread(ffpt).start();
+            }
         } else if (idNew != 0) {
             m_le = MFBMain.getNewFlightListener().getInProgressFlight(this);
             this.m_rgFlightRoute = LocSample.flightPathFromDB();
