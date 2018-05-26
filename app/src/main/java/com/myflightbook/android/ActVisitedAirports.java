@@ -81,7 +81,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
             }
 
             ActVisitedAirports ava = m_ctxt.getCallingActivity();
-            if (ava == null)
+            if (ava == null || !ava.isAdded() || ava.isDetached() || ava.getActivity() == null)
                 return;
 
             ActVisitedAirports.visitedAirports = (VisitedAirport[]) m_Result;
