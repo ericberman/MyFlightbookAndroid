@@ -100,7 +100,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
             ActNewAircraft ana = m_ctxt.getCallingActivity();
 
-            if (ana == null)
+            if (ana == null || !ana.isAdded() || ana.isDetached() || ana.getActivity() == null)
                 return;
 
             Aircraft[] rgac = (Aircraft[]) m_Result;
