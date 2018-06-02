@@ -1436,7 +1436,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         resetDateOfFlight();
 
-        AppendNearest();
+        if (MFBLocation.fPrefAutoDetect)
+            AppendNearest();
         MFBLocation.GetMainLocation().setIsRecording(true); // will respect preference
         ShowRecordingIndicator();
         if (MFBConstants.fFakeGPS) {
@@ -1452,7 +1453,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (!m_le.IsNewFlight())
             return;
 
-        AppendNearest();
+        if (MFBLocation.fPrefAutoDetect)
+            AppendNearest();
         MFBLocation.GetMainLocation().setIsRecording(false);
         AutoHobbs();
         AutoTotals();
@@ -1469,7 +1471,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             resetDateOfFlight();
 
         MFBLocation.GetMainLocation().setIsRecording(true);
-        AppendNearest();
+        if (MFBLocation.fPrefAutoDetect)
+            AppendNearest();
         unPauseFlight(); // don't pause in flight
     }
 
@@ -1478,7 +1481,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (!m_le.IsNewFlight())
             return;
 
-        AppendNearest();
+        if (MFBLocation.fPrefAutoDetect)
+            AppendNearest();
     }
 
     private void ShowRecordingIndicator() {
