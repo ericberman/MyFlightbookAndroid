@@ -42,7 +42,7 @@ public class MFBUtil {
 
     // region Alerts
     public static void Alert(Context c, String szTitle, String szMessage) {
-        if (c instanceof Activity && ((Activity) c).isFinishing())
+        if (c == null || c instanceof Activity && ((Activity) c).isFinishing())
             return;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(c);
@@ -50,7 +50,10 @@ public class MFBUtil {
         builder.setTitle(szTitle);
         builder.setNegativeButton(c.getString(R.string.lblOK), (dialog, id) -> dialog.cancel());
         AlertDialog alert = builder.create();
-        alert.show();
+        try {
+            alert.show();
+        }
+        catch (Exception ignored) { }
     }
 
     public static void Alert(Fragment f, String szTitle, String szMessage) {
