@@ -175,7 +175,7 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
         if (em == EditMode.HHMM)
             return DoubleToHHMM(d);
         else
-            return new DecimalFormat("#.##").format(d);
+            return new DecimalFormat("#,###.##").format(d);
     }
 
     public void setDoubleValue(double d) {

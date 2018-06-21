@@ -198,7 +198,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
                     tvValue.setText(DecimalEdit.StringForMode(ti.Value, em));
                     break;
                 case Decimal:
-                    tvValue.setText(String.format(Locale.getDefault(), "%.2f", ti.Value));
+                    tvValue.setText(DecimalEdit.StringForMode(ti.Value, EditMode.DECIMAL));
                     break;
                 case Currency:
                     tvValue.setText(DecimalFormat.getCurrencyInstance(Locale.getDefault()).format(ti.Value));
