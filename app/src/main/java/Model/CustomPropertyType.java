@@ -51,6 +51,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public static final int idPropTypeTachEnd = 96;
     public static final int idPropTypeBlockOut = 187;
     public static final int idPropTypeBlockIn = 186;
+    public static final int idPropTypeApproachDesc = 267;
 
     // DB Column names
     private static final String COL_IDPROPTYPE = "idPropType";

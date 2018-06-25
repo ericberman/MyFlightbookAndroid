@@ -934,14 +934,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE:
                 String approachDesc = data.getStringExtra(ActAddApproach.APPROACHDESCRIPTIONRESULT);
                 if (approachDesc.length() > 0) {
-                    m_le.szComments += " " + approachDesc;
-                    SetStringForField(R.id.txtComments, m_le.szComments);
+                    m_le.AddApproachDescription(approachDesc);
 
                     int cApproachesToAdd = data.getIntExtra(ActAddApproach.APPROACHADDTOTOTALSRESULT, 0);
                     if (cApproachesToAdd > 0) {
                         m_le.cApproaches += cApproachesToAdd;
                         SetIntForField(R.id.txtApproaches, m_le.cApproaches);
                     }
+                    ToView();
                 }
                 break;
             default:

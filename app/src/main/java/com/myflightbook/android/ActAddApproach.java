@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import java.util.ArrayList;
 
 import Model.Airport;
 import Model.ApproachDescription;
@@ -122,12 +124,19 @@ public class ActAddApproach extends Activity {
         });
 
         String szAirports = getIntent().getStringExtra(AIRPORTSFORAPPROACHES);
+        if (szAirports == null)
+            szAirports = "";
         rgAirports = Airport.SplitCodes(szAirports);
+        ArrayList<String> al = new ArrayList<>();
+        for (int i = rgAirports.length - 1; i >= 0; i--)
+            al.add(rgAirports[i]);
+        rgAirports = al.toArray(new String[0]);
 
         findViewById(R.id.spnAirport).setVisibility(rgAirports.length > 1 ? View.VISIBLE : View.GONE);
         EditText et = findViewById(R.id.txtAirport);
         et.setVisibility(rgAirports.length > 1 ? View.GONE : View.VISIBLE);
-        if (rgAirports.length == 1) {
+        // if airports specified, default to the first one in the list (last one visited)
+        if (rgAirports.length > 0) {
             approachDescription.airportName = rgAirports[0];
             et.setText(rgAirports[0]);
         }
@@ -143,6 +152,7 @@ public class ActAddApproach extends Activity {
             s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     approachDescription.airportName = rgAirports[i];
+                    et.setText(rgAirports[i]);
                 }
 
                 public void onNothingSelected(AdapterView<?> adapterView) {

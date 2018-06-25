@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -353,6 +353,22 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
             if (fp.idPropType == CustomPropertyType.idPropTypeNightTakeOff) {
                 // increment it, distill the properties, and save 'em to the db.
                 fp.intValue++;
+                FlightProperty[] rgfpUpdated = FlightProperty.DistillList(rgfpAll);
+                FlightProperty.RewritePropertiesForFlight(this.idLocalDB, rgfpUpdated);
+                SyncProperties();
+                return;
+            }
+        }
+    }
+
+    public void AddApproachDescription(String szApproachDesc) {
+        // expand the list of all properties, even ones that aren't currently set
+        FlightProperty[] rgfpAll = FlightProperty.CrossProduct(FlightProperty.FromDB(this.idLocalDB), CustomPropertyTypesSvc.getCachedPropertyTypes());
+
+        // find the nighttime takeoff property
+        for (FlightProperty fp : rgfpAll) {
+            if (fp.idPropType == CustomPropertyType.idPropTypeApproachDesc) {
+                fp.stringValue = (fp.stringValue + " " + szApproachDesc).trim();
                 FlightProperty[] rgfpUpdated = FlightProperty.DistillList(rgfpAll);
                 FlightProperty.RewritePropertiesForFlight(this.idLocalDB, rgfpUpdated);
                 SyncProperties();

@@ -53,33 +53,17 @@
                 android:orientation="vertical"
                 android:padding="5dp">
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/txtComments"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.8"
-                        android:hint="@string/lblComments"
-                        android:inputType="text|textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine"
-                        android:minLines="2"
-                        android:nextFocusDown="@+id/txtRoute"
-                        android:nextFocusUp="@+id/spnAircraft"
-                        android:text="" />
-
-                    <ImageButton
-                        android:id="@+id/btnAddApproach"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/lblAddApproaches"
-                        android:padding="2dp"
-                        android:src="@drawable/ic_action_new_light"
-                        android:text="" />
-                </LinearLayout>
+                <EditText
+                    android:id="@+id/txtComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.8"
+                    android:hint="@string/lblComments"
+                    android:inputType="text|textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine"
+                    android:minLines="2"
+                    android:nextFocusDown="@+id/txtRoute"
+                    android:nextFocusUp="@+id/spnAircraft"
+                    android:text="" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -229,6 +213,16 @@
                     android:text=""
                     mfb:EditMode="INTEGER" />
             </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnAddApproach"
+                android:layout_gravity="bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/lblAddApproaches"
+                android:padding="2dp"
+                android:src="@drawable/ic_action_new_light"
+                android:text="" />
 
             <CheckBox
                 android:id="@+id/ckHold"
