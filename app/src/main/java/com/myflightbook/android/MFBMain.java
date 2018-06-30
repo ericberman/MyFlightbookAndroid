@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import Model.Airport;
 import Model.CustomExceptionHandler;
@@ -259,7 +260,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     }
 
     private String paddedTabLabel(int id) {
-        return "";// String.format(Locale.getDefault(), "  %s  ", getString(id));
+        return String.format(Locale.getDefault(), "  %s  ", getString(id));
     }
 
     private void refreshAuth() {
