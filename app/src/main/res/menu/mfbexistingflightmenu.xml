@@ -39,4 +39,12 @@
         android:id="@+id/menuReverseFlight"
         android:title="@string/menuRepeatReverseFlight"
         android:titleCondensed="@string/menuReverseShort" />
+    <item
+        android:id="@+id/menuSendFlight"
+        android:title="@string/menuSendFlight"
+        android:titleCondensed="@string/menuSendFlightShort" />
+    <item
+        android:id="@+id/menuShareFlight"
+        android:title="@string/menuShareFlight"
+        android:titleCondensed="@string/menuShareFlightShort" />
 </menu>

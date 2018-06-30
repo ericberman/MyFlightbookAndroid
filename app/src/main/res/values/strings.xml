@@ -276,6 +276,11 @@
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs must begin with the prefix \'SIM\'</string>
     <string name="errInvalidCountryPrefix">Aircraft does not begin with a valid country prefix.</string>
     <string name="errNoGoogleMaps">This feature requires Google Play services, which are not installed.</string>
+    <string name="errCantShare">There is nothing in this flight that can be shared.</string>
+    <string name="errCantSend">This flight cannot be sent.</string>
+
+    <string name="sendFlightSubject">Add this flight to your logbook</string>
+    <string name="sendFlightBody">I am sending you this flight from my logbook so that you can add it to yours.\n\nPlease go to %s to add it.\n\nYou will have the chance to review the flight and make any changes before the flight is saved.</string>
 
     <string name="txtUpdateRouteOnMap">Update</string>
     <string name="txtShareGPX">Send GPX to…</string>
@@ -327,6 +332,10 @@
     <string name="menuRepeatReverseFlight">Repeat and Reverse Flight</string>
     <string name="menuRepeatShort">Repeat</string>
     <string name="menuReverseShort">Reverse</string>
+    <string name="menuSendFlight">Send flight to another pilot</string>
+    <string name="menuSendFlightShort">Send</string>
+    <string name="menuShareFlight">Share flight</string>
+    <string name="menuShareFlightShort">Share</string>
     <string name="menuDeleteFlight">Delete Flight</string>
     <string name="menuDeleteFlightShort">Delete</string>
     <string name="menuUpdateFlight">Update Flight</string>

@@ -943,6 +943,7 @@
                 android:layout_marginBottom="5dip"
                 android:clickable="true"
                 android:padding="5dip"
+                android:visibility="gone"
                 android:text="@string/lblSetUpFacebook"
                 android:textAlignment="center"
                 android:focusable="true" />
@@ -951,6 +952,7 @@
                 android:id="@+id/ckFacebook"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:drawablePadding="20dip"
                 android:drawableStart="@drawable/fb_f_logo"
                 android:text="@string/lblFacebook" />
@@ -959,6 +961,7 @@
                 android:id="@+id/ckTwitter"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:drawablePadding="20dip"
                 android:drawableStart="@drawable/twitter_logo_blue"
                 android:text="@string/lblTwitter" />

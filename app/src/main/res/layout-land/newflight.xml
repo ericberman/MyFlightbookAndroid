@@ -841,6 +841,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:padding="5dip"
+                android:visibility="gone"
                 android:layout_marginBottom="5dip"
                 android:text="@string/lblSetUpFacebook"
                 android:textAlignment="center"
@@ -852,6 +853,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/fb_f_logo"
                 android:drawablePadding="3dip"
+                android:visibility="gone"
                 android:text="@string/lblFacebook" />
 
             <CheckBox
@@ -860,6 +862,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/twitter_logo_blue"
                 android:drawablePadding="3dip"
+                android:visibility="gone"
                 android:text="@string/lblTwitter" />
 
             <CheckBox

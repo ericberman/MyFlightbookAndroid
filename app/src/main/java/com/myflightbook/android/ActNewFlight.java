@@ -34,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -724,9 +725,43 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         .create().show();
                 return true;
             }
+            case R.id.menuSendFlight:
+                sendFlight();
+                return true;
+            case R.id.menuShareFlight:
+                shareFlight();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    void sendFlight() {
+        if (m_le == null || m_le.sendLink == null || m_le.sendLink.length() == 0) {
+            MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errCantSend));
+            return;
+        }
+
+        ShareCompat.IntentBuilder.from(getActivity())
+                .setType("message/rfc822")
+                .setSubject(getString(R.string.sendFlightSubject))
+                .setText(String.format(Locale.getDefault(), getString(R.string.sendFlightBody), m_le.sendLink))
+                .setChooserTitle(getString(R.string.menuSendFlight))
+                .startChooser();
+    }
+
+    void shareFlight() {
+        if (m_le == null || m_le.shareLink == null || m_le.shareLink.length() == 0) {
+            MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errCantShare));
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, String.format(Locale.getDefault(), "%s %s", m_le.szComments, m_le.szRoute).trim());
+        intent.putExtra(Intent.EXTRA_TEXT, m_le.shareLink);
+
+        startActivity(Intent.createChooser(intent,  getString(R.string.menuShareFlight)));
     }
 
     @Override

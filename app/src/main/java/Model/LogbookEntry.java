@@ -59,7 +59,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         piddCFI, piddSIC, piddTotal, pidfHold, pidszCommets, pidszRoute, pidfPublic, pidszErr,
         piddtFStart, piddtFEnd, piddtEStart, piddtEEnd, piddHobbsStart, piddHobbsEnd,
         pidszModelDisplay, pidszTailDisplay, pidszCatClassDisplay, pidfHasData, pidszData,
-        pidProperties, pidExistingImages
+        pidProperties, pidExistingImages, pidSend, pidShare
     }
 
     public enum SigStatus {
@@ -104,6 +104,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
     public String szFlightData = "";
     public FlightProperty[] rgCustomProperties;
     public MFBImageInfo[] rgFlightImages; // Only used on existing flights.
+    public String shareLink = "";
+    public String sendLink = "";
 
     // non-persisted values.
     public String szError = "";
@@ -186,6 +188,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
 
         if (leNew == null)
             return null;
+
+        leNew.shareLink = leNew.sendLink = "";
 
         leNew.idFlight = ID_NEW_FLIGHT;
         if (leNew.rgCustomProperties == null)
@@ -465,6 +469,10 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 return new Vector<>(Arrays.asList(this.rgCustomProperties));
             case pidExistingImages:
                 return new Vector<>(Arrays.asList(this.rgFlightImages));
+            case pidSend:
+                return this.sendLink;
+            case pidShare:
+                return this.shareLink;
             default:
                 break;
         }
@@ -589,6 +597,12 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
             case pidProperties:
                 break;
             case pidExistingImages:
+                break;
+            case pidSend:
+                this.sendLink = sz;
+                break;
+            case pidShare:
+                this.shareLink = sz;
                 break;
             default:
                 break;
@@ -761,6 +775,14 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 pi.elementType.type = PropertyInfo.OBJECT_CLASS;
                 pi.elementType.name = "MFBImageInfo";
                 break;
+            case pidSend:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "SendFlightLink";
+                break;
+            case pidShare:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "SocialMediaLink";
+                break;
             default:
                 break;
         }
@@ -805,7 +827,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         so.addProperty("CatClassDisplay", szCatClassDisplay);
         so.addProperty("FlightData", szFlightData);
         so.addProperty("CustomProperties", rgCustomProperties);
-        // we don't need to write back existing image properties
+        // we don't need to write back existing image properties or send/share properties
     }
 
     public void FromProperties(SoapObject so) {
@@ -860,6 +882,9 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         szModelDisplay = so.getProperty("ModelDisplay").toString();
         szTailNumDisplay = so.getProperty("TailNumDisplay").toString();
         szCatClassDisplay = so.getProperty("CatClassDisplay").toString();
+
+        sendLink = so.getPropertySafelyAsString("SendFlightLink");
+        shareLink = so.getPropertySafelyAsString("SocialMediaLink");
 
         // FlightData is not always present.
         try {

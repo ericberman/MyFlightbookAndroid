@@ -276,6 +276,11 @@
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs doivent commencer par le préfixe \'SIM\'</string>
     <string name="errInvalidCountryPrefix">L\'aéronef ne commence pas par un préfixe de pays valide.</string>
     <string name="errNoGoogleMaps">Cette fonction nécessite les services de Google Play, qui ne sont pas installés.</string>
+    <string name="errCantShare">Il n\'y a rien dans ce vol qui puisse être partagé.</string>
+    <string name="errCantSend">Ce vol ne peut pas être envoyé.</string>
+
+    <string name="sendFlightSubject">Ajouter ce vol à votre journal de bord</string>
+    <string name="sendFlightBody">Je vous envoie ce vol de mon journal de bord pour que vous puissiez l\'ajouter au vôtre.\n\nS\'il vous plaît visitez %s.\n\nVous aurez la possibilité d'examiner le vol et de faire des changements avant que le vol soit enregistré.</string>
 
     <string name="txtUpdateRouteOnMap">Mise à jour</string>
     <string name="txtShareGPX">Envoyer GPX pour…</string>
@@ -327,6 +332,10 @@
     <string name="menuRepeatReverseFlight">Répétez et inversez ce vol</string>
     <string name="menuRepeatShort">Répétez</string>
     <string name="menuReverseShort">Inversez</string>
+    <string name="menuSendFlight">Envoyer un vol à un autre pilote</string>
+    <string name="menuSendFlightShort">Envoyer</string>
+    <string name="menuShareFlight">Partager le vol</string>
+    <string name="menuShareFlightShort">Partager</string>
     <string name="menuDeleteFlight">Effacer Vol</string>
     <string name="menuDeleteFlightShort">Effacer</string>
     <string name="menuUpdateFlight">Mettre à jour Vol</string>
