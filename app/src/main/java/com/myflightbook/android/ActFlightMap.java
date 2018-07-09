@@ -205,7 +205,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     private class FetchFlightPathTask implements Runnable {
         private int m_idFlight;
 
-        public FetchFlightPathTask(int idFlight) {
+        FetchFlightPathTask(int idFlight) {
             m_idFlight = idFlight;
         }
         public void run() {
@@ -306,7 +306,9 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
             String szContent = String.format("%s (%s) %s", ap.FacilityName, ap.AirportID, (ap.Distance > 0) ? String.format(Locale.getDefault(), " (%.1f%s)", ap.Distance, szNM) : "");
             llb.include(ll.getLatLng());
 
-            Marker m = map.addMarker(new MarkerOptions().position(ll.getLatLng()).icon(BitmapDescriptorFactory.fromResource(ap.IsPort() ? R.drawable.airport : R.drawable.tower)).title(szContent));
+            Marker m = map.addMarker(new MarkerOptions()
+                    .position(ll.getLatLng()).anchor(0.5f, 0.5f)
+                    .icon(BitmapDescriptorFactory.fromResource(ap.IsPort() ? R.drawable.airport : R.drawable.tower)).title(szContent));
             if (ap.IsPort())
                 m_hmAirports.put(m.getId(), ap);
         }
