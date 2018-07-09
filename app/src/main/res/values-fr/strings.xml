@@ -280,7 +280,7 @@
     <string name="errCantSend">Ce vol ne peut pas être envoyé.</string>
 
     <string name="sendFlightSubject">Ajouter ce vol à votre journal de bord</string>
-    <string name="sendFlightBody">Je vous envoie ce vol de mon journal de bord pour que vous puissiez l\'ajouter au vôtre.\n\nS\'il vous plaît visitez %s.\n\nVous aurez la possibilité d'examiner le vol et de faire des changements avant que le vol soit enregistré.</string>
+    <string name="sendFlightBody">Je vous envoie ce vol de mon journal de bord pour que vous puissiez l\'ajouter au vôtre.\n\nS\'il vous plaît visitez %s.\n\nVous aurez la possibilité d\'examiner le vol et de faire des changements avant que le vol soit enregistré.</string>
 
     <string name="txtUpdateRouteOnMap">Mise à jour</string>
     <string name="txtShareGPX">Envoyer GPX pour…</string>
@@ -305,7 +305,7 @@
     <string name="autoFlight">Temps de vol</string>
     <string name="autoHobbs">Temps Hobbs</string>
     <string name="autoBlock">Temps Bloc</string>
-    <string name="autoFlightStartEngineEnd">Démarrage du vol jusqu\'à l'arrêt du moteur</string>
+    <string name="autoFlightStartEngineEnd">Démarrage du vol jusqu\'à l\'arrêt du moteur</string>
 
     <!-- Tab names -->
     <string name="tabNew">Nouveau</string>
