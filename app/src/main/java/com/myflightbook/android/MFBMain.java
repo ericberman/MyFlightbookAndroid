@@ -54,7 +54,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 import Model.Airport;
 import Model.CustomExceptionHandler;
@@ -259,8 +258,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         tabHost.addTab(tabSpec);
     }
 
-    private String paddedTabLabel(int id) {
-        return String.format(Locale.getDefault(), "  %s  ", getString(id));
+    private String paddedTabLabel() {
+        return "";
     }
 
     private void refreshAuth() {
@@ -358,23 +357,24 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         // Set up the tabs
         mTabHost = findViewById(android.R.id.tabhost);
         mTabHost.setup();
+        mTabHost.setBackgroundColor(0xFFffffff);
         mTabHost.getTabWidget().setDividerDrawable(null);
         TabInfo tabInfo;
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabNewFlight).setIndicator(paddedTabLabel(R.string.tabNew), ContextCompat.getDrawable(this, R.drawable.ic_tab_newflight)), (tabInfo = new TabInfo(MFBConstants.tabNewFlight, ActNewFlight.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabNewFlight).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_newflight)), (tabInfo = new TabInfo(MFBConstants.tabNewFlight, ActNewFlight.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabAircraft).setIndicator(paddedTabLabel(R.string.tabAircraft), ContextCompat.getDrawable(this, R.drawable.ic_tab_aircraft)), (tabInfo = new TabInfo(MFBConstants.tabAircraft, ActAircraft.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabAircraft).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_aircraft)), (tabInfo = new TabInfo(MFBConstants.tabAircraft, ActAircraft.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabRecents).setIndicator(paddedTabLabel(R.string.tabRecent), ContextCompat.getDrawable(this, R.drawable.ic_tab_recents)), (tabInfo = new TabInfo(MFBConstants.tabRecents, ActRecentsWS.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabRecents).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_recents)), (tabInfo = new TabInfo(MFBConstants.tabRecents, ActRecentsWS.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabCurrency).setIndicator(paddedTabLabel(R.string.tabCurrency), ContextCompat.getDrawable(this, R.drawable.ic_tab_currency)), (tabInfo = new TabInfo(MFBConstants.tabCurrency, ActCurrency.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabCurrency).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_currency)), (tabInfo = new TabInfo(MFBConstants.tabCurrency, ActCurrency.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabTotals).setIndicator(paddedTabLabel(R.string.tabTotals), ContextCompat.getDrawable(this, R.drawable.ic_tab_totals)), (tabInfo = new TabInfo(MFBConstants.tabTotals, ActTotals.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabTotals).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_totals)), (tabInfo = new TabInfo(MFBConstants.tabTotals, ActTotals.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabVisitedAirports).setIndicator(paddedTabLabel(R.string.tabVisitedAirports), ContextCompat.getDrawable(this, R.drawable.ic_tab_visitedairport)), (tabInfo = new TabInfo(MFBConstants.tabVisitedAirports, ActVisitedAirports.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabVisitedAirports).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_visitedairport)), (tabInfo = new TabInfo(MFBConstants.tabVisitedAirports, ActVisitedAirports.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabTraining).setIndicator(paddedTabLabel(R.string.tabTraining), ContextCompat.getDrawable(this, R.drawable.ic_tab_training)), (tabInfo = new TabInfo(MFBConstants.tabTraining, ActTraining.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabTraining).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_training)), (tabInfo = new TabInfo(MFBConstants.tabTraining, ActTraining.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabOptions).setIndicator(paddedTabLabel(R.string.tabOptions), ContextCompat.getDrawable(this, R.drawable.ic_tab_profile)), (tabInfo = new TabInfo(MFBConstants.tabOptions, ActOptions.class, savedInstanceState)));
+        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabOptions).setIndicator(paddedTabLabel(), ContextCompat.getDrawable(this, R.drawable.ic_tab_profile)), (tabInfo = new TabInfo(MFBConstants.tabOptions, ActOptions.class, savedInstanceState)));
         this.mapTabInfo.put(tabInfo.tag, tabInfo);
 
         mTabHost.setOnTabChangedListener(this);
