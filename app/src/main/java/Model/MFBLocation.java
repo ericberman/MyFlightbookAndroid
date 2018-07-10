@@ -19,20 +19,26 @@
 package Model;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.myflightbook.android.ActNewFlight;
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.R;
+import com.myflightbook.android.mfblocationservice;
 
 public class MFBLocation implements LocationListener {
     public enum GPSQuality {Unknown, Poor, Good, Excellent}
@@ -84,20 +90,21 @@ public class MFBLocation implements LocationListener {
     // A single shared MFBLocation for the app
     private static MFBLocation m_Location = null;
 
+    private BroadcastReceiver mReceiver = null;
+
     private void Init(Context c) {
         if (c != null) {
+            if (mReceiver == null)
+                mReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        Parcelable l = intent.getParcelableExtra(mfblocationservice.EXTRA_LOCATION);
+                        if (l != null && l instanceof Location)
+                            onLocationChanged((Location) l);
+                    }
+                };
             this.startListening(c);
         }
-
-		/*
-         if (MFBConstants.fFakeGPS)
-		 { 
-			 m_lastSeenLoc = new Location("MFB");
-			 m_lastSeenLoc.setLatitude(47.906987);
-			 m_lastSeenLoc.setLongitude(-122.281);
-			 m_lastSeenLoc.setAltitude(500); 
-		 }
-		 */
     }
 
     private Boolean fCheckPermissions(Context c) {
@@ -110,22 +117,13 @@ public class MFBLocation implements LocationListener {
                 return;
 
             try {
-                LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
-                assert lm != null;
-                if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
-                    return;
+                LocalBroadcastManager.getInstance(c).registerReceiver(mReceiver, new IntentFilter(mfblocationservice.ACTION_LOCATION_BROADCAST));
 
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        0,
-                        0, this);
+                // start background service
+                c.startService(new Intent(c, mfblocationservice.class));
+
                 Log.w(MFBConstants.LOG_TAG, String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
                 IsListening = true;
-                if (m_lastSeenLoc == null)
-                    m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (m_lastSeenLoc == null && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-                    m_lastSeenLoc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                if (m_lastSeenLoc != null)
-                    InformListenerOfStatus(m_lastSeenLoc);
             } catch (IllegalArgumentException ex) {
                 MFBUtil.Alert(c, c.getString(R.string.errNoGPSTitle), c.getString(R.string.errCantUseGPS) + ex.getMessage());
             } catch (SecurityException ignored) {
@@ -138,12 +136,9 @@ public class MFBLocation implements LocationListener {
             if (!fCheckPermissions(c))
                 return;
 
-            LocationManager lm = (LocationManager) c
-                    .getSystemService(Context.LOCATION_SERVICE);
             try {
-                assert lm != null;
-                lm.removeUpdates(this);
-                Log.w(MFBConstants.LOG_TAG, "Stop Listening");
+                LocalBroadcastManager.getInstance(c).unregisterReceiver(mReceiver);
+                c.stopService(new Intent(c, mfblocationservice.class));
                 IsListening = false;
             } catch (SecurityException ignored) {
             }

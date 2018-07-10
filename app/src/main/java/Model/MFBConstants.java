@@ -56,7 +56,7 @@ public class MFBConstants {
     // speeds for distinguishing takeoff/landing
     // we want some hysteresis here, so set the take-off speed higher than the
     // landing speed
-    private static final double MIN_SAMPLE_RATE_TAXI_DEBUG = 10000; // Sample rate in milliseconds
+    public static final double MIN_SAMPLE_RATE_TAXI_DEBUG = 10000; // Sample rate in milliseconds
     private static final double MIN_SAMPLE_RATE_AIRBORNE_DEBUG = 3000;
 
     private static final double MIN_SAMPLE_RATE_TAXI_RELEASE = 10000;
@@ -68,7 +68,7 @@ public class MFBConstants {
     static double MIN_SAMPLE_RATE_TAXI = fIsDebug ? MIN_SAMPLE_RATE_TAXI_DEBUG
             : MIN_SAMPLE_RATE_TAXI_RELEASE;
     @SuppressWarnings("ConstantConditions")
-    static double MIN_SAMPLE_RATE_AIRBORNE = fIsDebug ? MIN_SAMPLE_RATE_AIRBORNE_DEBUG
+    public static double MIN_SAMPLE_RATE_AIRBORNE = fIsDebug ? MIN_SAMPLE_RATE_AIRBORNE_DEBUG
             : MIN_SAMPLE_RATE_AIRBORNE_RELEASE;
 
     // minimum horizontal accuracy for us not to throw things out.
