@@ -49,8 +49,6 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
-import Model.MFBConstants;
-
 // Background location service, modeled on the code sample at http://devdeeds.com/android-location-tracking-in-background-service/; thanks!!
 public class mfblocationservice  extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -92,8 +90,8 @@ public class mfblocationservice  extends Service implements
                 .addApi(LocationServices.API)
                 .build();
 
-        mLocationRequest.setInterval((long) MFBConstants.MIN_SAMPLE_RATE_AIRBORNE);
-        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setInterval(500);
+        mLocationRequest.setFastestInterval(250);
         mLocationRequest.setMaxWaitTime(10000);
 
         if (Build.VERSION.SDK_INT >= 26) {
@@ -102,7 +100,6 @@ public class mfblocationservice  extends Service implements
             if (nm != null)
                 nm.createNotificationChannel(nc);
             Notification n = new Notification.Builder(this, nc.getId())
-                    .setOngoing(true)
                     .setContentText(getString(R.string.lblGPSRunningInBackground))
                     .setContentTitle(getString(R.string.app_name))
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon))
