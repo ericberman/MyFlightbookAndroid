@@ -19,10 +19,16 @@ package com.myflightbook.android;
  */
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
@@ -75,6 +81,7 @@ public class mfblocationservice  extends Service implements
 
     public static final String ACTION_LOCATION_BROADCAST = mfblocationservice.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LOCATION = "mfbSerializedLocation";
+    public static final int NOTIFICATION_ID = 58235;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -87,6 +94,21 @@ public class mfblocationservice  extends Service implements
 
         mLocationRequest.setInterval((long) MFBConstants.MIN_SAMPLE_RATE_AIRBORNE);
         mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setMaxWaitTime(10000);
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel nc = new NotificationChannel("default", "com.myflightbook.android.channel", NotificationManager.IMPORTANCE_DEFAULT);
+            if (nm != null)
+                nm.createNotificationChannel(nc);
+            Notification n = new Notification.Builder(this, nc.getId())
+                    .setOngoing(true)
+                    .setContentText(getString(R.string.lblGPSRunningInBackground))
+                    .setContentTitle(getString(R.string.app_name))
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon))
+                    .build();
+            this.startForeground(NOTIFICATION_ID, n);
+        }
 
         int priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
 

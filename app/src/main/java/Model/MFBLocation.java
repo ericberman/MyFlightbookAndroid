@@ -29,6 +29,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
@@ -120,7 +121,11 @@ public class MFBLocation implements LocationListener {
                 LocalBroadcastManager.getInstance(c).registerReceiver(mReceiver, new IntentFilter(mfblocationservice.ACTION_LOCATION_BROADCAST));
 
                 // start background service
-                c.startService(new Intent(c, mfblocationservice.class));
+                Intent i = new Intent(c, mfblocationservice.class);
+                if (Build.VERSION.SDK_INT >= 26)
+                    c.startForegroundService(i);
+                else
+                    c.startService(i);
 
                 Log.w(MFBConstants.LOG_TAG, String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
                 IsListening = true;
