@@ -38,7 +38,12 @@ public class LazyThumbnailLoader implements Runnable, ImageCacheCompleted {
     }
 
     private void getNextThumb() {
+        if (m_rgItems == null)
+            return;
         for (ThumbnailedItem ti : m_rgItems) {
+            if (ti == null)
+                continue;
+
             MFBImageInfo mfbii = ti.getDefaultImage();
             if (mfbii != null) {
                 Bitmap b = mfbii.bitmapFromThumb();
