@@ -52,6 +52,12 @@ public class GPX extends Telemetry {
         sample.Speed = Double.parseDouble(readText(parser)) * MFBConstants.MPS_TO_KNOTS;
     }
 
+    private void readBadElfSpeed(LocSample sample, XmlPullParser parser) throws IOException, XmlPullParserException {
+        if (sample == null)
+            return;
+        sample.Speed = Double.parseDouble(readText(parser)) * MFBConstants.MPS_TO_KNOTS;
+    }
+
     public LocSample[] readFeed(XmlPullParser parser) {
         ArrayList<LocSample> lst = new ArrayList<>();
 
@@ -76,6 +82,9 @@ public class GPX extends Telemetry {
                             case "speed":
                                 readSpeed(sample, parser);
                                 break;
+                            case "badelf:speed":
+                                readBadElfSpeed(sample, parser);
+                                break;
                         }
                     } else if (eventType == XmlPullParser.END_TAG) {
                         if (parser.getName().equals("trkpt")) {
@@ -84,7 +93,9 @@ public class GPX extends Telemetry {
                         }
                     }
                 }
-                catch (XmlPullParserException ignored) { }
+                catch (XmlPullParserException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
