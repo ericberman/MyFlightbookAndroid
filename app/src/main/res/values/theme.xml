@@ -3,6 +3,7 @@
     <color name="custom_theme_color">#999999</color>
     <color name="divider_background">#555555</color>
     <color name="table_background">#FFFFFF</color>
+    <color name="splash_background">#263238</color>
 
     <style name="MFBDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@color/custom_theme_color</item>
