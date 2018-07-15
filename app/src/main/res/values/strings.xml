@@ -308,16 +308,6 @@
     <string name="autoBlock">Block Time</string>
     <string name="autoFlightStartEngineEnd">Flight Start to Engine End</string>
 
-    <!-- Tab names -->
-    <string name="tabNew">New</string>
-    <string name="tabRecent">Recent</string>
-    <string name="tabCurrency">Currency</string>
-    <string name="tabTotals">Totals</string>
-    <string name="tabAircraft">Aircraft</string>
-    <string name="tabOptions">Options</string>
-    <string name="tabVisitedAirports">Visited</string>
-    <string name="tabTraining">Training</string>
-
     <!-- Menu Strings -->
     <string name="menuRefreshAircraftShort">Refresh</string>
     <string name="menuRefreshAircraft">Refresh</string>

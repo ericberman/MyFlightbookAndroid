@@ -308,16 +308,6 @@
     <string name="autoBlock">Temps Bloc</string>
     <string name="autoFlightStartEngineEnd">Démarrage du vol jusqu\'à l\'arrêt du moteur</string>
 
-    <!-- Tab names -->
-    <string name="tabNew">Nouveau</string>
-    <string name="tabRecent">Récent</string>
-    <string name="tabCurrency">Etat des compétences</string>
-    <string name="tabTotals">Totaux</string>
-    <string name="tabAircraft">Avion</string>
-    <string name="tabOptions">Options</string>
-    <string name="tabVisitedAirports">Visités</string>
-    <string name="tabTraining">Formation</string>
-
     <!-- Menu Strings -->
     <string name="menuRefreshAircraftShort">Rafraichir</string>
     <string name="menuRefreshAircraft">Rafraichir la  Liste</string>
