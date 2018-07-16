@@ -20,13 +20,9 @@ package com.myflightbook.android;
 
 import android.Manifest;
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -79,10 +75,16 @@ public class mfblocationservice  extends Service implements
 
     public static final String ACTION_LOCATION_BROADCAST = mfblocationservice.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LOCATION = "mfbSerializedLocation";
+    public static final String EXTRA_NOTIFICATION = "mfbNotification";
     public static final int NOTIFICATION_ID = 58235;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            Notification n = intent.getParcelableExtra(EXTRA_NOTIFICATION);
+            this.startForeground(NOTIFICATION_ID, n);
+        }
+
         GoogleApiClient mLocationClient;
         mLocationClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -90,26 +92,10 @@ public class mfblocationservice  extends Service implements
                 .addApi(LocationServices.API)
                 .build();
 
-        mLocationRequest.setInterval(500);
-        mLocationRequest.setFastestInterval(250);
-        mLocationRequest.setMaxWaitTime(10000);
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel nc = new NotificationChannel("default", "com.myflightbook.android.channel", NotificationManager.IMPORTANCE_DEFAULT);
-            if (nm != null)
-                nm.createNotificationChannel(nc);
-            Notification n = new Notification.Builder(this, nc.getId())
-                    .setContentText(getString(R.string.lblGPSRunningInBackground))
-                    .setContentTitle(getString(R.string.app_name))
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon))
-                    .build();
-            this.startForeground(NOTIFICATION_ID, n);
-        }
-
-        int priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
-
-        mLocationRequest.setPriority(priority);
+        mLocationRequest.setInterval(500)
+                .setFastestInterval(250)
+                .setMaxWaitTime(10000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationClient.connect();
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
