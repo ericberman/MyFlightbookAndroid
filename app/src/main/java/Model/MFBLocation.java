@@ -128,7 +128,9 @@ public class MFBLocation implements LocationListener {
                 Intent i = new Intent(c, mfblocationservice.class);
                 if (Build.VERSION.SDK_INT >= 26) {
                     NotificationManager nm = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-                    NotificationChannel nc = new NotificationChannel("default", "com.myflightbook.android.channel", NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationChannel nc = new NotificationChannel("mfbGPSChannelDefault1", "com.myflightbook.android.channel", NotificationManager.IMPORTANCE_LOW);
+                    nc.enableLights(false);
+                    nc.enableVibration(false);
                     if (nm != null)
                         nm.createNotificationChannel(nc);
                     Notification n = new Notification.Builder(c, nc.getId())

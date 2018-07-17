@@ -187,7 +187,7 @@
     <string name="lblGPSPoor">Faible</string>
     <string name="lblGPSGood">Bonne</string>
     <string name="lblGPSExcellent">Excellent</string>
-    <string name="lblGPSRunningInBackground">MyFlightbook écoute le GPS en vol</string>
+    <string name="lblGPSRunningInBackground">MyFlightbook écoute le GPS</string>
     <string name="lblFlightOnGround">Au Sol</string>
     <string name="lblFlightInAir">En vol</string>
     <string name="lblElapsedTime">Temps écoulé: </string>
