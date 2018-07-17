@@ -31,6 +31,7 @@ import com.myflightbook.android.R;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 public class DecimalEdit extends EditText implements OnLongClickListener {
@@ -45,7 +46,6 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
     private EditMode m_editMode = EditMode.INTEGER;
 
     public static boolean DefaultHHMM = false;
-    private static DecimalFormat m_df = new DecimalFormat();
     private CrossFillDelegate delegate = null;
 
     public Boolean forceHHMM = false;
@@ -110,7 +110,8 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
                 // Using SetKeyListener
                 this.setHint(String.format(Locale.getDefault(), "%.1f", 0.0));
                 this.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                this.setKeyListener(DigitsKeyListener.getInstance(false, true)); // should work but bug above means it will ALWAYS use a period.
+                DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
+                this.setKeyListener(DigitsKeyListener.getInstance("0123456789" + dfs.getDecimalSeparator() + dfs.getGroupingSeparator())); // should work but bug above means it will ALWAYS use a period.
                 break;
         }
     }
@@ -147,11 +148,8 @@ public class DecimalEdit extends EditText implements OnLongClickListener {
                         return 0.0;
                 }
             } else {
-                // TODO: remove this when Android bug 2626 is fixed. See http://code.google.com/p/android/issues/detail?id=2626&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars.
-                DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
-                char c = dfs.getDecimalSeparator();
-
-                return m_df.parse(sz.replace('.', c).replace(',', c)).doubleValue();
+                NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+                return format.parse(sz).doubleValue();
             }
         } catch (Exception e) {
             return 0.0;
