@@ -20,7 +20,10 @@ package com.myflightbook.android;
 
 import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -75,16 +78,30 @@ public class mfblocationservice  extends Service implements
 
     public static final String ACTION_LOCATION_BROADCAST = mfblocationservice.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LOCATION = "mfbSerializedLocation";
-    public static final String EXTRA_NOTIFICATION = "mfbNotification";
     public static final int NOTIFICATION_ID = 58235;
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public void onCreate() {
+        super.onCreate();
+
         if (Build.VERSION.SDK_INT >= 26) {
-            Notification n = intent.getParcelableExtra(EXTRA_NOTIFICATION);
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel nc = new NotificationChannel("mfbGPSChannelDefault1", "com.myflightbook.android.channel", NotificationManager.IMPORTANCE_LOW);
+            nc.enableLights(false);
+            nc.enableVibration(false);
+            if (nm != null)
+                nm.createNotificationChannel(nc);
+            Notification n = new Notification.Builder(this, nc.getId())
+                    .setContentText(getString(R.string.lblGPSRunningInBackground))
+                    .setContentTitle(getString(R.string.app_name))
+                    .setSmallIcon(R.drawable.ic_gps_notification)
+                    .build();
             this.startForeground(NOTIFICATION_ID, n);
         }
+    }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         GoogleApiClient mLocationClient;
         mLocationClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)

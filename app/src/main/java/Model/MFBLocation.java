@@ -19,9 +19,6 @@
 package Model;
 
 import android.Manifest;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -126,23 +123,8 @@ public class MFBLocation implements LocationListener {
                 // start background service
                 // We only have 5 seconds from startForegroundService to calling startForeground, so let's build the Notification here first.
                 Intent i = new Intent(c, mfblocationservice.class);
-                if (Build.VERSION.SDK_INT >= 26) {
-                    NotificationManager nm = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-                    NotificationChannel nc = new NotificationChannel("mfbGPSChannelDefault1", "com.myflightbook.android.channel", NotificationManager.IMPORTANCE_LOW);
-                    nc.enableLights(false);
-                    nc.enableVibration(false);
-                    if (nm != null)
-                        nm.createNotificationChannel(nc);
-                    Notification n = new Notification.Builder(c, nc.getId())
-                            .setContentText(c.getString(R.string.lblGPSRunningInBackground))
-                            .setContentTitle(c.getString(R.string.app_name))
-                            .setSmallIcon(R.drawable.ic_gps_notification)
-                            .build();
-
-                    i.putExtra(mfblocationservice.EXTRA_NOTIFICATION, n);
-
+                if (Build.VERSION.SDK_INT >= 26)
                     c.startForegroundService(i);
-                }
                 else
                     c.startService(i);
 
