@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menuResetFlight"
-        android:title="@string/menuResetFlight"
-        android:titleCondensed="@string/menuResetFlightShort" />
-    <item
         android:id="@+id/btnSubmitFlight"
         android:showAsAction="ifRoom"
         android:title="@string/menuAddFlight"
@@ -32,4 +28,8 @@
         android:showAsAction="ifRoom"
         android:title="@string/menuChoosePicture"
         android:titleCondensed="@string/menuChoosePictureShort" />
+    <item
+        android:id="@+id/menuResetFlight"
+        android:title="@string/menuResetFlight"
+        android:titleCondensed="@string/menuResetFlightShort" />
 </menu>

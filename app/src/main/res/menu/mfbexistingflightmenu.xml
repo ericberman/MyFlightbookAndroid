@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/btnDeleteFlight"
-        android:icon="@drawable/ic_action_discard"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuDeleteFlight" />
-    <item
         android:id="@+id/menuSignFlight"
         android:showAsAction="always"
         android:title="@string/menuSignFlight" />
@@ -47,4 +42,9 @@
         android:id="@+id/menuShareFlight"
         android:title="@string/menuShareFlight"
         android:titleCondensed="@string/menuShareFlightShort" />
+    <item
+        android:id="@+id/btnDeleteFlight"
+        android:icon="@drawable/ic_action_discard"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuDeleteFlight" />
 </menu>
