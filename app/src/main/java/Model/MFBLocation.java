@@ -120,6 +120,8 @@ public class MFBLocation implements LocationListener {
             try {
                 LocalBroadcastManager.getInstance(c).registerReceiver(mReceiver, new IntentFilter(mfblocationservice.ACTION_LOCATION_BROADCAST));
 
+                Log.w(MFBConstants.LOG_TAG, String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
+
                 // start background service
                 // We only have 5 seconds from startForegroundService to calling startForeground, so let's build the Notification here first.
                 Intent i = new Intent(c, mfblocationservice.class);
@@ -128,7 +130,6 @@ public class MFBLocation implements LocationListener {
                 else
                     c.startService(i);
 
-                Log.w(MFBConstants.LOG_TAG, String.format("Start Listening, Isrecording = %s", IsRecording ? "Yes" : "No"));
                 IsListening = true;
             } catch (IllegalArgumentException ex) {
                 MFBUtil.Alert(c, c.getString(R.string.errNoGPSTitle), c.getString(R.string.errCantUseGPS) + ex.getMessage());

@@ -345,10 +345,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         // set up for web services
         AuthToken.APPTOKEN = getString(R.string.WebServiceKey);
 
-        if (MFBLocation.GetMainLocation() == null) {
-            MFBLocation.setMainLocation(new MFBLocation(this));
-        }
-
         CustomExceptionHandler ceh = new CustomExceptionHandler(getCacheDir().getAbsolutePath(), String.format(MFBConstants.urlCrashReport, MFBConstants.szIP));
         Thread.setDefaultUncaughtExceptionHandler(ceh);
 
@@ -409,6 +405,11 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         refreshAuth();
 
         OpenRequestedTelemetry();
+
+        // Turn on location/GPS last to minimize elapsed time between startForegroundService and startForeground
+        if (MFBLocation.GetMainLocation() == null) {
+            MFBLocation.setMainLocation(new MFBLocation(this));
+        }
     }
 
     private void OpenRequestedTelemetry() {

@@ -76,13 +76,15 @@ public class mfblocationservice  extends Service implements
     LocationCallback mLocationCallback = new MFBLocationCallback();
     FusedLocationProviderClient mFusedLocationProvider;
 
+    public boolean _isStarted = false;
+
     public static final String ACTION_LOCATION_BROADCAST = mfblocationservice.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LOCATION = "mfbSerializedLocation";
     public static final int NOTIFICATION_ID = 58235;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    private void startInForeground() {
+        if (_isStarted)
+            return;
 
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -98,10 +100,18 @@ public class mfblocationservice  extends Service implements
                     .build();
             this.startForeground(NOTIFICATION_ID, n);
         }
+        _isStarted = true;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startInForeground();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startInForeground();
         GoogleApiClient mLocationClient;
         mLocationClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -135,10 +145,18 @@ public class mfblocationservice  extends Service implements
         }
         mFusedLocationProvider = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationProvider.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+
+        // initialize with last known location.
+        mFusedLocationProvider.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null)
+                            onLocationChanged(location);
+                });
     }
 
     @Override
     public void onDestroy() {
+        _isStarted = false;
         if (mFusedLocationProvider != null)
             mFusedLocationProvider.removeLocationUpdates(mLocationCallback);
         super.onDestroy();
