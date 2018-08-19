@@ -730,17 +730,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 h.post(() -> MFBUtil.Alert(c, c.getString(R.string.txtError), szErr));
             } finally {
                 if (out != null)
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-                    }
+                    out.close();
                 if (in != null)
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-                    }
+                    in.close();
                 if (urlConnection != null)
                     urlConnection.disconnect();
                 m_imgData = null; // free up a potentially large block of memory
@@ -748,7 +740,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         } catch (IOException e) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         }
-
 
         return fResult;
     }
