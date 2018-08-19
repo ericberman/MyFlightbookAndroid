@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -317,6 +318,14 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
             RefreshCPTTask rt = new RefreshCPTTask(this, this);
             rt.execute();
         }
+
+        SwipeRefreshLayout srl = findViewById(R.id.swiperefresh);
+        if (srl != null) {
+            srl.setOnRefreshListener(() -> {
+                srl.setRefreshing(false);
+                refreshProps();
+            });
+        }
     }
 
     public void onPause() {
@@ -410,6 +419,14 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         return true;
     }
 
+    void refreshProps() {
+        updateProps();    // preserve current user edits
+        RefreshCPTTask rt = new RefreshCPTTask(this, this);
+        rt.fAllowCache = false;
+        rt.execute();
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -419,10 +436,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
                 finish();
                 return true;
             case R.id.menuRefreshProperties:
-                updateProps();    // preserve current user edits
-                RefreshCPTTask rt = new RefreshCPTTask(this, this);
-                rt.fAllowCache = false;
-                rt.execute();
+                refreshProps();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

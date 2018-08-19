@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -116,6 +117,14 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         Refresh(fNeedsRefresh);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
+
+        SwipeRefreshLayout srl = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        if (srl != null) {
+            srl.setOnRefreshListener(() -> {
+                srl.setRefreshing(false);
+                Refresh(true);
+            });
+        }
     }
 
     private void RedirectTo(String szDest) {

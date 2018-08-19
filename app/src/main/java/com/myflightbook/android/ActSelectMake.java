@@ -19,23 +19,78 @@
 package com.myflightbook.android;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+
+import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.WebServices.MakesandModelsSvc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import Model.MFBConstants;
+import Model.MFBUtil;
 import Model.MakesandModels;
 
 public class ActSelectMake extends FixedExpandableListActivity {
 
     private int m_ModelID;
+
+    private static class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
+        private ProgressDialog m_pd = null;
+        private AsyncWeakContext<ActSelectMake> m_ctxt;
+
+        GetMakesTask(Context c, ActSelectMake asm) {
+            super();
+            m_ctxt = new AsyncWeakContext<>(c, asm);
+        }
+
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            MakesandModelsSvc mms = new MakesandModelsSvc();
+            MakesandModels[] rgmm = mms.GetMakesAndModels(m_ctxt.getContext());
+            if (rgmm != null)
+                ActNewAircraft.AvailableMakesAndModels = rgmm;
+
+            return mms;
+        }
+
+        protected void onPreExecute() {
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgMakes));
+        }
+
+        protected void onPostExecute(MFBSoap svc) {
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActSelectMake asm = m_ctxt.getCallingActivity();
+            Context c = m_ctxt.getContext();
+
+            if (asm == null || c == null)
+                return;
+
+            if (ActNewAircraft.AvailableMakesAndModels == null || ActNewAircraft.AvailableMakesAndModels.length == 0) {
+                MFBUtil.Alert(c, c.getString(R.string.txtError), c.getString(R.string.errCannotRetrieveMakes));
+            }
+            else
+                asm.populateList();
+        }
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +110,16 @@ public class ActSelectMake extends FixedExpandableListActivity {
             @Override
             public void afterTextChanged(Editable editable) { }
         });
+
+        SwipeRefreshLayout srl = findViewById(R.id.swiperefresh);
+        srl.setOnRefreshListener(() -> {
+            srl.setRefreshing(false);
+            refresh();
+        });
+    }
+
+    void refresh() {
+        new GetMakesTask(this, this).execute();
     }
 
     public void onResume() {

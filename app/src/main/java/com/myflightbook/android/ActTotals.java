@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,7 @@ import com.myflightbook.android.WebServices.TotalsSvc;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
@@ -126,6 +128,14 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
             Object o = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
             if (o != null)
                 currentQuery = (FlightQuery) o;
+        }
+
+        SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
+        if (srl != null) {
+            srl.setOnRefreshListener(() -> {
+                srl.setRefreshing(false);
+                Refresh(true);
+            });
         }
     }
 

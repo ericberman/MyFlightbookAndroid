@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swiperefresh"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <android.support.v4.widget.NestedScrollView
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/lnkCurrencyDisclaimer"
+        android:layout_width="match_parent">
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:background="@color/table_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:padding="5dip"
-            android:text="@string/CurrencyDisclaimer"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <TableLayout
-            android:id="@+id/tblCurrency"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/table_background"
-            android:padding="4dp"
-            android:stretchColumns="0,1" />
-    </LinearLayout>
-</ScrollView> 
+            <TextView
+                android:id="@+id/lnkCurrencyDisclaimer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:background="@color/table_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="5dip"
+                android:text="@string/CurrencyDisclaimer"
+                android:textStyle="bold" />
+
+            <TableLayout
+                android:id="@+id/tblCurrency"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/table_background"
+                android:padding="4dp"
+                android:stretchColumns="0,1" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>

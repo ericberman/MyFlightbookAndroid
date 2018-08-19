@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -55,6 +56,7 @@ import com.myflightbook.android.WebServices.RecentFlightsSvc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.DecimalEdit;
@@ -347,6 +349,16 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             arws.populateList();
 
+            // Turn off the swipe refresh layout here because, unlike most other refreshable screens,
+            // this one doesn't show a progress indicator (because of continuous scroll)
+            // So if this was swipe-to-refresh, then we leave the indicator up until the operation is complete.
+            View v = arws.getView();
+            if (v != null) {
+                SwipeRefreshLayout srl = v.findViewById(R.id.swiperefresh);
+                if (srl != null)
+                    srl.setRefreshing(false);
+            }
+
             if (arws.getView() != null) {
                 TextView tv = arws.getView().findViewById(R.id.txtFlightQueryStatus);
                 tv.setText(c.getString(arws.currentQuery != null && arws.currentQuery.HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
@@ -379,6 +391,11 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         fCouldBeMore = true;
         if (m_rgLe.length == 0)
             refreshRecentFlights(false);
+
+        SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
+        if (srl != null) {
+            srl.setOnRefreshListener(() -> refreshRecentFlights(true));
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

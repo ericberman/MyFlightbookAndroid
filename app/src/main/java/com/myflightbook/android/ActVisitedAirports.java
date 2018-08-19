@@ -18,11 +18,13 @@
  */
 package com.myflightbook.android;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -105,7 +107,8 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 
-        TextView tvSearch = getActivity().findViewById(R.id.txtSearchProp);
+        Activity a = getActivity();
+        TextView tvSearch = a.findViewById(R.id.txtSearchProp);
         tvSearch.setHint(R.string.hintSearchVisitedAirports);
         tvSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -118,6 +121,12 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
 
             @Override
             public void afterTextChanged(Editable editable) { }
+        });
+
+        SwipeRefreshLayout srl = a.findViewById(R.id.swiperefresh);
+        srl.setOnRefreshListener(() -> {
+            srl.setRefreshing(false);
+            refreshAirports();
         });
     }
 
@@ -135,12 +144,16 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         inflater.inflate(R.menu.currencymenu, menu);
     }
 
+    void refreshAirports() {
+        new RefreshVisitedAirports(getActivity(), this).execute();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuRefresh:
-                new RefreshVisitedAirports(getActivity(), this).execute();
+                refreshAirports();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

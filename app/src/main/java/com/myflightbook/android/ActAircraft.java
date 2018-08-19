@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,6 +47,7 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.LazyThumbnailLoader;
@@ -229,6 +231,12 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MFBMain.registerNotifyResetAll(this);
+
+        SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
+        srl.setOnRefreshListener(() -> {
+            srl.setRefreshing(false);
+            refreshAircraft();
+        });
     }
 
     public void onDestroy() {
@@ -284,15 +292,19 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         inflater.inflate(R.menu.aircraftmenu, menu);
     }
 
+    void refreshAircraft() {
+        AircraftSvc ac = new AircraftSvc();
+        ac.FlushCache();
+        RefreshAircraftTask st = new RefreshAircraftTask(getActivity(), this);
+        st.execute();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuRefreshAircraft: {
-                AircraftSvc ac = new AircraftSvc();
-                ac.FlushCache();
-                RefreshAircraftTask st = new RefreshAircraftTask(getActivity(), this);
-                st.execute();
+                refreshAircraft();
             }
             return true;
             case R.id.menuNewAircraft:
