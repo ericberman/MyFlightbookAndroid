@@ -405,11 +405,6 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         refreshAuth();
 
         OpenRequestedTelemetry();
-
-        // Turn on location/GPS last to minimize elapsed time between startForegroundService and startForeground
-        if (MFBLocation.GetMainLocation() == null) {
-            MFBLocation.setMainLocation(new MFBLocation(this));
-        }
     }
 
     private void OpenRequestedTelemetry() {
@@ -462,6 +457,10 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     protected void onResume() {
         super.onResume();
+
+        // Turn on location/GPS last to minimize elapsed time between startForegroundService and startForeground
+        if (MFBLocation.GetMainLocation() == null)
+            MFBLocation.setMainLocation(new MFBLocation(this));
 
         if (MFBLocation.GetMainLocation() != null)
             MFBLocation.GetMainLocation().startListening(this);
