@@ -37,4 +37,5 @@ dependencies {
     implementation files('libs/annotations.jar')
     implementation files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.support:exifinterface:28.0.0-rc01'
 }
