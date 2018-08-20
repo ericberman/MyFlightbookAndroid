@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,6 +56,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.Airport;
@@ -223,7 +225,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         return CurrentQuery;
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.flightquery, container, false);
     }
@@ -232,7 +234,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Intent i = getActivity().getIntent();
+        Intent i = Objects.requireNonNull(getActivity()).getIntent();
         CurrentQuery = (FlightQuery) i.getSerializableExtra(QUERY_TO_EDIT);
         if (CurrentQuery == null)
             CurrentQuery = new FlightQuery();
@@ -339,7 +341,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
             return;
         tl.removeAllViews();
 
-        LayoutInflater l = getActivity().getLayoutInflater();
+        LayoutInflater l = Objects.requireNonNull(getActivity()).getLayoutInflater();
 
         assert listener != null;
 
@@ -477,7 +479,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
             return;
         tl.removeAllViews();
 
-        LayoutInflater l = getActivity().getLayoutInflater();
+        LayoutInflater l = Objects.requireNonNull(getActivity()).getLayoutInflater();
 
         if (rgItems == null)
             rgItems = new CannedQuery[0];
@@ -707,7 +709,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
 
     private void toggleHeader(View v, int idTarget) {
-        View vFocus = getActivity().getCurrentFocus();
+        View vFocus = Objects.requireNonNull(getActivity()).getCurrentFocus();
         if (vFocus != null)
             vFocus.clearFocus();  // prevent scrolling to the top (where the first text box is)
         View target = findViewById(idTarget);

@@ -6,7 +6,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -40,10 +39,7 @@ public class GPX extends Telemetry {
     private void readTime(LocSample sample, XmlPullParser parser) throws IOException, XmlPullParserException {
         if (sample == null)
             return;
-        try {
-            sample.TimeStamp = ParseUTCDate(readText(parser));
-        } catch (ParseException ignored) {
-        }
+        sample.TimeStamp = ParseUTCDate(readText(parser));
     }
 
     private void readSpeed(LocSample sample, XmlPullParser parser) throws IOException, XmlPullParserException {

@@ -44,6 +44,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Airport;
 import Model.DecimalEdit;
@@ -57,7 +58,7 @@ import Model.MFBUtil;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.options, container, false);
     }
@@ -76,7 +77,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         AddListener(R.id.btnSupport);
         AddListener(R.id.btnAdditionalOptions);
 
-        boolean fHasGPS = MFBLocation.HasGPS(getContext());
+        boolean fHasGPS = MFBLocation.HasGPS(Objects.requireNonNull(getContext()));
         if (!fHasGPS)
             MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight = MFBLocation.fPrefRecordFlightHighRes = false;
 
@@ -137,7 +138,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 };
 
         Spinner sp = (Spinner) findViewById(R.id.spnAutoHobbs);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoHobbs);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgAutoHobbs);
         sp.setAdapter(adapter);
         sp.setSelection(MFBLocation.fPrefAutoFillHobbs.ordinal());
         sp.setOnItemSelectedListener(this);
@@ -273,7 +274,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         }
 
         // Now delete the flight images that are not in our list
-        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.FlightImage, alImages, getActivity());
+        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.FlightImage, alImages, Objects.requireNonNull(getActivity()));
 
         // Clean up any orphaned aircraft images
         // We can delete ALL aircraft images - if they weren't submitted, they aren't going to be picked up.
@@ -355,7 +356,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     }
 
     private Boolean checkGPSPermissions(int req) {
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
 
         // Should we show an explanation?

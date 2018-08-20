@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -49,6 +50,7 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.MakesandModelsSvc;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.CountryCode;
@@ -161,7 +163,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.newaircraft, container, false);
     }
@@ -187,7 +189,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             rgszInstanceTypes[i] = getString(Aircraft.rgidInstanceTypes[i]);
 
         Spinner sp = (Spinner) findViewById(R.id.spnAircraftType);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgszInstanceTypes);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgszInstanceTypes);
         sp.setAdapter(adapter);
         sp.setSelection(0);
         sp.setOnItemSelectedListener(this);
@@ -219,7 +221,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
     private void Cancel() {
         Intent i = new Intent();
-        getActivity().setResult(Activity.RESULT_CANCELED, i);
+        Objects.requireNonNull(getActivity()).setResult(Activity.RESULT_CANCELED, i);
         getActivity().finish();
     }
 
@@ -361,7 +363,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
         inflater.inflate(R.menu.imagemenu, menu);
     }
 

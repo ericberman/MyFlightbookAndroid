@@ -175,7 +175,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             RowType rt = RowType.values()[getItemViewType(position)];
 
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.aircraft;
                 assert vi != null;
                 v = vi.inflate(layoutID, parent, false);

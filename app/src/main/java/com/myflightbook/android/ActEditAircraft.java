@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.Aircraft.PilotRole;
@@ -173,7 +175,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         }
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.editaircraft, container, false);
     }
@@ -200,7 +202,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         AddListener(R.id.txtACMaintenance);
         AddListener(R.id.txtImageHeader);
 
-        Intent i = getActivity().getIntent();
+        Intent i = Objects.requireNonNull(getActivity()).getIntent();
         int idAircraft = i.getIntExtra(AIRCRAFTID, 0);
         if (idAircraft > 0) {
             AircraftSvc acs = new AircraftSvc();
@@ -238,7 +240,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
         inflater.inflate(R.menu.imagemenu, menu);
     }
 

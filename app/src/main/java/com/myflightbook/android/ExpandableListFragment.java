@@ -4,6 +4,7 @@ package com.myflightbook.android;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
@@ -21,6 +22,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.Objects;
 
 public class ExpandableListFragment extends Fragment
     implements OnCreateContextMenuListener,
@@ -70,11 +73,13 @@ public class ExpandableListFragment extends Fragment
 * behavior of ListFragment. In particular, this is currently the only
 * way to have the built-in indeterminant progress state be shown.
 */
+    @SuppressWarnings("NullableProblems")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final Context context = getActivity();
 
+        assert context != null;
         FrameLayout root = new FrameLayout(context);
 
         // ------------------------------------------------------------------
@@ -125,7 +130,7 @@ public class ExpandableListFragment extends Fragment
 * Attach to list view once the view hierarchy has been created.
 */
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ensureList();
     }
@@ -355,7 +360,7 @@ public class ExpandableListFragment extends Fragment
         mExpandableListShown = true;
         mExpandableList.setOnItemClickListener(mOnClickListener);
         // add invisible indicator
-        mExpandableList.setGroupIndicator(ContextCompat.getDrawable(getContext(),  R.drawable.expander_group));
+        mExpandableList.setGroupIndicator(ContextCompat.getDrawable(Objects.requireNonNull(getContext()),  R.drawable.expander_group));
         if (mAdapter != null) {
             ExpandableListAdapter adapter = mAdapter;
             mAdapter = null;

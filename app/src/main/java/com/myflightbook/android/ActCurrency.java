@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.CurrencyStatusItem;
 import Model.MFBConstants;
@@ -103,7 +105,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         }
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.currency, container, false);
     }
@@ -140,7 +142,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         if (tl == null)
             throw new NullPointerException("tl is null in BindTable (ActCurrency)!");
         tl.removeAllViews();
-        LayoutInflater l = getActivity().getLayoutInflater();
+        LayoutInflater l = Objects.requireNonNull(getActivity()).getLayoutInflater();
 
         if (m_rgcsi == null)
             return;

@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -77,7 +76,7 @@ public abstract class Telemetry {
         return rgSamples;
     }
 
-    Date ParseUTCDate(String s) throws ParseException {
+    Date ParseUTCDate(String s) {
         if (m_pISODate == null) {
             m_pISODate = Pattern.compile("(\\d+)-(\\d+)-(\\d+)T? ?(\\d+):(\\d+):(\\d+\\.?\\d*)Z?", Pattern.CASE_INSENSITIVE);
         }

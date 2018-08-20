@@ -123,7 +123,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 
-        Intent i = getActivity().getIntent();
+        Intent i = Objects.requireNonNull(getActivity()).getIntent();
         if (i != null) {
             Object o = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
             if (o != null)
@@ -183,7 +183,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 assert vi != null;
                 v = vi.inflate(R.layout.totalsitem, parent, false);
             }

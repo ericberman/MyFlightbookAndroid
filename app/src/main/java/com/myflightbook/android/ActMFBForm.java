@@ -68,6 +68,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
@@ -131,7 +132,7 @@ public class ActMFBForm extends Fragment {
             if (fAddToGallery) {
                 File f = new File(szFilename);
                 Uri uriSource = FileProvider.getUriForFile(m_ctxt.getContext(), BuildConfig.APPLICATION_ID + ".provider", f);
-                m_ctxt.getCallingActivity().getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
+                Objects.requireNonNull(m_ctxt.getCallingActivity().getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
             }
 
             GallerySource gs = (GallerySource) m_ctxt.getCallingActivity();
@@ -170,14 +171,14 @@ public class ActMFBForm extends Fragment {
     }
 
     void finish() {
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 
     void AddGalleryImage(final Intent i) {
         Uri selectedImage = i.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA, MediaStore.Images.Media.MIME_TYPE};
 
-        ContentResolver cr = getActivity().getContentResolver();
+        ContentResolver cr = Objects.requireNonNull(getActivity()).getContentResolver();
         assert selectedImage != null;
         Cursor cursor = cr.query(
                 selectedImage, filePathColumn, null, null, null);
@@ -198,7 +199,7 @@ public class ActMFBForm extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // need to restore this here because OnResume may come after the onActivityResult call
-        SharedPreferences mPrefs = getActivity().getPreferences(Activity.MODE_PRIVATE);
+        SharedPreferences mPrefs = Objects.requireNonNull(getActivity()).getPreferences(Activity.MODE_PRIVATE);
         m_TempFilePath = mPrefs.getString(keyTempFileInProgress, "");
     }
 
@@ -383,7 +384,7 @@ public class ActMFBForm extends Fragment {
         switch (permission) {
             case CAMERA_PERMISSION_IMAGE:
             case CAMERA_PERMISSION_VIDEO:
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                         ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                         ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     return true;
@@ -391,7 +392,7 @@ public class ActMFBForm extends Fragment {
                     requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
                 break;
             case GALLERY_PERMISSION:
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                         ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     return true;
                 else
@@ -435,7 +436,7 @@ public class ActMFBForm extends Fragment {
 
     void TakePicture() {
         File fTemp;
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         if (MFBConstants.fFakePix) {
             String[] rgSamples = {"sampleimg.jpg", "sampleimg2.jpg", "sampleimg3.jpg"};
             for (String szAsset : rgSamples) {
@@ -489,7 +490,7 @@ public class ActMFBForm extends Fragment {
             ed.apply();
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri uriImage = FileProvider.getUriForFile(this.getContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
+            Uri uriImage = FileProvider.getUriForFile(Objects.requireNonNull(this.getContext()), BuildConfig.APPLICATION_ID + ".provider", fTemp);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -501,7 +502,7 @@ public class ActMFBForm extends Fragment {
 
     void TakeVideo() {
         File fTemp;
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         try {
             if (!fCheckImagePermissions(CAMERA_PERMISSION_VIDEO))
@@ -515,7 +516,7 @@ public class ActMFBForm extends Fragment {
             ed.putString(keyTempFileInProgress, m_TempFilePath);
             ed.apply();
 
-            Uri uriImage = FileProvider.getUriForFile(this.getContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
+            Uri uriImage = FileProvider.getUriForFile(Objects.requireNonNull(this.getContext()), BuildConfig.APPLICATION_ID + ".provider", fTemp);
 
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
@@ -590,13 +591,13 @@ public class ActMFBForm extends Fragment {
                 expandView(target);
             else
                 target.setVisibility(View.VISIBLE);
-            d = ContextCompat.getDrawable(getActivity(), R.drawable.collapse_light);
+            d = ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.collapse_light);
         } else {
             if (fAnimated)
                 collapseView(target);
             else
                 target.setVisibility(View.GONE);
-            d = ContextCompat.getDrawable(getActivity(), R.drawable.expand_light);
+            d = ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.expand_light);
         }
         v.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
     }

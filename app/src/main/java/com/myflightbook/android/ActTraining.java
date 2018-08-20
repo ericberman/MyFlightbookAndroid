@@ -40,6 +40,7 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.MFBConstants;
 import Model.MFBUtil;
@@ -83,7 +84,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 assert vi != null;
                 v = vi.inflate(R.layout.trainingitem, parent, false);
             }
@@ -147,7 +148,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
             return;
 
         if (m_rgTrainingItems[position].szURLDest.compareToIgnoreCase(endorseItem) == 0 &&
-                ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PERMISSION);
             return;
         }

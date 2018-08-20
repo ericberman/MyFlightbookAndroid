@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.MFBUtil;
 import Model.VisitedAirport;
@@ -95,7 +97,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         }
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.setHasOptionsMenu(true);
 
         return inflater.inflate(R.layout.expandablelist, container, false);
@@ -108,6 +110,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         MFBMain.registerNotifyResetAll(this);
 
         Activity a = getActivity();
+        assert a != null;
         TextView tvSearch = a.findViewById(R.id.txtSearchProp);
         tvSearch.setHint(R.string.hintSearchVisitedAirports);
         tvSearch.addTextChangedListener(new TextWatcher() {
@@ -191,7 +194,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         alAllAirports.add(hmAllAirports);
         childrenMaps.put(szKeyLast, alAllAirports);
 
-        String szRestrict = ((EditText) getActivity().findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
+        String szRestrict = ((EditText) Objects.requireNonNull(getActivity()).findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
 
         // slice and dice into headers/first names
         for (int i = 0; i < visitedAirports.length; i++) {

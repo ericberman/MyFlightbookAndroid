@@ -76,6 +76,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.Airport;
@@ -304,7 +305,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.newflight, container, false);
     }
@@ -382,7 +383,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         findViewById(R.id.txtHobbsStart).setOnFocusChangeListener(s);
         findViewById(R.id.txtHobbsEnd).setOnFocusChangeListener(s);
 
-        Intent i = getActivity().getIntent();
+        Intent i = Objects.requireNonNull(getActivity()).getIntent();
         int idFlightToView = i.getIntExtra(ActRecentsWS.VIEWEXISTINGFLIGHTID, 0);
         long idLocalFlightToView = i.getLongExtra(ActRecentsWS.VIEWEXISTINGFLIGHTLOCALID, 0);
         Boolean fIsNewFlight = (idFlightToView == 0);
@@ -483,7 +484,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             if (rgFilteredAircraft != null && rgFilteredAircraft.length > 0) {
                 // Create a list of the aircraft to show, which are the ones that are not hidden OR the active one for the flight
                 ArrayAdapter<Aircraft> adapter = new ArrayAdapter<>(
-                        getActivity(), R.layout.mfbsimpletextitem, rgFilteredAircraft);
+                        Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgFilteredAircraft);
                 spnAircraft.setAdapter(adapter);
                 // need to notifydatasetchanged or else setselection doesn't
                 // update correctly.
@@ -507,7 +508,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         LinearLayout l = (LinearLayout) findViewById(R.id.sectGPS);
         l.setVisibility(fIsNewFlight ? View.VISIBLE : View.GONE);
 
-        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBLocation.HasGPS(getContext()) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBLocation.HasGPS(Objects.requireNonNull(getContext())) ? View.VISIBLE : View.GONE);
         ImageButton btnViewFlight = (ImageButton) findViewById(R.id.btnViewOnMap);
         btnViewFlight.setVisibility((MFBMain.HasMaps()) ? View.VISIBLE : View.GONE);
 
@@ -581,7 +582,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private void RestoreState() {
         try {
-            SharedPreferences mPrefs = getActivity().getPreferences(Activity.MODE_PRIVATE);
+            SharedPreferences mPrefs = Objects.requireNonNull(getActivity()).getPreferences(Activity.MODE_PRIVATE);
 
             ActNewFlight.fPaused = mPrefs.getBoolean(m_KeysIsPaused, false);
             ActNewFlight.dtPauseTime = mPrefs.getLong(m_KeysPausedTime, 0);
@@ -596,7 +597,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        SharedPreferences.Editor ed = getActivity().getPreferences(Activity.MODE_PRIVATE).edit();
+        SharedPreferences.Editor ed = Objects.requireNonNull(getActivity()).getPreferences(Activity.MODE_PRIVATE).edit();
         ed.putBoolean(m_KeysIsPaused, ActNewFlight.fPaused);
         ed.putLong(m_KeysPausedTime, ActNewFlight.dtPauseTime);
         ed.putLong(m_KeysTimeOfLastPause, ActNewFlight.dtTimeOfLastPause);
@@ -643,7 +644,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
+        MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
         inflater.inflate(R.menu.imagemenu, menu);
     }
 
@@ -742,7 +743,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             return;
         }
 
-        ShareCompat.IntentBuilder.from(getActivity())
+        ShareCompat.IntentBuilder.from(Objects.requireNonNull(getActivity()))
                 .setType("message/rfc822")
                 .setSubject(getString(R.string.sendFlightSubject))
                 .setText(String.format(Locale.getDefault(), getString(R.string.sendFlightBody), m_le.sendLink))
@@ -794,7 +795,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private Boolean checkGPSPermissions(int req) {
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
 
         // Should we show an explanation?
@@ -914,7 +915,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 Boolean fExpandCockpit = target.getVisibility() != View.VISIBLE;
 
                 if (m_le != null && m_le.IsNewFlight()) {
-                    SharedPreferences.Editor e = getActivity().getPreferences(Context.MODE_PRIVATE).edit();
+                    SharedPreferences.Editor e = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE).edit();
                     e.putBoolean(m_KeyShowInCockpit, fExpandCockpit);
                     e.apply();
                 }

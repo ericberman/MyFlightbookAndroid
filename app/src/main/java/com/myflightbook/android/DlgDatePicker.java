@@ -33,6 +33,7 @@ import com.myflightbook.android.WebServices.UTCDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 class DlgDatePicker extends Dialog implements android.view.View.OnClickListener, OnDateChangedListener, OnTimeChangedListener {
 
@@ -65,7 +66,7 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
     }
 
     DlgDatePicker(Fragment f, datePickMode dpm, Date dt) {
-        super(f.getActivity());
+        super(Objects.requireNonNull(f.getActivity()));
         Init(dpm, dt);
     }
 

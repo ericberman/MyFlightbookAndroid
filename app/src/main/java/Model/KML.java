@@ -6,7 +6,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,11 +49,7 @@ public class KML extends Telemetry {
                         // Starts by looking for the entry tag
                         switch (name) {
                             case "when":
-                                Date dt = new Date();
-                                try {
-                                    dt = ParseUTCDate(readText(parser));
-                                } catch (ParseException ignored) {
-                                }
+                                Date dt = ParseUTCDate(readText(parser));
 
                                 sample = new LocSample(0, 0, 0, 0, 1.0, "");
                                 sample.TimeStamp = dt;
