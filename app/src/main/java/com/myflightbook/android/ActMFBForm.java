@@ -327,9 +327,9 @@ public class ActMFBForm extends Fragment {
         }
     }
 
-    void setDecimalEditMode(int id, EditMode em) {
+    void setDecimalEditMode(int id) {
         DecimalEdit e = (DecimalEdit) findViewById(id);
-        e.setMode(em);
+        e.setMode(EditMode.HHMM);
     }
 
     boolean onImageContextItemSelected(MenuItem item, GallerySource src) {

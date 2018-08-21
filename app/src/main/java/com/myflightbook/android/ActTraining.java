@@ -75,8 +75,8 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
     private class TrainingAdapter extends ArrayAdapter<TrainingItem> {
         private final TrainingItem[] m_rgti;
 
-        TrainingAdapter(Context c, int rid, TrainingItem[] rgti) {
-            super(c, rid, rgti);
+        TrainingAdapter(Context c, TrainingItem[] rgti) {
+            super(c, R.layout.trainingitem, rgti);
             m_rgti = rgti;
         }
 
@@ -113,7 +113,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
     }
 
     private void populateList() {
-        TrainingAdapter ta = new TrainingAdapter(getActivity(), R.layout.trainingitem, m_rgTrainingItems);
+        TrainingAdapter ta = new TrainingAdapter(getActivity(), m_rgTrainingItems);
         setListAdapter(ta);
         getListView().setOnItemClickListener(this);
     }

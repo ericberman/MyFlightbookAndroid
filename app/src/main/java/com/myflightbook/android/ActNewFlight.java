@@ -83,7 +83,6 @@ import Model.Airport;
 import Model.CustomPropertyType;
 import Model.DecimalEdit;
 import Model.DecimalEdit.CrossFillDelegate;
-import Model.DecimalEdit.EditMode;
 import Model.FlightProperty;
 import Model.GPSSim;
 import Model.LatLong;
@@ -535,16 +534,16 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         RestoreState();
 
         // set the ensure that we are following the right numerical format
-        setDecimalEditMode(R.id.txtCFI, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtDual, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtGround, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtIMC, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtNight, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtPIC, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtSIC, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtSimIMC, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtTotal, EditMode.HHMM);
-        setDecimalEditMode(R.id.txtXC, EditMode.HHMM);
+        setDecimalEditMode(R.id.txtCFI);
+        setDecimalEditMode(R.id.txtDual);
+        setDecimalEditMode(R.id.txtGround);
+        setDecimalEditMode(R.id.txtIMC);
+        setDecimalEditMode(R.id.txtNight);
+        setDecimalEditMode(R.id.txtPIC);
+        setDecimalEditMode(R.id.txtSIC);
+        setDecimalEditMode(R.id.txtSimIMC);
+        setDecimalEditMode(R.id.txtTotal);
+        setDecimalEditMode(R.id.txtXC);
 
         // Make sure the date of flight is up-to-date
         if (!m_le.isKnownEngineStart() && !m_le.isKnownFlightStart())
@@ -737,7 +736,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-    void sendFlight() {
+    private void sendFlight() {
         if (m_le == null || m_le.sendLink == null || m_le.sendLink.length() == 0) {
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errCantSend));
             return;
@@ -751,7 +750,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 .startChooser();
     }
 
-    void shareFlight() {
+    private void shareFlight() {
         if (m_le == null || m_le.shareLink == null || m_le.shareLink.length() == 0) {
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errCantShare));
             return;
@@ -1087,7 +1086,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         return idAircraftToUse;
     }
 
-    public void ResetFlight(Boolean fCarryHobbs) {
+    private void ResetFlight(Boolean fCarryHobbs) {
         // start up a new flight with the same aircraft ID and public setting.
         // first, validate that the aircraft is still OK for the user
         double hobbsEnd = m_le.hobbsEnd;

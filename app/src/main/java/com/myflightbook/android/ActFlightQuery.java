@@ -171,7 +171,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     // b) all aircraft are active, or
     // c) the query references an inactive aircraft.
     // if b or c is true, we will set (a) to true.
-    protected Aircraft[] GetCurrentAircraft() {
+    private Aircraft[] GetCurrentAircraft() {
         if (m_rgac == null)
             m_rgac = m_rgacAll = new AircraftSvc().getCachedAircraft();
 
@@ -197,7 +197,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         return m_rgac;
     }
 
-    protected MakeModel[] GetActiveMakes() {
+    private MakeModel[] GetActiveMakes() {
         if (m_rgmm == null) {
             GetCurrentAircraft();
             Map<String, MakeModel> htmm = new HashMap<>();
@@ -289,7 +289,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         setExpandCollapseState();
     }
 
-    protected void setExpandCollapseState() {
+    private void setExpandCollapseState() {
         setExpandedState((TextView) findViewById(R.id.txtFQDatesHeader), findViewById(R.id.sectFQDates), CurrentQuery.DateRange != DateRanges.AllTime);
         setExpandedState((TextView) findViewById(R.id.txtFQAirportsHeader), findViewById(R.id.tblFQAirports), CurrentQuery.AirportList.length > 0 || CurrentQuery.Distance != FlightQuery.FlightDistance.AllFlights);
         setExpandedState((TextView) findViewById(R.id.txtFQACFeatures), findViewById(R.id.sectFQAircraftFeatures), CurrentQuery.HasAircraftCriteria());
@@ -335,7 +335,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         boolean itemIsChecked(Object o);
     }
 
-    protected void setUpDynamicCheckList(int idTable, Object[] rgItems, CheckedTableListener listener) {
+    private void setUpDynamicCheckList(int idTable, Object[] rgItems, CheckedTableListener listener) {
         TableLayout tl = (TableLayout) findViewById(idTable);
         if (tl == null)
             return;
@@ -360,7 +360,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    protected void setUpAircraftChecklist() {
+    private void setUpAircraftChecklist() {
         setUpDynamicCheckList(R.id.tblFQAircraft, GetCurrentAircraft(), new CheckedTableListener() {
             @Override
             public void itemStateChanged(Object o, boolean fAdded) {
@@ -389,7 +389,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         findViewById(R.id.btnShowAllAircraft).setVisibility(fShowAllAircraft ? View.GONE : View.VISIBLE);
     }
 
-    protected void setUpChecklists() {
+    private void setUpChecklists() {
         setUpAircraftChecklist();
 
         setUpDynamicCheckList(R.id.tblFQModels, GetActiveMakes(), new CheckedTableListener() {
@@ -472,7 +472,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
     //endregion
 
-    protected void setUpNamedQueries() {
+    private void setUpNamedQueries() {
         CannedQuery[] rgItems = CannedQuery.getCannedQueries();
         TableLayout tl = (TableLayout) findViewById(R.id.tblFQNamedQueries);
         if (tl == null)
@@ -515,14 +515,14 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         fCannedQueryClicked = false;
     }
 
-    public void reset() {
+    private void reset() {
         CurrentQuery.Init();
         setUpChecklists();
         toForm();
         setExpandCollapseState();
     }
 
-    protected void toForm() {
+    private void toForm() {
         SetStringForField(R.id.fqGeneralText, CurrentQuery.GeneralText);
         SetStringForField(R.id.fqModelName, CurrentQuery.ModelName);
         SetStringForField(R.id.fqAirports, TextUtils.join(" ", CurrentQuery.AirportList));
@@ -639,7 +639,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    protected void fromForm() {
+    private void fromForm() {
         CurrentQuery.GeneralText = StringFromField(R.id.fqGeneralText);
         CurrentQuery.ModelName = StringFromField(R.id.fqModelName);
         String szAirports = StringFromField(R.id.fqAirports).trim().toUpperCase(Locale.getDefault());
@@ -721,7 +721,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         switch (id) {
             case R.id.btnfqDateEnd:
             case R.id.btnfqDateStart:
-                DlgDatePicker dlg = new DlgDatePicker(this,
+                DlgDatePicker dlg = new DlgDatePicker(getActivity(),
                         DlgDatePicker.datePickMode.LOCALDATEONLY,
                         id == R.id.btnfqDateStart ?
                                 MFBUtil.LocalDateFromUTCDate(CurrentQuery.DateMin) :

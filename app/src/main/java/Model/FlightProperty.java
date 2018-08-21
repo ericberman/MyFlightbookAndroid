@@ -83,7 +83,7 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
         return true;
     }
 
-    protected String toString(Boolean fLocal, Context c) {
+    private String toString(Boolean fLocal, Context c) {
         if (m_cpt == null)
             return String.format(Locale.getDefault(), "(PropType %d)", idPropType);
 

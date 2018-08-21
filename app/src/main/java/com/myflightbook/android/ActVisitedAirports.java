@@ -147,7 +147,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         inflater.inflate(R.menu.currencymenu, menu);
     }
 
-    void refreshAirports() {
+    private void refreshAirports() {
         new RefreshVisitedAirports(getActivity(), this).execute();
     }
 

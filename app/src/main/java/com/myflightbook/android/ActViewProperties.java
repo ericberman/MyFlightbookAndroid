@@ -419,7 +419,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         return true;
     }
 
-    void refreshProps() {
+    private void refreshProps() {
         updateProps();    // preserve current user edits
         RefreshCPTTask rt = new RefreshCPTTask(this, this);
         rt.fAllowCache = false;

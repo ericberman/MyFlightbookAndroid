@@ -53,7 +53,7 @@ public class mfblocationservice  extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    public class MFBLocationCallback extends LocationCallback {
+    class MFBLocationCallback extends LocationCallback {
         @Override
         public void onLocationAvailability(LocationAvailability availability) { }
 
@@ -72,15 +72,15 @@ public class mfblocationservice  extends Service implements
         }
     }
 
-    final LocationRequest mLocationRequest = new LocationRequest();
-    final LocationCallback mLocationCallback = new MFBLocationCallback();
-    FusedLocationProviderClient mFusedLocationProvider;
+    private final LocationRequest mLocationRequest = new LocationRequest();
+    private final LocationCallback mLocationCallback = new MFBLocationCallback();
+    private FusedLocationProviderClient mFusedLocationProvider;
 
-    public boolean _isStarted = false;
+    private boolean _isStarted = false;
 
     public static final String ACTION_LOCATION_BROADCAST = mfblocationservice.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LOCATION = "mfbSerializedLocation";
-    public static final int NOTIFICATION_ID = 58235;
+    private static final int NOTIFICATION_ID = 58235;
 
     private void startInForeground() {
         if (_isStarted)

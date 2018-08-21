@@ -422,8 +422,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         }
 
         if (fClearAll) {
-            if (m_rgExistingFlights != null)
-                m_rgExistingFlights.clear();
+            m_rgExistingFlights.clear();
             fCouldBeMore = true;
             this.getListView().setSelectionFromTop(0, 0);
         }

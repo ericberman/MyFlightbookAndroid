@@ -288,6 +288,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         // now delete any remaining aircraft images that might be in our files.
         MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<>(), getActivity());
 
+        //noinspection ConstantConditions
         MFBUtil.Alert(this, getString(R.string.lblCleanup), getString(fOrphansFound ? R.string.errCleanupOrphansFound : R.string.txtCleanupComplete));
     }
 

@@ -56,6 +56,7 @@ public class ExpandableListFragment extends Fragment
     private CharSequence mEmptyText;
     private boolean mExpandableListShown;
 
+    @SuppressWarnings("WeakerAccess")
     public ExpandableListFragment() {
     }
 

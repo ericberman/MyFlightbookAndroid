@@ -118,7 +118,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
         });
     }
 
-    void refresh() {
+    private void refresh() {
         new GetMakesTask(this, this).execute();
     }
 

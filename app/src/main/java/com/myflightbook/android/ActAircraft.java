@@ -292,7 +292,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         inflater.inflate(R.menu.aircraftmenu, menu);
     }
 
-    void refreshAircraft() {
+    private void refreshAircraft() {
         AircraftSvc ac = new AircraftSvc();
         ac.FlushCache();
         RefreshAircraftTask st = new RefreshAircraftTask(getActivity(), this);
