@@ -74,8 +74,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         void invalidate();
     }
 
-    static private ArrayList<Invalidatable> rgNotifyDataChanged = new ArrayList<>();
-    static private ArrayList<Invalidatable> rgNotifyResetAll = new ArrayList<>();
+    static private final ArrayList<Invalidatable> rgNotifyDataChanged = new ArrayList<>();
+    static private final ArrayList<Invalidatable> rgNotifyResetAll = new ArrayList<>();
 
     // preferences keys.
     static private final String m_KeyszUser = "username";
@@ -114,7 +114,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     private long mLastVacuum = 0; // ms of last vacuum
 
     private TabHost mTabHost = null;
-    private HashMap<String, TabInfo> mapTabInfo = new HashMap<>();
+    private final HashMap<String, TabInfo> mapTabInfo = new HashMap<>();
     private TabInfo mLastTab = null;
     private int mLastTabIndex = -1;
 
@@ -142,7 +142,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     private static class ImportTelemetryTask extends AsyncTask<Uri, Void, LogbookEntry> {
         private ProgressDialog m_pd = null;
-        private AsyncWeakContext<MFBMain> m_ctxt;
+        private final AsyncWeakContext<MFBMain> m_ctxt;
 
         ImportTelemetryTask(Context c, MFBMain m) {
             super();
@@ -211,9 +211,9 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     }
 
     private class TabInfo {
-        private String tag;
-        private Class<?> clss;
-        private Bundle args;
+        private final String tag;
+        private final Class<?> clss;
+        private final Bundle args;
         private Fragment fragment;
 
         TabInfo(String tag, Class<?> clazz, Bundle args) {
@@ -258,6 +258,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         tabHost.addTab(tabSpec);
     }
 
+    @SuppressWarnings("SameReturnValue")
     private String paddedTabLabel() {
         return "";
     }
@@ -495,7 +496,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     private static class RefreshTask extends AsyncTask<AuthToken, Void, Boolean> {
         private ProgressDialog m_pd;
-        AsyncWeakContext<MFBMain> m_ctxt;
+        final AsyncWeakContext<MFBMain> m_ctxt;
 
         RefreshTask(Context c, MFBMain m) {
             super();

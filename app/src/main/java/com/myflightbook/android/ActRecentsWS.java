@@ -74,7 +74,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
     private LogbookEntry[] m_rgLe = new LogbookEntry[0];
 
-    private ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<>();
+    private final ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<>();
 
     private boolean fCouldBeMore = true;
 
@@ -217,8 +217,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
     private static class SubmitPendingFlightsTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
-        private AsyncWeakContext<ActRecentsWS> m_ctxt;
-        private LogbookEntry[] m_rgle;
+        private final AsyncWeakContext<ActRecentsWS> m_ctxt;
+        private final LogbookEntry[] m_rgle;
         boolean m_fErrorsFound = false;
         boolean m_fFlightsPosted = false;
 
@@ -306,7 +306,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     private static class RefreshFlightsTask extends AsyncTask<Void, Void, Boolean> {
         private RecentFlightsSvc m_rfSvc = null;
         Boolean fClearCache = false;
-        private AsyncWeakContext<ActRecentsWS> m_ctxt;
+        private final AsyncWeakContext<ActRecentsWS> m_ctxt;
 
         RefreshFlightsTask(Context c, ActRecentsWS arws) {
             super();

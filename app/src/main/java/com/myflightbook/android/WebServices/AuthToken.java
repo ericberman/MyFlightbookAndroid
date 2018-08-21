@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public class AuthToken extends MFBSoap {
     public static String m_szAuthToken = "";
     public static String m_szEmail = "";
     public static String m_szPass = "";
-    private static String TABLE_AUTH = "Authentications";
+    private static final String TABLE_AUTH = "Authentications";
     public static String APPTOKEN = "";
 
     public static Boolean FIsValid() {

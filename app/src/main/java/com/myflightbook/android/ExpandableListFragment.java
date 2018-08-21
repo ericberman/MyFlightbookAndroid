@@ -31,9 +31,9 @@ public class ExpandableListFragment extends Fragment
     ExpandableListView.OnGroupExpandListener
     {
 
-    private static int INTERNAL_EMPTY_ID = View.generateViewId();
-    private static int INTERNAL_PROGRESS_CONTAINER_ID = View.generateViewId();
-    private static int INTERNAL_LIST_CONTAINER_ID = View.generateViewId();
+    private static final int INTERNAL_EMPTY_ID = View.generateViewId();
+    private static final int INTERNAL_PROGRESS_CONTAINER_ID = View.generateViewId();
+    private static final int INTERNAL_LIST_CONTAINER_ID = View.generateViewId();
 
     final private Handler mHandler = new Handler();
 

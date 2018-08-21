@@ -38,7 +38,7 @@ import Model.MFBImageInfo.PictureDestination;
 public class Aircraft extends SoapableObject implements KvmSerializable, Serializable, LazyThumbnailLoader.ThumbnailedItem {
     private static final long serialVersionUID = 1L;
 
-    public static int[] rgidInstanceTypes = {
+    public static final int[] rgidInstanceTypes = {
             R.string.aircraftInstanceTypeReal,
             R.string.aircraftInstanceTypeSimUncertified,
             R.string.aircraftInstanceTypeSimLogAppchs,
@@ -431,8 +431,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         return null;
     }
 
-    private static Hashtable<Integer, Double> hashHighWaterHobbs = new Hashtable<>();
-    private static Hashtable<Integer, Double> hashHighWaterTach = new Hashtable<>();
+    private static final Hashtable<Integer, Double> hashHighWaterHobbs = new Hashtable<>();
+    private static final Hashtable<Integer, Double> hashHighWaterTach = new Hashtable<>();
 
     public static void updateHobbsForAircraft(Double hobbs, Integer idAircraft) {
         if (!hashHighWaterHobbs.containsKey(idAircraft))

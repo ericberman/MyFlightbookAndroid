@@ -40,7 +40,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
     private static class AircraftTask extends AsyncTask<String, Void, MFBSoap> {
         private Object m_Result = null;
         private ProgressDialog m_pd = null;
-        AsyncWeakContext<DlgSignIn> m_ctxt;
+        final AsyncWeakContext<DlgSignIn> m_ctxt;
 
         AircraftTask(Context c, DlgSignIn d) {
             super();
@@ -80,8 +80,8 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
     private static class SignInTask extends AsyncTask<String, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        AuthToken m_Svc;
-        AsyncWeakContext<DlgSignIn> m_ctxt;
+        final AuthToken m_Svc;
+        final AsyncWeakContext<DlgSignIn> m_ctxt;
 
         SignInTask(Context c, DlgSignIn d, AuthToken at) {
             super();
@@ -124,7 +124,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
         }
     }
 
-    private Context m_CallingContext;
+    private final Context m_CallingContext;
 
     DlgSignIn(Context context) {
         super(context, R.style.MFBDialog);

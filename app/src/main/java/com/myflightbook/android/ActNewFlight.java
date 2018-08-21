@@ -102,7 +102,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private Aircraft[] m_rgac = null;
     private LogbookEntry m_le = null;
-    private PostingOptions m_po = new PostingOptions();
+    private final PostingOptions m_po = new PostingOptions();
 
     public final static String PROPSFORFLIGHTID = "com.myflightbook.android.FlightPropsID";
     public final static String PROPSFORFLIGHTEXISTINGID = "com.myflightbook.android.FlightPropsIDExisting";
@@ -125,7 +125,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     // Expand state of "in the cockpit"
     static private final String m_KeyShowInCockpit = "inTheCockpit";
 
-    public static long lastNewFlightID = LogbookEntry.ID_NEW_FLIGHT;
+    public static final long lastNewFlightID = LogbookEntry.ID_NEW_FLIGHT;
 
     private TextView txtQuality, txtStatus, txtSpeed, txtAltitude, txtSunrise, txtSunset, txtLatitude, txtLongitude;
     private ImageView imgRecording;
@@ -136,8 +136,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
-        private int m_idFlight;
-        private AsyncWeakContext<ActNewFlight> m_ctxt;
+        private final int m_idFlight;
+        private final AsyncWeakContext<ActNewFlight> m_ctxt;
 
         DeleteTask(Context c, ActNewFlight act, int idFlight) {
             super();
@@ -194,10 +194,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private static class SubmitTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
-        private PostingOptions m_po;
+        private final PostingOptions m_po;
         private LogbookEntry lelocal = null;
         private LogbookEntry m_le;
-        private AsyncWeakContext<ActNewFlight> m_ctxt;
+        private final AsyncWeakContext<ActNewFlight> m_ctxt;
         private Boolean fIsNew = false;
 
         SubmitTask(Context c, ActNewFlight act, PostingOptions po, LogbookEntry le) {
@@ -279,7 +279,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private static class GetDigitizedSigTask extends AsyncTask<String, Void, Bitmap> {
-        AsyncWeakContext<ImageView> m_ctxt;
+        final AsyncWeakContext<ImageView> m_ctxt;
 
         GetDigitizedSigTask(ImageView iv) {
             super();
@@ -1795,8 +1795,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     //region in-line property editing
     private static class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
-        private FlightProperty m_fp;
-        private AsyncWeakContext<ActNewFlight> m_ctxt;
+        private final FlightProperty m_fp;
+        private final AsyncWeakContext<ActNewFlight> m_ctxt;
 
         DeletePropertyTask(Context c, ActNewFlight act, FlightProperty fp) {
             super();

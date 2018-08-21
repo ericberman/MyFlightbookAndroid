@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ public class MFBTakeoffSpeed {
     private final static int TOLandingSpreadHigh = 15;
     private final static int TOLandingSpreadLow = 10;
 
-    private static int[] rgTOSpeeds = { 20, 40, 55, 70, 85, 100 };
+    private static final int[] rgTOSpeeds = { 20, 40, 55, 70, 85, 100 };
 
     public final static int DefaultTakeOffIndex = 3; // 70kts
 

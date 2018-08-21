@@ -64,7 +64,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     private static class RefreshCurrency extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        AsyncWeakContext<ActCurrency> m_ctxt;
+        final AsyncWeakContext<ActCurrency> m_ctxt;
 
         RefreshCurrency(Context c, ActCurrency ac) {
             super();

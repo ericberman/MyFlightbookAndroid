@@ -42,7 +42,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String DB_NAME_MAIN = "mfbAndroid.sqlite";
     public static final String DB_NAME_AIRPORTS = "mfbAirports.sqlite";
 
-    private String m_DBName;
+    private final String m_DBName;
     private static final String szDBNameMain = "mfbAndroid.sqlite";
     private static final String szDBNameAirports = "mfbAirport.sqlite";
 

@@ -66,7 +66,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     private static class SubmitTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private AircraftSvc m_acs = null;
-        private AsyncWeakContext<ActEditAircraft> m_ctxt;
+        private final AsyncWeakContext<ActEditAircraft> m_ctxt;
 
         SubmitTask(Context c, ActEditAircraft aea) {
             super();
@@ -125,7 +125,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private AircraftSvc m_acs = null;
-        private AsyncWeakContext<ActEditAircraft> m_ctxt;
+        private final AsyncWeakContext<ActEditAircraft> m_ctxt;
 
         DeleteTask(Context c, ActEditAircraft aea) {
             super();

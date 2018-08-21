@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public class ActNewUser extends Activity implements
     private static class AddUserTask extends AsyncTask<String, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
-        private AsyncWeakContext<ActNewUser> m_ctxt;
+        private final AsyncWeakContext<ActNewUser> m_ctxt;
 
         AddUserTask(Context c, ActNewUser anu) {
             super();

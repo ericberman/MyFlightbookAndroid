@@ -37,9 +37,9 @@ class DlgImageComment extends Dialog implements android.view.View.OnClickListene
         void updateAnnotation(MFBImageInfo mfbii);
     }
 
-    private AnnotationUpdate m_delegate;
-    private MFBImageInfo m_mfbii;
-    private Context m_Context;
+    private final AnnotationUpdate m_delegate;
+    private final MFBImageInfo m_mfbii;
+    private final Context m_Context;
 
     DlgImageComment(Context context, MFBImageInfo mfbii, AnnotationUpdate d) {
         super(context, R.style.MFBDialog);

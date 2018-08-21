@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@ public class MFBConstants {
     public static final Boolean fDebugLocal = false;    // If debug, this specifies a local (IP-based or LocalHost based) debug server, thus suppressing https
     public static final Boolean fFakePix = false;
 
-    private static String szIPDebug = "developer.myflightbook.com";
-    private static String szIPDebugRoam = "developer.myflightbook.com";
-    private static String szIPRelease = "myflightbook.com";
+    private static final String szIPDebug = "developer.myflightbook.com";
+    private static final String szIPDebugRoam = "developer.myflightbook.com";
+    private static final String szIPRelease = "myflightbook.com";
 
     // Configuration constants
     @SuppressWarnings("ConstantConditions")
-    public static String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
+    public static final String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
 
     // DB Versioning
     public static final int DBVersionMain = 24;
@@ -56,7 +56,7 @@ public class MFBConstants {
     // speeds for distinguishing takeoff/landing
     // we want some hysteresis here, so set the take-off speed higher than the
     // landing speed
-    public static final double MIN_SAMPLE_RATE_TAXI_DEBUG = 10000; // Sample rate in milliseconds
+    private static final double MIN_SAMPLE_RATE_TAXI_DEBUG = 10000; // Sample rate in milliseconds
     private static final double MIN_SAMPLE_RATE_AIRBORNE_DEBUG = 3000;
 
     private static final double MIN_SAMPLE_RATE_TAXI_RELEASE = 10000;
@@ -65,10 +65,10 @@ public class MFBConstants {
     static final int FULL_STOP_SPEED = 5; // 5kts or less is full stop
 
     @SuppressWarnings("ConstantConditions")
-    static double MIN_SAMPLE_RATE_TAXI = fIsDebug ? MIN_SAMPLE_RATE_TAXI_DEBUG
+    static final double MIN_SAMPLE_RATE_TAXI = fIsDebug ? MIN_SAMPLE_RATE_TAXI_DEBUG
             : MIN_SAMPLE_RATE_TAXI_RELEASE;
     @SuppressWarnings("ConstantConditions")
-    public static double MIN_SAMPLE_RATE_AIRBORNE = fIsDebug ? MIN_SAMPLE_RATE_AIRBORNE_DEBUG
+    public static final double MIN_SAMPLE_RATE_AIRBORNE = fIsDebug ? MIN_SAMPLE_RATE_AIRBORNE_DEBUG
             : MIN_SAMPLE_RATE_AIRBORNE_RELEASE;
 
     // minimum horizontal accuracy for us not to throw things out.

@@ -1186,7 +1186,7 @@ public class GPSSim {
             new LocSample(47.90479256, -122.28139693, 589, 4.4, 5, "2010-10-27 11:22:10")
     };
 
-    private LocationListener m_ll;
+    private final LocationListener m_ll;
 
     public GPSSim(LocationListener ll) {
         super();
@@ -1195,7 +1195,7 @@ public class GPSSim {
 
     private static class FeedTask extends AsyncTask<Integer, Void, Integer> {
         private Location m_Loc;
-        LocationListener m_ll;
+        final LocationListener m_ll;
 
         FeedTask(LocationListener ll) {
             super();

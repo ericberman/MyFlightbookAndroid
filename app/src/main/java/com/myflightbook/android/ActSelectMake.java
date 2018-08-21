@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
 
     private static class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
-        private AsyncWeakContext<ActSelectMake> m_ctxt;
+        private final AsyncWeakContext<ActSelectMake> m_ctxt;
 
         GetMakesTask(Context c, ActSelectMake asm) {
             super();

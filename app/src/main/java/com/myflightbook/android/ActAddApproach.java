@@ -42,7 +42,7 @@ public class ActAddApproach extends Activity {
     public static final String APPROACHADDTOTOTALSRESULT = "com.myflightbook.android.ApproachAddToTotalsResult";
     public static final int APPROACH_DESCRIPTION_REQUEST_CODE = 50382;
 
-    private ApproachDescription approachDescription = new ApproachDescription();
+    private final ApproachDescription approachDescription = new ApproachDescription();
 
     private String approachBase = "";
     private String approachSuffix = "";

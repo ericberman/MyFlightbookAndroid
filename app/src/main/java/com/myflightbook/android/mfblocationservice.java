@@ -72,8 +72,8 @@ public class mfblocationservice  extends Service implements
         }
     }
 
-    LocationRequest mLocationRequest = new LocationRequest();
-    LocationCallback mLocationCallback = new MFBLocationCallback();
+    final LocationRequest mLocationRequest = new LocationRequest();
+    final LocationCallback mLocationCallback = new MFBLocationCallback();
     FusedLocationProviderClient mFusedLocationProvider;
 
     public boolean _isStarted = false;

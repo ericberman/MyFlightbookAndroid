@@ -94,8 +94,8 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     private String m_GPXPath = null;
     private Boolean m_fHasHadLayout = false;
     private Boolean m_fShowAllAirports = false;
-    private HashMap<String, Airport> m_hmAirports = new HashMap<>();
-    private HashMap<String, MFBImageInfo> m_hmImages = new HashMap<>();
+    private final HashMap<String, Airport> m_hmAirports = new HashMap<>();
+    private final HashMap<String, MFBImageInfo> m_hmImages = new HashMap<>();
     private String m_passedAliases = "";
 
     private static final int DimensionImageOverlay = 60;
@@ -115,8 +115,8 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
     private static class SendGPXTask extends AsyncTask<Void, Void, MFBSoap> {
         String m_Result = "";
-        int m_idFlight;
-        private AsyncWeakContext<ActFlightMap> m_ctxt;
+        final int m_idFlight;
+        private final AsyncWeakContext<ActFlightMap> m_ctxt;
 
         SendGPXTask(Context c, ActFlightMap afm, int idFlight) {
             super();
@@ -203,7 +203,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
     }
 
     private class FetchFlightPathTask implements Runnable {
-        private int m_idFlight;
+        private final int m_idFlight;
 
         FetchFlightPathTask(int idFlight) {
             m_idFlight = idFlight;

@@ -29,11 +29,11 @@ public class SunriseSunsetTimes {
     public Date Sunrise;
     public Date Sunset;
     @SuppressWarnings("WeakerAccess")
-    public double Latitude;
+    public final double Latitude;
     @SuppressWarnings("WeakerAccess")
-    public double Longitude;
+    public final double Longitude;
     @SuppressWarnings("WeakerAccess")
-    public Date Date;
+    public final Date Date;
 
     // True if sun is more than 6 degrees below the horizon.
     Boolean IsCivilNight;

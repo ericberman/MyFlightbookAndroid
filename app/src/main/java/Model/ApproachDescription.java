@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ public class ApproachDescription {
     public String airportName = "";
     public Boolean addToApproachCount = true;
 
-    public static String[] ApproachNames = {
+    public static final String[] ApproachNames = {
             "CONTACT",
             "COPTER",
             "GCA",
@@ -62,13 +62,13 @@ public class ApproachDescription {
             "VOR/DME",
             "VOR/DME-ARC"};
 
-    public static String[] ApproachSuffixes = {"", "-A", "-B", "-C", "-X", "-Y", "-Z"};
+    public static final String[] ApproachSuffixes = {"", "-A", "-B", "-C", "-X", "-Y", "-Z"};
 
-    public static String[] RunwayNames = {
+    public static final String[] RunwayNames = {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
             "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36"};
 
-    public static String[] RunwayModifiers = {"", "L", "R", "C"};
+    public static final String[] RunwayModifiers = {"", "L", "R", "C"};
 
     public String toString() {
         approachName = approachName.trim();

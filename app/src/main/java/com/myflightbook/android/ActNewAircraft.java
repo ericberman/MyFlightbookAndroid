@@ -73,7 +73,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     private static class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        private AsyncWeakContext<ActNewAircraft> m_ctxt;
+        private final AsyncWeakContext<ActNewAircraft> m_ctxt;
 
         SaveAircraftTask(Context c, ActNewAircraft ana) {
             super();
@@ -123,7 +123,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
     private static class GetMakesTask extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
-        private AsyncWeakContext<ActNewAircraft> m_ctxt;
+        private final AsyncWeakContext<ActNewAircraft> m_ctxt;
 
         GetMakesTask(Context c, ActNewAircraft ana) {
             super();

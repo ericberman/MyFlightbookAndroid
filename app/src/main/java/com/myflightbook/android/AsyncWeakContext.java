@@ -24,8 +24,8 @@ import android.content.Context;
 import java.lang.ref.WeakReference;
 
 public class AsyncWeakContext<T> {
-    private WeakReference<Context> m_context;
-    private WeakReference<T> m_callingActivity;
+    private final WeakReference<Context> m_context;
+    private final WeakReference<T> m_callingActivity;
 
     AsyncWeakContext(Context c, T act) {
         m_context = (c == null) ? null : new WeakReference<>(c);

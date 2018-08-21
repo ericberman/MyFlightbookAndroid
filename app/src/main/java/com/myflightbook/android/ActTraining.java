@@ -51,8 +51,8 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
     private static final String endorseItem = "endorse";
 
     class TrainingItem {
-        int idTitle;
-        String szURLDest;
+        final int idTitle;
+        final String szURLDest;
 
         TrainingItem(int TitleID, String DestinationURL) {
             idTitle = TitleID;
@@ -60,7 +60,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         }
     }
 
-    private TrainingItem[] m_rgTrainingItems =
+    private final TrainingItem[] m_rgTrainingItems =
             {
                     new TrainingItem(R.string.lblStudents, "students"),
                     new TrainingItem(R.string.lblInstructors, "instructors"),
@@ -73,7 +73,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
 
 
     private class TrainingAdapter extends ArrayAdapter<TrainingItem> {
-        private TrainingItem[] m_rgti;
+        private final TrainingItem[] m_rgti;
 
         TrainingAdapter(Context c, int rid, TrainingItem[] rgti) {
             super(c, rid, rgti);

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@ import android.widget.ArrayAdapter;
 import Model.MFBImageInfo.ImageCacheCompleted;
 
 public class LazyThumbnailLoader implements Runnable, ImageCacheCompleted {
-    private ThumbnailedItem[] m_rgItems;
+    private final ThumbnailedItem[] m_rgItems;
 
-    private ArrayAdapter m_li;
+    private final ArrayAdapter m_li;
 
     public interface ThumbnailedItem {
         MFBImageInfo getDefaultImage();

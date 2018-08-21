@@ -59,7 +59,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
     private static class RefreshVisitedAirports extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        private AsyncWeakContext<ActVisitedAirports> m_ctxt;
+        private final AsyncWeakContext<ActVisitedAirports> m_ctxt;
 
         RefreshVisitedAirports(Context c, ActVisitedAirports ava) {
             super();

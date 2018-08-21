@@ -67,7 +67,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
     private static class RefreshTotals extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        private AsyncWeakContext<ActTotals> m_ctxt;
+        private final AsyncWeakContext<ActTotals> m_ctxt;
 
         RefreshTotals(Context c, ActTotals at) {
             super();

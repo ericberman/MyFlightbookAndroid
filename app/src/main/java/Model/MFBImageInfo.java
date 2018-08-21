@@ -121,11 +121,11 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     }
 
     private static class AsyncLoadURL extends AsyncTask<Void, Void, Drawable> {
-        private String m_URL;
-        private WeakReference<ImageView> imgView;
-        private Boolean mFIsThumbnail;
-        private ImageCacheCompleted m_icc;
-        private WeakReference<MFBImageInfo>  m_mfbii;
+        private final String m_URL;
+        private final WeakReference<ImageView> imgView;
+        private final Boolean mFIsThumbnail;
+        private final ImageCacheCompleted m_icc;
+        private final WeakReference<MFBImageInfo>  m_mfbii;
 
         AsyncLoadURL(ImageView iv, String url, Boolean fIsThumnbnail, ImageCacheCompleted icc, MFBImageInfo mfbii) {
             super();

@@ -68,7 +68,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         private ProgressDialog m_pd = null;
         Boolean fAllowCache = true;
         CustomPropertyType[] m_rgcpt;
-        AsyncWeakContext<ActViewProperties> m_ctxt;
+        final AsyncWeakContext<ActViewProperties> m_ctxt;
 
         RefreshCPTTask(Context c, ActViewProperties avp) {
             super();
@@ -116,8 +116,8 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
     private static class DeletePropertyTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
         int propId;
-        int m_idExistingId;
-        AsyncWeakContext<ActViewProperties> m_ctxt;
+        final int m_idExistingId;
+        final AsyncWeakContext<ActViewProperties> m_ctxt;
 
         DeletePropertyTask(Context c, ActViewProperties avp, int idExisting) {
             super();
@@ -161,10 +161,10 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
 
     private class ExpandablePropertyListAdapter extends BaseExpandableListAdapter {
 
-        Context m_context;
-        ArrayList<String> m_groups;
-        ArrayList<ArrayList<FlightProperty>> m_children;
-        private SparseArray<View> m_cachedViews;
+        final Context m_context;
+        final ArrayList<String> m_groups;
+        final ArrayList<ArrayList<FlightProperty>> m_children;
+        private final SparseArray<View> m_cachedViews;
 
         ExpandablePropertyListAdapter(Context context, ArrayList<String> groups, ArrayList<ArrayList<FlightProperty>> children) {
             m_context = context;

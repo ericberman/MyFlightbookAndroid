@@ -79,6 +79,7 @@ import Model.MFBUtil;
 
 public class ActMFBForm extends Fragment {
     interface GallerySource {
+        @SuppressWarnings("SameReturnValue")
         int getGalleryID();
 
         View getGalleryHeader();
@@ -106,11 +107,11 @@ public class ActMFBForm extends Fragment {
 
     private static class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         MFBImageInfo mfbii = null;
-        Boolean fGeoTag;
-        Boolean fDeleteFileWhenDone;
-        Boolean fAddToGallery;
-        Boolean m_fVideo;
-        AsyncWeakContext<ActMFBForm> m_ctxt;
+        final Boolean fGeoTag;
+        final Boolean fDeleteFileWhenDone;
+        final Boolean fAddToGallery;
+        final Boolean m_fVideo;
+        final AsyncWeakContext<ActMFBForm> m_ctxt;
 
         AddCameraTask(int ActivityRequestCode, Boolean fVideo, ActMFBForm frm) {
             super();

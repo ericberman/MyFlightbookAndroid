@@ -79,7 +79,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     public static final String QUERY_TO_EDIT = "com.myflightbook.android.querytoedit";
 
     private static class GetCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private AsyncWeakContext<ActFlightQuery> m_afq;
+        private final AsyncWeakContext<ActFlightQuery> m_afq;
 
         GetCannedQueryTask(Context c, ActFlightQuery afq) {
             super();
@@ -104,8 +104,8 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
 
     private static class AddCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private AsyncWeakContext<FlightQuery> m_ctxt;
-        private String m_name;
+        private final AsyncWeakContext<FlightQuery> m_ctxt;
+        private final String m_name;
         private FlightQuery m_fq;
 
         AddCannedQueryTask(Context c, FlightQuery fq, String szName) {
@@ -131,7 +131,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
 
     private static class DeleteCannedQueryTask extends AsyncTask<Void, Void, MFBSoap> {
-        private AsyncWeakContext<ActFlightQuery> m_ctxt;
+        private final AsyncWeakContext<ActFlightQuery> m_ctxt;
         private CannedQuery m_fq;
 
         DeleteCannedQueryTask(Context c, CannedQuery fq, ActFlightQuery afq) {

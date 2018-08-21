@@ -85,7 +85,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     private static class RefreshAircraftTask extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
-        AsyncWeakContext<ActAircraft> m_ctxt;
+        final AsyncWeakContext<ActAircraft> m_ctxt;
 
         RefreshAircraftTask(Context c, ActAircraft aa) {
             super();
