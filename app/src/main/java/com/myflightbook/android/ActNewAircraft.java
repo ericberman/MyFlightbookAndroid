@@ -109,7 +109,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             if (rgac == null || rgac.length == 0)
                 MFBUtil.Alert(ana, ana.getString(R.string.txtError), svc.getLastError());
             else
-                ana.Dismiss(RESULT_CODE_AIRCRAFT_CREATED);
+                ana.Dismiss();
         }
 
         protected void onProgressUpdate(String... msg) {
@@ -238,11 +238,11 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         toView();
     }
 
-    private void Dismiss(int resultCode) {
+    private void Dismiss() {
         Intent i = new Intent();
         Activity a = getActivity();
         if (a != null) {
-            a.setResult(resultCode, i);
+            a.setResult(RESULT_CODE_AIRCRAFT_CREATED, i);
             a.finish();
         }
     }

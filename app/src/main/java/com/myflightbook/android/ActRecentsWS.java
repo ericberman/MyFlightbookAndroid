@@ -91,9 +91,9 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     private FlightQuery currentQuery = new FlightQuery();
 
     private class FlightAdapter extends ArrayAdapter<LogbookEntry> {
-        FlightAdapter(Context c, int rid,
+        FlightAdapter(Context c,
                       LogbookEntry[] rgpp) {
-            super(c, rid, rgpp);
+            super(c, R.layout.flightitem, rgpp);
         }
 
         private String formattedTimeForLabel(int idLabel, double val, EditMode em) {
@@ -461,7 +461,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         if (index >= m_rgLe.length)
             index = top = 0;
 
-        FlightAdapter fa = new FlightAdapter(getActivity(), R.layout.flightitem, m_rgLe);
+        FlightAdapter fa = new FlightAdapter(getActivity(), m_rgLe);
         setListAdapter(fa);
 
         getListView().setSelectionFromTop(index, top);

@@ -172,9 +172,9 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
     }
 
     private class TotalsAdapter extends ArrayAdapter<Totals> {
-        TotalsAdapter(Context c, int rid,
+        TotalsAdapter(Context c,
                       Totals[] rgti) {
-            super(c, rid, rgti);
+            super(c, R.layout.totalsitem, rgti);
         }
 
         @Override
@@ -233,7 +233,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
 
         if (mRgti == null)
             mRgti = new Totals[0];
-        TotalsAdapter ta = new TotalsAdapter(getActivity(), R.layout.totalsitem, mRgti);
+        TotalsAdapter ta = new TotalsAdapter(getActivity(), mRgti);
         setListAdapter(ta);
         getListView().setOnItemClickListener(this);
     }

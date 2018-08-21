@@ -151,8 +151,8 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     }
 
     private class AircraftAdapter extends ArrayAdapter<AircraftRowItem> {
-        AircraftAdapter(Context c, int rid, AircraftRowItem[] rgac) {
-            super(c, rid, rgac == null ? new AircraftRowItem[0] : rgac);
+        AircraftAdapter(Context c, AircraftRowItem[] rgac) {
+            super(c, R.layout.aircraft, rgac == null ? new AircraftRowItem[0] : rgac);
         }
 
         @Override
@@ -260,7 +260,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         Activity a = getActivity();
         if (a == null)
             return;
-        AircraftAdapter aa = new AircraftAdapter(a, R.layout.aircraft, m_aircraftRows);
+        AircraftAdapter aa = new AircraftAdapter(a, m_aircraftRows);
         setListAdapter(aa);
         getListView().setOnItemClickListener(this);
         new Thread(new LazyThumbnailLoader(m_aircraftRows, aa)).start();
