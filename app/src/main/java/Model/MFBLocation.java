@@ -283,6 +283,9 @@ public class MFBLocation implements LocationListener {
         // see if things are too tightly spaced
         // get the time interval since the last location update
         long dt = loc.TimeStamp.getTime() - m_currentLoc.getTime();
+        if (dt < 0) // new timestamp is prior to more recently seen one
+            return;
+
         if ((IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_AIRBORNE) ||
                 (!IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_TAXI))
             fValidTime = fPrefRecordFlightHighRes;   // i.e., false unless we are recording high res./

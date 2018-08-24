@@ -82,6 +82,8 @@ public class mfblocationservice  extends Service implements
     public static final String EXTRA_LOCATION = "mfbSerializedLocation";
     private static final int NOTIFICATION_ID = 58235;
 
+    private static Location _initialLoc = null;
+
     private void startInForeground() {
         if (_isStarted)
             return;
@@ -147,11 +149,15 @@ public class mfblocationservice  extends Service implements
         mFusedLocationProvider.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
 
         // initialize with last known location.
-        mFusedLocationProvider.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (location != null)
+        if (_initialLoc == null) {
+            mFusedLocationProvider.getLastLocation()
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            _initialLoc = location;
                             onLocationChanged(location);
-                });
+                        }
+                    });
+        }
     }
 
     @Override
