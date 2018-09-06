@@ -284,6 +284,12 @@
                     android:text="@string/afGlass" />
 
                 <CheckBox
+                    android:id="@+id/ckisTAA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afTAA" />
+
+                <CheckBox
                     android:id="@+id/ckIsComplex"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

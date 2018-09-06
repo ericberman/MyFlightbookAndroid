@@ -390,7 +390,8 @@
     <string name="afInstanceAny">Tous les aéronefs</string>
     <string name="afInstanceReal">Avion réel</string>
     <string name="afInstanceTraining">Dispositifs de formation</string>
-    <string name="afGlass">Glass Cockpit</string>
+    <string name="afGlass">Cockpit en verre</string>
+    <string name="afTAA">Avion techniquement avancé</string>
     <string name="afComplex">Complexe</string>
     <string name="afRetract">Train rentrant</string>
     <string name="afCSProp">Hélice à pas variable</string>

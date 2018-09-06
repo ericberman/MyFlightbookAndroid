@@ -72,7 +72,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		
 		// Aircraft attributes
 		pidIsComplex, pidHasFlaps, pidIsHighPerformance, pidIsConstantSpeedProp, pidMotorGlider, pidMultiEngineHeli,
-		pidIsRetract, pidIsGlass, pidIsTailwheel, pidEngineType, pidInstanceType,
+		pidIsRetract, pidIsGlass, pidIsTAA, pidIsTailwheel, pidEngineType, pidInstanceType,
 		pidQueryName
 	}
 
@@ -126,6 +126,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	public Boolean IsConstantSpeedProp = false;
 	public Boolean IsRetract = false;
 	public Boolean IsGlass = false;
+	public Boolean IsTAA = false;
 	public Boolean IsTailwheel = false;
 	public Boolean IsMotorglider = false;
 	public Boolean IsMultiEngineHeli = false;
@@ -243,8 +244,9 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     	IsHighPerformance = 
     	IsConstantSpeedProp = 
     	IsRetract = 
-    	IsGlass = 
-    	IsTailwheel = 
+    	IsGlass =
+    	IsTAA =
+		IsTailwheel =
     	IsMultiEngineHeli = 
     	IsMotorglider = false;
     }
@@ -281,7 +283,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 
     public Boolean HasAircraftCriteria()
     {
-        return IsComplex || IsConstantSpeedProp || IsGlass || IsHighPerformance || IsRetract || IsTailwheel || HasFlaps || IsMultiEngineHeli || (EngineType != EngineTypeRestriction.AllEngines) || (AircraftInstanceTypes != AircraftInstanceRestriction.AllAircraft);
+        return IsComplex || IsConstantSpeedProp || IsGlass || IsTAA || IsHighPerformance || IsRetract || IsTailwheel || HasFlaps || IsMultiEngineHeli || (EngineType != EngineTypeRestriction.AllEngines) || (AircraftInstanceTypes != AircraftInstanceRestriction.AllAircraft);
     }
 
     public Boolean HasFlightCriteria()
@@ -417,6 +419,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     	IsConstantSpeedProp = Boolean.parseBoolean(so.getPropertySafelyAsString("IsConstantSpeedProp"));
     	IsRetract = Boolean.parseBoolean(so.getPropertySafelyAsString("IsRetract"));
     	IsGlass = Boolean.parseBoolean(so.getPropertySafelyAsString("IsGlass"));
+    	IsTAA = Boolean.parseBoolean(so.getPropertySafelyAsString("IsTechnicallyAdvanced"));
     	IsTailwheel = Boolean.parseBoolean(so.getPropertySafelyAsString("IsTailwheel"));
     	IsMotorglider = Boolean.parseBoolean(so.getPropertySafelyAsString("IsMotorglider"));
     	IsMultiEngineHeli = Boolean.parseBoolean(so.getPropertySafelyAsString("IsMultiEngineHeli"));
@@ -518,6 +521,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			return IsRetract;
 		case pidIsGlass:
 			return IsGlass;
+		case pidIsTAA:
+			return IsTAA;
 		case pidIsTailwheel:
 			return IsTailwheel;
 		case pidMotorGlider:
@@ -717,6 +722,10 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		case pidIsGlass:
 			pi.type = PropertyInfo.BOOLEAN_CLASS;
 			pi.name = "IsGlass";
+			break;
+		case pidIsTAA:
+			pi.type = PropertyInfo.BOOLEAN_CLASS;
+			pi.name = "IsTechnicallyAdvanced";
 			break;
 		case pidIsTailwheel:
 			pi.type = PropertyInfo.BOOLEAN_CLASS;

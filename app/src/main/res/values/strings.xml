@@ -391,6 +391,7 @@
     <string name="afInstanceReal">Real Aircraft</string>
     <string name="afInstanceTraining">Training Devices</string>
     <string name="afGlass">Glass Cockpit</string>
+    <string name="afTAA">Technically Advanced Airplane</string>
     <string name="afComplex">Complex</string>
     <string name="afRetract">Retractable Gear</string>
     <string name="afCSProp">Constant Speed Prop</string>

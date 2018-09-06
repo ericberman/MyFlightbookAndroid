@@ -587,6 +587,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         SetCheckState(R.id.ckIsComplex, CurrentQuery.IsComplex);
         SetCheckState(R.id.ckIsConstantProp, CurrentQuery.IsConstantSpeedProp);
         SetCheckState(R.id.ckisGlass, CurrentQuery.IsGlass);
+        SetCheckState(R.id.ckisTAA, CurrentQuery.IsTAA);
         SetCheckState(R.id.ckIsHighPerf, CurrentQuery.IsHighPerformance);
         SetCheckState(R.id.ckIsRetract, CurrentQuery.IsRetract);
         SetCheckState(R.id.ckIsTailwheel, CurrentQuery.IsTailwheel);
@@ -667,6 +668,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         CurrentQuery.IsComplex = CheckState(R.id.ckIsComplex);
         CurrentQuery.IsConstantSpeedProp = CheckState(R.id.ckIsConstantProp);
         CurrentQuery.IsGlass = CheckState(R.id.ckisGlass);
+        CurrentQuery.IsTAA = CheckState(R.id.ckisTAA);
         CurrentQuery.IsHighPerformance = CheckState(R.id.ckIsHighPerf);
         CurrentQuery.IsRetract = CheckState(R.id.ckIsRetract);
         CurrentQuery.IsTailwheel = CheckState(R.id.ckIsTailwheel);
