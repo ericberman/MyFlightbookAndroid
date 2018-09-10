@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import Model.Aircraft;
 import Model.DecimalEdit;
@@ -182,9 +183,14 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                     TextUtils.htmlEncode(le.szRoute.trim()));
             txtHeader.setText(Html.fromHtml(szHeaderHTML));
 
+            Pattern pBold = Pattern.compile("(\\*)([^*_\\r\\n]*)(\\*)", Pattern.CASE_INSENSITIVE);
+            Pattern pItalic = Pattern.compile("(_)([^*_\\r\\n]*)_", Pattern.CASE_INSENSITIVE);
+            String szComments = pBold.matcher(TextUtils.htmlEncode(le.szComments)).replaceAll("<strong>$2</strong>");
+            szComments = pItalic.matcher(szComments).replaceAll("<em>$2</em>");
+
             TextView txtComments = v.findViewById(R.id.txtComments);
-            txtComments.setVisibility(le.szComments.length() == 0 ? View.GONE : View.VISIBLE);
-            txtComments.setText(le.szComments);
+            txtComments.setVisibility(szComments.length() == 0 ? View.GONE : View.VISIBLE);
+            txtComments.setText(Html.fromHtml(szComments));
 
             TextView txtFlightTimes = v.findViewById(R.id.txtFlightTimes);
             StringBuilder sb = new StringBuilder();
