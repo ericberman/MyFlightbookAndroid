@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2018 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ import Model.LogbookEntry;
 import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBUtil;
-import Model.PostingOptions;
 
 public class CommitFlightSvc extends MFBSoap {
 
@@ -48,7 +47,6 @@ public class CommitFlightSvc extends MFBSoap {
     public void AddMappings(SoapSerializationEnvelope e) {
         e.addMapping(NAMESPACE, "CommitFlightWithOptionsResult", LogbookEntry.class);
         e.addMapping(NAMESPACE, "le", LogbookEntry.class);
-        e.addMapping(NAMESPACE, "PostingOptions", PostingOptions.class);
         e.addMapping(NAMESPACE, "LogbookEntry", LogbookEntry.class);
         e.addMapping(NAMESPACE, "CustomFlightProperty", FlightProperty.class);
         e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
@@ -60,7 +58,7 @@ public class CommitFlightSvc extends MFBSoap {
         md.register(e);
     }
 
-    public Boolean FCommitFlight(String szAuthToken, LogbookEntry le, PostingOptions po, Context c) {
+    public Boolean FCommitFlight(String szAuthToken, LogbookEntry le, Context c) {
         SoapObject Request = setMethod("CommitFlightWithOptions");
         Request.addProperty("szAuthUserToken", szAuthToken);
         PropertyInfo piLe = new PropertyInfo();
@@ -71,7 +69,7 @@ public class CommitFlightSvc extends MFBSoap {
         piLe.namespace = NAMESPACE;
         pipo.name = "po";
         pipo.type = "PostingOptions";
-        pipo.setValue(po);
+        pipo.setValue(null);
         pipo.namespace = NAMESPACE;
         Request.addProperty(piLe);
         Request.addProperty(pipo);

@@ -93,7 +93,6 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBLocation;
 import Model.MFBUtil;
-import Model.PostingOptions;
 import Model.SunriseSunsetTimes;
 
 public class ActNewFlight extends ActMFBForm implements android.view.View.OnClickListener, MFBFlightListener.ListenerFragmentDelegate,
@@ -101,7 +100,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private Aircraft[] m_rgac = null;
     private LogbookEntry m_le = null;
-    private final PostingOptions m_po = new PostingOptions();
 
     public final static String PROPSFORFLIGHTID = "com.myflightbook.android.FlightPropsID";
     public final static String PROPSFORFLIGHTEXISTINGID = "com.myflightbook.android.FlightPropsIDExisting";
@@ -193,16 +191,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private static class SubmitTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
-        private final PostingOptions m_po;
         private LogbookEntry lelocal = null;
         private LogbookEntry m_le;
         private final AsyncWeakContext<ActNewFlight> m_ctxt;
         private Boolean fIsNew = false;
 
-        SubmitTask(Context c, ActNewFlight act, PostingOptions po, LogbookEntry le) {
+        SubmitTask(Context c, ActNewFlight act, LogbookEntry le) {
             super();
             m_ctxt = new AsyncWeakContext<>(c, act);
-            m_po = po;
             m_le = le;
         }
 
@@ -210,7 +206,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         protected MFBSoap doInBackground(Void... params) {
             CommitFlightSvc cf = new CommitFlightSvc();
             cf.m_Progress = this;
-            m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_po, m_ctxt.getContext());
+            m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_ctxt.getContext());
             return cf;
         }
 
@@ -1185,7 +1181,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             }
         } else {
 
-            new SubmitTask(getContext(), this, m_po, m_le).execute();
+            new SubmitTask(getContext(), this, m_le).execute();
         }
     }
 
@@ -1289,10 +1285,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             m_le.SyncProperties();
         setUpPropertiesForFlight();
 
-        // Posting Options
-        SetCheckState(R.id.ckFacebook, m_po.m_fPostFacebook);
-        SetCheckState(R.id.ckTwitter, m_po.m_fTweet);
-
         updateElapsedTime();
         updatePausePlayButtonState();
     }
@@ -1335,10 +1327,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // Aircraft spinner
         m_le.idAircraft = selectedAircraftID();
-
-        // Posting options
-        m_po.m_fPostFacebook = CheckState(R.id.ckFacebook);
-        m_po.m_fTweet = CheckState(R.id.ckTwitter);
     }
 
     private int selectedAircraftID() {

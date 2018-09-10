@@ -72,8 +72,6 @@
     <string name="lblCatCockpit">In the cockpit</string>
     <string name="lblCatProperties">Flight Properties</string>
     <string name="lblCatSharing">Sharing</string>
-    <string name="lblFacebook">Share flight on Facebook</string>
-    <string name="lblTwitter">Share flight on Twitter</string>
     <string name="lblMyFlightbook">Share flight on MyFlightbook</string>
     <string name="lblSetUpFacebook">Enable Twitter and Facebook support.</string>
     <string name="lblSignature">Signature</string>

@@ -949,24 +949,6 @@
                 android:focusable="true" />
 
             <CheckBox
-                android:id="@+id/ckFacebook"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:drawablePadding="20dip"
-                android:drawableStart="@drawable/fb_f_logo"
-                android:text="@string/lblFacebook" />
-
-            <CheckBox
-                android:id="@+id/ckTwitter"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:drawablePadding="20dip"
-                android:drawableStart="@drawable/twitter_logo_blue"
-                android:text="@string/lblTwitter" />
-
-            <CheckBox
                 android:id="@+id/ckMyFlightbook"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

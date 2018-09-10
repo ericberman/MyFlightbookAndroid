@@ -68,7 +68,6 @@ import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBImageInfo.ImageCacheCompleted;
 import Model.MFBUtil;
-import Model.PostingOptions;
 
 public class ActRecentsWS extends ListFragment implements OnItemSelectedListener, ImageCacheCompleted, MFBMain.Invalidatable {
 
@@ -236,7 +235,6 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             m_fErrorsFound = m_fFlightsPosted = false;
 
             Context c = m_ctxt.getContext();
-            PostingOptions po = new PostingOptions();
             CommitFlightSvc cf = new CommitFlightSvc();
             cf.m_Progress = this;
             int cFlights = m_rgle.length;
@@ -248,7 +246,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                     NotifyProgress((iFlight * 100) / cFlights, szStatus);
                 iFlight++;
                 le.SyncProperties();    // pull in the properties for the flight.
-                if (cf.FCommitFlight(AuthToken.m_szAuthToken, le, po, c)) {
+                if (cf.FCommitFlight(AuthToken.m_szAuthToken, le, c)) {
                     m_fFlightsPosted = true;
                     le.DeletePendingFlight();
                 } else {
