@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.myflightbook.android"
-    android:versionCode="83"
-    android:versionName="3.3.4">
+    android:versionCode="84"
+    android:versionName="3.4.2018.09.11">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
