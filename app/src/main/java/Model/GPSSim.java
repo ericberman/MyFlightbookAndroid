@@ -23,13 +23,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.myflightbook.android.R;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Objects;
 
 public class GPSSim {
 
@@ -1259,18 +1260,16 @@ public class GPSSim {
             le.szComments = c.getString(R.string.telemetryImportDefaultComment);
 
             if (uriOriginalTelemetry != null) {
-                File f = new File(uriOriginalTelemetry.getPath());
-                try (FileInputStream inputStream = new FileInputStream(f)) {
-                    try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                        int i;
-                        i = inputStream.read();
-                        while (i != -1) {
-                            bos.write(i);
-                            i = inputStream.read();
+                try (InputStream in = c.getContentResolver().openInputStream(uriOriginalTelemetry)) {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
+                        StringBuilder sb = new StringBuilder();
+                        for (String line; (line = br.readLine()) != null; ) {
+                            sb.append(line).append('\n');
                         }
-                        le.szFlightData = bos.toString();
+                        le.szFlightData = sb.toString();
                     }
-                } catch (IOException ignored) {
+                } catch (Exception ex) {
+                    Log.e(MFBConstants.LOG_TAG, "Error copying input telemetry to new flight: " + ex.getMessage());
                 }
             }
 

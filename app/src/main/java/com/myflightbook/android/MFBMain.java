@@ -154,7 +154,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             LogbookEntry leResult = null;
             if (urls != null && urls.length > 0) {
 
-                Telemetry t = Telemetry.TelemetryFromURL(urls[0]);
+                Telemetry t = Telemetry.TelemetryFromURL(urls[0], this.m_ctxt.getContext());
 
                 if (t != null) {
                     try {
