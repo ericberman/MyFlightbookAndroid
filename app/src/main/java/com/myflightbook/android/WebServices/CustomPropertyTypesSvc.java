@@ -42,10 +42,8 @@ public class CustomPropertyTypesSvc extends MFBSoap {
         CustomPropertyType[] rgCpt = new CustomPropertyType[0];
 
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-        Cursor c = null;
 
-        try {
-            c = db.query(TABLENAME, null, null, null, null, null, null);
+        try (Cursor c = db.query(TABLENAME, null, null, null, null, null, null)) {
 
             if (c != null) {
                 rgCpt = new CustomPropertyType[c.getCount()];
@@ -62,9 +60,6 @@ public class CustomPropertyTypesSvc extends MFBSoap {
         } catch (Exception ex) {
             Log.e(MFBConstants.LOG_TAG,
                     "Error getting cached CustomPropertyType from db" + Log.getStackTraceString(ex));
-        } finally {
-            if (c != null)
-                c.close();
         }
         return rgCpt;
     }
@@ -80,7 +75,7 @@ public class CustomPropertyTypesSvc extends MFBSoap {
         if (lst.size() == 0)
             return rgCpt;
         else
-            return lst.toArray(new CustomPropertyType[lst.size()]);
+            return lst.toArray(new CustomPropertyType[0]);
     }
 
     private void updateCache(CustomPropertyType[] rgcpt) {

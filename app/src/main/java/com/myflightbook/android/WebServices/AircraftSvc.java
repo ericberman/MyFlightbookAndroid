@@ -87,10 +87,8 @@ public class AircraftSvc extends MFBSoap {
         MFBImageInfo[] rgAircraftImages = MFBImageInfo.getAllAircraftImages();
 
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-        Cursor c = null;
 
-        try {
-            c = db.query(TABLENAME, null, null, null, null, null, null);
+        try (Cursor c = db.query(TABLENAME, null, null, null, null, null, null)) {
 
             if (c != null) {
                 rgAc = new Aircraft[c.getCount()];
@@ -160,9 +158,6 @@ public class AircraftSvc extends MFBSoap {
             }
         } catch (Exception ex) {
             Log.e(MFBConstants.LOG_TAG, "Error getting cached aircraft from db: " + ex.getMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
         return rgAc;
     }

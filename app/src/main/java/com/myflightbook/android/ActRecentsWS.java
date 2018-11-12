@@ -293,7 +293,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 arws.refreshRecentFlights(true);
             }
             else if (m_fErrorsFound) {
-                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndPendingFlights(), arws.m_rgExistingFlights.toArray(new LogbookEntry[arws.m_rgExistingFlights.size()]));
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndPendingFlights(), arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
                 arws.populateList();
             }
         }
@@ -336,7 +336,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             if (rgle != null) {
                 arws.m_rgExistingFlights.addAll(Arrays.asList(rgle));
-                arws.m_rgLe = LogbookEntry.mergeFlightLists(rglePending, arws.m_rgExistingFlights.toArray(new LogbookEntry[arws.m_rgExistingFlights.size()]));
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(rglePending, arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
             }
             return rgle != null;
         }

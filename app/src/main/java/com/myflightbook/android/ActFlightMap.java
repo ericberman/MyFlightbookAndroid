@@ -529,12 +529,12 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
 
     private final int PERMISSION_REQUEST_WRITE_GPX = 50372;
 
-    private Boolean checkDocPermissions(int req) {
+    private Boolean checkDocPermissions() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             return true;
 
         // Should we show an explanation?
-        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, req);
+        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_WRITE_GPX);
         return false;
     }
 
@@ -557,7 +557,7 @@ public class ActFlightMap extends Activity implements OnMapReadyCallback, OnClic
                 updateMapElements();
                 break;
             case R.id.btnExportGPX:
-                if (!checkDocPermissions(PERMISSION_REQUEST_WRITE_GPX))
+                if (!checkDocPermissions())
                     return;
 
                 if (m_GPXPath == null && m_le != null && !m_le.IsPendingFlight() && !m_le.IsNewFlight()) {

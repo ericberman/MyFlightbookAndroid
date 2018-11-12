@@ -1048,10 +1048,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
     private void FromDB() {
         if (this.idLocalDB > 0) {
             SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-            Cursor c = null;
 
-            try {
-                c = db.query("Flights", null, "_id = ?", new String[]{String.format(Locale.US, "%d", this.idLocalDB)}, null, null, null);
+            try (Cursor c = db.query("Flights", null, "_id = ?", new String[]{String.format(Locale.US, "%d", this.idLocalDB)}, null, null, null)) {
 
                 if (c != null && c.getCount() == 1) {
                     c.moveToFirst();
@@ -1061,9 +1059,6 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, "Requested stored flight failed to load - resetting");
                 this.idLocalDB = -1;
-            } finally {
-                if (c != null)
-                    c.close();
             }
         }
     }
@@ -1072,10 +1067,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         LogbookEntry[] rglePending = new LogbookEntry[0];
 
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-        Cursor c = null;
 
-        try {
-            c = db.query("Flights", null, "idFlight = ?", new String[]{String.format(Locale.US, "%d", idFlight)}, null, null, null);
+        try (Cursor c = db.query("Flights", null, "idFlight = ?", new String[]{String.format(Locale.US, "%d", idFlight)}, null, null, null)) {
 
             if (c != null) {
                 rglePending = new LogbookEntry[c.getCount()];
@@ -1091,9 +1084,6 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 throw new Exception("Query for flight from db failed!");
         } catch (Exception e) {
             Log.e("LogbookEntry", "Error retrieving pending flights: " + e.getLocalizedMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         return rglePending;

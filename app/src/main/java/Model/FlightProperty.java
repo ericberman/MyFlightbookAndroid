@@ -375,10 +375,8 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
         FlightProperty[] rgfp = new FlightProperty[0];
         if (id > 0) {
             SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-            Cursor c = null;
 
-            try {
-                c = db.query(TABLENAME, null, "idFlight = ?", new String[]{String.format(Locale.US, "%d", id)}, null, null, null);
+            try (Cursor c = db.query(TABLENAME, null, "idFlight = ?", new String[]{String.format(Locale.US, "%d", id)}, null, null, null)) {
 
                 if (c != null) {
                     int i = 0;
@@ -392,9 +390,6 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
                     throw new Exception("Query for flightproperties from db failed!");
             } catch (Exception e) {
                 Log.v(MFBConstants.LOG_TAG, "Requested flight properties not read - " + e.getMessage());
-            } finally {
-                if (c != null)
-                    c.close();
             }
         }
         return rgfp;

@@ -155,7 +155,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
 
         while (m.find())
             lst.add(m.group(0));
-        return lst.toArray(new String[lst.size()]);
+        return lst.toArray(new String[0]);
     }
 
     private static Airport AdHocAirport(String sz) {
@@ -210,7 +210,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
         String szQ = String.format("AirportID IN (%s)", sb.toString());
 
         lstResults.addAll(Arrays.asList(Airport.AirportsForQuery(szQ, loc)));
-        return lstResults.toArray(new Airport[lstResults.size()]);
+        return lstResults.toArray(new Airport[0]);
     }
 
     public static Airport[] AirportsInRouteOrder(String szRoute, Location loc) {
@@ -257,11 +257,9 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
         Airport[] rgap = new Airport[0];
 
         SQLiteDatabase db = MFBMain.mDBHelperAirports.getReadableDatabase();
-        Cursor c = null;
         int iRow = 0;
 
-        try {
-            c = db.query("airports", null, szQ, null, null, null, null);
+        try (Cursor c = db.query("airports", null, szQ, null, null, null, null)) {
 
             if (c != null) {
                 rgap = new Airport[c.getCount()];
@@ -298,9 +296,6 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
             Log.e(MFBConstants.LOG_TAG, "Exception querying airports:" + e.getMessage());
             // some of the airports could be null; just clear them all out
             rgap = new Airport[0];
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         return rgap;

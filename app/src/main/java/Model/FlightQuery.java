@@ -387,7 +387,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			if (s != null)
 				alTypes.add(s);
 		}
-		TypeNames = alTypes.toArray(new String[alTypes.size()]);
+		TypeNames = alTypes.toArray(new String[0]);
 		
 		SoapObject models = (SoapObject) so.getProperty("MakeList");
 		int cmodels = models.getPropertyCount();

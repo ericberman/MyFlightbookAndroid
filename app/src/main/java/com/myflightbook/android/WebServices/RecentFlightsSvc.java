@@ -128,7 +128,7 @@ public class RecentFlightsSvc extends MFBSoap {
         if (rgLe != null)
             alle.addAll(Arrays.asList(rgLe));
 
-        m_CachedFlights = alle.toArray(new LogbookEntry[alle.size()]);
+        m_CachedFlights = alle.toArray(new LogbookEntry[0]);
 
         ClearOrphanedExistingFlightsFromDB();
 
@@ -177,10 +177,8 @@ public class RecentFlightsSvc extends MFBSoap {
     private static void ClearOrphanedExistingFlightsFromDB() {
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
         int[] rgLocalIDs = new int[0];
-        Cursor c = null;
 
-        try {
-            c = db.query("Flights", null, "idFlight > 0", null, null, null, null);
+        try (Cursor c = db.query("Flights", null, "idFlight > 0", null, null, null, null)) {
 
             // get the local ID's of the orphaned entries.
             if (c != null) {
@@ -191,9 +189,6 @@ public class RecentFlightsSvc extends MFBSoap {
             }
         } catch (Exception ex) {
             Log.e(MFBConstants.LOG_TAG, ex.getLocalizedMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         // now clean up the local ID's that were found

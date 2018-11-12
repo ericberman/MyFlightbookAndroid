@@ -143,7 +143,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
                 for (Aircraft ac : lstArchived)
                     arRows.add(new AircraftRowItem(ac));
 
-                aa.m_aircraftRows = arRows.toArray(new AircraftRowItem[arRows.size()]);
+                aa.m_aircraftRows = arRows.toArray(new AircraftRowItem[0]);
 
                 aa.populateList();
             }

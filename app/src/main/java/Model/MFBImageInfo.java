@@ -72,6 +72,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.UUID;
 
 public class MFBImageInfo extends SoapableObject implements KvmSerializable, Serializable {
 
@@ -253,12 +254,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     public void DeletePendingImages(long id) {
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
         String szId = (m_pd == PictureDestination.FlightImage) ? "idFlight" : "idAircraft";
-        Cursor c = null;
         long rgIds[] = null;
 
-        try {
+        try (Cursor c = db.query(TABLENAME, new String[]{"_id"}, szId + " = ?", new String[]{String.format(Locale.US, "%d", id)}, null, null, null)) {
             // Get each one individually so that the associated image file gets deleted too.
-            c = db.query(TABLENAME, new String[]{"_id"}, szId + " = ?", new String[]{String.format(Locale.US, "%d", id)}, null, null, null);
             if (c != null) {
                 rgIds = new long[c.getCount()];
                 int i = 0;
@@ -267,9 +266,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             }
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "Error deleting pending images: " + e.getMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         if (rgIds != null) {
@@ -282,12 +278,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
     public static MFBImageInfo[] getLocalImagesForId(long id, PictureDestination pd) {
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-        Cursor c = null;
         String szId = (pd == PictureDestination.FlightImage) ? "idFlight" : "idAircraft";
         MFBImageInfo[] rgMfbii = new MFBImageInfo[0];
 
-        try {
-            c = db.query(MFBImageInfo.TABLENAME, null, szId + " = ?", new String[]{String.format(Locale.US, "%d", id)}, null, null, null);
+        try (Cursor c = db.query(MFBImageInfo.TABLENAME, null, szId + " = ?", new String[]{String.format(Locale.US, "%d", id)}, null, null, null)) {
             if (c != null) {
 
                 rgMfbii = new MFBImageInfo[c.getCount()];
@@ -300,9 +294,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             }
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "Error getting images for id: " + e.getMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         return rgMfbii;
@@ -310,11 +301,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
     public static MFBImageInfo[] getAllAircraftImages() {
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-        Cursor c = null;
         MFBImageInfo[] rgMfbii = new MFBImageInfo[0];
 
-        try {
-            c = db.query(MFBImageInfo.TABLENAME, null, "idAircraft > 0", null, null, null, null);
+        try (Cursor c = db.query(MFBImageInfo.TABLENAME, null, "idAircraft > 0", null, null, null, null)) {
             if (c != null) {
 
                 rgMfbii = new MFBImageInfo[c.getCount()];
@@ -327,9 +316,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             }
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "Error getting aircraft images: " + e.getMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         return rgMfbii;
@@ -476,40 +462,35 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             return;
 
         SQLiteDatabase db = MFBMain.mDBHelper.getReadableDatabase();
-        Cursor c = null;
-        try {
-            ArrayList<String> alColumns = new ArrayList<>();
-            alColumns.add("szComment");
-            alColumns.add("idFlight");
-            alColumns.add("idAircraft");
-            if (fGetThumb)
-                alColumns.add("thmbData");
-            if (fGetFullImage)
-                alColumns.add("imageData");
+        ArrayList<String> alColumns = new ArrayList<>();
+        alColumns.add("szComment");
+        alColumns.add("idFlight");
+        alColumns.add("idAircraft");
+        if (fGetThumb)
+            alColumns.add("thmbData");
+        if (fGetFullImage)
+            alColumns.add("imageData");
 
-            alColumns.add("Width");
-            alColumns.add("Height");
-            alColumns.add("WidthThumbnail");
-            alColumns.add("HeightThumbnail");
-            alColumns.add("VirtualPath");
-            alColumns.add("ThumbnailFile");
-            alColumns.add("URLFullImage");
-            alColumns.add("ImageType");
+        alColumns.add("Width");
+        alColumns.add("Height");
+        alColumns.add("WidthThumbnail");
+        alColumns.add("HeightThumbnail");
+        alColumns.add("VirtualPath");
+        alColumns.add("ThumbnailFile");
+        alColumns.add("URLFullImage");
+        alColumns.add("ImageType");
 
 
-            String[] rgszColumns = new String[alColumns.size()];
-            alColumns.toArray(rgszColumns);
+        String[] rgszColumns = new String[alColumns.size()];
+        alColumns.toArray(rgszColumns);
 
-            c = db.query(TABLENAME, rgszColumns, "_id = ?", new String[]{String.format(Locale.US, "%d", m_id)}, null, null, null);
+        try (Cursor c = db.query(TABLENAME, rgszColumns, "_id = ?", new String[]{String.format(Locale.US, "%d", m_id)}, null, null, null)) {
             if (c != null && c.getCount() > 0) {
                 c.moveToNext();
                 fromCursor(c, fGetThumb, fGetFullImage);
             }
         } catch (Exception ex) {
             Log.e(MFBConstants.LOG_TAG, String.format("Unable to load image %d: %s", m_id, ex.getMessage()));
-        } finally {
-            if (c != null)
-                c.close();
         }
     }
 
@@ -657,33 +638,23 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         this.setID(idImg);
         fromDB(false, false);    // actual bytes could be long.
 
-        // get a stream to the raw bytes
-
         Boolean fResult = false;
 
         try (FileInputStream fis = new FileInputStream(getAbsoluteImageFile())) {
             String szBase = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? "http://" : "https://") + MFBConstants.szIP;
-            String szBoundary = "IMAGEBOUNDARY";
+            String szBoundary = UUID.randomUUID().toString();
             String szBoundaryDivider = String.format("--%s\r\n", szBoundary);
 
-            URL url;
-            HttpURLConnection urlConnection = null;
+            URL url= new URL(szBase + m_szURL);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoOutput(true);
+            urlConnection.setChunkedStreamingMode(0);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", String.format("multipart/form-data; boundary=%s", szBoundary));
 
-            OutputStream out = null;
-            InputStream in = null;
-            try {
+            try (OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream())) {
                 if (m_key.length() == 0)
                     throw new Exception("No valid key provided");
-
-                url = new URL(szBase + m_szURL);
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                urlConnection.setDoOutput(true);
-                urlConnection.setChunkedStreamingMode(0);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type", String.format("multipart/form-data; boundary=%s", szBoundary));
-
-                out = new BufferedOutputStream(urlConnection.getOutputStream());
 
                 out.write(szBoundaryDivider.getBytes("UTF8"));
                 out.write("Content-Disposition: form-data; name=\"txtAuthToken\"\r\n\r\n".getBytes("UTF8"));
@@ -707,14 +678,19 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
                 out.flush();
 
-                in = new BufferedInputStream(urlConnection.getInputStream());
                 int status = urlConnection.getResponseCode();
                 if (status != HttpURLConnection.HTTP_OK)
                     throw new Exception(String.format(Locale.US, "Bad response - status = %d", status));
 
                 byte[] rgResponse = new byte[1024];
-                int cBytes = in.read(rgResponse);
-                Log.v(MFBConstants.LOG_TAG, String.format(Locale.US, "%d bytes read in uploadpendingimage", cBytes));
+                try (InputStream in = new BufferedInputStream(urlConnection.getInputStream())) {
+                    int cBytes = in.read(rgResponse);
+                    Log.v(MFBConstants.LOG_TAG, String.format(Locale.US, "%d bytes read in uploadpendingimage", cBytes));
+                }
+                catch (Exception ex) {
+                    Log.e(MFBConstants.LOG_TAG, "error uploading pending image: " + ex.getMessage());
+                    throw ex;
+                }
 
                 String sz = new String(rgResponse, "UTF8");
                 if (!sz.contains("OK"))
@@ -728,12 +704,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 Handler h = new Handler(c.getMainLooper());
                 h.post(() -> MFBUtil.Alert(c, c.getString(R.string.txtError), szErr));
             } finally {
-                if (out != null)
-                    out.close();
-                if (in != null)
-                    in.close();
-                if (urlConnection != null)
-                    urlConnection.disconnect();
+                urlConnection.disconnect();
                 m_imgData = null; // free up a potentially large block of memory
             }
         } catch (IOException e) {

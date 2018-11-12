@@ -100,7 +100,7 @@ public class MFBLocation implements LocationListener {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         Parcelable l = intent.getParcelableExtra(mfblocationservice.EXTRA_LOCATION);
-                        if (l != null && l instanceof Location)
+                        if (l instanceof Location)
                             onLocationChanged((Location) l);
                     }
                 };

@@ -456,7 +456,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             if (!ac.HideFromSelection || (m_le != null && ac.AircraftID == m_le.idAircraft))
                 lst.add(ac);
         }
-        return lst.toArray(new Aircraft[lst.size()]);
+        return lst.toArray(new Aircraft[0]);
     }
 
     public void onResume() {
@@ -789,12 +789,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private Boolean checkGPSPermissions(int req) {
+    private Boolean checkGPSPermissions() {
         if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
 
         // Should we show an explanation?
-        requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, req);
+        requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_NEAREST);
         return false;
     }
 
@@ -805,7 +805,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private void AppendNearest() {
         Assert.assertNotNull("No location object in AppendNearest", MFBLocation.GetMainLocation());
 
-        if (checkGPSPermissions(PERMISSION_REQUEST_NEAREST)) {
+        if (checkGPSPermissions()) {
             TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
             m_le.szRoute = Airport.AppendNearestToRoute(txtRoute.getText().toString(), MFBLocation.GetMainLocation().CurrentLoc());
             txtRoute.setText(m_le.szRoute);
@@ -813,13 +813,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void AppendAdHoc() {
-        Assert.assertNotNull("No location object in AppendNearest", MFBLocation.GetMainLocation());
         MFBLocation loc = MFBLocation.GetMainLocation();
+        Assert.assertNotNull("No location object in AppendNearest", loc);
 
-        if (!checkGPSPermissions(PERMISSION_REQUEST_NEAREST))
+        if (!checkGPSPermissions())
             return;
 
-        if (loc == null || loc.CurrentLoc() == null)
+        if (loc.CurrentLoc() == null)
             return;
         String szAdHoc = new LatLong(loc.CurrentLoc()).toAdHocLocString();
         TextView txtRoute = (TextView) findViewById(R.id.txtRoute);

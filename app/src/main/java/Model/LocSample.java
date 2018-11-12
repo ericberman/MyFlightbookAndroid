@@ -70,17 +70,12 @@ public class LocSample extends LatLong {
         ArrayList<LocSample> al = new ArrayList<>();
 
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
-        Cursor c = null;
-        try {
-            c = db.query("FlightTrack", null, null, null, null, null, "TimeStamp ASC");
+        try (Cursor c = db.query("FlightTrack", null, null, null, null, null, "TimeStamp ASC")) {
 
             while (c.moveToNext())
                 al.add(new LocSample(c));
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "Unable to retrieve pending flight telemetry data: " + e.getLocalizedMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         return al.toArray(new LocSample[0]);

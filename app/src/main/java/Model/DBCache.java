@@ -89,10 +89,8 @@ public class DBCache {
         this.errorString = "";
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
         DBCacheStatus dbcs = DBCacheStatus.INVALID;
-        Cursor c = null;
 
-        try {
-            c = db.query(CACHE_TABLE, new String[]{COL_LASTREFRESH}, String.format("%s = ?", COL_TABLENAME), new String[]{tablename}, null, null, null);
+        try (Cursor c = db.query(CACHE_TABLE, new String[]{COL_LASTREFRESH}, String.format("%s = ?", COL_TABLENAME), new String[]{tablename}, null, null, null)) {
             if (c != null && c.moveToFirst()) {
                 SimpleDateFormat sf = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
                 Date dtNow = new Date();
@@ -118,9 +116,6 @@ public class DBCache {
             this.errorString = "Error checking status for table " + tablename + e.getMessage();
             Log.e(MFBConstants.LOG_TAG, this.errorString);
             dbcs = DBCacheStatus.INVALID;
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         return dbcs;

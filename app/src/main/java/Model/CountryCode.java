@@ -51,9 +51,7 @@ public class CountryCode {
         m_allCodes = new ArrayList<>();
 
         SQLiteDatabase db = MFBMain.mDBHelper.getReadableDatabase();
-        Cursor c = null;
-        try {
-            c = db.query("countrycodes", null, null, null, null, null, "id ASC");
+        try (Cursor c = db.query("countrycodes", null, null, null, null, null, "id ASC")) {
 
             if (c != null && c.getCount() > 0) {
                 while (c.moveToNext())
@@ -61,9 +59,6 @@ public class CountryCode {
             }
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "Unable to retrieve pending flight telemetry data: " + e.getLocalizedMessage());
-        } finally {
-            if (c != null)
-                c.close();
         }
 
         return m_allCodes;
