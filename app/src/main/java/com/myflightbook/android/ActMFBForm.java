@@ -430,8 +430,8 @@ public class ActMFBForm extends Fragment {
 
     //region image/video selection
     void ChoosePicture() {
-        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        i.setType("image/* video/*");
+        Intent i = new Intent(Intent.ACTION_PICK);
+        i.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/* video/*");
         startActivityForResult(i, SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
