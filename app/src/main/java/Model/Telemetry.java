@@ -18,6 +18,7 @@
  */
 package Model;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Xml;
 
@@ -27,13 +28,13 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,12 +48,14 @@ public abstract class Telemetry {
     public enum ImportedFileType { GPX, KML, CSV, Unknown }
 
     private Uri m_uri = null;
+    private Context m_ctxt = null;
     private Pattern m_pISODate = null;
 
     Telemetry() {}
 
-    Telemetry(Uri uri) {
+    Telemetry(Uri uri, Context c) {
         m_uri = uri;
+        m_ctxt = c;
     }
 
     LocSample[] ComputeSpeed(LocSample[] rgSamples) {
@@ -97,13 +100,12 @@ public abstract class Telemetry {
         return new Date();
     }
 
-    private static ImportedFileType TypeFromUri(Uri data) {
+    private static ImportedFileType TypeFromUri(Uri data, Context c) {
 
         ImportedFileType result = ImportedFileType.Unknown;
 
-        File f = new File(data.getPath());
-        try (FileReader fr = new FileReader(f)) {
-            try (BufferedReader br = new BufferedReader(fr)) {
+        try (InputStream in = c.getContentResolver().openInputStream(data)) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
                 String s;
                 while ((s = br.readLine()) != null) {
                     s = s.toUpperCase(Locale.ENGLISH);
@@ -126,15 +128,15 @@ public abstract class Telemetry {
         return result;
     }
 
-    public static Telemetry TelemetryFromURL(Uri uri) {
+    public static Telemetry TelemetryFromURL(Uri uri, Context c) {
         if (uri == null)
             return null;
 
-        switch (TypeFromUri(uri)) {
+        switch (TypeFromUri(uri, c)) {
             case GPX:
-                return new GPX(uri);
+                return new GPX(uri, c);
             case KML:
-                return new KML(uri);
+                return new KML(uri, c);
             default:
                 return null;
         }
@@ -151,13 +153,14 @@ public abstract class Telemetry {
 
     // Follows the instructions at https://developer.android.com/training/basics/network-ops/xml.html
     private LocSample[] parse() throws XmlPullParserException, IOException {
-        File f = new File(m_uri.getPath());
-        try (FileInputStream s = new FileInputStream(f)){
-            XmlPullParser parser = Xml.newPullParser();
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            parser.setInput(s, null);
-            parser.nextTag();
-            return readFeed(parser);
+        try (InputStream in = m_ctxt.getContentResolver().openInputStream(m_uri)) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
+                XmlPullParser parser = Xml.newPullParser();
+                parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                parser.setInput(in, null);
+                parser.nextTag();
+                return readFeed(parser);
+            }
         }
     }
 
