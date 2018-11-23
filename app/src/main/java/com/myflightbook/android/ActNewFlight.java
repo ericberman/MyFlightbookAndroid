@@ -391,7 +391,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (fIsNewFlight) {
             // re-use the existing in-progress flight
             m_le = MFBMain.getNewFlightListener().getInProgressFlight(getActivity());
-            MFBMain.SetInProgressFlightActivity(getContext(), this);
             MFBMain.registerNotifyResetAll(this);
             SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
             Boolean fExpandCockpit = pref.getBoolean(m_KeyShowInCockpit, true);
@@ -518,14 +517,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 }
             };
             m_HandlerUpdateTimer.postDelayed(m_UpdateElapsedTimeTask, 1000);
-
-            // And make sure we display GPS data
-            MFBMain.SetInProgressFlightActivity(getContext(), this);
         }
 
         setUpGalleryForFlight();
-
-        Log.w(MFBConstants.LOG_TAG, String.format("onResume completed, landings are %d, isRecording: %s", m_le.cLandings, MFBLocation.IsRecording ? "yes" : "no"));
 
         RestoreState();
 
@@ -547,6 +541,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime && m_le.rgCustomProperties != null)
             AutoTotals();
+
+        if (fIsNewFlight)
+            MFBMain.SetInProgressFlightActivity(getContext(), this);
 
         ToView();
     }

@@ -32,6 +32,8 @@ import android.database.sqlite.SQLiteReadOnlyDatabaseException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -456,15 +458,19 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         super.onPause();
     }
 
-    protected void onResume() {
-        super.onResume();
-
-        // Turn on location/GPS last to minimize elapsed time between startForegroundService and startForeground
+    protected void resumeGPS() {
+        Log.e(MFBConstants.LOG_TAG, "GPSCRASH - RESUMEGPS called");
         if (MFBLocation.GetMainLocation() == null)
             MFBLocation.setMainLocation(new MFBLocation(this));
+        else
+            Log.e(MFBConstants.LOG_TAG, "GPSCRASH - RESUMEGPS Main Location already exists");
 
         if (MFBLocation.GetMainLocation() != null)
             MFBLocation.GetMainLocation().startListening(this);
+    }
+
+    protected void onResume() {
+        super.onResume();
 
         // check to see if we need to refresh auth.
         AuthToken at = new AuthToken();
@@ -472,6 +478,13 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             RefreshTask rt = new RefreshTask(getApplicationContext(), this);
             rt.execute(at);
         }
+
+        // This is a hack, but we get a lot of crashes about too much time between startForegroundService being
+        // called and startForeground being called.
+        // Problem is, other tabs' OnResume may not have been called yet, so let's delay this by a few
+        // seconds so that all the other startup tasks are done before we call startForegroundService.
+        // Note that ActNewFlight will initialize the GPS as needed, so this call will be a no-op at that point.
+        new Handler(Looper.getMainLooper()).postDelayed(this::resumeGPS, 3000);
     }
 
     @Override
