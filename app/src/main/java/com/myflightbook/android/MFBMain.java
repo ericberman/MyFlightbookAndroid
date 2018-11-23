@@ -458,7 +458,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         super.onPause();
     }
 
-    protected void resumeGPS() {
+    private void resumeGPS() {
         Log.e(MFBConstants.LOG_TAG, "GPSCRASH - RESUMEGPS called");
         if (MFBLocation.GetMainLocation() == null)
             MFBLocation.setMainLocation(new MFBLocation(this));
