@@ -197,6 +197,9 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                         case Deadline:
                             RedirectTo("DEADLINE");
                             break;
+                        case AircraftDeadline:
+                            RedirectTo(String.format(Locale.US, "AIRCRAFTEDIT&id=%d", csi.AssociatedResourceID));
+                            break;
                         case Certificates:
                             RedirectTo("CERTIFICATES");
                             break;

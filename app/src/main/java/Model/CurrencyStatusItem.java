@@ -22,7 +22,7 @@ import org.ksoap2.serialization.SoapObject;
 
 
 public class CurrencyStatusItem extends SoapableObject {
-    public enum  CurrencyGroups {None, FlightExperience, FlightReview, Aircraft, Certificates, Medical, Deadline, CustomCurrency}
+    public enum  CurrencyGroups {None, FlightExperience, FlightReview, Aircraft, AircraftDeadline, Certificates, Medical, Deadline, CustomCurrency}
 
     public String Attribute = "";
     public String Value = "";
