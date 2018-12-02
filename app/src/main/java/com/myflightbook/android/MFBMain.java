@@ -540,7 +540,10 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         }
     }
 
+    private Boolean fIsPaused = false;
+
     protected void onPause() {
+        fIsPaused = true;
         if (MFBLocation.GetMainLocation() != null) {
             // stop listening we aren't supposed to stay awake.
             if (!MFBMain.getNewFlightListener().shouldKeepListening())
@@ -556,6 +559,9 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     }
 
     private void resumeGPS() {
+        if (fIsPaused)
+            return;
+
         Log.e(MFBConstants.LOG_TAG, "GPSCRASH - RESUMEGPS called");
         if (MFBLocation.GetMainLocation() == null)
             MFBLocation.setMainLocation(new MFBLocation(this));
@@ -569,6 +575,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
     protected void onResume() {
         super.onResume();
 
+        fIsPaused = false;
         // check to see if we need to refresh auth.
         AuthToken at = new AuthToken();
         if (!at.HasValidCache()) {
