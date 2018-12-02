@@ -44,6 +44,12 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         void unPauseFlight();
 
         void saveCurrentFlight();
+
+        void togglePausePlay();
+
+        void startEngine();
+
+        void stopEngine();
     }
 
     public MFBFlightListener() {

@@ -1589,6 +1589,31 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
+    public void togglePausePlay() {
+        if (fPaused)
+            unPauseFlight();
+        else
+            pauseFlight();
+        updatePausePlayButtonState();
+    }
+
+    public void startEngine() {
+        if (m_le != null && !m_le.isKnownEngineStart()) {
+            m_le.dtEngineStart = MFBUtil.nowWith0Seconds();
+            EngineStart();
+            ToView();
+        }
+    }
+
+    public void stopEngine() {
+        if (m_le != null && !m_le.isKnownEngineEnd()) {
+            m_le.dtEngineEnd = MFBUtil.nowWith0Seconds();
+            EngineStop();
+            ToView();
+        }
+    }
+
+
     private void updateElapsedTime() {            // update the button state
         ImageButton ib = (ImageButton) findViewById(R.id.btnPausePlay);
         // pause/play should only be visible on ground with engine running (or flight start known but engine end unknown)

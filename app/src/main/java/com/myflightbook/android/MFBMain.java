@@ -26,11 +26,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteReadOnlyDatabaseException;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,8 +51,6 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabContentFactory;
 
 import com.myflightbook.android.WebServices.AuthToken;
-
-import junit.framework.Assert;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -127,6 +129,14 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
     public static String versionName = "";
     public static int versionCode = 0;
+
+    private static final String ACTION_VIEW_CURRENCY = "com.myflightbook.android.VIEWCURRENCY";
+    private static final String ACTION_VIEW_TOTALS = "com.myflightbook.android.VIEWTOTALS";
+    private static final String ACTION_START_ENGINE = "com.myflightbook.android.STARTENGINE";
+    private static final String ACTION_STOP_ENGINE = "com.myflightbook.android.STOPENGINE";
+    private static final String ACTION_PAUSE_FLIGHT = "com.myflightbook.android.PAUSEFLIGHT";
+    private static final String ACTION_RESUME_FLIGHT = "com.myflightbook.android.RESUMEFLIGHT";
+    private static String pendingAction = null;
 
     private static Resources m_Resources = null;
     public static String getResourceString(int id) {
@@ -408,6 +418,24 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         refreshAuth();
 
         OpenRequestedTelemetry();
+
+        // handle shortcuts
+        Intent i = getIntent();
+        String szAction = i.getAction();
+        if (szAction != null) {
+            switch (szAction) {
+                case ACTION_VIEW_CURRENCY:
+                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabCurrency);
+                    break;
+                case ACTION_VIEW_TOTALS:
+                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabTotals);
+                    break;
+                default:
+                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabNewFlight);
+                    MFBMain.pendingAction = szAction;
+                    break;
+            }
+        }
     }
 
     private void OpenRequestedTelemetry() {
@@ -446,14 +474,83 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    protected void setDynamicShortcuts() {
+        // 4 possible dynamic shortcuts:
+        // Start/stop engine
+        // puase/play.
+        // If engine is not started, only show start.
+        // if engine is started, show stop and pause/play
+
+        if (Build.VERSION.SDK_INT >= 25) {
+
+            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+
+            if (shortcutManager != null && MFBLocation.GetMainLocation() != null) {
+                ArrayList<ShortcutInfo> lst = new ArrayList<>();
+
+                Boolean fFlightStarted = MFBMain.getNewFlightListener().shouldKeepListening();
+                Boolean fPaused = ActNewFlight.fPaused;
+
+                if (fFlightStarted) {
+                    lst.add(new ShortcutInfo.Builder(this, "startEngine")
+                            .setShortLabel(getString(R.string.shortcutStopEngine))
+                            .setLongLabel(getString(R.string.shortcutStopEngine))
+                            .setIcon(Icon.createWithResource(this, R.drawable.ic_action_stop))
+                            .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_STOP_ENGINE))
+                            .build());
+                    if (fPaused)
+                        lst.add(new ShortcutInfo.Builder(this, "resume")
+                            .setShortLabel(getString(R.string.shortcutResume))
+                            .setLongLabel(getString(R.string.shortcutResume))
+                            .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
+                                .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_RESUME_FLIGHT))
+                            .build());
+                    else
+                        lst.add(new ShortcutInfo.Builder(this, "pause")
+                                .setShortLabel(getString(R.string.shortcutPause))
+                                .setLongLabel(getString(R.string.shortcutPause))
+                                .setIcon(Icon.createWithResource(this, R.drawable.ic_action_pause))
+                                .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_PAUSE_FLIGHT))
+                                .build());
+                }
+                else
+                    lst.add(new ShortcutInfo.Builder(this, "startEngine")
+                            .setShortLabel(getString(R.string.shortcutStartEngine))
+                            .setLongLabel(getString(R.string.shortcutStartEngine))
+                            .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
+                            .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_START_ENGINE))
+                            .build());
+
+                // Now add Currency and Totals
+                lst.add(new ShortcutInfo.Builder(this, "currency")
+                        .setShortLabel(getString(R.string.shortcutCurrency))
+                        .setLongLabel(getString(R.string.shortcutCurrency))
+                        .setIcon(Icon.createWithResource(this, R.drawable.currency))
+                        .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_VIEW_CURRENCY))
+                        .build());
+                lst.add(new ShortcutInfo.Builder(this, "totals")
+                        .setShortLabel(getString(R.string.shortcutTotals))
+                        .setLongLabel(getString(R.string.shortcutTotals))
+                        .setIcon(Icon.createWithResource(this, R.drawable.totals))
+                        .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_VIEW_TOTALS))
+                        .build());
+
+                shortcutManager.setDynamicShortcuts(lst);
+            }
+        }
+    }
+
     protected void onPause() {
-        Assert.assertNotNull("m_Location is null in MFBMain.onResume()", MFBLocation.GetMainLocation());
-        // stop listening we aren't supposed to stay awake.
-        if (!MFBMain.getNewFlightListener().shouldKeepListening())
-            MFBLocation.GetMainLocation().stopListening(this);
+        if (MFBLocation.GetMainLocation() != null) {
+            // stop listening we aren't supposed to stay awake.
+            if (!MFBMain.getNewFlightListener().shouldKeepListening())
+                MFBLocation.GetMainLocation().stopListening(this);
+        }
 
         // close the writeable DB, in case it is opened.
         mDBHelper.getWritableDatabase().close();
+
+        setDynamicShortcuts();
 
         super.onPause();
     }
@@ -666,6 +763,22 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
             MFBLocation.setMainLocation(new MFBLocation(c, fl));
         else
             MFBLocation.GetMainLocation().SetListener(fl);
+
+        if (d != null && pendingAction != null) {
+            switch (pendingAction) {
+                case ACTION_PAUSE_FLIGHT:
+                case ACTION_RESUME_FLIGHT:
+                    d.togglePausePlay();
+                    break;
+                case ACTION_START_ENGINE:
+                    d.startEngine();
+                    break;
+                case ACTION_STOP_ENGINE:
+                    d.stopEngine();
+                    break;
+            }
+            pendingAction = null;
+        }
     }
 
     public static void registerNotifyDataChange(Invalidatable o) {

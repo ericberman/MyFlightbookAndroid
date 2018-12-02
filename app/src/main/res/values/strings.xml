@@ -509,4 +509,12 @@
     <string name="hintSearchModels">Models</string>
     <string name="hintSearchVisitedAirports">Airports</string>
     <string name="hintSearchProperties">Properties</string>
+
+    <!-- App Shortcuts -->
+    <string name="shortcutCurrency">Currency</string>
+    <string name="shortcutTotals">Totals</string>
+    <string name="shortcutStartEngine">Start Engine</string>
+    <string name="shortcutStopEngine">Stop Engine</string>
+    <string name="shortcutPause">Pause</string>
+    <string name="shortcutResume">Resume</string>
 s</resources>
