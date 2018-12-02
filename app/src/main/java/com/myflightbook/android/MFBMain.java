@@ -474,7 +474,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    protected void setDynamicShortcuts() {
+    private void setDynamicShortcuts() {
         // 4 possible dynamic shortcuts:
         // Start/stop engine
         // puase/play.
