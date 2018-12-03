@@ -490,6 +490,8 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
 
                 Boolean fFlightStarted = MFBMain.getNewFlightListener().shouldKeepListening();
                 Boolean fPaused = ActNewFlight.fPaused;
+                LogbookEntry le = MFBMain.getNewFlightListener().getInProgressFlight(this);
+                Boolean fFlightEnded = le != null && le.isKnownEngineEnd();
 
                 if (fFlightStarted) {
                     lst.add(new ShortcutInfo.Builder(this, "startEngine")
@@ -513,7 +515,7 @@ public class MFBMain extends FragmentActivity implements OnTabChangeListener {
                                 .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_PAUSE_FLIGHT))
                                 .build());
                 }
-                else
+                else if (!fFlightEnded)
                     lst.add(new ShortcutInfo.Builder(this, "startEngine")
                             .setShortLabel(getString(R.string.shortcutStartEngine))
                             .setLongLabel(getString(R.string.shortcutStartEngine))
