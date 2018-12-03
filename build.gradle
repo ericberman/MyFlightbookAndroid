@@ -21,5 +21,11 @@ allprojects {
             name 'Google'
         }
     }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked"
+        }
+    }
 }
 
