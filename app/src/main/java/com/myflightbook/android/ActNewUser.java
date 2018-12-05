@@ -18,12 +18,12 @@
  */
 package com.myflightbook.android;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,7 +38,7 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import Model.MFBConstants;
 import Model.MFBUtil;
 
-public class ActNewUser extends Activity implements
+public class ActNewUser extends AppCompatActivity implements
         android.view.View.OnClickListener {
     private TextView txtEmail, txtEmail2, txtPass, txtPass2, txtFirst, txtLast,
             txtQ, txtA;

@@ -19,7 +19,6 @@
 package com.myflightbook.android;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -41,7 +41,7 @@ import java.io.File;
 
 import Model.MFBConstants;
 
-public class ActWebView extends Activity {
+public class ActWebView extends AppCompatActivity {
 
     private String szTempFile = "";
     private ValueCallback<Uri> mUploadMessage;
@@ -170,14 +170,14 @@ public class ActWebView extends Activity {
         }
     }
 
-    public static void ViewTempFile(Activity a, File f) {
+    public static void ViewTempFile(android.app.Activity a, File f) {
         Intent i = new Intent(a, ActWebView.class);
         i.putExtra(MFBConstants.intentViewURL, FileProvider.getUriForFile(a, BuildConfig.APPLICATION_ID + ".provider", f).toString());
         i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
         a.startActivity(i);
     }
 
-    public static void ViewURL(Activity a, String szURL) {
+    public static void ViewURL(android.app.Activity a, String szURL) {
         Intent i = new Intent(a, ActWebView.class);
         i.putExtra(MFBConstants.intentViewURL, szURL);
         a.startActivity(i);

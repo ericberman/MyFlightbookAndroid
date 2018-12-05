@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menuDeleteImage"
         android:icon="@drawable/ic_action_discard"
-        android:showAsAction="ifRoom"
         android:title="@string/menuDeleteImage"
-        android:titleCondensed="@string/menuDeleteImageShort" />
+        android:titleCondensed="@string/menuDeleteImageShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuAddComment"
-        android:showAsAction="ifRoom"
         android:title="@string/menuEditComment"
-        android:titleCondensed="@string/menuEditCommentShort" />
+        android:titleCondensed="@string/menuEditCommentShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuViewImage"
-        android:showAsAction="ifRoom"
         android:title="@string/menuViewImage"
-        android:titleCondensed="@string/menuViewImageShort" />
+        android:titleCondensed="@string/menuViewImageShort"
+        app:showAsAction="ifRoom" />
 </menu>

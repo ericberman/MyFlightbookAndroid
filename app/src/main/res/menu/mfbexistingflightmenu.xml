@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menuSignFlight"
-        android:showAsAction="always"
-        android:title="@string/menuSignFlight" />
+        android:title="@string/menuSignFlight"
+        app:showAsAction="always" />
     <item
         android:id="@+id/btnUpdateFlight"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuUpdateFlight" />
+        android:title="@string/menuUpdateFlight"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuTakePicture"
         android:icon="@drawable/ic_action_camera"
-        android:showAsAction="ifRoom"
         android:title="@string/menuTakePicture"
-        android:titleCondensed="@string/menuTakePictureShort" />
+        android:titleCondensed="@string/menuTakePictureShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuTakeVideo"
         android:icon="@drawable/ic_action_video"
-        android:showAsAction="ifRoom"
         android:title="@string/menuTakeVideo"
-        android:titleCondensed="@string/menuTakeVideoShort" />
+        android:titleCondensed="@string/menuTakeVideoShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuChoosePicture"
         android:icon="@drawable/ic_action_picture"
-        android:showAsAction="ifRoom"
         android:title="@string/menuChoosePicture"
-        android:titleCondensed="@string/menuChoosePictureShort" />
+        android:titleCondensed="@string/menuChoosePictureShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuRepeatFlight"
         android:title="@string/menuRepeatFlight"
@@ -45,6 +46,6 @@
     <item
         android:id="@+id/btnDeleteFlight"
         android:icon="@drawable/ic_action_discard"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuDeleteFlight" />
+        android:title="@string/menuDeleteFlight"
+        app:showAsAction="ifRoom" />
 </menu>

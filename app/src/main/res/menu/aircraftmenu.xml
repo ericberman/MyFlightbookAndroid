@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menuRefreshAircraft"
         android:icon="@drawable/ic_action_refresh"
-        android:showAsAction="ifRoom"
         android:title="@string/menuRefreshAircraft"
-        android:titleCondensed="@string/menuRefreshAircraftShort" />
+        android:titleCondensed="@string/menuRefreshAircraftShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuNewAircraft"
         android:icon="@drawable/ic_action_new"
-        android:showAsAction="withText|always"
         android:title="@string/menuAddAircraft"
-        android:titleCondensed="@string/menuAddAircraftShort" />
+        android:titleCondensed="@string/menuAddAircraftShort"
+        app:showAsAction="withText|always" />
 </menu>

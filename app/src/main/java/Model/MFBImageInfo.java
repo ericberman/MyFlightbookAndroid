@@ -18,7 +18,6 @@
  */
 package Model;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -967,7 +966,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         return output;
     }
 
-    public void ViewFullImageInWebView(Activity a) {
+    public void ViewFullImageInWebView(android.app.Activity a) {
         if (URLFullImage.length() > 0) {
             // Image is on server - easy - just use webview
             ActWebView.ViewURL(a, getURLFullImage());

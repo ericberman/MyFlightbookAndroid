@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menuRefresh"
         android:icon="@drawable/ic_action_refresh"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuRefresh" />
+        android:title="@string/menuRefresh"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/findFlights"
         android:icon="@drawable/ic_action_search"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuFlightSearch" />
+        android:title="@string/menuFlightSearch"
+        app:showAsAction="ifRoom" />
 </menu>

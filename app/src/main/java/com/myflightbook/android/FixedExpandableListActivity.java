@@ -1,10 +1,11 @@
 package com.myflightbook.android;
 
 // This code is from http://code.google.com/p/android/issues/detail?id=2732
-import android.app.Activity;
+
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -138,7 +139,7 @@ import java.util.Map;
  * @see #setListAdapter
  * @see android.widget.ExpandableListView
  */
-public class FixedExpandableListActivity extends Activity implements
+public class FixedExpandableListActivity extends AppCompatActivity implements
         OnCreateContextMenuListener,
         ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupCollapseListener,
         ExpandableListView.OnGroupExpandListener {   

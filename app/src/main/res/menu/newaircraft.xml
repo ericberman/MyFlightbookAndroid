@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menuAddAircraft"
-        android:showAsAction="always|withText"
-        android:title="@string/lblBtnAddAircraft" />
+        android:title="@string/lblBtnAddAircraft"
+        app:showAsAction="always|withText" />
     <item
         android:id="@+id/menuTakePicture"
         android:icon="@drawable/ic_action_camera"
-        android:showAsAction="ifRoom"
         android:title="@string/menuTakePicture"
-        android:titleCondensed="@string/menuTakePictureShort" />
+        android:titleCondensed="@string/menuTakePictureShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuChoosePicture"
         android:icon="@drawable/ic_action_picture"
-        android:showAsAction="ifRoom"
         android:title="@string/menuChoosePicture"
-        android:titleCondensed="@string/menuChoosePictureShort" />
+        android:titleCondensed="@string/menuChoosePictureShort"
+        app:showAsAction="ifRoom" />
 </menu>

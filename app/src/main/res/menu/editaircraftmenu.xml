@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menuUpdateAircraft"
-        android:showAsAction="ifRoom"
         android:title="@string/menuUpdateAircraft"
-        android:titleCondensed="@string/menuUpdateAircraftShort" />
+        android:titleCondensed="@string/menuUpdateAircraftShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuTakePicture"
         android:icon="@drawable/ic_action_camera"
-        android:showAsAction="ifRoom"
         android:title="@string/menuTakePicture"
-        android:titleCondensed="@string/menuTakePictureShort" />
+        android:titleCondensed="@string/menuTakePictureShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuChoosePicture"
         android:icon="@drawable/ic_action_picture"
-        android:showAsAction="ifRoom"
         android:title="@string/menuChoosePicture"
-        android:titleCondensed="@string/menuChoosePictureShort" />
+        android:titleCondensed="@string/menuChoosePictureShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/findFlights"
         android:icon="@drawable/ic_action_search"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuFlightSearch" />
+        android:title="@string/menuFlightSearch"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuDeleteAircraft"
         android:icon="@drawable/ic_action_discard"
-        android:showAsAction="ifRoom"
         android:title="@string/menuDeleteAircraft"
-        android:titleCondensed="@string/menuDeleteAircraftShort" />
+        android:titleCondensed="@string/menuDeleteAircraftShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuViewSchedule"
         android:icon="@drawable/ic_action_go_to_today"
-        android:showAsAction="ifRoom"
         android:title="@string/lblSchedule"
-        android:titleCondensed="@string/lblSchedule" />
+        android:titleCondensed="@string/lblSchedule"
+        app:showAsAction="ifRoom" />
 </menu>

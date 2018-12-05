@@ -18,9 +18,9 @@
  */
 package com.myflightbook.android;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,7 +34,7 @@ import Model.Airport;
 import Model.ApproachDescription;
 import Model.DecimalEdit;
 
-public class ActAddApproach extends Activity {
+public class ActAddApproach extends AppCompatActivity {
 
     // intent keys
     public static final String AIRPORTSFORAPPROACHES = "com.myflightbook.android.AirportsForApproaches";

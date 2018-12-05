@@ -26,7 +26,6 @@ import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.widget.EditText;
 
 import com.myflightbook.android.R;
 
@@ -35,7 +34,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class DecimalEdit extends EditText implements OnLongClickListener {
+public class DecimalEdit extends android.support.v7.widget.AppCompatEditText implements OnLongClickListener {
 
     public interface CrossFillDelegate {
         void CrossFillRequested(DecimalEdit sender);

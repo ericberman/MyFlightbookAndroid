@@ -18,11 +18,11 @@
  */
 package com.myflightbook.android;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.VideoView;
 
@@ -30,7 +30,7 @@ import java.io.File;
 
 import Model.MFBConstants;
 
-public class ActLocalVideo extends Activity {
+public class ActLocalVideo extends AppCompatActivity {
     private String szTempFile = "";
 
     @Override
@@ -54,7 +54,7 @@ public class ActLocalVideo extends Activity {
         }
     }
 
-    public static void ViewTempFile(Activity a, File f) {
+    public static void ViewTempFile(android.app.Activity a, File f) {
         Intent i = new Intent(a, ActLocalVideo.class);
         i.putExtra(MFBConstants.intentViewURL, FileProvider.getUriForFile(a, BuildConfig.APPLICATION_ID + ".provider", f).toString());
         i.putExtra(MFBConstants.intentViewTempFile, f.getAbsolutePath());
