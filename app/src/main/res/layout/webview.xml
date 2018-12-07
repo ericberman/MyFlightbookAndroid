@@ -30,7 +30,7 @@
             android:id="@+id/btnWebRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_action_refresh"
+            android:drawableStart="@drawable/ic_action_refresh_dk"
             style="?android:attr/buttonBarStyle"
             android:text="" />
 

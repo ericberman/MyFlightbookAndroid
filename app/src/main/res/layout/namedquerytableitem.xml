@@ -20,6 +20,7 @@
         android:contentDescription="@string/fqQueryDeleteShort"
         android:padding="2dp"
         android:src="@drawable/ic_action_discard"
+        android:background="@null"
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

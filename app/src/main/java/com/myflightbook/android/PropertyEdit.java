@@ -163,11 +163,19 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
         });
 
         findViewById(R.id.imgAboutProp).setOnClickListener(view -> {
+            LayoutInflater inflater =(LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (inflater != null) {
+                View layout = inflater.inflate(R.layout.toastlayout, findViewById(R.id.toastLayout));
+                TextView txt = layout.findViewById(R.id.txtToastText);
+
                 Toast t = Toast.makeText(getContext(), fp.descriptionString(), Toast.LENGTH_SHORT);
                 int[] location = new int[2];
                 findViewById(R.id.layoutPropEdit).getLocationOnScreen(location);
                 t.setGravity(Gravity.TOP | Gravity.START, location[0], location[1]);
+                txt.setText(fp.descriptionString());
+                t.setView(layout);
                 t.show();
+            }
         });
 
         handleStupidFocusStuffInListViews(m_txtStringVal);

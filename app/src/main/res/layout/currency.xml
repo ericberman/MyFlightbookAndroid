@@ -18,7 +18,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:background="@color/table_background"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
@@ -30,7 +29,6 @@
                 android:id="@+id/tblCurrency"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/table_background"
                 android:padding="4dp"
                 android:stretchColumns="0,1" />
         </LinearLayout>

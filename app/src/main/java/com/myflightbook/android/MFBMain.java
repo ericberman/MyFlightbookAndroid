@@ -44,6 +44,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.View;
 import android.widget.TabHost;
@@ -110,6 +111,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     static private final String m_KeysTOSpeed = "takeoffspeed";
     static private final String m_KeysNightFlightOption = "nightFlightOption";
     static private final String m_KeysNightLandingOption = "nightLandingOption";
+
+    static private final String m_KeysNightMode = "nightModeOption";
+    static public int NightModePref = AppCompatDelegate.MODE_NIGHT_NO;
 
     static private final String m_TimeOfLastVacuum = "LastVacuum";
 
@@ -336,6 +340,12 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     //  Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // get cached auth credentials; restore state prior to restoring location.
+        mPrefs = getPreferences(MODE_PRIVATE);
+
+        MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         m_Resources = getResources();
@@ -351,8 +361,6 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
         initDB(true);
 
-        // get cached auth credentials; restore state prior to restoring location.
-        mPrefs = getPreferences(MODE_PRIVATE);
         RestoreState();
 
         // set up for web services
@@ -709,6 +717,8 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         ed.putBoolean(m_KeysfHeliports, Airport.fPrefIncludeHeliports);
         ed.putBoolean(m_KeysUseHHMM, DecimalEdit.DefaultHHMM);
         ed.putBoolean(m_KeysUseLocal, DlgDatePicker.fUseLocalTime);
+
+        ed.putInt(m_KeysNightMode, MFBMain.NightModePref);
 
         ed.putBoolean(m_KeysHasSeenWarning, m_fSeenWarning);
 

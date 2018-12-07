@@ -37,6 +37,10 @@
     <string name="lblImageOptions">Affichage du vol</string>
     <string name="lblShowFlightImages">Afficher les images pour les vols</string>
     <string name="lblShowFlightTimes">Afficher les heures de vol</string>
+    <string name="lblNightMode">Mode Nuit</string>
+    <string name="lblNightModeOff">Désactivé</string>
+    <string name="lblNightModeOn">Activé</string>
+    <string name="lblNightModeAuto">Automatique</string>
 
     <string name="lblRoute">Trajet</string>
     <string name="lblAppendNearest">le plus proche</string>

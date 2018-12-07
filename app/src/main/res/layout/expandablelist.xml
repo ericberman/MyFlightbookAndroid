@@ -6,7 +6,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableEnd="@drawable/ic_action_search_dark"
+        android:drawableEnd="@drawable/ic_action_search"
         android:hint="@string/strEmpty"
         android:inputType="text"
         android:id="@+id/txtSearchProp"

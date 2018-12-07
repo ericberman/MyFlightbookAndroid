@@ -208,7 +208,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
                 imgCamera.setImageResource(R.drawable.noimage);
             }
 
-            int textColor = ac.HideFromSelection ? 0x88000000 : 0xFF000000;
+            int textColor = (tvTail.getCurrentTextColor() & 0x00FFFFFF) | (ac.HideFromSelection ? 0x88000000 : 0xFF000000);
             tvTail.setTextColor(textColor);
             tvModel.setTextColor(textColor);
             tvModelCommonName.setTextColor(textColor);

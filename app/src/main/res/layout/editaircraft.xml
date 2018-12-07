@@ -94,7 +94,6 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/table_background"
             android:padding="4dp"
             android:stretchColumns="0,1"
             android:id="@+id/tblImageTable"/>

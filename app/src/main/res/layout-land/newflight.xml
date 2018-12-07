@@ -80,6 +80,7 @@
                     android:layout_height="wrap_content"
                     android:longClickable="true"
                     android:padding="2dp"
+                    android:background="@null"
                     android:src="@drawable/ic_action_location_found"
                     android:contentDescription="@string/lblAppendNearest" />
 
@@ -89,6 +90,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/lblViewOnMap"
                     android:padding="2dp"
+                    android:background="@null"
                     android:src="@drawable/ic_action_map"
                     android:text="" />
             </LinearLayout>
@@ -211,7 +213,8 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/lblAddApproaches"
                 android:padding="2dp"
-                android:src="@drawable/ic_action_new_light"
+                android:background="@null"
+                android:src="@drawable/ic_action_new"
                 android:layout_gravity="bottom"
                 android:text="" />
 
@@ -818,7 +821,6 @@
             android:id="@+id/tblImageTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/table_background"
             android:padding="4dp"
             android:stretchColumns="0,1" />
 

@@ -39,6 +39,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -198,6 +199,8 @@ public class ActMFBForm extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
+
         super.onCreate(savedInstanceState);
         // need to restore this here because OnResume may come after the onActivityResult call
         SharedPreferences mPrefs = Objects.requireNonNull(getActivity()).getPreferences(Activity.MODE_PRIVATE);

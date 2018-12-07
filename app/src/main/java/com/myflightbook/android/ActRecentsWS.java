@@ -23,7 +23,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -214,7 +213,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             // show pending flights different from others.
             Typeface tf = Typeface.DEFAULT;
             txtComments.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
-            v.setBackgroundColor(fIsPending ? Color.LTGRAY : Color.WHITE);
+            txtHeader.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
+            txtFlightTimes.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
 
             return v;
         }

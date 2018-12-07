@@ -23,6 +23,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -170,6 +171,17 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setOnItemSelectedListener(this);
         sp.setPromptId(R.string.lblAutoFillOptions);
 
+        sp = (Spinner) findViewById(R.id.spnNightMode);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+                getString(R.string.lblNightModeAuto),
+                getString(R.string.lblNightModeOff),
+                getString(R.string.lblNightModeOn)
+        });
+        sp.setAdapter(adapter);
+        sp.setSelection(MFBMain.NightModePref);
+        sp.setOnItemSelectedListener(this);
+        sp.setPromptId(R.string.lblAutoFillOptions);
+
         sp = (Spinner) findViewById(R.id.spnNightLandingDef);
         adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
                 getString(R.string.lblOptNightLandingsSunsetPlus1hour),
@@ -223,6 +235,15 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 break;
             case R.id.spnNightLandingDef:
                 MFBLocation.NightLandingPref = MFBLocation.NightLandingCriteria.values()[i];
+                break;
+            case R.id.spnNightMode:
+                if (MFBMain.NightModePref != i) {
+                    MFBMain.NightModePref = i;
+                    AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
+                    if (getActivity() != null) {
+                        getActivity().recreate();
+                    }
+                }
                 break;
             default:
                 break;
