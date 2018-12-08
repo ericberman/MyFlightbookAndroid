@@ -1506,8 +1506,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void ShowRecordingIndicator() {
-        Assert.assertNotNull("No location object in ShowRecordingIndicator", MFBLocation.GetMainLocation());
-        imgRecording.setVisibility(MFBLocation.GetMainLocation().getIsRecording() ? View.VISIBLE : View.INVISIBLE);
+        imgRecording.setVisibility(MFBLocation.GetMainLocation() != null && MFBLocation.GetMainLocation().getIsRecording() ? View.VISIBLE : View.INVISIBLE);
     }
 
     private SimpleDateFormat dfSunriseSunset = null;
