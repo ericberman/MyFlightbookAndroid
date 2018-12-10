@@ -1774,6 +1774,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, rgcptAll);
 
         for (FlightProperty fp : rgProps) {
+            // should never happen, but does - not sure why
+            if (fp == null)
+                continue;
+
             if (fp.CustomPropertyType() == null)
                 fp.RefreshPropType();
 
