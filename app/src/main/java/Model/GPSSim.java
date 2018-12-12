@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.myflightbook.android.ActNewFlight;
 import com.myflightbook.android.R;
 
 import java.io.BufferedReader;
@@ -1242,9 +1243,12 @@ public class GPSSim {
         MFBLocation mfbLocation = new MFBLocation(null, mfbFlightListener);
         mfbLocation.fNoRecord = true;   // don't overwrite a potential real flight in progress.
         GPSSim gpsSim = new GPSSim(mfbLocation);
+        double accumulatedNight = ActNewFlight.accumulatedNight;
+        ActNewFlight.accumulatedNight = 0;
         for (LocSample l : rgsamples) {
             gpsSim.m_ll.onLocationChanged(l.getLocation());
         }
+        ActNewFlight.accumulatedNight = accumulatedNight;
 
         if (!le.isEmptyFlight()) {
             le.dtEngineEnd = rgsamples[rgsamples.length - 1].TimeStamp;
