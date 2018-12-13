@@ -59,7 +59,7 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
     }
 
     DlgDatePicker(Context c, datePickMode dpm, Date dt) {
-        super(c);
+        super(c, R.style.MFBDialog);
         Init(dpm, dt);
     }
 

@@ -5,4 +5,6 @@
     <color name="colorAccent">#263238</color>
     <color name="textColorPrimary">#000000</color>
     <color name="colorBackground">#FFFFFF</color>
+    <color name="colorDialog">#bababa</color>
+    <color name="colorMenu">#e8e8e8</color>
 </resources>
