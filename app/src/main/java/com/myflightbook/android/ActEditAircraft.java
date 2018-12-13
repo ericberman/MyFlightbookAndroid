@@ -40,8 +40,6 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.UTCDate;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -471,12 +469,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
                 (new DeleteTask(getContext(), this)).execute();
                 return true;
             case R.id.menuViewSchedule:
-                String szURL;
-                try {
-                    szURL = String.format(Locale.US, MFBConstants.urlAircraftSchedule, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), m_ac.AircraftID);
-                    ActWebView.ViewURL(getActivity(), szURL);
-                } catch (UnsupportedEncodingException ignored) {
-                }
+                ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams(String.format(Locale.US, "d=aircraftschedule&ac=%d", m_ac.AircraftID), getContext()));
                 return true;
             case R.id.findFlights:
                 FlightQuery fq = new FlightQuery();

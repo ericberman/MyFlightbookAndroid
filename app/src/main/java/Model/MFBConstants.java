@@ -18,6 +18,15 @@
  */
 package Model;
 
+import android.content.Context;
+import android.content.res.Configuration;
+
+import com.myflightbook.android.WebServices.AuthToken;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Locale;
+
 public class MFBConstants {
 
     public static final Boolean fIsDebug = false;   // Set to true to use one of the debug servers specified below
@@ -96,21 +105,50 @@ public class MFBConstants {
 
     // URLs
     // TODO: These need to be branded and, in some cases, URLencoded.
-    public static final String urlPrivacy = "http://MyFlightbook.com/logbook/public/privacy.aspx?naked=1";
-    public static final String urlTandC = "http://myflightbook.com/logbook/Public/TandC.aspx?naked=1";
-    public static final String urlContact = "http://myflightbook.com/logbook/public/ContactMe.aspx?email=%s&subj=%s&noCap=1&naked=1";
-    public static final String urlSign = "%s://%s/logbook/public/SignEntry.aspx?idFlight=%d&auth=%s&naked=1";
+    public static final String urlPrivacy = "https://%s/logbook/public/privacy.aspx?naked=1&%s";
+    public static final String urlTandC = "https://%s/logbook/Public/TandC.aspx?naked=1&%s";
+    public static final String urlContact = "http://%s/logbook/public/ContactMe.aspx?email=%s&subj=%s&noCap=1&naked=1&%s";
+    public static final String urlSign = "https://%s/logbook/public/SignEntry.aspx?idFlight=%d&auth=%s&naked=1&%s";
     public static final String urlFacebook = "http://www.facebook.com/pages/MyFlightbook/145794653106";
     public static final String urlTwitter = "http://twitter.com/myflightbook";
     public static final String urlCrashReport = "http://%s/logbook/public/CrashReport.aspx";
-    public static final String urlSupport = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=donate&naked=1";
-    public static final String urlPreferences = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=profile&naked=1";
-    public static final String urlTraining = "%s://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1";
-    public static final String urlAircraftSchedule = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=aircraftschedule&naked=1&ac=%d";
+
+    private static final String urlNoNight = "night=no";
+    private static final String urlNight = "night=yes";
+
+    private static final String urlAuthRedirBase = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&naked=1&%s";
+
     public static final String urlFAQ = "http://myflightbook.com/logbook/public/FAQ.aspx?naked=1";
 
     // Formatting strings
     static final String TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
 
     public static final String LOG_TAG = "MFBAndroid";
+
+    // Utilities
+    public static String NightParam(Context c) {
+        if (c == null)
+            return urlNoNight;
+
+        int currentNightMode = c.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+        return (currentNightMode == Configuration.UI_MODE_NIGHT_YES) ? urlNight : urlNoNight;
+    }
+
+    public static String AuthRedirWithParams(String szParams, Context c) {
+        return AuthRedirWithParams(szParams, c, true);
+    }
+
+    public static String AuthRedirWithParams(String szParams, Context c, boolean fUseNight) {
+        if (szParams == null)
+            return "";
+
+        try {
+            return String.format(Locale.US, urlAuthRedirBase, szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), fUseNight ? NightParam(c) : urlNoNight) + (szParams.length() == 0 ? "" : "&" + szParams);
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
+
+
 }

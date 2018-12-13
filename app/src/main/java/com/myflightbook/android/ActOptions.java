@@ -41,8 +41,6 @@ import android.widget.TextView;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
@@ -251,7 +249,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     }
 
     private void ContactUs() {
-        ActWebView.ViewURL(getActivity(), String.format(MFBConstants.urlContact, AuthToken.m_szEmail, "Comment from Android user"));
+        ActWebView.ViewURL(getActivity(), String.format(MFBConstants.urlContact, MFBConstants.szIP, AuthToken.m_szEmail, "Comment from Android user", MFBConstants.NightParam(getContext())));
     }
 
     private void ViewFacebook() {
@@ -340,18 +338,12 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     public void onNothingSelected(AdapterView<?> arg0) {
     }
 
-    private void ViewPreferences(String szTemplate) {
+    private void ViewPreferences(String szURL) {
         if (!AuthToken.FIsValid()) {
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.statusNotSignedIn));
             return;
         }
-
-        String szURL;
-        try {
-            szURL = String.format(Locale.US, szTemplate, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"));
-            ActWebView.ViewURL(getActivity(), szURL);
-        } catch (UnsupportedEncodingException ignored) {
-        }
+        ActWebView.ViewURL(getActivity(), szURL);
     }
 
     private final int PERMISSION_REQUEST_AUTODETECT = 50382;
@@ -456,10 +448,10 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 CleanUp();
                 break;
             case R.id.btnSupport:
-                ViewPreferences(MFBConstants.urlSupport);
+                ViewPreferences(MFBConstants.AuthRedirWithParams("d=donate", getContext(), false));
                 break;
             case R.id.btnAdditionalOptions:
-                ViewPreferences(MFBConstants.urlPreferences);
+                ViewPreferences(MFBConstants.AuthRedirWithParams("d=profile", getContext()));
                 break;
             case R.id.btnFAQ:
                 ActWebView.ViewURL(getActivity(), MFBConstants.urlFAQ);

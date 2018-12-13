@@ -35,6 +35,8 @@ import android.widget.TextView;
 import com.myflightbook.android.WebServices.CreateUserSvc;
 import com.myflightbook.android.WebServices.MFBSoap;
 
+import java.util.Locale;
+
 import Model.MFBConstants;
 import Model.MFBUtil;
 
@@ -167,14 +169,14 @@ public class ActNewUser extends AppCompatActivity implements
             break;
             case R.id.btnViewPrivacy: {
                 Intent i = new Intent(v.getContext(), ActWebView.class);
-                i.putExtra(MFBConstants.intentViewURL, MFBConstants.urlPrivacy);
+                i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlPrivacy, MFBConstants.szIP, MFBConstants.NightParam(this)));
                 startActivityForResult(i, 0);
             }
             break;
 
             case R.id.btnViewTandC: {
                 Intent i = new Intent(v.getContext(), ActWebView.class);
-                i.putExtra(MFBConstants.intentViewURL, MFBConstants.urlTandC);
+                i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlTandC, MFBConstants.szIP, MFBConstants.NightParam(this)));
                 startActivityForResult(i, 0);
             }
             break;

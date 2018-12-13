@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +36,6 @@ import android.widget.TextView;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Locale;
 import java.util.Objects;
 
 import Model.MFBConstants;
@@ -157,12 +153,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
         String szDest = m_rgTrainingItems[position].szURLDest;
         String szURL;
-        try {
-            szURL = String.format(Locale.US, MFBConstants.urlTraining, szProtocol, MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), szDest);
-            ActWebView.ViewURL(getActivity(), szURL);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-        }
+        ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams("d=" + szDest, getContext()));
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

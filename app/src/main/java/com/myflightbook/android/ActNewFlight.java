@@ -660,10 +660,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case R.id.menuSignFlight:
                 try {
                     ActWebView.ViewURL(getActivity(), String.format(Locale.US, MFBConstants.urlSign,
-                            MFBConstants.fIsDebug ? "http" : "https",
                             MFBConstants.szIP,
                             m_le.idFlight,
-                            URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8")));
+                            URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
+                            MFBConstants.NightParam(getContext())));
                 } catch (UnsupportedEncodingException ignored) {
                 }
                 return true;
@@ -930,7 +930,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             }
             break;
             case R.id.txtSocialNetworkHint: {
-                String szURLProfile = String.format(MFBConstants.urlPreferences, MFBConstants.szIP, AuthToken.m_szEmail, AuthToken.m_szPass) + "&pane=social";
+                String szURLProfile = MFBConstants.AuthRedirWithParams("d=profile&pane=social", getContext());
                 ActWebView.ViewURL(getActivity(), szURLProfile);
             }
             default:
