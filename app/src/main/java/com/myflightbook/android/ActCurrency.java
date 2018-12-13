@@ -43,8 +43,6 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.CurrencySvc;
 import com.myflightbook.android.WebServices.MFBSoap;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -114,7 +112,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         TextView tvDisclaimer = (TextView) findViewById(R.id.lnkCurrencyDisclaimer);
-        tvDisclaimer.setOnClickListener((v) -> ActWebView.ViewURL(getActivity(), "https://myflightbook.com/logbook/public/CurrencyDisclaimer.aspx?naked=1"));
+        tvDisclaimer.setOnClickListener((v) -> ActWebView.ViewURL(getActivity(), String.format(Locale.US, "https://%s/logbook/public/CurrencyDisclaimer.aspx?naked=1&%s", MFBConstants.szIP, MFBConstants.NightParam(getContext()))));
 
         Refresh(fNeedsRefresh);
         MFBMain.registerNotifyDataChange(this);
@@ -130,11 +128,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     }
 
     private void RedirectTo(String szDest) {
-        try {
-            String szURL = String.format(Locale.US, "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&d=%s&naked=1", MFBConstants.szIP, URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"), URLEncoder.encode(AuthToken.m_szPass, "UTF-8"), szDest);
-            ActWebView.ViewURL(getActivity(), szURL);
-        } catch (UnsupportedEncodingException ignored) {
-        }
+        ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams("d=" + szDest, getContext()));
     }
 
     private void BindTable() {
