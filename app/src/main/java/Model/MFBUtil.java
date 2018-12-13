@@ -158,6 +158,7 @@ public class MFBUtil {
         return "";
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T deserializeFromString(String s) {
         if (s == null || s.length() == 0)
             return null;
@@ -166,7 +167,6 @@ public class MFBUtil {
             byte rgb[] = Base64.decode(s, Base64.DEFAULT);
             ByteArrayInputStream bis = new ByteArrayInputStream(rgb);
             ObjectInputStream ois = new ObjectInputStream(bis);
-            //noinspection unchecked
             return (T) ois.readObject();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -174,7 +174,7 @@ public class MFBUtil {
         return null;
     }
 
-    public static <T> T clone(Serializable obj) {
+    static <T> T clone(Serializable obj) {
         String s = serializeToString(obj);
         if (s.length() == 0)
             return null;
