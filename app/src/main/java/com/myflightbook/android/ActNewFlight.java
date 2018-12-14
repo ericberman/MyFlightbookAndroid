@@ -1842,7 +1842,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void deleteDefaultedProperty(FlightProperty fp) {
-        if (fp.idFlight > 0 && fp.IsDefaultValue()) {
+        if (fp.idProp > 0 && fp.IsDefaultValue()) {
             new DeletePropertyTask(getContext(), this, fp).execute();
             return;
         }
