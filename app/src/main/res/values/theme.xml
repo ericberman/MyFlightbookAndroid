@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="custom_theme_color">#999999</color>
-    <color name="divider_background">#555555</color>
-    <color name="table_background">#FFFFFF</color>
     <color name="splash_background">#263238</color>
 
     <style name="MFBDialog" parent="@android:style/Theme.Dialog">
@@ -21,7 +19,7 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_gravity">center_horizontal|center_vertical</item>
         <item name="android:gravity">center_horizontal|center_vertical</item>
-        <item name="android:textColor">#EEEEEE</item>
+        <item name="android:textColor">@color/divider_text</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:padding">5dip</item>

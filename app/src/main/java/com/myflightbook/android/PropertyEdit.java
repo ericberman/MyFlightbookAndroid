@@ -238,6 +238,8 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
     private void UpdateLabelTypefaceForProperty() {
         TextView txtLabel = findViewById(R.id.txtLabel);
         txtLabel.setTypeface(null, m_fp.IsDefaultValue() ? Typeface.NORMAL : Typeface.BOLD);
+        CheckBox ckLabel = findViewById(R.id.ckBoolValue);
+        ckLabel.setTypeface(null, m_fp.IsDefaultValue() ? Typeface.NORMAL : Typeface.BOLD);
     }
 
     private void UpdateForProperty() {
