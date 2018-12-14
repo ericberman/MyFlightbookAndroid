@@ -28,6 +28,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteReadOnlyDatabaseException;
@@ -47,6 +48,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabContentFactory;
@@ -342,6 +344,13 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     public void onCreate(Bundle savedInstanceState) {
         // get cached auth credentials; restore state prior to restoring location.
         mPrefs = getPreferences(MODE_PRIVATE);
+
+        // TOTALLY MESSED UP
+        // WebView screws up night mode, but this code, for some reason, fixes it
+        // see https://stackoverflow.com/questions/44035654/broken-colors-in-daynight-theme-after-loading-admob-firebase-ad
+        int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightMode != AppCompatDelegate.MODE_NIGHT_NO)
+            new WebView(this);
 
         MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_NO);
         AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
