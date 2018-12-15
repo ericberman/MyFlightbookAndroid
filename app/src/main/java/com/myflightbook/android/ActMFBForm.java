@@ -348,7 +348,7 @@ public class ActMFBForm extends Fragment {
                 dlgComment.show();
                 break;
             case R.id.menuDeleteImage:
-                new AlertDialog.Builder(getActivity())
+                new AlertDialog.Builder(getActivity(), R.style.MFBDialog)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.lblConfirmImageDelete)

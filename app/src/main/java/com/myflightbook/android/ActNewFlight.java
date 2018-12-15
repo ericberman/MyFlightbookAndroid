@@ -247,7 +247,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     };
                     lelocal = m_le = null; // so that onPause won't cause it to be saved on finish() call.
                 }
-                new AlertDialog.Builder(act.getActivity())
+                new AlertDialog.Builder(act.getActivity(), R.style.MFBDialog)
                         .setMessage(c.getString(R.string.txtSavedFlight))
                         .setTitle(c.getString(R.string.txtSuccess))
                         .setNegativeButton("OK", ocl)
@@ -668,7 +668,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 }
                 return true;
             case R.id.btnDeleteFlight:
-                new AlertDialog.Builder(getActivity())
+                new AlertDialog.Builder(getActivity(), R.style.MFBDialog)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.lblConfirmFlightDelete)
@@ -708,7 +708,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 FlightProperty.RewritePropertiesForFlight(leNew.idLocalDB, leNew.rgCustomProperties);
                 leNew.SyncProperties();
                 RecentFlightsSvc.ClearCachedFlights();
-                new AlertDialog.Builder(ActNewFlight.this.getActivity())
+                new AlertDialog.Builder(ActNewFlight.this.getActivity(), R.style.MFBDialog)
                         .setMessage(getString(R.string.txtRepeatFlightComplete))
                         .setTitle(getString(R.string.txtSuccess))
                         .setNegativeButton("OK", (d, id) -> {
@@ -1130,7 +1130,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
             // Existing flights can't be saved for later.  No good reason for that except work.
             if (m_le.IsExistingFlight()) {
-                new AlertDialog.Builder(ActNewFlight.this.getActivity())
+                new AlertDialog.Builder(ActNewFlight.this.getActivity(), R.style.MFBDialog)
                         .setMessage(getString(R.string.errNoInternetNoSave))
                         .setTitle(getString(R.string.txtError))
                         .setNegativeButton(getString(R.string.lblOK), (d, id) -> {
@@ -1167,7 +1167,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 ResetFlight(true);
                 MFBUtil.Alert(this, getString(R.string.txtSuccess), getString(R.string.txtSavedPendingFlight));
             } else {
-                new AlertDialog.Builder(ActNewFlight.this.getActivity())
+                new AlertDialog.Builder(ActNewFlight.this.getActivity(), R.style.MFBDialog)
                         .setMessage(getString(R.string.txtSavedPendingFlight))
                         .setTitle(getString(R.string.txtSuccess))
                         .setNegativeButton("OK", (d, id) -> {

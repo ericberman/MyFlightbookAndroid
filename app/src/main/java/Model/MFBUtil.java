@@ -45,7 +45,7 @@ public class MFBUtil {
         if (c == null || c instanceof Activity && ((Activity) c).isFinishing())
             return;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.MFBDialog);
         builder.setMessage(szMessage);
         builder.setTitle(szTitle);
         builder.setNegativeButton(c.getString(R.string.lblOK), (dialog, id) -> dialog.cancel());

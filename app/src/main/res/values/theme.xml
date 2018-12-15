@@ -3,16 +3,17 @@
     <color name="custom_theme_color">#999999</color>
     <color name="splash_background">#263238</color>
 
-    <style name="MFBDialog" parent="@android:style/Theme.Dialog">
+    <style name="MFBDialog" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowBackground">@color/custom_theme_color</item>
         <item name="android:colorBackground">@color/colorDialog</item>
         <item name="android:background">@color/colorDialog</item>
         <item name="android:textSize">14sp</item>
         <item name="android:padding">5sp</item>
         <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:alertDialogStyle">@style/MFBCustomProgressStyle</item>
     </style>
 
-    <style name="MFBProgressStyle" parent="@android:style/Theme.Dialog">
+    <style name="MFBProgressStyle" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:alertDialogStyle">@style/MFBCustomProgressStyle</item>
         <item name="android:colorBackground">@color/colorDialog</item>
         <item name="android:background">@color/colorDialog</item>
@@ -22,16 +23,16 @@
     </style>
 
     <style name="MFBCustomProgressStyle">
-        <item name="android:bottomBright">@color/progressBackColor</item>
-        <item name="android:bottomDark">@color/progressBackColor</item>
-        <item name="android:bottomMedium">@color/progressBackColor</item>
-        <item name="android:centerBright">@color/progressBackColor</item>
-        <item name="android:centerDark">@color/progressBackColor</item>
-        <item name="android:centerMedium">@color/progressBackColor</item>
-        <item name="android:fullBright">@color/progressBackColor</item>
-        <item name="android:fullDark">@color/progressBackColor</item>
-        <item name="android:topBright">@color/progressBackColor</item>
-        <item name="android:topDark">@color/progressBackColor</item>
+        <item name="android:bottomBright">@color/colorDialog</item>
+        <item name="android:bottomDark">@color/colorDialog</item>
+        <item name="android:bottomMedium">@color/colorDialog</item>
+        <item name="android:centerBright">@color/colorDialog</item>
+        <item name="android:centerDark">@color/colorDialog</item>
+        <item name="android:centerMedium">@color/colorDialog</item>
+        <item name="android:fullBright">@color/colorDialog</item>
+        <item name="android:fullDark">@color/colorDialog</item>
+        <item name="android:topBright">@color/colorDialog</item>
+        <item name="android:topDark">@color/colorDialog</item>
     </style>
 
     <style name="DividerBar">

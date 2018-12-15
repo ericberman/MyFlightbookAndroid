@@ -497,7 +497,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 getActivity().finish();
             });
             ImageButton btnDelete = tr.findViewById(R.id.btnDeleteNamedQuery);
-            btnDelete.setOnClickListener(view -> new AlertDialog.Builder(getActivity())
+            btnDelete.setOnClickListener(view -> new AlertDialog.Builder(getActivity(), R.style.MFBDialog)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(R.string.lblConfirm)
                     .setMessage(R.string.fqQueryDeleteConfirm)

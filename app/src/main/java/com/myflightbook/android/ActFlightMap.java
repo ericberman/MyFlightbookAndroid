@@ -147,7 +147,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         MFBImageInfo mfbii;
 
         if ((ap = m_hmAirports.get(marker.getId())) != null) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.MFBDialog);
             dialog.setTitle(marker.getTitle());
             final Airport ap2 = ap;
             dialog.setIcon(ContextCompat.getDrawable(ActFlightMap.this, ap.IsPort() ? R.drawable.airport : R.drawable.tower));
@@ -177,7 +177,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             dialog.show();
             return true;
         } else if ((mfbii = m_hmImages.get(marker.getId())) != null) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.MFBDialog);
 
             LayoutInflater vi = getLayoutInflater();
             @SuppressLint("InflateParams") View v = vi.inflate(R.layout.mapimageitem, null);

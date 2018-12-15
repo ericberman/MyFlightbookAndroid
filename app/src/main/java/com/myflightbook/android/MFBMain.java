@@ -466,7 +466,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
                     return;
                 }
 
-                new AlertDialog.Builder(this)
+                new AlertDialog.Builder(this, R.style.MFBDialog)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.telemetryImportPrompt)
