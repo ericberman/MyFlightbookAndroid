@@ -70,7 +70,7 @@ public class MFBUtil {
             // in progress.  Doesn't seem to affect the overall worker thread, fortunately, but we can just
             // return the bogus progress dialog if it becomes bogus.
             // do a search on "View not attached to window manager" for details.
-            pd = new ProgressDialog(c);
+            pd = new ProgressDialog(c, R.style.MFBProgressStyle);
             pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             pd.isIndeterminate();
             pd.setMessage(szMessage);

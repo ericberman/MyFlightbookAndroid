@@ -12,6 +12,28 @@
         <item name="android:textColor">@color/textColorPrimary</item>
     </style>
 
+    <style name="MFBProgressStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:alertDialogStyle">@style/MFBCustomProgressStyle</item>
+        <item name="android:colorBackground">@color/colorDialog</item>
+        <item name="android:background">@color/colorDialog</item>
+        <item name="android:textColorPrimary">@color/progressTextColor</item>
+        <item name="android:textColor">@color/progressTextColor</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MFBCustomProgressStyle">
+        <item name="android:bottomBright">@color/progressBackColor</item>
+        <item name="android:bottomDark">@color/progressBackColor</item>
+        <item name="android:bottomMedium">@color/progressBackColor</item>
+        <item name="android:centerBright">@color/progressBackColor</item>
+        <item name="android:centerDark">@color/progressBackColor</item>
+        <item name="android:centerMedium">@color/progressBackColor</item>
+        <item name="android:fullBright">@color/progressBackColor</item>
+        <item name="android:fullDark">@color/progressBackColor</item>
+        <item name="android:topBright">@color/progressBackColor</item>
+        <item name="android:topDark">@color/progressBackColor</item>
+    </style>
+
     <style name="DividerBar">
         <item name="android:colorBackground">@color/divider_background</item>
         <item name="android:background">@color/divider_background</item>

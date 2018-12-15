@@ -9,4 +9,6 @@
     <color name="colorMenu">#656565</color>
     <color name="divider_background">#555555</color>
     <color name="divider_text">#00BCD4</color>
+    <color name="progressBackColor">#bababa</color>
+    <color name="progressTextColor">#FFFFFF</color>
 </resources>
