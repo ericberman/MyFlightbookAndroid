@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/lblEmail"
         android:inputType="textEmailAddress"
+        android:padding="8sp"
         android:text="" />
 
     <TextView
@@ -29,6 +30,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
+        android:padding="8sp"
         android:maxLines="1"
         android:text="" />
 
