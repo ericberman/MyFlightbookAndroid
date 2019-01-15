@@ -883,8 +883,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         szTailNumDisplay = so.getProperty("TailNumDisplay").toString();
         szCatClassDisplay = so.getProperty("CatClassDisplay").toString();
 
-        sendLink = so.getPropertySafelyAsString("SendFlightLink");
-        shareLink = so.getPropertySafelyAsString("SocialMediaLink");
+        sendLink = ReadNullableString(so,"SendFlightLink");
+        shareLink = ReadNullableString(so,"SocialMediaLink");
 
         // FlightData is not always present.
         try {
