@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -381,7 +381,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         Intent i = Objects.requireNonNull(getActivity()).getIntent();
         int idFlightToView = i.getIntExtra(ActRecentsWS.VIEWEXISTINGFLIGHTID, 0);
         long idLocalFlightToView = i.getLongExtra(ActRecentsWS.VIEWEXISTINGFLIGHTLOCALID, 0);
-        Boolean fIsNewFlight = (idFlightToView == 0);
+        boolean fIsNewFlight = (idFlightToView == 0);
 
         Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - onCreate - Viewing flight idflight=%d, idlocal=%d", idFlightToView, idLocalFlightToView));
 
@@ -904,7 +904,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 break;
             case R.id.txtViewInTheCockpit: {
                 View target = findViewById(R.id.sectInTheCockpit);
-                Boolean fExpandCockpit = target.getVisibility() != View.VISIBLE;
+                boolean fExpandCockpit = target.getVisibility() != View.VISIBLE;
 
                 if (m_le != null && m_le.IsNewFlight()) {
                     SharedPreferences.Editor e = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE).edit();
@@ -1002,8 +1002,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public void updateDate(int id, Date dt) {
         FromView();
 
-        Boolean fEngineChanged = false;
-        Boolean fFlightChanged = false;
+        boolean fEngineChanged = false;
+        boolean fFlightChanged = false;
 
         dt = MFBUtil.removeSeconds(dt);
 
@@ -1011,6 +1011,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case R.id.btnEngineStartSet:
                 m_le.dtEngineStart = dt;
                 fEngineChanged = true;
+                resetDateOfFlight();
                 break;
             case R.id.btnEngineEndSet:
                 m_le.dtEngineEnd = dt;
@@ -1019,6 +1020,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 break;
             case R.id.btnFlightStartSet:
                 m_le.dtFlightStart = dt;
+                resetDateOfFlight();
                 fFlightChanged = true;
                 break;
             case R.id.btnFlightEndSet:
@@ -1218,7 +1220,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         SetDoubleForField(R.id.txtTotal, m_le.decTotal);
         SetDoubleForField(R.id.txtXC, m_le.decXC);
 
-        Boolean fIsSigned = (m_le.signatureStatus != LogbookEntry.SigStatus.None);
+        boolean fIsSigned = (m_le.signatureStatus != LogbookEntry.SigStatus.None);
         findViewById(R.id.sectSignature).setVisibility(fIsSigned ? View.VISIBLE : View.GONE);
         findViewById(R.id.txtSignatureHeader).setVisibility(fIsSigned ? View.VISIBLE : View.GONE);
         if (fIsSigned)
@@ -1381,7 +1383,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
 
         if (dtTotal > 0) {
-            Boolean fIsReal = true;
+            boolean fIsReal = true;
             Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
 
             if (MFBLocation.fPrefRoundNearestTenth)
@@ -1442,9 +1444,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void resetDateOfFlight() {
-        if (m_le != null && m_le.isEmptyFlight()) {
+        if (m_le != null && m_le.IsNewFlight()) {
             // set the date of the flight to now in local time.
-            m_le.dtFlight = new Date();
+            Date dt = new Date();
+            if (m_le.isKnownEngineStart() && m_le.dtEngineStart.compareTo(dt) < 0)
+                dt = m_le.dtEngineStart;
+            if (m_le.isKnownFlightStart() && m_le.dtFlightStart.compareTo(dt) < 0)
+                dt = m_le.dtFlightStart;
+            m_le.dtFlight = dt;
             SetLocalDateForField(R.id.btnFlightSet, m_le.dtFlight);
         }
     }
@@ -1612,11 +1619,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
-
     private void updateElapsedTime() {            // update the button state
         ImageButton ib = (ImageButton) findViewById(R.id.btnPausePlay);
         // pause/play should only be visible on ground with engine running (or flight start known but engine end unknown)
-        Boolean fShowPausePlay = !MFBLocation.IsFlying && (m_le.isKnownEngineStart() || m_le.isKnownFlightStart()) && !m_le.isKnownEngineEnd();
+        boolean fShowPausePlay = !MFBLocation.IsFlying && (m_le.isKnownEngineStart() || m_le.isKnownFlightStart()) && !m_le.isKnownEngineEnd();
         ib.setVisibility(fShowPausePlay ? View.VISIBLE : View.INVISIBLE);
 
         TextView txtElapsed = (TextView) findViewById(R.id.txtElapsedTime);
