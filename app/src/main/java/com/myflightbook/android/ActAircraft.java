@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             tvTail.setText(ac.displayTailNumber());
             tvModel.setText(ac.ModelDescription);
             if (ac.ModelCommonName.length() > 0)
-                tvModelCommonName.setText(String.format(" (%s)", ac.ModelCommonName.trim()));
+                tvModelCommonName.setText(ac.ModelCommonName.trim());
 
             return v;
         }
