@@ -10,17 +10,17 @@
         android:padding="5dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/lblNewAircraftPromopt" />
 
         <TableLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2sp">
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
 
@@ -38,34 +38,20 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:id="@+id/tblrowIsAnonymous"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/lblMakeModel" />
-
-                <Button
-                    android:id="@+id/btnMakeModel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="2sp"
-                    android:paddingTop="2sp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tblrowIsAnonymous"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                    android:text="" />
 
                 <CheckBox
                     android:id="@+id/ckAnonymous"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_span="2"
                     android:text="@string/lblAnonymous" />
             </TableRow>
 
@@ -80,27 +66,36 @@
                     android:layout_height="wrap_content"
                     android:text="@string/lblTail" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/txtTail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/lblTail"
-                        android:inputType="textCapCharacters|textNoSuggestions"
-                        android:text="" />
-                </LinearLayout>
+                <AutoCompleteTextView
+                    android:id="@+id/txtTail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/lblTail"
+                    android:inputType="textCapCharacters|textNoSuggestions|textFilter"
+                    android:dropDownHeight="150dp"
+                    android:text="" />
             </TableRow>
 
         </TableLayout>
 
-        <TextView
-            android:id="@+id/txtAddMakesHint"
-            android:layout_width="wrap_content"
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/lblAddMakes" />
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lblMakeModel" />
+
+            <Button
+                android:id="@+id/btnMakeModel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="2sp"
+                android:paddingTop="2sp" />
+        </TableRow>
+
         <!-- Images -->
         <TableLayout
             android:id="@+id/tblImageTable"

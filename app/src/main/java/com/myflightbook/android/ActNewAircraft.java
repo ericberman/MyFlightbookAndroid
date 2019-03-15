@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,10 +22,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.method.LinkMovementMethod;
+import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -38,9 +42,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -49,6 +53,9 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.MakesandModelsSvc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -63,20 +70,114 @@ import Model.MakesandModels;
 public class ActNewAircraft extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener, ActMFBForm.GallerySource {
 
     public static MakesandModels[] AvailableMakesAndModels = null;
-    private static Aircraft m_ac = new Aircraft();
+    private Aircraft m_ac = new Aircraft();
     private String szTailLast = "";
     private static final int SELECT_MAKE_ACTIVITY_REQUEST_CODE = 41845;
     public static final int BEGIN_NEW_AIRCRAFT_REQUEST_CODE = 49283;
     public final static String MODELFORAIRCRAFT = "com.myflightbook.android.aircraftModelID";
     private static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
+    private AutoCompleteAdapter autoCompleteAdapter;
+    private boolean fNoTrigger = false; // true to suppress autosuggestions
+
+    public class AutoCompleteAdapter extends ArrayAdapter<Aircraft> {
+        private List<Aircraft> mMatchingAircraft;
+
+        AutoCompleteAdapter(@NonNull Context context, int resource) {
+            super(context, resource);
+            mMatchingAircraft = new ArrayList<>();
+        }
+
+        public void setData(List<Aircraft> list) {
+            mMatchingAircraft.clear();
+            mMatchingAircraft.addAll(list);
+        }
+
+        @Override
+        public int getCount() {
+            return mMatchingAircraft.size();
+        }
+
+        @Nullable
+        @Override
+        public Aircraft getItem(int position) {
+            return mMatchingAircraft.get(position);
+        }
+
+        Aircraft getObject(int position) {
+            return mMatchingAircraft.get(position);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+
+            View v;
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                assert inflater != null;
+                v = inflater.inflate(android.R.layout.simple_list_item_2, null);
+            } else
+                v = convertView;
+
+            Aircraft ac = getObject(position);
+            TextView tv = v.findViewById(android.R.id.text1);
+            tv.setText(ac.displayTailNumber());
+            tv.setTypeface(tv.getTypeface(), Typeface.BOLD);
+
+            tv = v.findViewById(android.R.id.text2);
+            MakesandModels mm;
+            if (AvailableMakesAndModels == null || ((mm = MakesandModels.getMakeModelByID(ac.ModelID, AvailableMakesAndModels)) == null))
+                tv.setText(ac.ModelDescription);
+            else
+                tv.setText(mm.Description);
+
+            return v;
+        }
+    }
+
+    private static class SuggestAircraftTask extends AsyncTask<Void, Void, MFBSoap> {
+        Object m_Result = null;
+        String mPrefix;
+        final AsyncWeakContext<ActNewAircraft> m_ctxt;
+
+        SuggestAircraftTask(Context c, String szPrefix, ActNewAircraft ana) {
+            super();
+            mPrefix = szPrefix;
+            m_ctxt = new AsyncWeakContext<>(c, ana);
+        }
+
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            AircraftSvc as = new AircraftSvc();
+            m_Result = as.AircraftForPrefix(AuthToken.m_szAuthToken, mPrefix, m_ctxt.getContext());
+            return as;
+        }
+
+        protected void onPostExecute(MFBSoap svc) {
+            ActNewAircraft aa = m_ctxt.getCallingActivity();
+            if (aa == null || !aa.isAdded() || aa.isDetached() || aa.getActivity() == null || aa.autoCompleteAdapter == null)
+                return;
+
+            Aircraft[] rgac = (Aircraft[]) m_Result;
+            if (rgac == null)
+                rgac = new Aircraft[0];
+
+            ArrayList<Aircraft> lst = new ArrayList<>(Arrays.asList(rgac));
+            aa.autoCompleteAdapter.setData(lst);
+            aa.autoCompleteAdapter.notifyDataSetChanged();
+        }
+    }
 
     private static class SaveAircraftTask extends AsyncTask<Aircraft, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         Object m_Result = null;
         private final AsyncWeakContext<ActNewAircraft> m_ctxt;
+        private Aircraft mAc;
 
-        SaveAircraftTask(Context c, ActNewAircraft ana) {
+        SaveAircraftTask(Context c, Aircraft ac, ActNewAircraft ana) {
             super();
+            mAc = ac;
             m_ctxt = new AsyncWeakContext<>(c, ana);
         }
 
@@ -84,7 +185,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         protected MFBSoap doInBackground(Aircraft... params) {
             AircraftSvc acs = new AircraftSvc();
             acs.m_Progress = this;
-            m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, m_ac, m_ctxt.getContext());
+            m_Result = acs.AddAircraft(AuthToken.m_szAuthToken, mAc, m_ctxt.getContext());
             return acs;
         }
 
@@ -194,10 +295,40 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         sp.setSelection(0);
         sp.setOnItemSelectedListener(this);
 
-        // make the hint for creating make/model a hyperlink
-        TextView txtHint = (TextView) findViewById(R.id.txtAddMakesHint);
-        txtHint.setText(getString(R.string.lblAddMakes));
-        txtHint.setMovementMethod(LinkMovementMethod.getInstance());
+        // Autocompletion based on code at https://www.truiton.com/2018/06/android-autocompletetextview-suggestions-from-webservice-call/
+        final ActNewAircraft ana = this;
+        AutoCompleteTextView act = (AutoCompleteTextView) findViewById(R.id.txtTail);
+        act.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT);
+        act.setThreshold(3);
+        autoCompleteAdapter = new AutoCompleteAdapter(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_2);
+        final AutoCompleteAdapter aca = autoCompleteAdapter;
+        act.setAdapter(autoCompleteAdapter);
+        act.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    m_ac = aca.getObject(position);
+                    setCurrentMakeModel(MakesandModels.getMakeModelByID(m_ac.ModelID, AvailableMakesAndModels));
+                    toView();
+                });
+
+        act.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                autoCompleteAdapter.notifyDataSetChanged();
+                if (!fNoTrigger) {
+                    String szTail = act.getText().toString();
+                    if (szTail.length() > 2) {
+                        SuggestAircraftTask sat = new SuggestAircraftTask(getContext(), szTail, ana);
+                        sat.execute();
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
 
         // Get available makes/models, but only if we have none.  Can refresh.
         // This avoids getting makes/models when just getting a picture.
@@ -276,7 +407,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     }
 
     private void fromView() {
-        m_ac.TailNumber = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
+        m_ac.TailNumber = ((AutoCompleteTextView) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
         m_ac.InstanceTypeID = ((Spinner) findViewById(R.id.spnAircraftType)).getSelectedItemPosition() + 1;
 
         if (m_ac.InstanceTypeID > 1) // not a real aircraft - auto-assign a tail
@@ -284,8 +415,11 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     }
 
     private void toView() {
-        EditText et = (EditText) findViewById(R.id.txtTail);
+        AutoCompleteTextView et = (AutoCompleteTextView) findViewById(R.id.txtTail);
+        // don't trigger autosuggest if the user isn't typing.
+        fNoTrigger = true;
         et.setText(m_ac.TailNumber);
+        fNoTrigger = false;
         et.setSelection(m_ac.TailNumber.length());
         ((Spinner) findViewById(R.id.spnAircraftType)).setSelection(m_ac.InstanceTypeID - 1);
         setCurrentMakeModel(MakesandModels.getMakeModelByID(m_ac.ModelID, AvailableMakesAndModels));
@@ -297,7 +431,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
     private void saveLastTail() {
         if (m_ac.IsReal() && !m_ac.IsAnonymous())
-            this.szTailLast = ((EditText) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
+            this.szTailLast = ((AutoCompleteTextView) findViewById(R.id.txtTail)).getText().toString().toUpperCase(Locale.getDefault());
     }
 
     private void toggleAnonymous(CheckBox sender) {
@@ -351,7 +485,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
                 fromView();
 
                 if (m_ac.FIsValid(getContext())) {
-                    SaveAircraftTask st = new SaveAircraftTask(getActivity(), this);
+                    SaveAircraftTask st = new SaveAircraftTask(getActivity(), m_ac, this);
                     st.execute(m_ac);
                 } else
                     MFBUtil.Alert(this, getString(R.string.txtError), m_ac.ErrorString);

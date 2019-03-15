@@ -152,7 +152,7 @@
     <string name="lblTail">Immatriculation</string>
     <string name="lblAircraftType">Type</string>
     <string name="lblMakeModel">Fabricant et modèle</string>
-    <string name="lblAddMakes">Si vous ne trouvez pas la désignation de votre aéronef, ajoutez la à MyFlightbook.com.</string>
+    <string name="lblAddMakes">Si vous ne trouvez pas la désignation de votre avion, ajoutez la à MyFlightbook.com.</string>
     <string name="lblBtnAddAircraft">Ajouter un avion</string>
     <string name="lblAnonymous">Cet avion est anonyme</string>
 

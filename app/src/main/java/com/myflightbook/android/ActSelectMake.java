@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.SimpleExpandableListAdapter;
@@ -94,7 +95,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.expandablelist);
+        setContentView(R.layout.selectmake);
 
         TextView tvSearch = findViewById(R.id.txtSearchProp);
         tvSearch.setHint(R.string.hintSearchModels);
@@ -116,6 +117,11 @@ public class ActSelectMake extends FixedExpandableListActivity {
             srl.setRefreshing(false);
             refresh();
         });
+
+        // make the hint for creating make/model a hyperlink
+        TextView txtHint = (TextView) findViewById(R.id.txtAddMakesHint);
+        txtHint.setText(getString(R.string.lblAddMakes));
+        txtHint.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void refresh() {

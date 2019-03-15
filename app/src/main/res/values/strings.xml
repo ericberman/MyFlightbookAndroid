@@ -152,7 +152,7 @@
     <string name="lblTail">TailNumber</string>
     <string name="lblAircraftType">Type</string>
     <string name="lblMakeModel">Make/Model</string>
-    <string name="lblAddMakes">Don\'t see your airplane\'s make/model?  Add it at MyFlightbook.com.</string>
+    <string name="lblAddMakes">Don\'t see your aircraft\'s make/model?  Add it at MyFlightbook.com.</string>
     <string name="lblBtnAddAircraft">Add Aircraft</string>
     <string name="lblAnonymous">This aircraft is anonymous</string>
 
