@@ -124,10 +124,10 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         return String.format(Locale.US, "%s%05d", PREFIX_ANON, ModelID);
     }
 
-    public Boolean FIsValid(Context c) {
+    public boolean FIsValid(Context c) {
         // check to see that the tailnumber begins with a country code
 
-        Boolean fStartsWithSim = TailNumber.toUpperCase(Locale.getDefault()).startsWith(PREFIX_SIM);
+        boolean fStartsWithSim = TailNumber.toUpperCase(Locale.getDefault()).startsWith(PREFIX_SIM);
 
         if (IsAnonymous()) {
             // nothing to check - by definition, the way we know we are anonymous is that we begin with PREFIX_ANON

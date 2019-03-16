@@ -79,15 +79,16 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     private AutoCompleteAdapter autoCompleteAdapter;
     private boolean fNoTrigger = false; // true to suppress autosuggestions
 
-    public class AutoCompleteAdapter extends ArrayAdapter<Aircraft> {
-        private List<Aircraft> mMatchingAircraft;
+    class AutoCompleteAdapter extends ArrayAdapter<Aircraft> {
+        private final List<Aircraft> mMatchingAircraft;
 
+        @SuppressWarnings("SameParameterValue")
         AutoCompleteAdapter(@NonNull Context context, int resource) {
             super(context, resource);
             mMatchingAircraft = new ArrayList<>();
         }
 
-        public void setData(List<Aircraft> list) {
+        void setData(List<Aircraft> list) {
             mMatchingAircraft.clear();
             mMatchingAircraft.addAll(list);
         }
@@ -138,7 +139,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
     private static class SuggestAircraftTask extends AsyncTask<Void, Void, MFBSoap> {
         Object m_Result = null;
-        String mPrefix;
+        final String mPrefix;
         final AsyncWeakContext<ActNewAircraft> m_ctxt;
 
         SuggestAircraftTask(Context c, String szPrefix, ActNewAircraft ana) {
@@ -173,7 +174,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         private ProgressDialog m_pd = null;
         Object m_Result = null;
         private final AsyncWeakContext<ActNewAircraft> m_ctxt;
-        private Aircraft mAc;
+        private final Aircraft mAc;
 
         SaveAircraftTask(Context c, Aircraft ac, ActNewAircraft ana) {
             super();

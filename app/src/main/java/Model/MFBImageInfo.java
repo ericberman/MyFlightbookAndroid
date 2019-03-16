@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -142,6 +143,20 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             try {
                 InputStream is = (InputStream) new URL(m_URL).getContent();
                 d = Drawable.createFromStream(is, "src name");
+                if (d != null) {
+                    MFBImageInfo mfbii = m_mfbii.get();
+
+                    if (mfbii != null) {
+                        BitmapDrawable bd = (BitmapDrawable) d;
+                        Bitmap bmp = bd.getBitmap();
+                        ByteArrayOutputStream s = new ByteArrayOutputStream();
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, s);
+                        if (mFIsThumbnail)
+                            mfbii.m_imgThumb = s.toByteArray();
+                        else
+                            mfbii.m_imgData = s.toByteArray();
+                    }
+                }
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
@@ -154,23 +169,11 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         protected void onPostExecute(Drawable d) {
             if (d != null) {
                 ImageView iv = imgView.get();
-                MFBImageInfo mfbii = m_mfbii.get();
                 if (iv != null)
                     iv.setImageDrawable(d);
 
-                if (mfbii != null) {
-                    BitmapDrawable bd = (BitmapDrawable) d;
-                    Bitmap bmp = bd.getBitmap();
-                    ByteArrayOutputStream s = new ByteArrayOutputStream();
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, s);
-                    if (mFIsThumbnail)
-                        mfbii.m_imgThumb = s.toByteArray();
-                    else
-                        mfbii.m_imgData = s.toByteArray();
-
-                    if (m_icc != null)
-                        m_icc.imgCompleted(mfbii);
-                }
+                if (m_icc != null)
+                    m_icc.imgCompleted(m_mfbii.get());
             }
         }
     }
@@ -514,7 +517,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     public Boolean initFromCamera(String szFile, Location curLoc, Boolean fVideo, Boolean fDeleteFileWhenDone) {
         // Convert it to a Jpeg and geotag it.
         FileInputStream fis = null;
-        Boolean fResult = false;
+        boolean fResult = false;
         int orientation = ExifInterface.ORIENTATION_NORMAL;
         m_imgData = m_imgThumb = null;
 
@@ -637,7 +640,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         this.setID(idImg);
         fromDB(false, false);    // actual bytes could be long.
 
-        Boolean fResult = false;
+        boolean fResult = false;
 
         try (FileInputStream fis = new FileInputStream(getAbsoluteImageFile())) {
             String szBase = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? "http://" : "https://") + MFBConstants.szIP;
@@ -655,25 +658,25 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 if (m_key.length() == 0)
                     throw new Exception("No valid key provided");
 
-                out.write(szBoundaryDivider.getBytes("UTF8"));
-                out.write("Content-Disposition: form-data; name=\"txtAuthToken\"\r\n\r\n".getBytes("UTF8"));
-                out.write(String.format("%s\r\n%s", AuthToken.m_szAuthToken, szBoundaryDivider).getBytes("UTF8"));
+                out.write(szBoundaryDivider.getBytes(StandardCharsets.UTF_8));
+                out.write("Content-Disposition: form-data; name=\"txtAuthToken\"\r\n\r\n".getBytes(StandardCharsets.UTF_8));
+                out.write(String.format("%s\r\n%s", AuthToken.m_szAuthToken, szBoundaryDivider).getBytes(StandardCharsets.UTF_8));
 
-                out.write("Content-Disposition: form-data; name=\"txtComment\"\r\n\r\n".getBytes("UTF8"));
-                out.write(String.format("%s\r\n%s", Comment, szBoundaryDivider).getBytes("UTF8"));
+                out.write("Content-Disposition: form-data; name=\"txtComment\"\r\n\r\n".getBytes(StandardCharsets.UTF_8));
+                out.write(String.format("%s\r\n%s", Comment, szBoundaryDivider).getBytes(StandardCharsets.UTF_8));
 
-                out.write(String.format("Content-Disposition: form-data; name=\"%s\"\r\n\r\n", this.m_keyName).getBytes("UTF8"));
-                out.write(String.format("%s\r\n%s", this.m_key, szBoundaryDivider).getBytes("UTF8"));
+                out.write(String.format("Content-Disposition: form-data; name=\"%s\"\r\n\r\n", this.m_keyName).getBytes(StandardCharsets.UTF_8));
+                out.write(String.format("%s\r\n%s", this.m_key, szBoundaryDivider).getBytes(StandardCharsets.UTF_8));
 
-                out.write(String.format(Locale.getDefault(), "Content-Disposition: form-data; name=\"imgPicture\"; filename=\"myimage%s\"\r\n", getImageSuffix()).getBytes("UTF8"));
-                out.write(String.format(Locale.getDefault(), "Content-Type: %s\r\nContent-Transfer-Encoding: binary\r\n\r\n", IsVideo() ? "video/mp4" : "image/jpeg").getBytes("UTF8"));
+                out.write(String.format(Locale.getDefault(), "Content-Disposition: form-data; name=\"imgPicture\"; filename=\"myimage%s\"\r\n", getImageSuffix()).getBytes(StandardCharsets.UTF_8));
+                out.write(String.format(Locale.getDefault(), "Content-Type: %s\r\nContent-Transfer-Encoding: binary\r\n\r\n", IsVideo() ? "video/mp4" : "image/jpeg").getBytes(StandardCharsets.UTF_8));
 
                 byte[] b = new byte[1024];
                 int bytesRead;
                 while ((bytesRead = fis.read(b)) != -1)
                     out.write(b, 0, bytesRead);
 
-                out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes("UTF8"));
+                out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes(StandardCharsets.UTF_8));
 
                 out.flush();
 
@@ -691,7 +694,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                     throw ex;
                 }
 
-                String sz = new String(rgResponse, "UTF8");
+                String sz = new String(rgResponse, StandardCharsets.UTF_8);
                 if (!sz.contains("OK"))
                     throw new Exception(sz);
 

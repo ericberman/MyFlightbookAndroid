@@ -49,7 +49,7 @@ public class CurrencyWidgetService extends RemoteViewsService {
 
 class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private List<CurrencyStatusItem> mCurrencyItems = new ArrayList<>();
-    private Context mContext;
+    private final Context mContext;
 
     CurrencyRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;

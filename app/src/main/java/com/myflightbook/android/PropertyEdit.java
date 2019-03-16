@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -245,7 +245,7 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
     private void UpdateForProperty() {
         UpdateLabelTypefaceForProperty();
         CustomPropertyType.CFPPropertyType cptType = m_fp.getType();
-        Boolean fIsBasicDecimal = cptType == CustomPropertyType.CFPPropertyType.cfpDecimal && (m_fp.CustomPropertyType().cptFlag & 0x00200000) != 0;
+        boolean fIsBasicDecimal = cptType == CustomPropertyType.CFPPropertyType.cfpDecimal && (m_fp.CustomPropertyType().cptFlag & 0x00200000) != 0;
 
         m_tvLabel.setVisibility(VISIBLE);
         m_txtStringVal.setVisibility(GONE);

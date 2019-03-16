@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ public class GPX extends Telemetry {
         sb.append("<gpx creator=\"http://myflightbook.com\" version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n");
         sb.append("<trk>\r\n<name />\r\n<trkseg>\r\n");
 
-        Boolean fIsLocSample = (rgloc.length > 0 && rgloc[0] instanceof  LocSample);
+        boolean fIsLocSample = (rgloc.length > 0 && rgloc[0] instanceof  LocSample);
 
         for (LatLong ll : rgloc) {
             sb.append(String.format(Locale.US, "<trkpt lat=\"%.8f\" lon=\"%.8f\">\r\n", ll.Latitude, ll.Longitude));

@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation files('libs/annotations.jar')
     implementation files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')

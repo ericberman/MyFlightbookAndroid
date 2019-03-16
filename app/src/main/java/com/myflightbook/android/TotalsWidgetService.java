@@ -51,7 +51,7 @@ public class TotalsWidgetService extends RemoteViewsService {
 
 class TotalsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private List<Totals> mTotalsItmes = new ArrayList<>();
-    private Context mContext;
+    final private Context mContext;
 
     TotalsRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;

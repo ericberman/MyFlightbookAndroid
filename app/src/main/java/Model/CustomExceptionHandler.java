@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -152,14 +153,14 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
 
             out = new BufferedOutputStream(urlConnection.getOutputStream());
 
-            out.write(szBoundaryDivider.getBytes("UTF8"));
-            out.write("Content-Disposition: form-data; name=\"filename\"\r\n\r\n".getBytes("UTF8"));
-            out.write(String.format("%s\r\n%s", filename, szBoundaryDivider).getBytes("UTF8"));
+            out.write(szBoundaryDivider.getBytes(StandardCharsets.UTF_8));
+            out.write("Content-Disposition: form-data; name=\"filename\"\r\n\r\n".getBytes(StandardCharsets.UTF_8));
+            out.write(String.format("%s\r\n%s", filename, szBoundaryDivider).getBytes(StandardCharsets.UTF_8));
 
-            out.write("Content-Disposition: form-data; name=\"stacktrace\"\r\n\r\n".getBytes("UTF8"));
-            out.write(String.format("%s\r\n%s", stacktrace, szBoundaryDivider).getBytes("UTF8"));
+            out.write("Content-Disposition: form-data; name=\"stacktrace\"\r\n\r\n".getBytes(StandardCharsets.UTF_8));
+            out.write(String.format("%s\r\n%s", stacktrace, szBoundaryDivider).getBytes(StandardCharsets.UTF_8));
 
-            out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes("UTF8"));
+            out.write(String.format("\r\n\r\n--%s--\r\n", szBoundary).getBytes(StandardCharsets.UTF_8));
 
             out.flush();
 
@@ -172,7 +173,7 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
             if (in.read(rgResponse) == 0)
                 Log.e(MFBConstants.LOG_TAG, "No bytes read from the response to uploading error report!");
 
-            String sz = new String(rgResponse, "UTF8");
+            String sz = new String(rgResponse, StandardCharsets.UTF_8);
             if (!sz.contains("OK"))
                 throw new Exception(sz);
         } catch (Exception ex) {

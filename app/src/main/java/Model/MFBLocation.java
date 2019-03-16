@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -271,9 +271,9 @@ public class MFBLocation implements LocationListener {
 
         double SpeedKts = loc.Speed;
         double Accuracy = loc.HError;
-        Boolean fValidQuality = (Accuracy > 0 && Accuracy < MFBConstants.MIN_ACCURACY);
-        Boolean fValidSpeed = (SpeedKts > 0.1);
-        Boolean fValidTime = true;
+        boolean fValidQuality = (Accuracy > 0 && Accuracy < MFBConstants.MIN_ACCURACY);
+        boolean fValidSpeed = (SpeedKts > 0.1);
+        boolean fValidTime = true;
 
         m_lastSeenLoc = newLoc; // always update this, even if we don't use it.
 

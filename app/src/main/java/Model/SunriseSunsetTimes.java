@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,11 +49,11 @@ public class SunriseSunsetTimes {
 
     // The offset from sunrise/sunset (in minutes) needed for night currency (i.e., in computing IsFAANight
     // 1 hour by default (i.e., landings need to be between sunset + 1 hour and sunrise - 1 hour to count
-    private int NightLandingOffset = 60;
+    private final int  NightLandingOffset;
 
     // The offset from sunrise/sunset (in minutes) needed for night flight, if that's how night flight is computed
     // Default is 0.0, since default for night flight is IsCivilNight
-    private int NightFlightOffset = 0;
+    private final int NightFlightOffset;
 
     SunriseSunsetTimes(Date dt, double latitude, double longitude, int nightFlightOffset) {
         Date = dt;
@@ -135,14 +135,14 @@ public class SunriseSunsetTimes {
         double solarAngle = Solar.calcSolarAngle(Latitude, Longitude, JD, cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE));
         IsCivilNight = solarAngle <= -6.0;
 
-        Boolean nosunrise = false;
+        boolean nosunrise = false;
         double riseTimeGMT = Solar.calcSunriseUTC(JD, Latitude, -Longitude);
         if (Double.isNaN(riseTimeGMT))
             nosunrise = true;
 
         // Calculate sunset for this date
         // if no sunset is found, set flag nosunset
-        Boolean nosunset = false;
+        boolean nosunset = false;
         double setTimeGMT = Solar.calcSunsetUTC(JD, Latitude, -Longitude);
         if (Double.isNaN(setTimeGMT))
             nosunset = true;

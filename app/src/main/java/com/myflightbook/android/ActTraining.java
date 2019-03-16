@@ -119,7 +119,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
-        Boolean fAllGranted = true;
+        boolean fAllGranted = true;
         for (int i : grantResults)
             if (i != PackageManager.PERMISSION_GRANTED)
                 fAllGranted = false;

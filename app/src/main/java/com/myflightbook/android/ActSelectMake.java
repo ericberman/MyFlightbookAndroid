@@ -119,7 +119,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
         });
 
         // make the hint for creating make/model a hyperlink
-        TextView txtHint = (TextView) findViewById(R.id.txtAddMakesHint);
+        TextView txtHint = findViewById(R.id.txtAddMakesHint);
         txtHint.setText(getString(R.string.lblAddMakes));
         txtHint.setMovementMethod(LinkMovementMethod.getInstance());
     }

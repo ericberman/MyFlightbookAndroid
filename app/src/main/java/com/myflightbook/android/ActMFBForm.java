@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -384,7 +384,8 @@ public class ActMFBForm extends Fragment {
     }
 
     //region Image/video permissions
-    private Boolean fCheckImagePermissions(int permission) {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean fCheckImagePermissions(int permission) {
         switch (permission) {
             case CAMERA_PERMISSION_IMAGE:
             case CAMERA_PERMISSION_VIDEO:
@@ -409,7 +410,7 @@ public class ActMFBForm extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
-        Boolean fAllGranted = true;
+        boolean fAllGranted = true;
         for (int i : grantResults)
             if (i != PackageManager.PERMISSION_GRANTED)
                 fAllGranted = false;

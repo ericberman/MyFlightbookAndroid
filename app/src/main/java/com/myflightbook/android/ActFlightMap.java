@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -341,9 +341,9 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
 
         // Save as GPX only if there is a path.
         String state = Environment.getExternalStorageState();
-        Boolean fIsMounted = Environment.MEDIA_MOUNTED.equals(state);
+        boolean fIsMounted = Environment.MEDIA_MOUNTED.equals(state);
 
-        Boolean fHasNoPath = m_rgFlightRoute == null || this.m_rgFlightRoute.length == 0;
+        boolean fHasNoPath = m_rgFlightRoute == null || this.m_rgFlightRoute.length == 0;
         findViewById(R.id.btnExportGPX).setVisibility(fHasNoPath || !fIsMounted ? View.GONE : View.VISIBLE);
     }
 

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ import org.ksoap2.serialization.SoapObject;
 
 public class CreateUserSvc extends MFBSoap {
 
-    public Boolean FCreateUser(String szEmail, String szPass, String szFirst, String szLast,
+    public boolean FCreateUser(String szEmail, String szPass, String szFirst, String szLast,
                                String szQ, String szA, Context c) {
-        Boolean fResult = false;
+        boolean fResult = false;
         SoapObject Request = setMethod("CreateUser");
         Request.addProperty("szAppToken", AuthToken.APPTOKEN);
         Request.addProperty("szEmail", szEmail);

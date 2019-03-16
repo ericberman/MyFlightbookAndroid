@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ public class CustomPropertyTypesSvc extends MFBSoap {
         // note that these calls will close the db, so we do them first.
         DBCache dbc = new DBCache();
         dbc.flushCache(TABLENAME, true);
-        Boolean fResult = false;
+        boolean fResult = false;
 
         // now, we get an open db
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
