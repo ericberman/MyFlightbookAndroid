@@ -23,6 +23,7 @@ package com.myflightbook.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -74,6 +75,13 @@ class TotalsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         // We construct a remote views item based on our widget item xml file, and set the
         // text based on the position.
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_totals_item);
+
+        // Next, we set a fill-intent which will be used to fill-in the pending intent template
+        // which is set on the collection view in StackWidgetProvider.
+        Bundle extras = new Bundle();
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtras(extras);
+        rv.setOnClickFillInIntent(R.id.layoutWidgetTotalsItem, fillInIntent);
 
         Totals ti = mTotalsItmes.get(position);
 

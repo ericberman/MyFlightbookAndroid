@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:id="@+id/layoutWidgetTotalsItem"
         android:layout_weight=".7"
         android:orientation="vertical">
 

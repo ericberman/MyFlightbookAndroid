@@ -23,9 +23,23 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.widget.RemoteViews;
 
+import java.util.Objects;
+
 public class CurrencyWidgetProvider extends AppWidgetProvider {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
+        if (intent != null) {
+            if (Objects.equals(intent.getAction(), MFBMain.ACTION_VIEW_CURRENCY))
+                context.startActivity(new Intent(context, MFBMain.class).setAction(intent.getAction()));
+        }
+        super.onReceive(context, intent);
+    }
+
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
             // Set up the intent that starts the ListViewService, which will
@@ -41,8 +55,9 @@ public class CurrencyWidgetProvider extends AppWidgetProvider {
             rv.setRemoteAdapter(android.R.id.list, intent);
 
             // Trigger listview item click
-            Intent startActivityIntent = new Intent(context, MFBMain.class);
-            PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent startActivityIntent = new Intent(context, CurrencyWidgetProvider.class).setAction(MFBMain.ACTION_VIEW_CURRENCY);
+            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+            PendingIntent startActivityPendingIntent = PendingIntent.getBroadcast(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);
 
             // The empty view is displayed when the collection has no items.

@@ -27,6 +27,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 	<TextView android:text="" android:id="@+id/txtTotValue"
 		android:layout_width="0px" android:layout_height="wrap_content"
 		android:layout_weight="3"
-		android:textSize="8pt">
+		android:textSize="6pt">
 	</TextView>
 </LinearLayout>

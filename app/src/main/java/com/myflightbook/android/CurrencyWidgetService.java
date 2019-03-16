@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.widget.RemoteViews;
@@ -74,24 +75,32 @@ class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
         // text based on the position.
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_currency_item);
 
+        // Next, we set a fill-intent which will be used to fill-in the pending intent template
+        // which is set on the collection view in StackWidgetProvider.
+        Bundle extras = new Bundle();
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtras(extras);
+        rv.setOnClickFillInIntent(R.id.layoutWidgetCurrencyItem, fillInIntent);
+
+
         CurrencyStatusItem csi = mCurrencyItems.get(position);
 
         rv.setTextViewText(R.id.txtCsiDiscrepancy, csi.Discrepancy);
-        rv.setTextViewText(R.id.txtCsiValue, csi.Value);
-        SpannableString attribute = new SpannableString(csi.Attribute);
+        rv.setTextViewText(R.id.txtCsiAttribute, csi.Attribute);
+        SpannableString value = new SpannableString(csi.Value);
         if (csi.Status.compareTo("NotCurrent") == 0) {
-            rv.setTextColor(R.id.txtCsiAttribute, Color.RED);
-            attribute.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Attribute.length(), 0);
+            rv.setTextColor(R.id.txtCsiValue, Color.RED);
+            value.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Value.length(), 0);
         } else if (csi.Status.compareTo("GettingClose") == 0) {
-            rv.setTextColor(R.id.txtCsiAttribute, Color.argb(255, 0, 128, 255));
+            rv.setTextColor(R.id.txtCsiValue, Color.argb(255, 0, 128, 255));
         } else if (csi.Status.compareTo("NoDate") == 0) {
-            attribute.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Attribute.length(), 0);
-            rv.setTextColor(R.id.txtCsiAttribute, Color.BLACK);
+            value.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Value.length(), 0);
+            rv.setTextColor(R.id.txtCsiValue, Color.BLACK);
         }
         else
-            rv.setTextColor(R.id.txtCsiAttribute, Color.argb(255, 0, 128, 0));
+            rv.setTextColor(R.id.txtCsiValue, Color.argb(255, 0, 128, 0));
 
-        rv.setTextViewText(R.id.txtCsiAttribute, attribute);
+        rv.setTextViewText(R.id.txtCsiValue, value);
 
         // Return the remote views object.
         return rv;

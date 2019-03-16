@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:padding="5dp"
+    android:id="@+id/layoutWidgetCurrencyItem"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
@@ -9,6 +10,7 @@
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textSize="6pt"
         />
 
     <LinearLayout
@@ -18,10 +20,12 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/txtCsiValue"
+            android:textSize="6pt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/txtCsiDiscrepancy"
+            android:textSize="6pt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
