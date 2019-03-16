@@ -170,6 +170,22 @@
         </provider>
 
         <service android:name=".mfblocationservice" />
-    </application>
+        <service android:name=".CurrencyWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service android:name=".TotalsWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
 
+        <receiver android:name="CurrencyWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/currency_appwidget_info" />
+        </receiver>
+        <receiver android:name="TotalsWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/totals_appwidget_info" />
+        </receiver>
+    </application>
 </manifest>

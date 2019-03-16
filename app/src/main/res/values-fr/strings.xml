@@ -522,4 +522,8 @@
     <string name="shortcutStopEngine">Arrêter le moteur</string>
     <string name="shortcutPause">Pauser</string>
     <string name="shortcutResume">Reprendre</string>
+
+    <!-- Widgets -->
+    <string name="noCurrency">Aucune donnée d\'expérience à afficher</string>
+    <string name="noTotals">Pas de données totales à afficher</string>
 </resources>

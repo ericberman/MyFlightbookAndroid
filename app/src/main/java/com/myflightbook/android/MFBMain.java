@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -136,8 +136,8 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     public static String versionName = "";
     public static int versionCode = 0;
 
-    private static final String ACTION_VIEW_CURRENCY = "com.myflightbook.android.VIEWCURRENCY";
-    private static final String ACTION_VIEW_TOTALS = "com.myflightbook.android.VIEWTOTALS";
+    public static final String ACTION_VIEW_CURRENCY = "com.myflightbook.android.VIEWCURRENCY";
+    public static final String ACTION_VIEW_TOTALS = "com.myflightbook.android.VIEWTOTALS";
     private static final String ACTION_START_ENGINE = "com.myflightbook.android.STARTENGINE";
     private static final String ACTION_STOP_ENGINE = "com.myflightbook.android.STOPENGINE";
     private static final String ACTION_PAUSE_FLIGHT = "com.myflightbook.android.PAUSEFLIGHT";
@@ -505,10 +505,10 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
             if (shortcutManager != null && MFBLocation.GetMainLocation() != null) {
                 ArrayList<ShortcutInfo> lst = new ArrayList<>();
 
-                Boolean fFlightStarted = MFBMain.getNewFlightListener().shouldKeepListening();
-                Boolean fPaused = ActNewFlight.fPaused;
+                boolean fFlightStarted = MFBMain.getNewFlightListener().shouldKeepListening();
+                boolean fPaused = ActNewFlight.fPaused;
                 LogbookEntry le = MFBMain.getNewFlightListener().getInProgressFlight(this);
-                Boolean fFlightEnded = le != null && le.isKnownEngineEnd();
+                boolean fFlightEnded = le != null && le.isKnownEngineEnd();
 
                 if (fFlightStarted) {
                     lst.add(new ShortcutInfo.Builder(this, "startEngine")
