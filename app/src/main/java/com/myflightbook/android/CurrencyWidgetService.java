@@ -81,11 +81,11 @@ class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
         SpannableString attribute = new SpannableString(csi.Attribute);
         if (csi.Status.compareTo("NotCurrent") == 0) {
             rv.setTextColor(R.id.txtCsiAttribute, Color.RED);
-            attribute.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Attribute.length() - 1, 0);
+            attribute.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Attribute.length(), 0);
         } else if (csi.Status.compareTo("GettingClose") == 0) {
             rv.setTextColor(R.id.txtCsiAttribute, Color.argb(255, 0, 128, 255));
         } else if (csi.Status.compareTo("NoDate") == 0) {
-            attribute.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Attribute.length() - 1, 0);
+            attribute.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Attribute.length(), 0);
             rv.setTextColor(R.id.txtCsiAttribute, Color.BLACK);
         }
         else
