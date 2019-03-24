@@ -21,8 +21,10 @@
 
 package com.myflightbook.android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import Model.CurrencyStatusItem;
+import Model.MFBUtil;
 
 public class CurrencyWidgetService extends RemoteViewsService {
     @Override
@@ -50,6 +53,8 @@ public class CurrencyWidgetService extends RemoteViewsService {
 class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private List<CurrencyStatusItem> mCurrencyItems = new ArrayList<>();
     private final Context mContext;
+    private static final String prefCurrency = "prefCurrencyWidget";
+    private static final String prefCurrencyLast = "prefCurrencyWidgetLast";
 
     CurrencyRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
@@ -58,12 +63,18 @@ class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
         // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
+        SharedPreferences prefs = mContext.getSharedPreferences(prefCurrency, Activity.MODE_PRIVATE);
+        String szTotals = prefs.getString(prefCurrencyLast, null);
+        if (szTotals != null) {
+            CurrencyStatusItem[] rgcsi = MFBUtil.deserializeFromString(szTotals);
+            mCurrencyItems = Arrays.asList(rgcsi);
+        }
     }
 
     public void onDestroy() {
         // In onDestroy() you should tear down anything that was setup for your data source,
         // eg. cursors, connections, etc.
-        mCurrencyItems.clear();
+        mCurrencyItems = new ArrayList<>();
     }
     public int getCount() {
         return mCurrencyItems.size();
@@ -81,7 +92,6 @@ class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         rv.setOnClickFillInIntent(R.id.layoutWidgetCurrencyItem, fillInIntent);
-
 
         CurrencyStatusItem csi = mCurrencyItems.get(position);
 
@@ -130,6 +140,12 @@ class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
             return;
 
         CurrencySvc cs = new CurrencySvc();
-        mCurrencyItems = Arrays.asList(cs.CurrencyForUser(AuthToken.m_szAuthToken, mContext));
+        CurrencyStatusItem[] rgcsi = cs.CurrencyForUser(AuthToken.m_szAuthToken, mContext);
+        mCurrencyItems = Arrays.asList(rgcsi);
+
+        SharedPreferences prefs = mContext.getSharedPreferences(prefCurrency, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putString(prefCurrencyLast, MFBUtil.serializeToString(rgcsi));
+        ed.apply();
     }
 }

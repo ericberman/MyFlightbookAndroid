@@ -21,8 +21,10 @@
 
 package com.myflightbook.android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -39,6 +41,7 @@ import java.util.Locale;
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
 import Model.FlightQuery;
+import Model.MFBUtil;
 import Model.Totals;
 
 
@@ -52,6 +55,8 @@ public class TotalsWidgetService extends RemoteViewsService {
 class TotalsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private List<Totals> mTotalsItmes = new ArrayList<>();
     final private Context mContext;
+    private static final String prefTotals = "prefTotalsWidget";
+    private static final String prefTotalsLast = "prefTotalsWidgetLast";
 
     TotalsRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
@@ -60,16 +65,23 @@ class TotalsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
+        SharedPreferences prefs = mContext.getSharedPreferences(prefTotals, Activity.MODE_PRIVATE);
+        String szTotals = prefs.getString(prefTotalsLast, null);
+        if (szTotals != null) {
+            Totals[] rgti = MFBUtil.deserializeFromString(szTotals);
+            mTotalsItmes = Arrays.asList(rgti);
+        }
     }
 
     public void onDestroy() {
         // In onDestroy() you should tear down anything that was setup for your data source,
         // eg. cursors, connections, etc.
-        mTotalsItmes.clear();
+        mTotalsItmes = new ArrayList<>();
     }
     public int getCount() {
         return mTotalsItmes.size();
     }
+
     public RemoteViews getViewAt(int position) {
         // position will always range from 0 to getCount() - 1.
         // We construct a remote views item based on our widget item xml file, and set the
@@ -132,6 +144,13 @@ class TotalsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
             return;
 
         TotalsSvc ts = new TotalsSvc();
-        mTotalsItmes = Arrays.asList(ts.TotalsForUser(AuthToken.m_szAuthToken, new FlightQuery(), mContext));
+        Totals[] rgti = ts.TotalsForUser(AuthToken.m_szAuthToken, new FlightQuery(), mContext);
+        mTotalsItmes = Arrays.asList(rgti);
+
+        SharedPreferences prefs = mContext.getSharedPreferences(prefTotals, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putString(prefTotalsLast, MFBUtil.serializeToString(rgti));
+        ed.apply();
+
     }
 }

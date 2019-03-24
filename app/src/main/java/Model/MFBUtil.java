@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ public class MFBUtil {
     // endregion
 
     // region Object serialization/deserialization
-    private static String serializeToString(Serializable o) {
+    public static String serializeToString(Serializable o) {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -159,7 +159,7 @@ public class MFBUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T deserializeFromString(String s) {
+    public static <T> T deserializeFromString(String s) {
         if (s == null || s.length() == 0)
             return null;
 

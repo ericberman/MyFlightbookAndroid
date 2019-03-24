@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,8 +20,10 @@ package Model;
 
 import org.ksoap2.serialization.SoapObject;
 
+import java.io.Serializable;
 
-public class CurrencyStatusItem extends SoapableObject {
+
+public class CurrencyStatusItem extends SoapableObject implements Serializable {
     public enum  CurrencyGroups {None, FlightExperience, FlightReview, Aircraft, AircraftDeadline, Certificates, Medical, Deadline, CustomCurrency}
 
     public String Attribute = "";
@@ -36,6 +38,8 @@ public class CurrencyStatusItem extends SoapableObject {
         super();
         FromProperties(so);
     }
+
+    public CurrencyStatusItem() { super(); }
 
     @Override
     public String toString() {
