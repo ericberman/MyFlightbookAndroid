@@ -536,7 +536,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         setDecimalEditMode(R.id.txtXC);
 
         // Make sure the date of flight is up-to-date
-        if (!m_le.isKnownEngineStart() && !m_le.isKnownFlightStart())
+        if (m_le.isKnownEngineStart() || m_le.isKnownFlightStart())
             resetDateOfFlight();
 
         if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime && m_le.rgCustomProperties != null)
