@@ -145,6 +145,11 @@ public class ActWebView extends AppCompatActivity {
             }
         });
         wv.loadUrl(szURL);
+        wv.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+            if (mimetype.compareToIgnoreCase("text/calendar") == 0) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            }
+        });
 
         btnBack.setOnClickListener(view -> {
             if (wv.canGoBack())
