@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -342,6 +342,20 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         FlightProperty.RewritePropertiesForFlight(m_idFlight, rgfpUpdated);
     }
 
+    private Boolean containsWords(String szTarget, String[] rgTerms)
+    {
+        if (szTarget == null)
+            return false;
+
+        szTarget = szTarget.toUpperCase(Locale.getDefault());
+
+        for (String s : rgTerms) {
+            if (s.length() > 0 && !szTarget.contains(s))
+                return false;
+        }
+        return true;
+    }
+
     private void populateList() {
         // get the cross product of property types with existing properties
         if (m_rgcpt == null)
@@ -358,11 +372,11 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         String szKeyLast = "";
 
         String szRestrict = ((EditText) findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
+        String[] rgTerms = szRestrict.split("\\s+");
 
         // slice and dice into headers/first names
         for (FlightProperty fp : m_rgfpAll) {
-
-            if (szRestrict.length() > 0 && !fp.labelString().toUpperCase(Locale.getDefault()).contains(szRestrict))
+            if (!containsWords(fp.labelString(), rgTerms))
                 continue;
 
             // get the section for this property
