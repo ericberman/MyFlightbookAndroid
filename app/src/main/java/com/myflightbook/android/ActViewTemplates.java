@@ -188,6 +188,10 @@ public class ActViewTemplates extends ListFragment implements OnItemClickListene
             srl.setRefreshing(false);
             refresh();
         });
+
+        PropertyTemplate[] rgpt =PropertyTemplate.getSharedTemplates(getActivity().getSharedPreferences(PropertyTemplate.PREF_KEY_TEMPLATES, Activity.MODE_PRIVATE));
+        if (rgpt == null || rgpt.length == 0)
+            refresh();
     }
 
     private void refresh() {
