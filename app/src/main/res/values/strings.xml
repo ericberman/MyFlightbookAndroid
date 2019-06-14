@@ -361,6 +361,8 @@
     <string name="menuSignFlight">Sign</string>
     <string name="menuDeleteAircraft">Delete Aircraft</string>
     <string name="menuDeleteAircraftShort">Delete</string>
+    <string name="menuChooseTemplate">Templates for flight</string>
+    <string name="menuChooseTemplateShort">Templates</string>
 
     <!-- Abbreviations -->
     <string name="abbrevNauticalMiles">nm</string>

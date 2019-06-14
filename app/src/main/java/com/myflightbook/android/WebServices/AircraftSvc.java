@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.myflightbook.android.MFBMain;
@@ -33,6 +34,7 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import Model.Aircraft;
 import Model.Aircraft.PilotRole;
@@ -68,6 +70,8 @@ public class AircraftSvc extends MFBSoap {
     private static final String COL_ROLEFORPILOT = "RoleForPilot";
     private static final String COL_PUBLICNOTES = "PublicNotes";
     private static final String COL_PRIVATENOTES = "PrivateNotes";
+    private static final String COL_DEFAULTIMAGE = "DefaultImage";
+    private static final String COL_DEFAULTTEMPLATEIDS = "DefaultTemplateIDs";
 
     @Override
     public void AddMappings(SoapSerializationEnvelope e) {
@@ -117,21 +121,24 @@ public class AircraftSvc extends MFBSoap {
 
                 int cPublicNotes = c.getColumnIndex(COL_PUBLICNOTES);
                 int cPrivateNotes = c.getColumnIndex(COL_PRIVATENOTES);
+                int cDefaultImage = c.getColumnIndex(COL_DEFAULTIMAGE);
+                int cDefaultTemplateIDs = c.getColumnIndex(COL_DEFAULTTEMPLATEIDS);
 
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
 
                 while (c.moveToNext()) {
                     Aircraft ac = new Aircraft();
-                    ac.AircraftID = c.getInt(cAircraftID);
-                    ac.InstanceTypeID = c.getInt(cInstanceId);
-                    ac.ModelCommonName = c.getString(cModelName);
-                    ac.ModelDescription = c.getString(cModelDesc);
-                    ac.ModelID = c.getInt(cModelId);
-                    ac.TailNumber = c.getString(cTailNum);
-                    ac.PublicNotes = c.getString(cPublicNotes);
-                    ac.PrivateNotes = c.getString(cPrivateNotes);
-
                     try {
+                        ac.AircraftID = c.getInt(cAircraftID);
+                        ac.InstanceTypeID = c.getInt(cInstanceId);
+                        ac.ModelCommonName = c.getString(cModelName);
+                        ac.ModelDescription = c.getString(cModelDesc);
+                        ac.ModelID = c.getInt(cModelId);
+                        ac.TailNumber = c.getString(cTailNum);
+                        ac.PublicNotes = c.getString(cPublicNotes);
+                        ac.PrivateNotes = c.getString(cPrivateNotes);
+                        ac.DefaultImage = c.getString(cDefaultImage);
+
                         ac.HideFromSelection = c.getInt(cHideSelection) != 0;
                         ac.RoleForPilot = PilotRole.values()[c.getInt(cRoleForPilot)];
 
@@ -142,6 +149,12 @@ public class AircraftSvc extends MFBSoap {
                         ac.LastStatic = df.parse(c.getString(cLastStatic));
                         ac.LastAnnual = df.parse(c.getString(cLastAnnual));
                         ac.RegistrationDue = df.parse(c.getString(cRegistrationDue));
+
+                        String szTemplateIDs = c.getString(cDefaultTemplateIDs);
+                        String[] rgIDs = szTemplateIDs.split(" ");
+                        for (String sz : rgIDs)
+                            ac.DefaultTemplates.add(Integer.parseInt(sz));
+
                     } catch (Exception ex) {
                         Log.e(MFBConstants.LOG_TAG, "Error getting cached aircraft: " + ex.getMessage());
                     }
@@ -203,6 +216,13 @@ public class AircraftSvc extends MFBSoap {
 
                     cv.put(COL_PUBLICNOTES, ac.PublicNotes);
                     cv.put(COL_PRIVATENOTES, ac.PrivateNotes);
+                    cv.put(COL_DEFAULTIMAGE, ac.DefaultImage);
+
+                    ArrayList<String> al = new ArrayList<>();
+                    for (Integer idTemplate : ac.DefaultTemplates)
+                        al.add(idTemplate.toString());
+                    String szTemplateIDs = TextUtils.join(" ", al);
+                    cv.put(COL_DEFAULTTEMPLATEIDS, szTemplateIDs);
 
                     long l = db.insertOrThrow(TABLENAME, null, cv);
                     if (l < 0)

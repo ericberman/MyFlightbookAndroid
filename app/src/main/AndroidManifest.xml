@@ -142,6 +142,7 @@
         <activity
             android:name=".ActViewProperties"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".ViewTemplatesActivity" android:windowSoftInputMode="stateHidden" />
         <activity android:name=".ActWebView" />
         <activity android:name=".ActLocalVideo" />
 

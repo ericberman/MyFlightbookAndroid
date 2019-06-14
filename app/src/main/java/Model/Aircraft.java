@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import org.ksoap2.serialization.SoapObject;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Locale;
 
@@ -48,7 +49,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     private enum AircraftProp {
         pidTailNumber, pidAircratID, pidModelID, pidInstanctTypeID,
         pidLastVOR, pidLastAltimeter, pidLastTransponder, pidLastELT, pidLastStatic, pidLastAnnual, pidRegistrationDue,
-        pidLast100, pidLastOil, pidLastEngine, pidHideFromSelection, pidPilotRole, pidPublicNotes, pidPrivateNotes
+        pidLast100, pidLastOil, pidLastEngine, pidHideFromSelection, pidPilotRole, pidPublicNotes, pidPrivateNotes, pidDefaultImage, pidDefaultTemplates
     }
 
     public String TailNumber = "";
@@ -58,7 +59,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     public String ModelCommonName = "";
     public String ModelDescription = "";
     public MFBImageInfo[] AircraftImages = new MFBImageInfo[0];
-    private String DefaultImage = "";
+    public String DefaultImage = "";
+    public HashSet<Integer> DefaultTemplates = new HashSet<>();
 
     // Maintenance fields
     public Date LastVOR;
@@ -156,9 +158,11 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     }
 
     public static Aircraft getAircraftById(int idAircraft, Aircraft[] rgac) {
-        for (Aircraft ac : rgac)
-            if (ac.AircraftID == idAircraft)
-                return ac;
+        if (rgac != null) {
+            for (Aircraft ac : rgac)
+                if (ac.AircraftID == idAircraft)
+                    return ac;
+        }
         return null;
     }
 
@@ -186,6 +190,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
 
         so.addProperty("PublicNotes", PublicNotes);
         so.addProperty("PrivateNotes", PrivateNotes);
+
+        so.addProperty("DefaultImage", DefaultImage);
     }
 
     public void FromProperties(SoapObject so) {
@@ -226,6 +232,11 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
 
             DefaultImage = ReadNullableString(so, "DefaultImage");
         }
+
+        SoapObject templates = (SoapObject) so.getProperty("DefaultTemplates");
+        int cVals = templates.getPropertyCount();
+        for (int i = 0; i < cVals; i++)
+            DefaultTemplates.add(Integer.parseInt(templates.getPropertyAsString(i)));
     }
 
     // serialization methods
@@ -272,6 +283,10 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 return PublicNotes;
             case pidPrivateNotes:
                 return PrivateNotes;
+            case pidDefaultImage:
+                return DefaultImage;
+            case pidDefaultTemplates:
+                return DefaultTemplates;
             default:
                 return null;
         }
@@ -334,6 +349,15 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 break;
             case pidPrivateNotes:
                 PrivateNotes = sz;
+                break;
+            case pidDefaultImage:
+                DefaultImage = sz;
+                break;
+            case pidDefaultTemplates:
+                DefaultTemplates.clear();
+                int[] rgVals = (int[]) value;
+                for (int iVal : rgVals)
+                    DefaultTemplates.add(iVal);
                 break;
             default:
                 break;
@@ -416,6 +440,16 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 pi.type = PropertyInfo.STRING_CLASS;
                 pi.name = "PrivateNotes";
                 break;
+            case pidDefaultImage:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "DefaultImage";
+                break;
+            case pidDefaultTemplates:
+                pi.type = PropertyInfo.VECTOR_CLASS;
+                pi.name = "DefaultTemplates";
+                pi.elementType = new PropertyInfo();
+                pi.elementType.type = PropertyInfo.INTEGER_CLASS;
+                pi.elementType.name = "integer";
             default:
                 break;
         }

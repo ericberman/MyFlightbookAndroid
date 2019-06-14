@@ -18,8 +18,10 @@
  */
 package com.myflightbook.android.WebServices;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -34,6 +36,7 @@ import java.util.Arrays;
 import Model.CustomPropertyType;
 import Model.DBCache;
 import Model.MFBConstants;
+import Model.PropertyTemplate;
 
 public class CustomPropertyTypesSvc extends MFBSoap {
     private static final String TABLENAME = "customproptypes";
@@ -115,10 +118,11 @@ public class CustomPropertyTypesSvc extends MFBSoap {
             dbc.updateCache(TABLENAME);
     }
 
-    private CustomPropertyType[] ReadResults(SoapObject result) {
+    private CustomPropertyType[] ReadResults(SoapObject bundle, Context c) {
         CustomPropertyType[] rgcptCached = getCachedPropertyTypes();
         CustomPropertyType[] rgcpt;
 
+        SoapObject result = (SoapObject) bundle.getProperty("UserProperties");
         try {
             rgcpt = new CustomPropertyType[result.getPropertyCount()];
 
@@ -134,6 +138,24 @@ public class CustomPropertyTypesSvc extends MFBSoap {
         } catch (Exception e) {
             setLastError(getLastError() + e.getMessage());
             rgcpt = rgcptCached;
+        }
+
+        // Now get any templates
+        result = (SoapObject) bundle.getProperty("UserTemplates");
+        try {
+            PropertyTemplate[] rgpt = new PropertyTemplate[result.getPropertyCount()];
+            for (int i = 0; i < rgpt.length; i++) {
+                rgpt[i] = new PropertyTemplate((SoapObject) result.getProperty(i));
+            }
+
+            // if we made it here, we have successfully retrieved new values
+            PropertyTemplate.sharedTemplates = rgpt;
+
+            SharedPreferences pref = c.getSharedPreferences(PropertyTemplate.PREF_KEY_TEMPLATES, Activity.MODE_PRIVATE);
+
+            PropertyTemplate.saveSharedTemplates(pref);
+        } catch (Exception e) {
+            setLastError(getLastError() + e.getMessage());
         }
 
         return rgcpt;
@@ -154,7 +176,7 @@ public class CustomPropertyTypesSvc extends MFBSoap {
             rgcpt = getCachedPropertyTypes();
         } else // refresh the cache
         {
-            SoapObject Request = setMethod("AvailablePropertyTypesForUser");
+            SoapObject Request = setMethod("PropertiesAndTemplatesForUser");
             Request.addProperty("szAuthUserToken", szAuthToken);
 
             SoapObject result = (SoapObject) Invoke(c);
@@ -164,7 +186,7 @@ public class CustomPropertyTypesSvc extends MFBSoap {
                 if (dbcs == DBCache.DBCacheStatus.VALID_BUT_RETRY)
                     rgcpt = getCachedPropertyTypes();
             } else {
-                rgcpt = ReadResults(result);
+                rgcpt = ReadResults(result, c);
             }
         }
 

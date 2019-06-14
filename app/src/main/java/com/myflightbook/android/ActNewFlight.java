@@ -46,6 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -72,6 +73,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -93,6 +95,7 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBLocation;
 import Model.MFBUtil;
+import Model.PropertyTemplate;
 import Model.SunriseSunsetTimes;
 
 public class ActNewFlight extends ActMFBForm implements android.view.View.OnClickListener, MFBFlightListener.ListenerFragmentDelegate,
@@ -100,12 +103,15 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private Aircraft[] m_rgac = null;
     private LogbookEntry m_le = null;
+    private HashSet<PropertyTemplate> m_activeTemplates = new HashSet<>();
+    private boolean needsDefaultTemplates = true;
 
     public final static String PROPSFORFLIGHTID = "com.myflightbook.android.FlightPropsID";
     public final static String PROPSFORFLIGHTEXISTINGID = "com.myflightbook.android.FlightPropsIDExisting";
     public final static String PROPSFORFLIGHTCROSSFILLVALUE = "com.myflightbook.android.FlightPropsXFill";
     public final static String TACHFORCROSSFILLVALUE = "com.myflightbook.android.TachStartXFill";
     private static final int EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE = 48329;
+    private static final int CHOOSE_TEMPLATE_ACTIVITY_REQUEST_CODE = 29370;
 
     // current state of pause/play and accumulated night
     public static Boolean fPaused = false;
@@ -385,6 +391,22 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - onCreate - Viewing flight idflight=%d, idlocal=%d", idFlightToView, idLocalFlightToView));
 
+        ((Spinner) findViewById(R.id.spnAircraft)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Aircraft ac = (Aircraft) parent.getSelectedItem();
+                if (ac != null && m_le.idAircraft != ac.AircraftID) {
+                    m_le.idAircraft = ac.AircraftID;
+                    updateTemplatesForAircraft(false);
+                    ToView();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         // set for no focus.
         findViewById(R.id.btnFlightSet).requestFocus();
 
@@ -545,6 +567,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (fIsNewFlight)
             MFBMain.SetInProgressFlightActivity(getContext(), this);
 
+        // First resume after create should pull in default templates;
+        // subsequent resumes should NOT.
+        updateTemplatesForAircraft(!needsDefaultTemplates);
+        needsDefaultTemplates = false;  // reset this.
+
         ToView();
     }
 
@@ -699,6 +726,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case R.id.menuChoosePicture:
                 choosePictureClicked();
                 return true;
+            case R.id.menuChooseTemplate: {
+                Intent i = new Intent(getActivity(), ViewTemplatesActivity.class);
+                Bundle b = new Bundle();
+                b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, m_activeTemplates);
+                i.putExtras(b);
+                startActivityForResult(i, CHOOSE_TEMPLATE_ACTIVITY_REQUEST_CODE);
+            }
+                return true;
             case R.id.menuRepeatFlight:
             case R.id.menuReverseFlight: {
                 assert m_le != null;
@@ -774,13 +809,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_NEAREST:
-                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    AppendNearest();
-                }
-                return;
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_NEAREST) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                AppendNearest();
+            }
+            return;
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -939,6 +973,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ToView();
     }
 
+    @SuppressWarnings("unchecked")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
@@ -958,6 +993,16 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case ActFlightMap.REQUEST_ROUTE:
                 m_le.szRoute = data.getStringExtra(ActFlightMap.ROUTEFORFLIGHT);
                 SetStringForField(R.id.txtRoute, m_le.szRoute);
+                break;
+            case CHOOSE_TEMPLATE_ACTIVITY_REQUEST_CODE:
+                Bundle b = data.getExtras();
+                try {
+                    m_activeTemplates = (HashSet<PropertyTemplate>) Objects.requireNonNull(b).getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES);
+                    updateTemplatesForAircraft(true);
+                    ToView();
+                } catch (ClassCastException ex) {
+                    Log.e(MFBConstants.LOG_TAG, ex.getMessage());
+                }
                 break;
             case ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE:
                 String approachDesc = data.getStringExtra(ActAddApproach.APPROACHDESCRIPTIONRESULT);
@@ -1088,6 +1133,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         LogbookEntry leNew = new LogbookEntry(ValidateAircraftID(m_le.idAircraft), m_le.fPublic);
         if (fCarryHobbs)
             leNew.hobbsStart = hobbsEnd;
+        m_activeTemplates.clear();
+        m_le.idAircraft = leNew.idAircraft; // so that updateTemplatesForAircraft works
+        updateTemplatesForAircraft(false);
         SetLogbookEntry(leNew);
         MFBMain.getNewFlightListener().setInProgressFlight(leNew);
         saveCurrentFlight();
@@ -1772,10 +1820,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             return;
 
         HashSet<Integer> pinnedProps = CustomPropertyType.getPinnedProperties(getActivity().getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, Activity.MODE_PRIVATE));
+        HashSet<Integer> templateProps = PropertyTemplate.mergeTemplates(m_activeTemplates.toArray(new PropertyTemplate[0]));
 
         CustomPropertyType[] rgcptAll = CustomPropertyTypesSvc.getCachedPropertyTypes();
         if (rgcptAll == null)
             return;
+
+        Arrays.sort(rgcptAll);
 
         FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, rgcptAll);
 
@@ -1790,7 +1841,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             Boolean fIsPinned = CustomPropertyType.isPinnedProperty(pinnedProps, fp.idPropType);
 
 
-            if (!fIsPinned && fp.IsDefaultValue())
+            if (!fIsPinned && !templateProps.contains(fp.idPropType) && fp.IsDefaultValue())
                 continue;
 
             TableRow tr = (TableRow) l.inflate(R.layout.cpttableitem, tl, false);
@@ -1881,4 +1932,32 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             AutoTotals();
     }
     //endregion
+
+    // region Templates
+    protected void updateTemplatesForAircraft(boolean noDefault) {
+        if (PropertyTemplate.sharedTemplates == null && PropertyTemplate.getSharedTemplates(Objects.requireNonNull(getActivity()).getSharedPreferences(PropertyTemplate.PREF_KEY_TEMPLATES, Activity.MODE_PRIVATE)) == null)
+            return;
+
+        PropertyTemplate[] rgDefault = PropertyTemplate.getDefaultTemplates();
+        PropertyTemplate ptAnon = PropertyTemplate.getAnonTemplate();
+        PropertyTemplate ptSim = PropertyTemplate.getSimTemplate();
+
+        Aircraft ac = Aircraft.getAircraftById(m_le.idAircraft, m_rgac);
+        if (ac != null && ac.DefaultTemplates.size() > 0)
+            m_activeTemplates.addAll(Arrays.asList(PropertyTemplate.templatesWithIDs(ac.DefaultTemplates)));
+        else if (rgDefault.length > 0 && !noDefault)
+            m_activeTemplates.addAll(Arrays.asList(rgDefault));
+
+        m_activeTemplates.remove(ptAnon);
+        m_activeTemplates.remove(ptSim);
+
+        // Always add in sims or anon as appropriate
+        if (ac != null) {
+            if (ac.IsAnonymous() && ptAnon != null)
+                m_activeTemplates.add(ptAnon);
+            if (!ac.IsReal() && ptSim != null)
+                m_activeTemplates.add(ptSim);
+        }
+    }
+    // endregion
 }

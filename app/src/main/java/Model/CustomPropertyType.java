@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public static final int idPropTypeTachEnd = 96;
     public static final int idPropTypeBlockOut = 187;
     public static final int idPropTypeBlockIn = 186;
-    public static final int idPropTypeApproachDesc = 267;
+    static final int idPropTypeApproachDesc = 267;
 
     // DB Column names
     private static final String COL_IDPROPTYPE = "idPropType";
@@ -108,6 +108,8 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         idPropType = c.getInt(c.getColumnIndex(COL_IDPROPTYPE));
         szTitle = c.getString(c.getColumnIndex(COL_TITLE));
         szSortKey = c.getString(c.getColumnIndex(COL_SORTKEY));
+        if (szSortKey == null || szSortKey.length() == 0)
+            szSortKey = szTitle;
         szFormatString = c.getString(c.getColumnIndex(COL_FORMATSTRING));
         szDescription = (c.getString(c.getColumnIndex(COL_DESCRIPTION)));
         if (szDescription == null)
@@ -150,6 +152,8 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         idPropType = Integer.parseInt(so.getProperty("PropTypeID").toString());
         szTitle = so.getProperty("Title").toString();
         szSortKey = so.getPropertySafelyAsString("SortKey");
+        if (szSortKey == null || szSortKey.length() == 0)
+            szSortKey = szTitle;
         szFormatString = so.getProperty("FormatString").toString();
         szDescription = so.getPropertySafelyAsString("Description");
         cptType = CFPPropertyType.valueOf(so.getProperty("Type").toString());

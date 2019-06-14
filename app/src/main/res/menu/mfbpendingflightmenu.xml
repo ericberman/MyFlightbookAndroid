@@ -30,6 +30,10 @@
         android:titleCondensed="@string/menuChoosePictureShort"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menuChooseTemplate"
+        android:title="@string/menuChooseTemplate"
+        android:titleCondensed="@string/menuChooseTemplateShort" />
+    <item
         android:id="@+id/btnDeleteFlight"
         android:icon="@drawable/ic_action_discard"
         android:title="@string/menuDeleteFlight"
