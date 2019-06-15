@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -136,7 +136,6 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (ActRecentsWS.fShowFlightImages) {
                 ivCamera.setVisibility(View.VISIBLE);
                 if (le.hasImages() || (ac != null && ac.HasImage())) {
-                    //noinspection ConstantConditions - ac.AircraftImages cannot be null because ac.HasImage() has already verified that it isn't.
                     MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.AircraftImages[0];
                     Bitmap b = mfbii.bitmapFromThumb();
                     if (b != null) {
@@ -404,13 +403,10 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case ActFlightQuery.QUERY_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-                    currentQuery = (FlightQuery) data.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
-                }
-            default:
-                break;
+        if (requestCode == ActFlightQuery.QUERY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                currentQuery = (FlightQuery) data.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
+            }
         }
     }
 

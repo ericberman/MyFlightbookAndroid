@@ -256,7 +256,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     public void DeletePendingImages(long id) {
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
         String szId = (m_pd == PictureDestination.FlightImage) ? "idFlight" : "idAircraft";
-        long rgIds[] = null;
+        long[] rgIds = null;
 
         try (Cursor c = db.query(TABLENAME, new String[]{"_id"}, szId + " = ?", new String[]{String.format(Locale.US, "%d", id)}, null, null, null)) {
             // Get each one individually so that the associated image file gets deleted too.

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,10 +44,8 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
     public String AirportID;
     public String FacilityName;
     public String Type;
-    @SuppressWarnings("WeakerAccess")
-    public double Latitude;
-    @SuppressWarnings("WeakerAccess")
-    public double Longitude;
+    private double Latitude;
+    private double Longitude;
     public double Distance;
     private boolean IsPreferred;
 

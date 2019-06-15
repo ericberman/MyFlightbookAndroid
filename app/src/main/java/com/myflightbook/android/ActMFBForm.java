@@ -409,7 +409,7 @@ public class ActMFBForm extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
         boolean fAllGranted = true;
         for (int i : grantResults)
             if (i != PackageManager.PERMISSION_GRANTED)

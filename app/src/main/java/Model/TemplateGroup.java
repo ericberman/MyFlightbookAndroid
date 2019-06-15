@@ -26,9 +26,9 @@ import java.util.Hashtable;
 import java.util.Locale;
 
 public class TemplateGroup implements Comparable<TemplateGroup> {
-    private int group;
-    public String groupDisplayName;
-    public ArrayList<PropertyTemplate> templates;
+    private final int group;
+    public final String groupDisplayName;
+    public final ArrayList<PropertyTemplate> templates;
 
     public TemplateGroup() {
         group = 0;

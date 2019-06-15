@@ -56,7 +56,6 @@ public class ExpandableListFragment extends Fragment
     private CharSequence mEmptyText;
     private boolean mExpandableListShown;
 
-    @SuppressWarnings("WeakerAccess")
     public ExpandableListFragment() {
     }
 
@@ -74,7 +73,6 @@ public class ExpandableListFragment extends Fragment
 * behavior of ListFragment. In particular, this is currently the only
 * way to have the built-in indeterminant progress state be shown.
 */
-    @SuppressWarnings("NullableProblems")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

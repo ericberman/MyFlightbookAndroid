@@ -60,7 +60,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     public String ModelDescription = "";
     public MFBImageInfo[] AircraftImages = new MFBImageInfo[0];
     public String DefaultImage = "";
-    public HashSet<Integer> DefaultTemplates = new HashSet<>();
+    public final HashSet<Integer> DefaultTemplates = new HashSet<>();
 
     // Maintenance fields
     public Date LastVOR;

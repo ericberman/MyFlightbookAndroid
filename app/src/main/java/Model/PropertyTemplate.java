@@ -116,7 +116,7 @@ public class PropertyTemplate  extends SoapableObject implements Comparable<Prop
     }
 
     @Override
-    public void FromProperties(SoapObject so) {
+    protected void FromProperties(SoapObject so) {
         ID = Integer.parseInt(so.getProperty("ID").toString());
         Name = so.getProperty("Name").toString();
         Description = so.getProperty("Description").toString();

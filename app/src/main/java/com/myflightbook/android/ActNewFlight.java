@@ -1934,7 +1934,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     //endregion
 
     // region Templates
-    protected void updateTemplatesForAircraft(boolean noDefault) {
+    private void updateTemplatesForAircraft(boolean noDefault) {
         if (PropertyTemplate.sharedTemplates == null && PropertyTemplate.getSharedTemplates(Objects.requireNonNull(getActivity()).getSharedPreferences(PropertyTemplate.PREF_KEY_TEMPLATES, Activity.MODE_PRIVATE)) == null)
             return;
 

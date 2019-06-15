@@ -164,7 +164,7 @@ public class MFBUtil {
             return null;
 
         try {
-            byte rgb[] = Base64.decode(s, Base64.DEFAULT);
+            byte[] rgb = Base64.decode(s, Base64.DEFAULT);
             ByteArrayInputStream bis = new ByteArrayInputStream(rgb);
             ObjectInputStream ois = new ObjectInputStream(bis);
             return (T) ois.readObject();

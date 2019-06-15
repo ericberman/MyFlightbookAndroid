@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -118,17 +118,15 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
         boolean fAllGranted = true;
         for (int i : grantResults)
             if (i != PackageManager.PERMISSION_GRANTED)
                 fAllGranted = false;
 
-        switch (requestCode) {
-            case GALLERY_PERMISSION:
-                if (fAllGranted && grantResults.length == 2)
-                    clickItem(lastPositionClicked);
-                break;
+        if (requestCode == GALLERY_PERMISSION) {
+            if (fAllGranted && grantResults.length == 2)
+                clickItem(lastPositionClicked);
         }
     }
 

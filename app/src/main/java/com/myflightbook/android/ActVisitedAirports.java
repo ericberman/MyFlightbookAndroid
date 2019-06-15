@@ -154,13 +154,11 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuRefresh:
-                refreshAirports();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.menuRefresh) {
+            refreshAirports();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void populateList() {

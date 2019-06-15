@@ -479,13 +479,12 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_READ:
-                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    OpenRequestedTelemetry();
-                }
-                return;
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_READ) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                OpenRequestedTelemetry();
+            }
+            return;
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

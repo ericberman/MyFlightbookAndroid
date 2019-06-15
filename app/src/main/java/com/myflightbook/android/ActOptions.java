@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -299,7 +299,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         // We can delete ALL aircraft images - if they weren't submitted, they aren't going to be picked up.
 
         // First delete all of the ones that haven't been saved to the server
-        MFBImageInfo rgMfbiiAircraft[] = MFBImageInfo.getAllAircraftImages();
+        MFBImageInfo[] rgMfbiiAircraft = MFBImageInfo.getAllAircraftImages();
         for (MFBImageInfo mfbii : rgMfbiiAircraft)
             if (!mfbii.IsOnServer())
                 mfbii.deleteFromDB();
@@ -351,7 +351,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_AUTODETECT:
                 if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

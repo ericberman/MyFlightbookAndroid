@@ -272,7 +272,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         if (!m_fShowAllAirports) {
             // Add the airport route; we'll draw the airports on top of them.
             // Note that we don't do this if m_le is null because then we would connect the dots.
-            if (m_le != null && !m_fShowAllAirports) {
+            if (m_le != null) {
                 PolylineOptions po = new PolylineOptions().geodesic(true).color(Color.BLUE).width(4);
 
                 for (Airport ap : m_rgapRoute) {
@@ -540,13 +540,12 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_WRITE_GPX:
-                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    onClick(findViewById(R.id.btnExportGPX));
-                }
-                return;
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_WRITE_GPX) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                onClick(findViewById(R.id.btnExportGPX));
+            }
+            return;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
@@ -577,12 +576,8 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onCheckedChanged(CompoundButton v, boolean isChecked) {
-        switch (v.getId()) {
-            case R.id.ckShowAllAirports:
-                setShowAllAirports(v.isChecked());
-                break;
-            default:
-                break;
+        if (v.getId() == R.id.ckShowAllAirports) {
+            setShowAllAirports(v.isChecked());
         }
     }
 

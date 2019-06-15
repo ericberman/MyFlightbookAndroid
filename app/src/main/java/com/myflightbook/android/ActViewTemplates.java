@@ -52,8 +52,8 @@ import Model.TemplateGroup;
 
 public class ActViewTemplates extends ListFragment implements OnItemClickListener {
     private enum RowType {DATA_ITEM, HEADER_ITEM}
-    protected TemplateRowItem[] m_templateRows;
-    protected HashSet<PropertyTemplate> m_activeTemplates = new HashSet<>();
+    private TemplateRowItem[] m_templateRows;
+    HashSet<PropertyTemplate> m_activeTemplates = new HashSet<>();
     public static final String ACTIVE_PROPERTYTEMPLATES = "com.myflightbook.android.viewactivetemplates";
 
     private static class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
