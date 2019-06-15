@@ -306,6 +306,48 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
+    private static class RefreshAircraftTask extends AsyncTask<Void, Void, MFBSoap> {
+        private ProgressDialog m_pd = null;
+        Object m_Result = null;
+        final AsyncWeakContext<ActNewFlight> m_ctxt;
+
+        RefreshAircraftTask(Context c, ActNewFlight anf) {
+            super();
+            m_ctxt = new AsyncWeakContext<>(c, anf);
+        }
+
+        @Override
+        protected MFBSoap doInBackground(Void... params) {
+            AircraftSvc as = new AircraftSvc();
+            m_Result = as.AircraftForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
+            return as;
+        }
+
+        protected void onPreExecute() {
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.prgAircraft));
+        }
+
+        protected void onPostExecute(MFBSoap svc) {
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            ActNewFlight anf = m_ctxt.getCallingActivity();
+            if (anf == null || !anf.isAdded() || anf.isDetached() || anf.getActivity() == null)
+                return;
+
+            Aircraft[] rgac = (Aircraft[]) m_Result;
+            if (rgac == null)
+                MFBUtil.Alert(anf, anf.getString(R.string.txtError), svc.getLastError());
+            else {
+                anf.refreshAircraft(rgac);
+            }
+        }
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.newflight, container, false);
@@ -448,6 +490,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le != null && m_le.rgFlightImages == null)
             m_le.getImagesForFlight();
 
+        // Refresh aircraft on create.
+        if (AuthToken.FIsValid() && m_rgac == null || m_rgac.length == 0) {
+            RefreshAircraftTask rat = new RefreshAircraftTask(getContext(), this);
+            rat.execute();
+        }
+
         Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - created, m_le is %s", m_le == null ? "null" : "non-null"));
     }
 
@@ -480,6 +528,26 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         return lst.toArray(new Aircraft[0]);
     }
 
+    protected  void refreshAircraft(Aircraft[] rgac) {
+        m_rgac = rgac;
+
+        Spinner spnAircraft = (Spinner) findViewById(R.id.spnAircraft);
+
+        Aircraft[] rgFilteredAircraft = SelectibleAircraft();
+        if (rgFilteredAircraft != null && rgFilteredAircraft.length > 0) {
+            // Create a list of the aircraft to show, which are the ones that are not hidden OR the active one for the flight
+            ArrayAdapter<Aircraft> adapter = new ArrayAdapter<>(
+                    Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgFilteredAircraft);
+            spnAircraft.setAdapter(adapter);
+            // need to notifydatasetchanged or else setselection doesn't
+            // update correctly.
+            adapter.notifyDataSetChanged();
+        } else {
+            spnAircraft.setPrompt(getString(R.string.errNoAircraftFoundShort));
+            MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errMustCreateAircraft));
+        }
+    }
+
     public void onResume() {
         // refresh the aircraft list (will be cached if we already have it)
         // in case a new aircraft has been added.
@@ -490,26 +558,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             d.show();
         }
 
-        if (AuthToken.FIsValid()) {
-            AircraftSvc acs = new AircraftSvc();
-            m_rgac = acs.AircraftForUser(AuthToken.m_szAuthToken, getContext());
-
-            Spinner spnAircraft = (Spinner) findViewById(R.id.spnAircraft);
-
-            Aircraft[] rgFilteredAircraft = SelectibleAircraft();
-            if (rgFilteredAircraft != null && rgFilteredAircraft.length > 0) {
-                // Create a list of the aircraft to show, which are the ones that are not hidden OR the active one for the flight
-                ArrayAdapter<Aircraft> adapter = new ArrayAdapter<>(
-                        Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgFilteredAircraft);
-                spnAircraft.setAdapter(adapter);
-                // need to notifydatasetchanged or else setselection doesn't
-                // update correctly.
-                adapter.notifyDataSetChanged();
-            } else {
-                spnAircraft.setPrompt(getString(R.string.errNoAircraftFoundShort));
-                MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errMustCreateAircraft));
-            }
-        }
+        if (m_rgac != null)
+            refreshAircraft(m_rgac);
 
         // fix up the link to the user's profile.
         AddListener(R.id.txtSocialNetworkHint);
