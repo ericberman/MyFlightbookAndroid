@@ -152,8 +152,10 @@ public class AircraftSvc extends MFBSoap {
 
                         String szTemplateIDs = c.getString(cDefaultTemplateIDs);
                         String[] rgIDs = szTemplateIDs.split(" ");
-                        for (String sz : rgIDs)
-                            ac.DefaultTemplates.add(Integer.parseInt(sz));
+                        for (String sz : rgIDs) {
+                            if (sz.trim().length() > 0)
+                                ac.DefaultTemplates.add(Integer.parseInt(sz));
+                        }
 
                     } catch (Exception ex) {
                         Log.e(MFBConstants.LOG_TAG, "Error getting cached aircraft: " + ex.getMessage());

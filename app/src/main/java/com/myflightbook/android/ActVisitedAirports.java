@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -209,6 +209,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
             }
 
             HashMap<String, String> hmGroups = (headers.containsKey(szKey) ? headers.get(szKey) : new HashMap<>());
+            assert hmGroups != null;
             hmGroups.put("sectionName", szKey);
             headers.put(szKey, hmGroups);
 
@@ -228,6 +229,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
             hmProperty.put("Distance", szDistance);
             hmProperty.put("Visits", szVisits);
             hmProperty.put("Position", String.format(Locale.US, "%d", i));
+            assert alAirports != null;
             alAirports.add(hmProperty);
 
             childrenMaps.put(szKey, alAirports);
@@ -271,7 +273,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
 
             @SuppressWarnings("unchecked")
             HashMap<String, String> hmProp = (HashMap<String, String>) adapter.getChild(groupPosition, childPosition);
-            int position = Integer.parseInt(hmProp.get("Position"));
+            int position = Integer.parseInt(Objects.requireNonNull(hmProp.get("Position")));
             String szRoute = "";
             String szAlias = "";
             if (position < 0) // all airports

@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.myflightbook.android"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         multiDexEnabled true
 
         android.compileOptions.sourceCompatibility 1.8
@@ -32,17 +32,17 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation files('libs/annotations.jar')
     implementation files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.support:support-compat:27.1.1'
-    implementation 'com.android.support:support-core-ui:27.1.1'
-    implementation 'com.android.support:support-core-utils:27.1.1'
-    implementation 'com.android.support:support-fragment:27.1.1'
-    implementation 'com.android.support:support-media-compat:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:exifinterface:27.1.1'
+    implementation 'com.android.support:support-compat:28.0.0'
+    implementation 'com.android.support:support-core-ui:28.0.0'
+    implementation 'com.android.support:support-core-utils:28.0.0'
+    implementation 'com.android.support:support-fragment:28.0.0'
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:exifinterface:28.0.0'
 }

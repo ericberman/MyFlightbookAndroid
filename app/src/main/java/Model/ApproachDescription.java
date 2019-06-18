@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Model;
+
+import android.support.annotation.NonNull;
 
 import java.util.Locale;
 
@@ -70,6 +72,7 @@ public class ApproachDescription {
 
     public static final String[] RunwayModifiers = {"", "L", "R", "C"};
 
+    @NonNull
     public String toString() {
         approachName = approachName.trim();
         runwayName = runwayName.trim();

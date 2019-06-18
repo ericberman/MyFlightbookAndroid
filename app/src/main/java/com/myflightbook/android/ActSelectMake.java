@@ -39,6 +39,7 @@ import com.myflightbook.android.WebServices.MakesandModelsSvc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.MFBConstants;
 import Model.MFBUtil;
@@ -174,6 +175,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
                 }
 
                 HashMap<String, String> hmGroups = (headers.containsKey(szKey) ? headers.get(szKey) : new HashMap<>());
+                assert hmGroups != null;
                 hmGroups.put("sectionName", szKey);
                 headers.put(szKey, hmGroups);
 
@@ -184,6 +186,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
                 HashMap<String, String> hmProperty = new HashMap<>();
                 hmProperty.put("Description", mm.Description);
                 hmProperty.put("Position", String.format(Locale.getDefault(), "%d", i));
+                assert alProps != null;
                 alProps.add(hmProperty);
 
                 childrenMaps.put(szKey, alProps);
@@ -229,7 +232,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
         getExpandableListView().setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
                 @SuppressWarnings("unchecked")
                 HashMap<String, String> hmProp = (HashMap<String, String>) adapter.getChild(groupPosition, childPosition);
-                int position = Integer.parseInt(hmProp.get("Position"));
+                int position = Integer.parseInt(Objects.requireNonNull(hmProp.get("Position")));
                 Intent i = new Intent();
                 i.putExtra(ActNewAircraft.MODELFORAIRCRAFT, position);
                 ActSelectMake.this.setResult(Activity.RESULT_OK, i);

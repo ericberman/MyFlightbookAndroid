@@ -72,6 +72,7 @@ public class PropertyTemplate  extends SoapableObject implements Comparable<Prop
         FromProperties(so);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "%d: (%s) %s %s", ID, GroupDisplayName, Name, IsDefault ? " (default)" : "");

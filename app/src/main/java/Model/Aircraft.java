@@ -19,6 +19,7 @@
 package Model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.myflightbook.android.R;
 
@@ -91,6 +92,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         super();
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format("%s (%s)", TailNumber, ModelDescription);
@@ -286,7 +288,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
             case pidDefaultImage:
                 return DefaultImage;
             case pidDefaultTemplates:
-                return DefaultTemplates;
+                return DefaultTemplates.toArray();
             default:
                 return null;
         }

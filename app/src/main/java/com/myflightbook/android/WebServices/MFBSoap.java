@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -137,9 +137,7 @@ public class MFBSoap {
         AddMappings(envelope);
         envelope.setOutputSoapObject(m_request);
 
-        String PROTOCOL = "http://";
-        String PROTOCOLS = "https://";
-        String URL = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? PROTOCOL : PROTOCOLS) + MFBConstants.szIP + "/logbook/public/webservice.asmx";
+        String URL = "https://" + MFBConstants.szIP + "/logbook/public/webservice.asmx";
         HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
 
         androidHttpTransport.debug = MFBConstants.fIsDebug;

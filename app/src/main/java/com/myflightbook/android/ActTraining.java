@@ -148,7 +148,6 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         }
 
         lastPositionClicked = -1;   // clear this out now.
-        String szProtocol = MFBConstants.fIsDebug ? "http" : "https";
         String szDest = m_rgTrainingItems[position].szURLDest;
         String szURL;
         ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams("d=" + szDest, getContext()));

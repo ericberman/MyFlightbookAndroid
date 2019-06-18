@@ -85,6 +85,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
 
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format("%s (%s)", AirportID, FacilityName);

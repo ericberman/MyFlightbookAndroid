@@ -18,6 +18,8 @@
  */
 package Model;
 
+import android.support.annotation.NonNull;
+
 import org.ksoap2.serialization.SoapObject;
 
 import java.io.Serializable;
@@ -39,6 +41,7 @@ public class Totals extends SoapableObject implements Serializable {
 
     public Totals() { super(); }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "%s %s %.2f", Description, SubDescription, Value);

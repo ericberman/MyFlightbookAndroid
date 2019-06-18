@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package Model;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -81,6 +82,7 @@ public class LatLong extends SoapableObject implements KvmSerializable, Serializ
         return Latitude >= -90 && Latitude <= 90 && Longitude >= -180 && Longitude <= 180;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "%.8f, %.8f", Latitude, Longitude);

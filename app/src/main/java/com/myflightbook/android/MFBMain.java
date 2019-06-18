@@ -223,6 +223,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
                 i.setData(null);
 
             TabInfo ti = m.mapTabInfo.get(MFBConstants.tabRecents);
+            assert ti != null;
             if (ti.fragment != null)
                 ((ActRecentsWS) ti.fragment).refreshRecentFlights(false);
         }

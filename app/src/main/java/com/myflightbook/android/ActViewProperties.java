@@ -392,6 +392,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
             // Get the array-list for that key, creating it if necessary
             ArrayList<FlightProperty> alProps;
             alProps = (childrenMaps.containsKey(szKey) ? childrenMaps.get(szKey) : new ArrayList<>());
+            assert alProps != null;
             alProps.add(fp);
 
             childrenMaps.put(szKey, alProps);

@@ -99,6 +99,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
             return this.IsFavorite ? -1 : 1;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return this.szTitle;
@@ -284,6 +285,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public static HashSet<Integer> getPinnedProperties(SharedPreferences pref) {
         Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
         HashSet<Integer> result = new HashSet<>();
+        assert stringVals != null;
         for (String s : stringVals)
             result.add(Integer.parseInt(s));
         return result;
@@ -310,6 +312,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
 
         String sRemove = String.format(Locale.US, "%d", id);
+        assert stringVals != null;
         if (!stringVals.contains(sRemove))
             return;
 

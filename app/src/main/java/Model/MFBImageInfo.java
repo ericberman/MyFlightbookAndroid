@@ -72,6 +72,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class MFBImageInfo extends SoapableObject implements KvmSerializable, Serializable {
@@ -561,7 +562,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                     }
 
                     // get the orientation
-                    orientation = Integer.parseInt(ei.getAttribute(ExifInterface.TAG_ORIENTATION));
+                    orientation = Integer.parseInt(Objects.requireNonNull(ei.getAttribute(ExifInterface.TAG_ORIENTATION)));
                 } catch (Exception e) {
                     Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -643,7 +644,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         boolean fResult = false;
 
         try (FileInputStream fis = new FileInputStream(getAbsoluteImageFile())) {
-            String szBase = ((MFBConstants.fIsDebug && MFBConstants.fDebugLocal) ? "http://" : "https://") + MFBConstants.szIP;
+            String szBase = "https://" + MFBConstants.szIP;
             String szBoundary = UUID.randomUUID().toString();
             String szBoundaryDivider = String.format("--%s\r\n", szBoundary);
 
@@ -874,11 +875,11 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     }
 
     private String getURLFullImage() {
-        return String.format(Locale.US, "http://%s%s", MFBConstants.szIP, this.URLFullImage);
+        return String.format(Locale.US, "https://%s%s", MFBConstants.szIP, this.URLFullImage);
     }
 
     private String getURLThumbnail() {
-        return String.format(Locale.US, "http://%s%s%s", MFBConstants.szIP, this.VirtualPath, this.ThumbnailFile);
+        return String.format(Locale.US, "https://%s%s%s", MFBConstants.szIP, this.VirtualPath, this.ThumbnailFile);
     }
 
     public void LoadImageAsync(Boolean fThumbnail, ImageCacheCompleted delegate) {

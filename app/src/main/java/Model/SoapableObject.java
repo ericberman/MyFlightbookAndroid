@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ abstract class SoapableObject {
 
     Date ReadNullableDate(SoapObject so, String propName) {
         String sz = so.getProperty(propName).toString();
-        if (sz == null || sz.length() == 0)
+        if (sz.length() == 0)
             return null;
         else
             return IsoDate.stringToDate(sz, IsoDate.DATE_TIME);

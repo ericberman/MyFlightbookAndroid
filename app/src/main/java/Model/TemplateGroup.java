@@ -50,6 +50,7 @@ public class TemplateGroup implements Comparable<TemplateGroup> {
         return groupDisplayName.compareTo(o.groupDisplayName);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "%s (%d templates)", groupDisplayName, templates.size());
@@ -69,6 +70,7 @@ public class TemplateGroup implements Comparable<TemplateGroup> {
             else
                 tg = h.get(pt.GroupAsInt);
 
+            assert tg != null;
             tg.templates.add(pt);
         }
 

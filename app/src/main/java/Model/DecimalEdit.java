@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018
+    Copyright (C) 2017-2019
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 public class DecimalEdit extends android.support.v7.widget.AppCompatEditText implements OnLongClickListener {
 
@@ -175,7 +176,7 @@ public class DecimalEdit extends android.support.v7.widget.AppCompatEditText imp
     }
 
     public double getDoubleValue() {
-        return doubleFromString(getText().toString(), EffectiveMode());
+        return doubleFromString(Objects.requireNonNull(getText()).toString(), EffectiveMode());
     }
 
     public static String DoubleToHHMM(double d) {
@@ -199,7 +200,7 @@ public class DecimalEdit extends android.support.v7.widget.AppCompatEditText imp
     }
 
     public int getIntValue() {
-        if (getText().length() == 0)
+        if (Objects.requireNonNull(getText()).length() == 0)
             return 0;
 
         try {
@@ -237,7 +238,7 @@ public class DecimalEdit extends android.support.v7.widget.AppCompatEditText imp
             else
                 sz = String.format(Locale.US, "%d:%02d", (val / 100), val % 100);
             this.setText(sz);
-            this.setSelection(this.getText().length());
+            this.setSelection(Objects.requireNonNull(this.getText()).length());
         }
     }
 

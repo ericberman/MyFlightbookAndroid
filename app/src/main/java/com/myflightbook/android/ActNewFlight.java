@@ -66,8 +66,6 @@ import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
-import junit.framework.Assert;
-
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -528,7 +526,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         return lst.toArray(new Aircraft[0]);
     }
 
-    protected  void refreshAircraft(Aircraft[] rgac) {
+    private  void refreshAircraft(Aircraft[] rgac) {
         m_rgac = rgac;
 
         Spinner spnAircraft = (Spinner) findViewById(R.id.spnAircraft);
@@ -884,7 +882,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     // wasn't thread safe with the database.  DB is pretty fast,
     // so we can just make sure we do all DB stuff on the main thread.
     private void AppendNearest() {
-        Assert.assertNotNull("No location object in AppendNearest", MFBLocation.GetMainLocation());
+        assert MFBLocation.GetMainLocation() != null;
 
         if (checkGPSPermissions()) {
             TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
@@ -895,7 +893,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private void AppendAdHoc() {
         MFBLocation loc = MFBLocation.GetMainLocation();
-        Assert.assertNotNull("No location object in AppendNearest", loc);
+        assert loc != null;
 
         if (!checkGPSPermissions())
             return;
