@@ -428,6 +428,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         int idFlightToView = i.getIntExtra(ActRecentsWS.VIEWEXISTINGFLIGHTID, 0);
         long idLocalFlightToView = i.getLongExtra(ActRecentsWS.VIEWEXISTINGFLIGHTLOCALID, 0);
         boolean fIsNewFlight = (idFlightToView == 0);
+        if (!fIsNewFlight && m_rgac == null)
+            m_rgac = (new AircraftSvc()).getCachedAircraft();
 
         Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - onCreate - Viewing flight idflight=%d, idlocal=%d", idFlightToView, idLocalFlightToView));
 

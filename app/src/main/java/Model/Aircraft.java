@@ -29,10 +29,12 @@ import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Vector;
 
 import Model.MFBImageInfo.PictureDestination;
 
@@ -288,7 +290,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
             case pidDefaultImage:
                 return DefaultImage;
             case pidDefaultTemplates:
-                return DefaultTemplates.toArray();
+                return new Vector<>(Arrays.asList(DefaultTemplates.toArray()));
             default:
                 return null;
         }
@@ -357,9 +359,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 break;
             case pidDefaultTemplates:
                 DefaultTemplates.clear();
-                int[] rgVals = (int[]) value;
-                for (int iVal : rgVals)
-                    DefaultTemplates.add(iVal);
+                Integer[] rgVals = (Integer[]) value;
+                DefaultTemplates.addAll(Arrays.asList(rgVals));
                 break;
             default:
                 break;
@@ -451,7 +452,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 pi.name = "DefaultTemplates";
                 pi.elementType = new PropertyInfo();
                 pi.elementType.type = PropertyInfo.INTEGER_CLASS;
-                pi.elementType.name = "integer";
+                pi.elementType.name = "Integer";
             default:
                 break;
         }
