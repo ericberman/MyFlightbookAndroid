@@ -491,7 +491,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             m_le.getImagesForFlight();
 
         // Refresh aircraft on create.
-        if (AuthToken.FIsValid() && m_rgac == null || m_rgac.length == 0) {
+        if (AuthToken.FIsValid() && (m_rgac == null || m_rgac.length == 0)) {
             RefreshAircraftTask rat = new RefreshAircraftTask(getContext(), this);
             rat.execute();
         }
