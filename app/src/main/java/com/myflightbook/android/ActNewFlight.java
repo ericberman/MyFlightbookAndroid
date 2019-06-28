@@ -438,6 +438,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Aircraft ac = (Aircraft) parent.getSelectedItem();
                 if (ac != null && m_le.idAircraft != ac.AircraftID) {
+                    FromView();
                     m_le.idAircraft = ac.AircraftID;
                     updateTemplatesForAircraft(false);
                     ToView();
