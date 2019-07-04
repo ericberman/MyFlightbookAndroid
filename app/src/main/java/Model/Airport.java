@@ -62,6 +62,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
 
     private static final String szRegAdHocFix = szNavaidPrefix + "\\b\\d{1,2}(?:[.,]\\d*)?[NS]\\d{1,3}(?:[.,]\\d*)?[EW]\\b";  // Must have a digit on the left side of the decimal
     private static final String szRegexAirports = String.format(Locale.US, "((?:%s)|(?:@?\\b[A-Z0-9]{%d,%d}\\b))", szRegAdHocFix, Math.min(minNavaidCodeLength, minAirportCodeLength), maxCodeLength);
+    private static final String szRegexAirportSearch = "!?@?[a-zA-Z0-9]+!?";
 
     public Airport() {
         super();
@@ -150,6 +151,16 @@ public class Airport extends SoapableObject implements KvmSerializable, Comparab
         Pattern p = Pattern.compile(Airport.szRegexAirports, Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(szRoute.toUpperCase(Locale.getDefault()));
 
+        ArrayList<String> lst = new ArrayList<>();
+
+        while (m.find())
+            lst.add(m.group(0));
+        return lst.toArray(new String[0]);
+    }
+
+    public static String[] SplitCodesSearch(String szRoute) {
+        Pattern p = Pattern.compile(Airport.szRegexAirportSearch, Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(szRoute.toUpperCase(Locale.getDefault()));
         ArrayList<String> lst = new ArrayList<>();
 
         while (m.find())

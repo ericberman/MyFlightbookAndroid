@@ -644,7 +644,8 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         CurrentQuery.GeneralText = StringFromField(R.id.fqGeneralText);
         CurrentQuery.ModelName = StringFromField(R.id.fqModelName);
         String szAirports = StringFromField(R.id.fqAirports).trim().toUpperCase(Locale.getDefault());
-        CurrentQuery.AirportList = (szAirports.length() > 0) ? Airport.SplitCodes(szAirports) : new String[0];
+
+        CurrentQuery.AirportList = (szAirports.length() > 0) ? Airport.SplitCodesSearch(szAirports) : new String[0];
 
         CurrentQuery.IsPublic = CheckState(R.id.ckIsPublic);
         CurrentQuery.IsSigned = CheckState(R.id.ckIsSigned);
