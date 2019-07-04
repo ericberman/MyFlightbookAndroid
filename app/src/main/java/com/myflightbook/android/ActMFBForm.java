@@ -48,7 +48,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -256,12 +255,12 @@ public class ActMFBForm extends Fragment {
     }
 
     String StringFromField(int id) {
-        EditText e = (EditText) findViewById(id);
+        TextView e = (TextView) findViewById(id);
         return e.getText().toString();
     }
 
     void SetStringForField(int id, String s) {
-        EditText e = (EditText) findViewById(id);
+        TextView e = (TextView) findViewById(id);
         e.setText(s);
     }
 

@@ -20,8 +20,10 @@ package Model;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.format.DateFormat;
 
 import com.myflightbook.android.R;
+import com.myflightbook.android.WebServices.UTCDate;
 
 import org.kobjects.isodate.IsoDate;
 import org.ksoap2.serialization.KvmSerializable;
@@ -475,14 +477,18 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         if (!hashHighWaterHobbs.containsKey(idAircraft))
             hashHighWaterHobbs.put(idAircraft, hobbs);
 
-        hashHighWaterHobbs.put(idAircraft, Math.max(hashHighWaterHobbs.get(idAircraft), hobbs));
+        Double d = hashHighWaterHobbs.get(idAircraft);
+        if (d != null)
+            hashHighWaterHobbs.put(idAircraft, Math.max(d, hobbs));
     }
 
     public static void updateTachForAircraft(Double tach, Integer idAircraft) {
         if (!hashHighWaterTach.containsKey(idAircraft))
             hashHighWaterTach.put(idAircraft, tach);
 
-        hashHighWaterTach.put(idAircraft, Math.max(hashHighWaterTach.get(idAircraft), tach));
+        Double d = hashHighWaterTach.get(idAircraft);
+        if (d != null)
+            hashHighWaterTach.put(idAircraft, Math.max(d, tach));
     }
 
     public static Double getHighWaterHobbsForAircraft(Integer idAircraft) {
@@ -492,4 +498,36 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     public static Double getHighWaterTachForAircraft(Integer idAircraft) {
         return hashHighWaterTach.containsKey(idAircraft) ? hashHighWaterTach.get(idAircraft) : 0.0;
     }
+
+    // region Inspections
+    public Date NextVOR() {
+        return UTCDate.IsNullDate(LastVOR) ? null : MFBUtil.AddDays(MFBUtil.LocalDateFromUTCDate(LastVOR), 30);
+    }
+
+    public Date NextAnnual() {
+        return UTCDate.IsNullDate(LastAnnual) ? null : MFBUtil.AddCalendarMonths(MFBUtil.LocalDateFromUTCDate(LastAnnual), 12);
+    }
+
+    public Date NextELT() {
+        return UTCDate.IsNullDate(LastELT) ? null : MFBUtil.AddCalendarMonths(MFBUtil.LocalDateFromUTCDate(LastELT), 12);
+    }
+
+    public Date NextAltimeter() {
+        return UTCDate.IsNullDate(LastAltimeter) ? null : MFBUtil.AddCalendarMonths(MFBUtil.LocalDateFromUTCDate(LastAltimeter), 24);
+    }
+
+    public Date NextStatic () {
+        return UTCDate.IsNullDate(LastStatic) ? null : MFBUtil.AddCalendarMonths(MFBUtil.LocalDateFromUTCDate(LastStatic), 24);
+    }
+
+    public Date NextTransponder() {
+        return UTCDate.IsNullDate(LastTransponder) ? null : MFBUtil.AddCalendarMonths(MFBUtil.LocalDateFromUTCDate(LastTransponder), 24);
+    }
+
+    public String NextDueLabel(Date dt, String szFormat, Context c) {
+        if (dt == null)
+            return "";
+        return String.format(Locale.getDefault(), szFormat, DateFormat.getDateFormat(c).format(dt));
+    }
+    // endregion
 }

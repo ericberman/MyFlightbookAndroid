@@ -164,6 +164,7 @@
     <string name="lblAltimeter">Altimètre:</string>
     <string name="lblELT">Balise de détresse:</string>
     <string name="lblAnnual">Annuelle ou CDN:</string>
+    <string name="lblNextDue">Prochaine échéance: %s</string>
     <string name="lblRegistration">Enregistrement:</string>
     <string name="lbl100Hour">100 Heures:</string>
     <string name="lblOilChange">Vidange:</string>

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -275,12 +275,20 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         SetLocalDateForField(R.id.btnPitotStatic, MFBUtil.LocalDateFromUTCDate(m_ac.LastStatic));
         SetLocalDateForField(R.id.btnRegistration, MFBUtil.LocalDateFromUTCDate(m_ac.RegistrationDue));
 
+
+        SetStringForField(R.id.nextVOR, m_ac.NextDueLabel(m_ac.NextVOR(), getString(R.string.lblNextDue), getContext()));
+        SetStringForField(R.id.nextAltimeter, m_ac.NextDueLabel(m_ac.NextAltimeter(), getString(R.string.lblNextDue), getContext()));
+        SetStringForField(R.id.nextAnnual, m_ac.NextDueLabel(m_ac.NextAnnual(), getString(R.string.lblNextDue), getContext()));
+        SetStringForField(R.id.nextTransponder, m_ac.NextDueLabel(m_ac.NextTransponder(), getString(R.string.lblNextDue), getContext()));
+        SetStringForField(R.id.nextELT, m_ac.NextDueLabel(m_ac.NextELT(), getString(R.string.lblNextDue), getContext()));
+        SetStringForField(R.id.nextPitotStatic, m_ac.NextDueLabel(m_ac.NextStatic(), getString(R.string.lblNextDue), getContext()));
+
         SetDoubleForField(R.id.txt100hr, m_ac.Last100);
         SetDoubleForField(R.id.txtOilChange, m_ac.LastOil);
         SetDoubleForField(R.id.txtNewEngine, m_ac.LastEngine);
 
-        ((TextView) findViewById(R.id.txtPublicAircraftNotes)).setText(m_ac.PublicNotes);
-        ((TextView) findViewById(R.id.txtPrivateAircraftNotes)).setText(m_ac.PrivateNotes);
+        SetStringForField(R.id.txtPublicAircraftNotes, m_ac.PublicNotes);
+        SetStringForField(R.id.txtPrivateAircraftNotes, m_ac.PrivateNotes);
 
         SetCheckState(R.id.ckHideAircraftFromSelection, !m_ac.HideFromSelection);
         switch (m_ac.RoleForPilot) {

@@ -120,6 +120,29 @@ public class MFBUtil {
         return c.getTime();
     }
 
+    static Date AddCalendarMonths(Date dt, int cMonths) {
+        GregorianCalendar c = new GregorianCalendar(UTCDate.getUTCTimeZone());
+        c.setTime(dt);
+        int y = c.get(Calendar.YEAR);
+        int m = c.get(Calendar.MONTH);
+        // Go to the first of the month
+        c.add(Calendar.DAY_OF_MONTH, 1 - c.get(Calendar.DAY_OF_MONTH));
+        if (cMonths > 0) {
+            c.add(Calendar.MONTH, cMonths + 1);
+            c.add(Calendar.DATE, -1);
+        }
+        else
+            c.add(Calendar.MONTH, cMonths);
+        return c.getTime();
+    }
+
+    static Date AddDays(Date dt, int cDays) {
+        GregorianCalendar c = new GregorianCalendar(UTCDate.getUTCTimeZone());
+        c.setTime(dt);
+        c.add(Calendar.DATE, cDays);
+        return c.getTime();
+    }
+
 
     public static Date removeSeconds(Date dt) {
         Calendar cal = Calendar.getInstance();

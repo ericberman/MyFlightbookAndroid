@@ -164,6 +164,7 @@
     <string name="lblAltimeter">Altimeter:</string>
     <string name="lblELT">ELT:</string>
     <string name="lblAnnual">Annual:</string>
+    <string name="lblNextDue">Next Due: %s</string>
     <string name="lblRegistration">Registration:</string>
     <string name="lbl100Hour">100Hour:</string>
     <string name="lblOilChange">Oil Change:</string>
