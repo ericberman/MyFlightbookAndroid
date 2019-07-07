@@ -612,9 +612,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le.isKnownEngineStart() || m_le.isKnownFlightStart())
             resetDateOfFlight();
 
-        if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime && m_le.rgCustomProperties != null)
-            AutoTotals();
-
         if (fIsNewFlight)
             MFBMain.SetInProgressFlightActivity(getContext(), this);
 
@@ -1037,6 +1034,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     AddGalleryImage(data);
             case EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE:
                 setUpPropertiesForFlight();
+                if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime)
+                    AutoTotals();
                 break;
             case ActTimeCalc.TIME_CALC_REQUEST_CODE:
                 SetDoubleForField(R.id.txtTotal, m_le.decTotal = data.getDoubleExtra(ActTimeCalc.COMPUTED_TIME, m_le.decTotal));
