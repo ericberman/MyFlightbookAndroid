@@ -121,7 +121,7 @@ public class MFBConstants {
     public static final String urlFAQ = "http://myflightbook.com/logbook/public/FAQ.aspx?naked=1";
 
     // Formatting strings
-    static final String TIMESTAMP = "yyyy-MM-dd HH:mm:ss";
+    static final String TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     public static final String LOG_TAG = "MFBAndroid";
 

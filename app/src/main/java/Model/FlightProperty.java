@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class FlightProperty extends SoapableObject implements KvmSerializable, Serializable {
 
@@ -63,8 +64,6 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
     public String stringValue = "";
     private CustomPropertyType m_cpt = null; // not persisted, just cached.
     private static CustomPropertyType[] m_rgcptCached = null;
-
-    private static final SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
 
     public Boolean IsDefaultValue() {
         switch (m_cpt.cptType) {
@@ -342,6 +341,8 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
     }
 
     private void FromCursor(Cursor c) {
+        SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
         _id = c.getInt(c.getColumnIndex("_id"));
         idProp = c.getInt(c.getColumnIndex("idProp"));
         idFlight = c.getInt(c.getColumnIndex("idFlight"));
@@ -358,6 +359,8 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
     }
 
     private void ToContentValues(ContentValues cv) {
+        SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
         if (_id >= 0)
             cv.put("_id", _id);
         cv.put("idProp", idProp);

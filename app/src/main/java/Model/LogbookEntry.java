@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import Model.MFBImageInfo.PictureDestination;
@@ -951,7 +952,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
     public boolean ToDB() {
         boolean fResult = true;
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+        SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         ContentValues cv = new ContentValues();
         cv.put("idFlight", idFlight);
@@ -1003,7 +1005,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
     }
 
     private void FromCursor(Cursor c) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+        SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         try {
             idFlight = c.getInt(c.getColumnIndex("idFlight"));
