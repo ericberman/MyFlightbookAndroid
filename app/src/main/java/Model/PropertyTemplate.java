@@ -269,7 +269,8 @@ public class PropertyTemplate  extends SoapableObject implements Comparable<Prop
         HashSet<Integer> result = new HashSet<>();
         if (rgpt != null) {
             for (PropertyTemplate pt : rgpt)
-                result.addAll(pt.PropertyTypes);
+                if (pt != null && pt.PropertyTypes != null)
+                    result.addAll(pt.PropertyTypes);
         }
         return result;
     }
