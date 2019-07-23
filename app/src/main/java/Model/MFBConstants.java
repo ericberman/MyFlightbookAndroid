@@ -107,18 +107,18 @@ public class MFBConstants {
     // TODO: These need to be branded and, in some cases, URLencoded.
     public static final String urlPrivacy = "https://%s/logbook/public/privacy.aspx?naked=1&%s";
     public static final String urlTandC = "https://%s/logbook/Public/TandC.aspx?naked=1&%s";
-    public static final String urlContact = "http://%s/logbook/public/ContactMe.aspx?email=%s&subj=%s&noCap=1&naked=1&%s";
+    public static final String urlContact = "https://%s/logbook/public/ContactMe.aspx?email=%s&subj=%s&noCap=1&naked=1&%s";
     public static final String urlSign = "https://%s/logbook/public/SignEntry.aspx?idFlight=%d&auth=%s&naked=1&%s";
-    public static final String urlFacebook = "http://www.facebook.com/pages/MyFlightbook/145794653106";
-    public static final String urlTwitter = "http://twitter.com/myflightbook";
-    public static final String urlCrashReport = "http://%s/logbook/public/CrashReport.aspx";
+    public static final String urlFacebook = "https://www.facebook.com/pages/MyFlightbook/145794653106";
+    public static final String urlTwitter = "https://twitter.com/myflightbook";
+    public static final String urlCrashReport = "https://%s/logbook/public/CrashReport.aspx";
 
     private static final String urlNoNight = "night=no";
     private static final String urlNight = "night=yes";
 
     private static final String urlAuthRedirBase = "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&naked=1&%s";
 
-    public static final String urlFAQ = "http://myflightbook.com/logbook/public/FAQ.aspx?naked=1";
+    public static final String urlFAQ = "https://myflightbook.com/logbook/public/FAQ.aspx?naked=1";
 
     // Formatting strings
     static final String TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss'Z'";
