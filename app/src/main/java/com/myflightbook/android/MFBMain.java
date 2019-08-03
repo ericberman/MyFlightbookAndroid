@@ -270,7 +270,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         if (tabInfo.fragment != null && !tabInfo.fragment.isDetached()) {
             FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             ft.detach(tabInfo.fragment);
-            ft.commit();
+            ft.commitAllowingStateLoss();
             activity.getSupportFragmentManager().executePendingTransactions();
         }
 
@@ -774,7 +774,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
             }
 
             mLastTab = newTab;
-            ft.commit();
+            ft.commitAllowingStateLoss();
             this.getSupportFragmentManager().executePendingTransactions();
         }
     }

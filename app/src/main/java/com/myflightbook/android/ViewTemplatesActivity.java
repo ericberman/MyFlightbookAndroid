@@ -38,7 +38,7 @@ public class ViewTemplatesActivity extends AppCompatActivity {
                 .beginTransaction();
         m_viewTemplates = new ActViewTemplates();
         fragmentTransaction.replace(android.R.id.content, m_viewTemplates);
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     @Override
