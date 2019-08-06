@@ -445,9 +445,41 @@
 
         <LinearLayout
             android:id="@+id/sectFQFlightFeatures"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dip"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/conjunctionMatches"/>
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/conjunctionAny"
+                        android:id="@+id/rbConjunctionAnyFeature" />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/conjunctionAll"
+                        android:id="@+id/rbConjunctionAllFeature" />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/conjunctionNone"
+                        android:id="@+id/rbConjunctionNoFeature" />
+                </RadioGroup>
+            </LinearLayout>
 
             <CheckBox
                 android:id="@+id/ckHasFSLandings"
@@ -563,11 +595,50 @@
             android:drawableStart="@drawable/collapse_light"
             android:text="@string/fqProperties" />
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tblFQProps">
-        </TableLayout>
+            android:id="@+id/fqPropsBody"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dip"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/conjunctionMatches"/>
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/conjunctionAny"
+                        android:id="@+id/rbConjunctionAnyProps" />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/conjunctionAll"
+                        android:id="@+id/rbConjunctionAllProps" />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/conjunctionNone"
+                        android:id="@+id/rbConjunctionNoProps" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tblFQProps">
+            </TableLayout>
+        </LinearLayout>
 
         <!--  Named Queries -->
         <TextView

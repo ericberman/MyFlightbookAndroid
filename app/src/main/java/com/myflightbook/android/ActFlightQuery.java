@@ -273,6 +273,13 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         AddListener(R.id.rbDistanceLocal);
         AddListener(R.id.rbDistanceNonlocal);
 
+        AddListener(R.id.rbConjunctionAllFeature);
+        AddListener(R.id.rbConjunctionAnyFeature);
+        AddListener(R.id.rbConjunctionNoFeature);
+        AddListener(R.id.rbConjunctionAllProps);
+        AddListener(R.id.rbConjunctionAnyProps);
+        AddListener(R.id.rbConjunctionNoProps);
+
         // Expand/collapse
         AddListener(R.id.txtFQDatesHeader);
         AddListener(R.id.txtFQAirportsHeader);
@@ -297,7 +304,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         setExpandedState((TextView) findViewById(R.id.txtFQAircraftHeader), findViewById(R.id.llfqAircraft), CurrentQuery.AircraftList.length >  0);
         setExpandedState((TextView) findViewById(R.id.txtFQModelsHeader), findViewById(R.id.sectFQModels), CurrentQuery.MakeList.length > 0 || CurrentQuery.ModelName.length() > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQCatClassHeader), findViewById(R.id.tblFQCatClass), CurrentQuery.CatClassList.length > 0);
-        setExpandedState((TextView) findViewById(R.id.txtFQPropsHeader), findViewById(R.id.tblFQProps), CurrentQuery.PropertyTypes.length > 0);
+        setExpandedState((TextView) findViewById(R.id.txtFQPropsHeader), findViewById(R.id.fqPropsBody), CurrentQuery.PropertyTypes.length > 0);
         setExpandedState((TextView) findViewById(R.id.txtFQNamedQueryHeader), findViewById(R.id.sectFQNamedQueries), CannedQuery.getCannedQueries() != null && CannedQuery.getCannedQueries().length > 0);
 
         Button btnShowAll = (Button) findViewById(R.id.btnShowAllAircraft);
@@ -565,6 +572,30 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 break;
         }
 
+        switch (CurrentQuery.FlightCharacteristicsConjunction) {
+            case All:
+                SetRadioButton(R.id.rbConjunctionAllFeature);
+                break;
+            case Any:
+                SetRadioButton(R.id.rbConjunctionAnyFeature);
+                break;
+            case None:
+                SetRadioButton(R.id.rbConjunctionNoFeature);
+                break;
+        }
+
+        switch (CurrentQuery.PropertiesConjunction) {
+            case All:
+                SetRadioButton(R.id.rbConjunctionAllProps);
+                break;
+            case Any:
+                SetRadioButton(R.id.rbConjunctionAnyProps);
+                break;
+            case None:
+                SetRadioButton(R.id.rbConjunctionNoFeature);
+                break;
+        }
+
         SetCheckState(R.id.ckIsPublic, CurrentQuery.IsPublic);
         SetCheckState(R.id.ckIsSigned, CurrentQuery.IsSigned);
         SetCheckState(R.id.ckHasApproaches, CurrentQuery.HasApproaches);
@@ -640,13 +671,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    private void fromForm() {
-        CurrentQuery.GeneralText = StringFromField(R.id.fqGeneralText);
-        CurrentQuery.ModelName = StringFromField(R.id.fqModelName);
-        String szAirports = StringFromField(R.id.fqAirports).trim().toUpperCase(Locale.getDefault());
-
-        CurrentQuery.AirportList = (szAirports.length() > 0) ? Airport.SplitCodesSearch(szAirports) : new String[0];
-
+    private void readFlightCharacteristics() {
         CurrentQuery.IsPublic = CheckState(R.id.ckIsPublic);
         CurrentQuery.IsSigned = CheckState(R.id.ckIsSigned);
         CurrentQuery.HasApproaches = CheckState(R.id.ckHasApproaches);
@@ -664,6 +689,16 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         CurrentQuery.HasTelemetry = CheckState(R.id.ckHasTelemetry);
         CurrentQuery.HasImages = CheckState(R.id.ckHasImages);
         CurrentQuery.HasXC = CheckState(R.id.ckHasXC);
+    }
+
+    private void fromForm() {
+        CurrentQuery.GeneralText = StringFromField(R.id.fqGeneralText);
+        CurrentQuery.ModelName = StringFromField(R.id.fqModelName);
+        String szAirports = StringFromField(R.id.fqAirports).trim().toUpperCase(Locale.getDefault());
+
+        CurrentQuery.AirportList = (szAirports.length() > 0) ? Airport.SplitCodesSearch(szAirports) : new String[0];
+
+        readFlightCharacteristics();
 
         CurrentQuery.HasFlaps = CheckState(R.id.ckHasFlaps);
         CurrentQuery.IsComplex = CheckState(R.id.ckIsComplex);
@@ -793,6 +828,33 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 CurrentQuery.AircraftInstanceTypes = FlightQuery.AircraftInstanceRestriction.TrainingOnly;
                 break;
 
+            case R.id.rbConjunctionAllFeature:
+                CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.All;
+                readFlightCharacteristics();
+                break;
+
+            case R.id.rbConjunctionAnyFeature:
+                CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.Any;
+                readFlightCharacteristics();
+                break;
+
+            case R.id.rbConjunctionNoFeature:
+                CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.None;
+                readFlightCharacteristics();
+                break;
+
+            case R.id.rbConjunctionAllProps:
+                CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.All;
+                break;
+
+            case R.id.rbConjunctionAnyProps:
+                CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.Any;
+                break;
+
+            case R.id.rbConjunctionNoProps:
+                CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.None;
+                break;
+
             case R.id.rbDistanceAny:
                 CurrentQuery.Distance = FlightQuery.FlightDistance.AllFlights;
                 break;
@@ -824,7 +886,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 toggleHeader(v, R.id.tblFQCatClass);
                 break;
             case R.id.txtFQPropsHeader:
-                toggleHeader(v, R.id.tblFQProps);
+                toggleHeader(v, R.id.fqPropsBody);
                 break;
             case R.id.txtFQNamedQueryHeader:
                 toggleHeader(v, R.id.sectFQNamedQueries);

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		Trailing90,
 		Custom
 		}
+
+	public enum GroupConjunction {Any, All, None }
 		
 	public enum FlightDistance { AllFlights, LocalOnly, NonLocalOnly}
 	
@@ -66,9 +68,11 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		pidIsPublic, pidHasNightLandings, pidHasFullStopLandings, pidHasLandings, pidHasApproaches,
 		pidHasHolds, pidHaxXC, pidHasSimIMCTime, pidHasGroundSim, pidHasIMC, pidHasAnyInstrument, pidHasNight, 
 		pidHasDual, pidHasCFI, pidHasSIC, pidHasPIC, pidHasTotalTime, pidHasTelemetry, pidHasImages, pidIsSigned,
+		pidFlightCharacteristicsConjunction,
 		
 		// Flight properties
 		pidProperties,
+		pidPropertiesConjunction,
 		
 		// Aircraft attributes
 		pidIsComplex, pidHasFlaps, pidIsHighPerformance, pidIsConstantSpeedProp, pidMotorGlider, pidMultiEngineHeli,
@@ -93,6 +97,9 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	
 	public FlightDistance Distance;
 
+	public GroupConjunction FlightCharacteristicsConjunction = GroupConjunction.All;
+	public GroupConjunction PropertiesConjunction = GroupConjunction.Any;
+
 	// Flight attributes - 15 + GroundSim = 16
 	public Boolean IsPublic = false;
 	public Boolean HasNightLandings = false;
@@ -113,7 +120,6 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	public Boolean HasCFI = false;
 	public Boolean HasSIC = false;
 	public Boolean HasPIC = false;
-	@SuppressWarnings("WeakerAccess")
 	public Boolean HasTotalTime = false;
 	public Boolean HasTelemetry = false;
 	public Boolean HasImages = false;
@@ -218,6 +224,8 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
         Distance = FlightDistance.AllFlights;
         EngineType = EngineTypeRestriction.AllEngines;
         AircraftInstanceTypes = AircraftInstanceRestriction.AllAircraft;
+        PropertiesConjunction = GroupConjunction.Any;
+        FlightCharacteristicsConjunction = GroupConjunction.All;
         
     	IsPublic = 
     	IsSigned =
@@ -355,6 +363,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		this.HasPIC = Boolean.parseBoolean(so.getPropertySafelyAsString("HasPIC"));
 		this.HasTotalTime = Boolean.parseBoolean(so.getPropertySafelyAsString("HasTotalTime"));
 		this.IsSigned = Boolean.parseBoolean(so.getPropertySafelyAsString("IsSigned"));
+		this.FlightCharacteristicsConjunction = Enum.valueOf(FlightQuery.GroupConjunction.class, so.getPropertyAsString("FlightCharacteristicsConjunction"));
 
 		// Airports
 		SoapObject airports = (SoapObject) so.getProperty("AirportList");
@@ -434,6 +443,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			cpt.FromProperties((SoapObject) properties.getProperty(i));
 			PropertyTypes[i] = cpt;
 		}
+		this.PropertiesConjunction = Enum.valueOf(FlightQuery.GroupConjunction.class, so.getPropertyAsString("PropertiesConjunction"));
 
 		QueryName = so.getPropertySafelyAsString("QueryName");
  	}
@@ -535,6 +545,10 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			return AircraftInstanceTypes.toString();
 		case pidQueryName:
 			return QueryName;
+		case pidFlightCharacteristicsConjunction:
+			return FlightCharacteristicsConjunction.toString();
+		case pidPropertiesConjunction:
+			return PropertiesConjunction.toString();
 		default:
 			break;
 		}
@@ -746,6 +760,14 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		case pidInstanceType:
 			pi.type = PropertyInfo.STRING_CLASS;
 			pi.name = "AircraftInstanceTypes";
+			break;
+		case pidPropertiesConjunction:
+			pi.type = PropertyInfo.STRING_CLASS;
+			pi.name = "PropertiesConjunction";
+			break;
+		case pidFlightCharacteristicsConjunction:
+			pi.type = PropertyInfo.STRING_CLASS;
+			pi.name = "FlightCharacteristicsConjunction";
 			break;
 		case pidQueryName:
 			pi.type = PropertyInfo.STRING_CLASS;

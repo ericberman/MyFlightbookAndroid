@@ -369,6 +369,10 @@
     <string name="abbrevNauticalMiles">nm</string>
 
     <!-- Search -->
+    <string name="conjunctionMatches">Matches</string>
+    <string name="conjunctionAny">Any</string>
+    <string name="conjunctionAll">All</string>
+    <string name="conjunctionNone">None</string>
     <string name="fqTextContains">Contains:</string>
     <string name="fqAirportsVisited">Airports:</string>
     <string name="fqTextContainsPrompt">Text to find</string>
