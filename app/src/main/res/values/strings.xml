@@ -369,7 +369,7 @@
     <string name="abbrevNauticalMiles">nm</string>
 
     <!-- Search -->
-    <string name="conjunctionMatches">Matches</string>
+    <string name="conjunctionMatches">Flight has</string>
     <string name="conjunctionAny">Any</string>
     <string name="conjunctionAll">All</string>
     <string name="conjunctionNone">None</string>

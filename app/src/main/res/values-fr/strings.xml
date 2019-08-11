@@ -369,10 +369,10 @@
     <string name="abbrevNauticalMiles">nm</string>
 
     <!-- Search -->
-    <string name="conjunctionMatches">Correspond</string>
-    <string name="conjunctionAny">au moins</string>
-    <string name="conjunctionAll">à tous</string>
-    <string name="conjunctionNone">à aucun</string>
+    <string name="conjunctionMatches">Vol</string>
+    <string name="conjunctionAny">a au moins</string>
+    <string name="conjunctionAll">a tous</string>
+    <string name="conjunctionNone">n\'a pas du tout</string>
     <string name="fqTextContains">Contient:</string>
     <string name="fqAirportsVisited">Aéroports:</string>
     <string name="fqTextContainsPrompt">Texte pour a recherche</string>
