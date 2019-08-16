@@ -104,16 +104,13 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 	public Boolean IsPublic = false;
 	public Boolean HasNightLandings = false;
 	public Boolean HasFullStopLandings = false;
-	@SuppressWarnings("WeakerAccess")
 	public Boolean HasLandings = false;
 	public Boolean HasApproaches = false;
 	public Boolean HasHolds = false;
 	public Boolean HasXC = false;
 	public Boolean HasSimIMCTime = false;
-	@SuppressWarnings("WeakerAccess")
 	public Boolean HasGroundSim = false;
 	public Boolean HasIMC = false;
-	@SuppressWarnings("WeakerAccess")
 	public Boolean HasAnyInstrument = false;
 	public Boolean HasNight = false;
 	public Boolean HasDual = false;
@@ -297,7 +294,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
     public Boolean HasFlightCriteria()
     {
         return IsPublic || HasApproaches || HasCFI || HasDual || HasFullStopLandings || HasLandings || HasHolds || HasIMC || HasAnyInstrument ||
-            HasNight || HasNightLandings || HasPIC || HasSIC || HasTotalTime || HasSimIMCTime || HasTelemetry || HasImages || HasXC || IsSigned;
+            HasNight || HasNightLandings || HasPIC || HasSIC || HasTotalTime || HasSimIMCTime || HasTelemetry || HasImages || HasXC || IsSigned || HasGroundSim;
     }
 
     public Boolean HasCriteria()

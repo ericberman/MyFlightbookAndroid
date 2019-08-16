@@ -408,13 +408,16 @@
     <string name="fqFlightFeatures">Charactéristiques de vol</string>
     <string name="ffFSLanding">Atterissages complets</string>
     <string name="ffFSNightLanding">Atterissages complets - Nuit</string>
+    <string name="ffAnyLandings">Tous les atterrissages</string>
     <string name="ffApproaches">Approches IFR</string>
     <string name="ffHold">Procédures d\'attente</string>
     <string name="ffTelemetry">Données télémétriques</string>
     <string name="ffImages">Images or videos</string>
     <string name="ffXC">Temps navigation</string>
+    <string name="ffGroundSim">Simulateur</string>
     <string name="ffSimIMC">Simulation VSV (vol sans visibilité)</string>
     <string name="ffIMC">VSV (vol sans visibilité)</string>
+    <string name="ffAnyInstrument">VSV ou instrument simulé</string>
     <string name="ffNight">Nuit</string>
     <string name="ffIsPublic">Données du vol partagées</string>
     <string name="ffIsSigned">Vol est signé</string>

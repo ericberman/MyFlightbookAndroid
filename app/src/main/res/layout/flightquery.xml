@@ -494,6 +494,12 @@
                 android:text="@string/ffFSNightLanding" />
 
             <CheckBox
+                android:id="@+id/ckHasAnyLandings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffAnyLandings" />
+
+            <CheckBox
                 android:id="@+id/ckHasApproaches"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -504,18 +510,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ffHold" />
-
-            <CheckBox
-                android:id="@+id/ckHasTelemetry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ffTelemetry" />
-
-            <CheckBox
-                android:id="@+id/ckHasImages"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ffImages" />
 
             <CheckBox
                 android:id="@+id/ckHasXC"
@@ -536,22 +530,22 @@
                 android:text="@string/ffIMC" />
 
             <CheckBox
+                android:id="@+id/ckHasAnyInstrument"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffAnyInstrument" />
+
+            <CheckBox
+                android:id="@+id/ckHasGroundSim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffGroundSim" />
+
+            <CheckBox
                 android:id="@+id/ckHasNight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ffNight" />
-
-            <CheckBox
-                android:id="@+id/ckIsPublic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ffIsPublic" />
-
-            <CheckBox
-                android:id="@+id/ckIsSigned"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ffIsSigned" />
 
             <CheckBox
                 android:id="@+id/ckHasDual"
@@ -582,6 +576,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ffTotal" />
+
+            <CheckBox
+                android:id="@+id/ckIsPublic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffIsPublic" />
+
+            <CheckBox
+                android:id="@+id/ckHasTelemetry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffTelemetry" />
+
+            <CheckBox
+                android:id="@+id/ckHasImages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffImages" />
+
+            <CheckBox
+                android:id="@+id/ckIsSigned"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffIsSigned" />
+
         </LinearLayout>
 
         <!--  Properties -->

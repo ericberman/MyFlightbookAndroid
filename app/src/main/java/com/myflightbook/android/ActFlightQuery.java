@@ -613,6 +613,9 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         SetCheckState(R.id.ckHasTelemetry, CurrentQuery.HasTelemetry);
         SetCheckState(R.id.ckHasImages, CurrentQuery.HasImages);
         SetCheckState(R.id.ckHasXC, CurrentQuery.HasXC);
+        SetCheckState(R.id.ckHasGroundSim, CurrentQuery.HasGroundSim);
+        SetCheckState(R.id.ckHasAnyLandings, CurrentQuery.HasLandings);
+        SetCheckState(R.id.ckHasAnyInstrument, CurrentQuery.HasAnyInstrument);
 
         SetCheckState(R.id.ckHasFlaps, CurrentQuery.HasFlaps);
         SetCheckState(R.id.ckIsComplex, CurrentQuery.IsComplex);
@@ -689,6 +692,9 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         CurrentQuery.HasTelemetry = CheckState(R.id.ckHasTelemetry);
         CurrentQuery.HasImages = CheckState(R.id.ckHasImages);
         CurrentQuery.HasXC = CheckState(R.id.ckHasXC);
+        CurrentQuery.HasAnyInstrument = CheckState(R.id.ckHasAnyInstrument);
+        CurrentQuery.HasLandings = CheckState(R.id.ckHasAnyLandings);
+        CurrentQuery.HasGroundSim = CheckState(R.id.ckHasGroundSim);
     }
 
     private void fromForm() {
