@@ -482,6 +482,12 @@
             </LinearLayout>
 
             <CheckBox
+                android:id="@+id/ckHasAnyLandings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ffAnyLandings" />
+
+            <CheckBox
                 android:id="@+id/ckHasFSLandings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -492,12 +498,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ffFSNightLanding" />
-
-            <CheckBox
-                android:id="@+id/ckHasAnyLandings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ffAnyLandings" />
 
             <CheckBox
                 android:id="@+id/ckHasApproaches"
