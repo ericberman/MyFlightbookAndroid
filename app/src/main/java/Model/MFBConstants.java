@@ -44,7 +44,7 @@ public class MFBConstants {
 
     // DB Versioning
     public static final int DBVersionMain = 28;
-    public static final int DBVersionAirports = 28;
+    public static final int DBVersionAirports = 29;
 
     // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
     // To read it: PRAGMA user_version
