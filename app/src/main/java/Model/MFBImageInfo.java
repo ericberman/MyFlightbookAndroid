@@ -87,7 +87,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
     // for serialization
     private enum FPProp {
-        pidComment, pidVirtualPath, pidThumbnailFile, pidURLFullImage, pidWidth, pidHeight, pidTHWidth, pidTHHeight, pidLocation, pidImageType
+        pidComment, pidVirtualPath, pidThumbnailFile, pidURLThumbnail, pidURLFullImage, pidWidth, pidHeight, pidTHWidth, pidTHHeight, pidLocation, pidImageType
     }
 
     private enum ImageFileType {JPEG, PDF, S3PDF, S3VideoMP4}
@@ -100,6 +100,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     private String VirtualPath = "";
     public String ThumbnailFile = "";
     private String URLFullImage = "";
+    private String URLThumbnail = "";
     public LatLong Location;
     private ImageFileType ImageType = ImageFileType.JPEG;
 
@@ -151,7 +152,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                         BitmapDrawable bd = (BitmapDrawable) d;
                         Bitmap bmp = bd.getBitmap();
                         ByteArrayOutputStream s = new ByteArrayOutputStream();
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, s);
+                        bmp.compress((mfbii.ImageType == ImageFileType.PDF || mfbii.ImageType == ImageFileType.S3PDF) ? CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 100, s);
                         if (mFIsThumbnail)
                             mfbii.m_imgThumb = s.toByteArray();
                         else
@@ -386,6 +387,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         cv.put("VirtualPath", VirtualPath);
         cv.put("ThumbnailFile", ThumbnailFile);
         cv.put("URLFullImage", URLFullImage);
+        cv.put("URLThumbnail", URLThumbnail);
         cv.put("ImageType", ImageType.ordinal());
 
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
@@ -452,6 +454,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         HeightThumbnail = c.getInt(c.getColumnIndex("HeightThumbnail"));
         VirtualPath = c.getString(c.getColumnIndex("VirtualPath"));
         ThumbnailFile = c.getString(c.getColumnIndex("ThumbnailFile"));
+        URLThumbnail = c.getString(c.getColumnIndex("URLThumbnail"));
         URLFullImage = c.getString(c.getColumnIndex("URLFullImage"));
         ImageType = ImageFileType.values()[c.getInt(c.getColumnIndex("ImageType"))];
     }
@@ -481,6 +484,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         alColumns.add("VirtualPath");
         alColumns.add("ThumbnailFile");
         alColumns.add("URLFullImage");
+        alColumns.add("URLThumbnail");
         alColumns.add("ImageType");
 
 
@@ -737,6 +741,8 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 return this.ThumbnailFile;
             case pidURLFullImage:
                 return this.URLFullImage;
+            case pidURLThumbnail:
+                return this.URLThumbnail;
             case pidWidth:
                 return this.Width;
             case pidHeight:
@@ -767,6 +773,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             case pidThumbnailFile:
                 pi.type = PropertyInfo.STRING_CLASS;
                 pi.name = "ThumbnailFile";
+                break;
+            case pidURLThumbnail:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "URLThumbnail";
                 break;
             case pidURLFullImage:
                 pi.type = PropertyInfo.STRING_CLASS;
@@ -817,6 +827,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             case pidURLFullImage:
                 this.URLFullImage = sz;
                 break;
+            case pidURLThumbnail:
+                this.URLThumbnail = sz;
+                break;
             case pidWidth:
                 this.Width = Integer.parseInt(sz);
                 break;
@@ -844,6 +857,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         so.addProperty("Comment", Comment);
         so.addProperty("VirtualPath", VirtualPath);
         so.addProperty("URLFullImage", URLFullImage);
+        so.addProperty("URLThumbnail", URLThumbnail);
         so.addProperty("ThumbnailFile", ThumbnailFile);
         so.addProperty("Width", Width);
         so.addProperty("Height", Height);
@@ -857,6 +871,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     public void FromProperties(SoapObject so) {
         Comment = ReadNullableString(so, "Comment");
         VirtualPath = ReadNullableString(so, "VirtualPath");
+        URLThumbnail = ReadNullableString(so, "URLThumbnail");
         URLFullImage = ReadNullableString(so, "URLFullImage");
         ThumbnailFile = ReadNullableString(so, "ThumbnailFile");
         Width = Integer.parseInt(so.getProperty("Width").toString());
@@ -879,7 +894,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     }
 
     private String getURLThumbnail() {
-        return String.format(Locale.US, "https://%s%s%s", MFBConstants.szIP, this.VirtualPath, this.ThumbnailFile);
+        return this.URLThumbnail.startsWith("/") ? String.format(Locale.US, "https://%s%s", MFBConstants.szIP, this.URLThumbnail) : this.URLThumbnail;
     }
 
     public void LoadImageAsync(Boolean fThumbnail, ImageCacheCompleted delegate) {
