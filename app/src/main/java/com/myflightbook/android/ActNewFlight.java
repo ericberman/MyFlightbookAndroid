@@ -439,7 +439,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 Aircraft ac = (Aircraft) parent.getSelectedItem();
                 if (ac != null && m_le.idAircraft != ac.AircraftID) {
                     FromView();
-                    m_le.idAircraft = ac.AircraftID;
+                        m_le.idAircraft = ac.AircraftID;
                     updateTemplatesForAircraft(false);
                     ToView();
                 }
@@ -536,10 +536,18 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         Aircraft[] rgFilteredAircraft = SelectibleAircraft();
         if (rgFilteredAircraft != null && rgFilteredAircraft.length > 0) {
+            int pos = 0;
+            for (int i = 0; i < rgFilteredAircraft.length; i++) {
+                if (m_le.idAircraft == rgFilteredAircraft[i].AircraftID) {
+                    pos = i;
+                    break;
+                }
+            }
             // Create a list of the aircraft to show, which are the ones that are not hidden OR the active one for the flight
             ArrayAdapter<Aircraft> adapter = new ArrayAdapter<>(
                     Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgFilteredAircraft);
             spnAircraft.setAdapter(adapter);
+            spnAircraft.setSelection(pos);
             // need to notifydatasetchanged or else setselection doesn't
             // update correctly.
             adapter.notifyDataSetChanged();
