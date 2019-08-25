@@ -343,6 +343,8 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     //  Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         // get cached auth credentials; restore state prior to restoring location.
         mPrefs = getPreferences(MODE_PRIVATE);
 
@@ -356,7 +358,6 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_NO);
         AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         m_Resources = getResources();
         m_filesPath = getFilesDir().getAbsolutePath();
@@ -756,6 +757,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     public void onTabChanged(String tag) {
 
         TabInfo newTab = this.mapTabInfo.get(tag);
+        if (isFinishing() || isDestroyed())
+            return;
+
         if (mLastTab != newTab) {
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
             if (mLastTab != null) {
