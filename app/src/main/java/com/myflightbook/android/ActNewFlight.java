@@ -620,15 +620,16 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le.isKnownEngineStart() || m_le.isKnownFlightStart())
             resetDateOfFlight();
 
-        if (fIsNewFlight)
-            MFBMain.SetInProgressFlightActivity(getContext(), this);
-
         // First resume after create should pull in default templates;
         // subsequent resumes should NOT.
         updateTemplatesForAircraft(!needsDefaultTemplates);
         needsDefaultTemplates = false;  // reset this.
 
         ToView();
+
+        // do this last to start GPS service
+        if (fIsNewFlight)
+            MFBMain.SetInProgressFlightActivity(getContext(), this);
     }
 
     private void setUpGalleryForFlight() {
