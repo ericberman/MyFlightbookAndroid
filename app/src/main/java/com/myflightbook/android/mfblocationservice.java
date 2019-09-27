@@ -76,8 +76,6 @@ public class mfblocationservice  extends Service implements
     private final LocationCallback mLocationCallback = new MFBLocationCallback();
     private FusedLocationProviderClient mFusedLocationProvider;
 
-    private boolean _isStarted = false;
-
     public static final String ACTION_LOCATION_BROADCAST = mfblocationservice.class.getName() + "LocationBroadcast";
     public static final String EXTRA_LOCATION = "mfbSerializedLocation";
     private static final int NOTIFICATION_ID = 58235;
@@ -85,9 +83,6 @@ public class mfblocationservice  extends Service implements
     private static Location _initialLoc = null;
 
     private void startInForeground() {
-        if (_isStarted)
-            return;
-
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel nc = new NotificationChannel("mfbGPSChannelDefault1", "com.myflightbook.android.channel", NotificationManager.IMPORTANCE_LOW);
@@ -102,7 +97,6 @@ public class mfblocationservice  extends Service implements
                     .build();
             this.startForeground(NOTIFICATION_ID, n);
         }
-        _isStarted = true;
     }
 
     @Override
@@ -162,7 +156,6 @@ public class mfblocationservice  extends Service implements
 
     @Override
     public void onDestroy() {
-        _isStarted = false;
         if (mFusedLocationProvider != null)
             mFusedLocationProvider.removeLocationUpdates(mLocationCallback);
         super.onDestroy();
