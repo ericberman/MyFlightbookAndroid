@@ -115,7 +115,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     static private final String m_KeysNightLandingOption = "nightLandingOption";
 
     static private final String m_KeysNightMode = "nightModeOption";
-    static public int NightModePref = AppCompatDelegate.MODE_NIGHT_NO;
+    static public int NightModePref = AppCompatDelegate.MODE_NIGHT_AUTO;
 
     static private final String m_TimeOfLastVacuum = "LastVacuum";
 
@@ -355,7 +355,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         if (nightMode != Configuration.UI_MODE_NIGHT_NO)
             new WebView(this);
 
-        MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_NO);
+        MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_AUTO);
         AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
 
         setContentView(R.layout.main);
