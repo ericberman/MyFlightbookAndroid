@@ -20,12 +20,14 @@ package com.myflightbook.android;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,8 +65,10 @@ import Model.Airport;
 import Model.CannedQuery;
 import Model.CategoryClass;
 import Model.CustomPropertyType;
+import Model.DBCache;
 import Model.FlightQuery;
 import Model.FlightQuery.DateRanges;
+import Model.MFBConstants;
 import Model.MFBUtil;
 import Model.MakeModel;
 
@@ -166,6 +170,39 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
             }
         }
     }
+
+    private static class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
+        private ProgressDialog m_pd = null;
+        final AsyncWeakContext<ActFlightQuery> m_ctxt;
+
+        RefreshCPTTask(Context c, ActFlightQuery avt) {
+            super();
+            m_ctxt = new AsyncWeakContext<>(c, avt);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
+            cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, false, m_ctxt.getContext());
+            return true;
+        }
+
+        protected void onPreExecute() {
+            Context c = m_ctxt.getContext();
+            if (c != null)
+                m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgCPT));
+        }
+
+        protected void onPostExecute(Boolean b) {
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+        }
+    }
+
     // We are going to return only active aircraft UNLESS:
     // a) fShowAllAircraft is true
     // b) all aircraft are active, or
@@ -243,6 +280,12 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
             new GetCannedQueryTask(getActivity(), this).execute();
         else
             setUpNamedQueries();
+
+        CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
+        if (cptSvc.CacheStatus() == DBCache.DBCacheStatus.INVALID) {
+            RefreshCPTTask rt = new RefreshCPTTask(this.getContext(), this);
+            rt.execute();
+        }
 
         AddListener(R.id.btnfqDateStart);
         AddListener(R.id.btnfqDateEnd);

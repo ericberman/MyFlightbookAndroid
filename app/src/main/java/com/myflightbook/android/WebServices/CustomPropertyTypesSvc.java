@@ -75,10 +75,7 @@ public class CustomPropertyTypesSvc extends MFBSoap {
             if (cpt.IsFavorite)
                 lst.add(cpt);
 
-        if (lst.size() == 0)
-            return rgCpt;
-        else
-            return lst.toArray(new CustomPropertyType[0]);
+        return lst.toArray(new CustomPropertyType[0]);
     }
 
     private void updateCache(CustomPropertyType[] rgcpt) {
