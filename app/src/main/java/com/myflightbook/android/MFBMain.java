@@ -456,8 +456,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
             }
         }
 
-        // get the GPS service going early.
-        resumeGPS();
+        // Set up the GPS service, but don't start it until OnResume
+        if (MFBLocation.GetMainLocation() == null)
+            MFBLocation.setMainLocation(new MFBLocation(this));
     }
 
     private void OpenRequestedTelemetry() {
