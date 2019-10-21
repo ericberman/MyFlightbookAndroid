@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,6 +48,7 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 import Model.Aircraft;
@@ -192,9 +194,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 
             Aircraft ac = m_aircraftRows[position].aircraftItem;
 
-            TextView tvTail = v.findViewById(R.id.txtTail);
-            TextView tvModel = v.findViewById(R.id.txtModel);
-            TextView tvModelCommonName = v.findViewById(R.id.txtCommonName);
+            TextView tvTail = v.findViewById(R.id.txtAircraftDetails);
 
             // Show the camera if the aircraft has images.
             ImageView imgCamera = v.findViewById(R.id.imgCamera);
@@ -210,13 +210,9 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 
             int textColor = (tvTail.getCurrentTextColor() & 0x00FFFFFF) | (ac.HideFromSelection ? 0x88000000 : 0xFF000000);
             tvTail.setTextColor(textColor);
-            tvModel.setTextColor(textColor);
-            tvModelCommonName.setTextColor(textColor);
 
-            tvTail.setText(ac.displayTailNumber());
-            tvModel.setText(ac.ModelDescription);
-            if (ac.ModelCommonName.length() > 0)
-                tvModelCommonName.setText(ac.ModelCommonName.trim());
+            String szAircraftDetails = String.format(Locale.getDefault(), "<big><b>%s</b></big> <i>%s</i><br />%s %s", ac.displayTailNumber(), (ac.ModelDescription + " " + ac.ModelCommonName).trim(), ac.PrivateNotes, ac.PublicNotes);
+            tvTail.setText(Html.fromHtml(szAircraftDetails));
 
             return v;
         }

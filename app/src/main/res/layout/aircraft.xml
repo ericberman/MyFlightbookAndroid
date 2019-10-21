@@ -13,34 +13,11 @@
         android:contentDescription="@string/cdTakePicture"
         android:padding="4dip" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/txtAircraftDetails"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/txtTail"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:layout_gravity="start"
-            android:text=""
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtModel"
-            android:layout_gravity="start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:text="" />
-
-        <TextView
-            android:id="@+id/txtCommonName"
-            android:layout_gravity="start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:text="" />
-    </LinearLayout>
+        android:textAlignment="textStart"
+        android:layout_gravity="start"
+        android:text="" />
 </LinearLayout>
