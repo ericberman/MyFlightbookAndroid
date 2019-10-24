@@ -80,24 +80,6 @@
             android:layout_height="wrap_content"
             android:text="@string/lblShowAircraft" />
 
-        <!-- Images -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/DividerBar"
-            android:clickable="true"
-            android:text="@string/cdImagesForAircraft"
-            android:drawableStart="@drawable/collapse_light"
-            android:id="@+id/txtImageHeader"
-            android:focusable="true" />
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:stretchColumns="0,1"
-            android:id="@+id/tblImageTable"/>
-
         <!-- Aircraft Preferences -->
         <TextView
             android:id="@+id/acPrefsHeader"
@@ -440,5 +422,24 @@
                 </TableRow>
             </TableLayout>
         </LinearLayout>
+
+        <!-- Images -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/DividerBar"
+            android:clickable="true"
+            android:text="@string/cdImagesForAircraft"
+            android:drawableStart="@drawable/collapse_light"
+            android:id="@+id/txtImageHeader"
+            android:focusable="true" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:stretchColumns="0,1"
+            android:id="@+id/tblImageTable"/>
+
     </LinearLayout>
 </ScrollView>

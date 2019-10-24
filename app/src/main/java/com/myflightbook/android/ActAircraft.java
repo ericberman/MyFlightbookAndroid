@@ -211,7 +211,9 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             int textColor = (tvTail.getCurrentTextColor() & 0x00FFFFFF) | (ac.HideFromSelection ? 0x88000000 : 0xFF000000);
             tvTail.setTextColor(textColor);
 
-            String szAircraftDetails = String.format(Locale.getDefault(), "<big><b>%s</b></big> <i>%s</i><br />%s %s", ac.displayTailNumber(), (ac.ModelDescription + " " + ac.ModelCommonName).trim(), ac.PrivateNotes, ac.PublicNotes);
+            String szInstanceType = " " + (ac.IsReal() ? "" : getString(Aircraft.rgidInstanceTypes[ac.InstanceTypeID - 1]));
+
+            String szAircraftDetails = String.format(Locale.getDefault(), "<big><b>%s</b></big> <i>%s</i><br />%s %s", ac.displayTailNumber(), (ac.ModelDescription + " " + ac.ModelCommonName).trim() + szInstanceType, ac.PrivateNotes, ac.PublicNotes);
             tvTail.setText(Html.fromHtml(szAircraftDetails));
 
             return v;
