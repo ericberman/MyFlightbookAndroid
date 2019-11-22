@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.myflightbook.android"
-    android:versionCode="104"
-    android:versionName="2019.10.31.1">
+    android:versionCode="105"
+    android:versionName="2019.11.22.1">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -53,6 +53,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:host="*" />
                 <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.kml" />
@@ -64,6 +65,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:host="*" />
                 <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.KML" />
@@ -75,6 +77,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:host="*" />
                 <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.gpx" />
@@ -86,6 +89,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:host="*" />
                 <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.GPX" />
@@ -97,6 +101,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:host="*" />
                 <data android:mimeType="application/vnd.google-earth.kml+xml" />
             </intent-filter>
@@ -107,6 +112,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:host="*" />
                 <data android:mimeType="application/gpx+xml" />
             </intent-filter>

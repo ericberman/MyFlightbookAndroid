@@ -1078,10 +1078,10 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 int i = 0;
                 while (c.moveToNext()) {
                     LogbookEntry le = new LogbookEntry();
+                    rglePending[i++] = le;
                     le.FromCursor(c);
                     le.idLocalDB = c.getLong(c.getColumnIndex("_id"));
                     le.rgFlightImages = MFBImageInfo.getLocalImagesForId(le.idLocalDB, PictureDestination.FlightImage);
-                    rglePending[i++] = le;
                 }
             } else
                 throw new Exception("Query for flight from db failed!");

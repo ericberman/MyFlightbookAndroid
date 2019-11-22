@@ -65,7 +65,9 @@ public abstract class Telemetry {
         LocSample refSample = rgSamples[0];
         refSample.Speed = 0;
         for (int i = 1; i < rgSamples.length; i++) {
-            long elapsedMS = rgSamples[i].TimeStamp.getTime() - refSample.TimeStamp.getTime();
+            if (rgSamples[i] == null)
+                break;
+            long elapsedMS = (rgSamples[i].TimeStamp != null && refSample.TimeStamp != null) ? rgSamples[i].TimeStamp.getTime() - refSample.TimeStamp.getTime() : -1;
 
             if (elapsedMS <= 0) {
                 rgSamples[i].Speed = refSample.Speed;

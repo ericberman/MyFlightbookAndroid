@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -77,13 +77,15 @@ public class KML extends Telemetry {
                                 sample.TimeStamp = dt;
                                 break;
                             case "gx:coord":
-                                readCoord(sample, parser);
-                                lst.add(sample);
-                                sample = null;
+                                if (sample != null) {
+                                    readCoord(sample, parser);
+                                    lst.add(sample);
+                                    sample = null;
+                                }
                                 break;
                         }
                     } else if (eventType == XmlPullParser.END_TAG) {
-                        if (parser.getName().equals("trkpt")) {
+                        if (sample != null && parser.getName().equals("trkpt")) {
                             lst.add(sample);
                             sample = null;
                         }
