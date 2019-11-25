@@ -567,8 +567,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             d.show();
         }
 
-        if (m_rgac != null)
+        if (m_rgac != null) {
+            Aircraft[] rgac = (new AircraftSvc()).getCachedAircraft();
+            if (rgac != null)
+                m_rgac = rgac;
             refreshAircraft(m_rgac);
+        }
 
         // fix up the link to the user's profile.
         AddListener(R.id.txtSocialNetworkHint);
