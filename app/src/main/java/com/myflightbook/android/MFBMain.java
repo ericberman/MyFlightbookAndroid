@@ -55,9 +55,6 @@ import android.widget.TabHost.TabContentFactory;
 
 import com.myflightbook.android.WebServices.AuthToken;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -174,13 +171,8 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
                 Telemetry t = Telemetry.TelemetryFromURL(urls[0], this.m_ctxt.getContext());
 
-                if (t != null) {
-                    try {
-                        leResult = GPSSim.ImportTelemetry(m_ctxt.getCallingActivity(), t.Samples(), urls[0]);
-                    } catch (IOException | XmlPullParserException e) {
-                        e.printStackTrace();
-                    }
-                }
+                if (t != null)
+                    leResult = GPSSim.ImportTelemetry(m_ctxt.getCallingActivity(), t, urls[0]);
             }
             return leResult;
         }

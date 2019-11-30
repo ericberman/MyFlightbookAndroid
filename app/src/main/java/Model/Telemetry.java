@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -50,12 +52,19 @@ public abstract class Telemetry {
     private Uri m_uri = null;
     private Context m_ctxt = null;
     private Pattern m_pISODate = null;
+    Hashtable<String, Object> metaData;
+    public static final String TELEMETRY_METADATA_TAIL = "aircraft";
 
     Telemetry() {}
 
     Telemetry(Uri uri, Context c) {
         m_uri = uri;
         m_ctxt = c;
+        metaData = new Hashtable<>();
+    }
+
+    public Dictionary<String, Object> getMetaData() {
+        return metaData;
     }
 
     LocSample[] ComputeSpeed(LocSample[] rgSamples) {

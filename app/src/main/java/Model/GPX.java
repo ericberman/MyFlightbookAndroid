@@ -50,6 +50,12 @@ public class GPX extends Telemetry {
         return new LocSample(Double.parseDouble(szLat), Double.parseDouble(szLon), 0, 0, 1.0, "");
     }
 
+    private void readMetaName(XmlPullParser parser) {
+        String szTail = parser.getAttributeValue(null, TELEMETRY_METADATA_TAIL);
+        if (szTail != null)
+            metaData.put(TELEMETRY_METADATA_TAIL, szTail);
+    }
+
     private void readEle(LocSample sample, XmlPullParser parser) throws IOException, XmlPullParserException {
         if (sample == null)
             return;
@@ -100,6 +106,9 @@ public class GPX extends Telemetry {
                                 break;
                             case "badelf:speed":
                                 readBadElfSpeed(sample, parser);
+                                break;
+                            case "name":
+                                readMetaName(parser);
                                 break;
                         }
                     } else if (eventType == XmlPullParser.END_TAG) {

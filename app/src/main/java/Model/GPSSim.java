@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,8 +27,12 @@ import android.util.Log;
 
 import com.myflightbook.android.ActNewFlight;
 import com.myflightbook.android.R;
+import com.myflightbook.android.WebServices.AircraftSvc;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
@@ -1231,9 +1235,18 @@ public class GPSSim {
         ft.execute(0);
     }
 
-    public static LogbookEntry ImportTelemetry(Context c, LocSample[] rgsamples, Uri uriOriginalTelemetry) {
-        if (rgsamples == null || rgsamples.length == 0)
+    public static LogbookEntry ImportTelemetry(Context c, Telemetry t, Uri uriOriginalTelemetry) {
+        if (t == null)
             return null;
+        LocSample[] rgsamples;
+        try {
+            rgsamples = t.Samples();
+            if (rgsamples == null || rgsamples.length == 0)
+                return null;
+        } catch (IOException | XmlPullParserException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         LogbookEntry le = new LogbookEntry();
         le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;
@@ -1262,6 +1275,20 @@ public class GPSSim {
 
             le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;
             le.szComments = c.getString(R.string.telemetryImportDefaultComment);
+
+            if (t.metaData.containsKey(Telemetry.TELEMETRY_METADATA_TAIL)) {
+                String szTail = (String) t.metaData.get(Telemetry.TELEMETRY_METADATA_TAIL);
+                if (szTail != null && szTail.length() > 0) {
+                    AircraftSvc acsvc = new AircraftSvc();
+                    Aircraft[] rgac = acsvc.getCachedAircraft();
+                    for (Aircraft ac : rgac) {
+                        if (ac.TailNumber.compareToIgnoreCase(szTail) == 0) {
+                            le.idAircraft = ac.AircraftID;
+                            break;
+                        }
+                    }
+                }
+            }
 
             if (uriOriginalTelemetry != null) {
                 try (InputStream in = c.getContentResolver().openInputStream(uriOriginalTelemetry)) {
