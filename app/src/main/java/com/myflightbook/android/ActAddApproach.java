@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2019 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,11 +24,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import Model.Airport;
 import Model.ApproachDescription;
@@ -48,7 +50,6 @@ public class ActAddApproach extends AppCompatActivity {
     private String approachSuffix = "";
     private String runwayBase = "";
     private String runwaySuffix = "";
-    private String[] rgAirports = new String[0];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,15 +127,13 @@ public class ActAddApproach extends AppCompatActivity {
         String szAirports = getIntent().getStringExtra(AIRPORTSFORAPPROACHES);
         if (szAirports == null)
             szAirports = "";
-        rgAirports = Airport.SplitCodes(szAirports);
+        String[] rgAirports = Airport.SplitCodes(szAirports);
         ArrayList<String> al = new ArrayList<>();
         for (int i = rgAirports.length - 1; i >= 0; i--)
             al.add(rgAirports[i]);
         rgAirports = al.toArray(new String[0]);
 
-        findViewById(R.id.spnAirport).setVisibility(rgAirports.length > 1 ? View.VISIBLE : View.GONE);
-        EditText et = findViewById(R.id.txtAirport);
-        et.setVisibility(rgAirports.length > 1 ? View.GONE : View.VISIBLE);
+        AutoCompleteTextView et = findViewById(R.id.txtAirport);
         // if airports specified, default to the first one in the list (last one visited)
         if (rgAirports.length > 0) {
             approachDescription.airportName = rgAirports[0];
@@ -142,23 +141,9 @@ public class ActAddApproach extends AppCompatActivity {
         }
 
         if (rgAirports.length > 1) {
-            s = findViewById(R.id.spnAirport);
-
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rgAirports);
-
-            adapter.setDropDownViewResource(R.layout.samplequestion);
-            s.setAdapter(adapter);
-
-            s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    approachDescription.airportName = rgAirports[i];
-                    et.setText(rgAirports[i]);
-                }
-
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                    approachDescription.airportName = "";
-                }
-            });
+            et.setAdapter(new ArrayAdapter<>(
+                    this, android.R.layout.simple_list_item_1,
+                    rgAirports));
         }
 
         CheckBox ckAddToTotals = findViewById(R.id.ckAddToApproachTotals);
@@ -171,7 +156,7 @@ public class ActAddApproach extends AppCompatActivity {
         approachDescription.approachCount = ((DecimalEdit) findViewById(R.id.txtApproachCount)).getIntValue();
         String szTypedAirports = ((EditText) findViewById(R.id.txtAirport)).getText().toString();
         if (szTypedAirports.length() > 0)
-            approachDescription.airportName = szTypedAirports;
+            approachDescription.airportName = szTypedAirports.toUpperCase(Locale.getDefault());
 
         Bundle bundle = new Bundle();
         bundle.putString(APPROACHDESCRIPTIONRESULT, approachDescription.toString());

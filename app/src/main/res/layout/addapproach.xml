@@ -98,23 +98,14 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/ahApproachAirport" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/txtAirport"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
                 android:hint="@string/ahApproachAirport"
                 android:inputType="textCapCharacters|textNoSuggestions"
-                android:minLines="1"
-                android:text="" />
-
-            <Spinner
-                android:id="@+id/spnAirport"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="2sp"
-                android:paddingTop="2sp"
-                android:visibility="gone" />
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+                android:layout_weight="0.8" />
         </TableRow>
 
         <TableRow
