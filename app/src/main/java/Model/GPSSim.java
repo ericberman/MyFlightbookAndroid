@@ -1297,7 +1297,9 @@ public class GPSSim {
                         for (String line; (line = br.readLine()) != null; ) {
                             sb.append(line).append('\n');
                         }
-                        le.szFlightData = sb.toString();
+
+                        // Issue #175: android sqlite cursors are limited to 2MB, so if the telemetry is longer then that, just truncate it.
+                        le.szFlightData = sb.length() > 1800000 ? "" : sb.toString();
                     }
                 } catch (Exception ex) {
                     Log.e(MFBConstants.LOG_TAG, "Error copying input telemetry to new flight: " + ex.getMessage());
