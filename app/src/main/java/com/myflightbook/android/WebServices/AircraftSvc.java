@@ -25,6 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.myflightbook.android.ActRecentsWS;
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.Marshal.MarshalDate;
 import com.myflightbook.android.Marshal.MarshalDouble;
@@ -53,6 +54,8 @@ public class AircraftSvc extends MFBSoap {
     private static final String COL_AIRCRAFTID = "AircraftID";
     private static final String COL_MODELID = "ModelID";
     private static final String COL_INSTANCEID = "InstanceTypeID";
+    private static final String COL_VERSION = "Version";
+    private static final String COL_ICAO = "ICAO";
     private static final String COL_MODELNAME = "ModelCommonName";
     private static final String COL_MODELDESCRIPTION = "ModelDescription";
 
@@ -67,11 +70,16 @@ public class AircraftSvc extends MFBSoap {
     private static final String COL_LASTOIL = "LastOilChange";
     private static final String COL_LASTENGINE = "LastNewEngine";
     private static final String COL_HIDEFROMSELECTION = "HideFromSelection";
+    private static final String COL_COPYPICName = "CopyPICName";
     private static final String COL_ROLEFORPILOT = "RoleForPilot";
     private static final String COL_PUBLICNOTES = "PublicNotes";
     private static final String COL_PRIVATENOTES = "PrivateNotes";
     private static final String COL_DEFAULTIMAGE = "DefaultImage";
     private static final String COL_DEFAULTTEMPLATEIDS = "DefaultTemplateIDs";
+
+    private static final String COL_ISGLASS = "IsGlass";
+    private static final String COL_GLASSUPGRADEDATE = "GlassUpgradeDate";
+    private static final String COL_AVIONICSUPGRADETYPE = "AvionicsUpgradeType";
 
     @Override
     public void AddMappings(SoapSerializationEnvelope e) {
@@ -100,6 +108,8 @@ public class AircraftSvc extends MFBSoap {
 
                 int cAircraftID = c.getColumnIndex(COL_AIRCRAFTID);
                 int cTailNum = c.getColumnIndex(COL_TAILNUM);
+                int cVersion = c.getColumnIndex(COL_VERSION);
+                int cICAO = c.getColumnIndex(COL_ICAO);
                 int cModelId = c.getColumnIndex(COL_MODELID);
                 int cInstanceId = c.getColumnIndex(COL_INSTANCEID);
                 int cModelName = c.getColumnIndex(COL_MODELNAME);
@@ -117,12 +127,17 @@ public class AircraftSvc extends MFBSoap {
                 int cLastEngine = c.getColumnIndex(COL_LASTENGINE);
 
                 int cHideSelection = c.getColumnIndex(COL_HIDEFROMSELECTION);
+                int cCopyPICName = c.getColumnIndex(COL_COPYPICName);
                 int cRoleForPilot = c.getColumnIndex(COL_ROLEFORPILOT);
 
                 int cPublicNotes = c.getColumnIndex(COL_PUBLICNOTES);
                 int cPrivateNotes = c.getColumnIndex(COL_PRIVATENOTES);
                 int cDefaultImage = c.getColumnIndex(COL_DEFAULTIMAGE);
                 int cDefaultTemplateIDs = c.getColumnIndex(COL_DEFAULTTEMPLATEIDS);
+
+                int cIsGlass = c.getColumnIndex(COL_ISGLASS);
+                int cGlassUpgradeDate = c.getColumnIndex(COL_GLASSUPGRADEDATE);
+                int cAvionicsUpgradeType = c.getColumnIndex(COL_AVIONICSUPGRADETYPE);
 
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
 
@@ -131,6 +146,8 @@ public class AircraftSvc extends MFBSoap {
                     try {
                         ac.AircraftID = c.getInt(cAircraftID);
                         ac.InstanceTypeID = c.getInt(cInstanceId);
+                        ac.Version = c.getInt(cVersion);
+                        ac.ICAO = c.getString(cICAO);
                         ac.ModelCommonName = c.getString(cModelName);
                         ac.ModelDescription = c.getString(cModelDesc);
                         ac.ModelID = c.getInt(cModelId);
@@ -140,6 +157,7 @@ public class AircraftSvc extends MFBSoap {
                         ac.DefaultImage = c.getString(cDefaultImage);
 
                         ac.HideFromSelection = c.getInt(cHideSelection) != 0;
+                        ac.CopyPICNameWithCrossfill = c.getInt(cCopyPICName) != 0;
                         ac.RoleForPilot = PilotRole.values()[c.getInt(cRoleForPilot)];
 
                         ac.LastVOR = df.parse(c.getString(cLastVOR));
@@ -149,6 +167,15 @@ public class AircraftSvc extends MFBSoap {
                         ac.LastStatic = df.parse(c.getString(cLastStatic));
                         ac.LastAnnual = df.parse(c.getString(cLastAnnual));
                         ac.RegistrationDue = df.parse(c.getString(cRegistrationDue));
+
+                        ac.Last100 = c.getDouble(cLast100);
+                        ac.LastOil = c.getDouble(cLastOil);
+                        ac.LastEngine = c.getDouble(cLastEngine);
+
+                        ac.IsGlass = c.getInt(cIsGlass) != 0;
+                        String szGlassUpgrade = c.getString(cGlassUpgradeDate);
+                        ac.GlassUpgradeDate = szGlassUpgrade == null ? null : df.parse(szGlassUpgrade);
+                        ac.AvionicsTechnologyUpgrade = Aircraft.AvionicsTechnologyType.values()[c.getInt(cAvionicsUpgradeType)];
 
                         String szTemplateIDs = c.getString(cDefaultTemplateIDs);
                         String[] rgIDs = szTemplateIDs.split(" ");
@@ -160,10 +187,6 @@ public class AircraftSvc extends MFBSoap {
                     } catch (Exception ex) {
                         Log.e(MFBConstants.LOG_TAG, "Error getting cached aircraft: " + ex.getMessage());
                     }
-
-                    ac.Last100 = c.getDouble(cLast100);
-                    ac.LastOil = c.getDouble(cLastOil);
-                    ac.LastEngine = c.getDouble(cLastEngine);
 
                     if (rgAircraftImages != null)
                         ac.AircraftImages = MFBImageInfo.getAircraftImagesForId(ac.AircraftID, rgAircraftImages);
@@ -196,6 +219,8 @@ public class AircraftSvc extends MFBSoap {
                     ContentValues cv = new ContentValues();
                     cv.put(COL_AIRCRAFTID, ac.AircraftID);
                     cv.put(COL_INSTANCEID, ac.InstanceTypeID);
+                    cv.put(COL_VERSION, ac.Version);
+                    cv.put(COL_ICAO, ac.ICAO);
                     cv.put(COL_MODELID, ac.ModelID);
                     cv.put(COL_MODELDESCRIPTION, ac.ModelDescription);
                     cv.put(COL_MODELNAME, ac.ModelCommonName);
@@ -214,11 +239,16 @@ public class AircraftSvc extends MFBSoap {
                     cv.put(COL_LASTENGINE, ac.LastEngine);
 
                     cv.put(COL_HIDEFROMSELECTION, ac.HideFromSelection);
+                    cv.put(COL_COPYPICName, ac.CopyPICNameWithCrossfill);
                     cv.put(COL_ROLEFORPILOT, ac.RoleForPilot.ordinal());
 
                     cv.put(COL_PUBLICNOTES, ac.PublicNotes);
                     cv.put(COL_PRIVATENOTES, ac.PrivateNotes);
                     cv.put(COL_DEFAULTIMAGE, ac.DefaultImage);
+
+                    cv.put(COL_ISGLASS, ac.IsGlass);
+                    cv.put(COL_GLASSUPGRADEDATE, ac.GlassUpgradeDate == null ? null : df.format(ac.GlassUpgradeDate));
+                    cv.put(COL_AVIONICSUPGRADETYPE, ac.AvionicsTechnologyUpgrade.ordinal());
 
                     ArrayList<String> al = new ArrayList<>();
                     for (Integer idTemplate : ac.DefaultTemplates)
@@ -261,7 +291,7 @@ public class AircraftSvc extends MFBSoap {
                 }
             }
         }
-
+        ActRecentsWS.m_rgac = null; // Hack, but recents keeps a cache for performance
     }
 
     public void FlushCache() {

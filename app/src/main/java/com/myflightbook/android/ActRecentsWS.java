@@ -146,7 +146,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (ActRecentsWS.fShowFlightImages) {
                 ivCamera.setVisibility(View.VISIBLE);
                 if (le.hasImages() || (ac != null && ac.HasImage())) {
-                    MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.AircraftImages[0];
+                    MFBImageInfo mfbii = le.hasImages() ? le.rgFlightImages[0] : ac.getDefaultImage();
                     Bitmap b = mfbii.bitmapFromThumb();
                     if (b != null) {
                         ivCamera.setImageBitmap(b);

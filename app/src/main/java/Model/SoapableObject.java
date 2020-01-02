@@ -49,7 +49,7 @@ abstract class SoapableObject {
     }
 
     Date ReadNullableDate(SoapObject so, String propName) {
-        String sz = so.getProperty(propName).toString();
+        String sz = so.getPropertySafelyAsString(propName);
         if (sz.length() == 0)
             return null;
         else

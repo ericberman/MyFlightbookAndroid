@@ -42,7 +42,7 @@ import Model.MFBImageInfo.PictureDestination;
 
 
 public class Aircraft extends SoapableObject implements KvmSerializable, Serializable, LazyThumbnailLoader.ThumbnailedItem {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     public static final int[] rgidInstanceTypes = {
             R.string.aircraftInstanceTypeReal,
@@ -52,9 +52,11 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
             R.string.aircraftInstanceTypeATD};
 
     private enum AircraftProp {
-        pidTailNumber, pidAircratID, pidModelID, pidInstanctTypeID,
+        pidTailNumber, pidAircratID, pidModelID, pidInstanctTypeID, pidVersion, pidICAO,
+        pidAvionicsTechnologyUpgrade, pidIsGlass, pidGlassUpgradeDate,
         pidLastVOR, pidLastAltimeter, pidLastTransponder, pidLastELT, pidLastStatic, pidLastAnnual, pidRegistrationDue,
-        pidLast100, pidLastOil, pidLastEngine, pidHideFromSelection, pidPilotRole, pidPublicNotes, pidPrivateNotes, pidDefaultImage, pidDefaultTemplates
+        pidLast100, pidLastOil, pidLastEngine, pidPublicNotes, pidPrivateNotes, pidDefaultImage, pidDefaultTemplates,
+        pidHideFromSelection, pidPilotRole, pidCopyPICName
     }
 
     public String TailNumber = "";
@@ -63,6 +65,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     public int InstanceTypeID = 1;
     public String ModelCommonName = "";
     public String ModelDescription = "";
+    public String ICAO = "";
+    public int Version = 0;
     public MFBImageInfo[] AircraftImages = new MFBImageInfo[0];
     public String DefaultImage = "";
     public final HashSet<Integer> DefaultTemplates = new HashSet<>();
@@ -79,15 +83,20 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     public double LastOil;
     public double LastEngine;
 
+    // Glass
+    public enum AvionicsTechnologyType { None, Glass, TAA }
+    public AvionicsTechnologyType AvionicsTechnologyUpgrade = AvionicsTechnologyType.None;
+    public Boolean IsGlass;
+    public Date GlassUpgradeDate = null;
+
     // Notes
     public String PublicNotes;
     public String PrivateNotes;
 
     // User preferences
-    public Boolean HideFromSelection;
-
     public enum PilotRole {None, PIC, SIC, CFI}
-
+    public Boolean HideFromSelection;
+    public Boolean CopyPICNameWithCrossfill;
     public PilotRole RoleForPilot;
 
     public String ErrorString = "";
@@ -176,6 +185,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         so.addProperty("Tailnumber", TailNumber);
         so.addProperty("AircraftID", AircraftID);
         so.addProperty("ModelID", ModelID);
+        so.addProperty("Version", Version);
+        so.addProperty("ICAO", ICAO);
         so.addProperty("InstanceTypeID", InstanceTypeID);
         so.addProperty("ModelCommonName", ModelCommonName);
         so.addProperty("ModelDescription", ModelDescription);
@@ -192,7 +203,12 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         so.addProperty("LastNewEngine", LastEngine);
 
         so.addProperty("RoleForPilot", RoleForPilot);
+        so.addProperty("CopyPICNameWithCrossfill", CopyPICNameWithCrossfill);
         so.addProperty("HideFromSelection", HideFromSelection);
+
+        so.addProperty("IsGlass", IsGlass);
+        so.addProperty("GlassUpgradeDate", GlassUpgradeDate);
+        so.addProperty("AvionicsTechnologyUpgrade", AvionicsTechnologyUpgrade);
 
         so.addProperty("PublicNotes", PublicNotes);
         so.addProperty("PrivateNotes", PrivateNotes);
@@ -207,6 +223,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         InstanceTypeID = Integer.parseInt(so.getProperty("InstanceTypeID").toString());
         ModelCommonName = so.getProperty("ModelCommonName").toString();
         ModelDescription = so.getProperty("ModelDescription").toString();
+        ICAO = so.getProperty("ICAO").toString();
+        Version = Integer.parseInt(so.getProperty("Version").toString());
 
         LastVOR = ReadNullableDate(so, "LastVOR");
         LastAltimeter = ReadNullableDate(so, "LastAltimeter");
@@ -220,7 +238,12 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         LastEngine = Double.parseDouble(so.getProperty("LastNewEngine").toString());
 
         HideFromSelection = Boolean.parseBoolean(so.getProperty("HideFromSelection").toString());
+        CopyPICNameWithCrossfill = Boolean.parseBoolean(so.getProperty("CopyPICNameWithCrossfill").toString());
         RoleForPilot = PilotRole.valueOf(so.getProperty("RoleForPilot").toString());
+
+        IsGlass = Boolean.parseBoolean(so.getProperty("IsGlass").toString());
+        GlassUpgradeDate = ReadNullableDate(so,"GlassUpgradeDate");
+        AvionicsTechnologyUpgrade = AvionicsTechnologyType.valueOf(so.getProperty("AvionicsTechnologyUpgrade").toString());
 
         PublicNotes = ReadNullableString(so, "PublicNotes");
         PrivateNotes = ReadNullableString(so, "PrivateNotes");
@@ -259,6 +282,10 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 return AircraftID;
             case pidModelID:
                 return ModelID;
+            case pidVersion:
+                return Version;
+            case pidICAO:
+                return ICAO;
             case pidInstanctTypeID:
                 return InstanceTypeID;
             case pidLastVOR:
@@ -283,6 +310,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 return LastEngine;
             case pidHideFromSelection:
                 return HideFromSelection;
+            case pidCopyPICName:
+                return CopyPICNameWithCrossfill;
             case pidPilotRole:
                 return RoleForPilot.toString();
             case pidPublicNotes:
@@ -293,6 +322,12 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 return DefaultImage;
             case pidDefaultTemplates:
                 return new Vector<>(Arrays.asList(DefaultTemplates.toArray()));
+            case pidIsGlass:
+                return IsGlass;
+            case pidGlassUpgradeDate:
+                return GlassUpgradeDate;
+            case pidAvionicsTechnologyUpgrade:
+                return AvionicsTechnologyUpgrade;
             default:
                 return null;
         }
@@ -310,6 +345,12 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 break;
             case pidModelID:
                 ModelID = Integer.parseInt(sz);
+                break;
+            case pidICAO:
+                ICAO = sz;
+                break;
+            case pidVersion:
+                Version = Integer.parseInt(sz);
                 break;
             case pidInstanctTypeID:
                 InstanceTypeID = Integer.parseInt(sz);
@@ -347,6 +388,9 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
             case pidHideFromSelection:
                 HideFromSelection = Boolean.parseBoolean(sz);
                 break;
+            case pidCopyPICName:
+                CopyPICNameWithCrossfill = Boolean.parseBoolean(sz);
+                break;
             case pidPilotRole:
                 RoleForPilot = PilotRole.valueOf(sz);
                 break;
@@ -363,6 +407,15 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 DefaultTemplates.clear();
                 Integer[] rgVals = (Integer[]) value;
                 DefaultTemplates.addAll(Arrays.asList(rgVals));
+                break;
+            case pidIsGlass:
+                IsGlass = Boolean.parseBoolean(sz);
+                break;
+            case pidGlassUpgradeDate:
+                GlassUpgradeDate = IsoDate.stringToDate(sz, IsoDate.DATE);
+                break;
+            case pidAvionicsTechnologyUpgrade:
+                AvionicsTechnologyUpgrade = AvionicsTechnologyType.valueOf(sz);
                 break;
             default:
                 break;
@@ -384,6 +437,14 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
             case pidModelID:
                 pi.type = PropertyInfo.INTEGER_CLASS;
                 pi.name = "ModelID";
+                break;
+            case pidVersion:
+                pi.type = PropertyInfo.INTEGER_CLASS;
+                pi.name = "Version";
+                break;
+            case pidICAO:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "ICAO";
                 break;
             case pidInstanctTypeID:
                 pi.type = PropertyInfo.INTEGER_CLASS;
@@ -433,6 +494,10 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 pi.type = PropertyInfo.BOOLEAN_CLASS;
                 pi.name = "HideFromSelection";
                 break;
+            case pidCopyPICName:
+                pi.type = PropertyInfo.BOOLEAN_CLASS;
+                pi.name = "CopyPICNameWithCrossfill";
+                break;
             case pidPilotRole:
                 pi.type = PropertyInfo.STRING_CLASS;
                 pi.name = "RoleForPilot";
@@ -455,6 +520,18 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 pi.elementType = new PropertyInfo();
                 pi.elementType.type = PropertyInfo.INTEGER_CLASS;
                 pi.elementType.name = "Integer";
+            case pidIsGlass:
+                pi.type = PropertyInfo.BOOLEAN_CLASS;
+                pi.name = "IsGlass";
+                break;
+            case pidGlassUpgradeDate:
+                pi.type = PropertyInfo.OBJECT_CLASS;
+                pi.name = "GlassUpgradeDate";
+                break;
+            case pidAvionicsTechnologyUpgrade:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "AvionicsTechnologyUpgrade";
+                break;
             default:
                 break;
         }
