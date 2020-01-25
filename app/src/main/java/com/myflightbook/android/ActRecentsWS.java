@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,8 +86,10 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
     public static Aircraft[] m_rgac = null;
 
+    public enum FlightDetail {Low, Medium, High}
+
     public static Boolean fShowFlightImages = true;
-    public static Boolean fShowFlightTimes = true;
+    public static FlightDetail flightDetail = FlightDetail.Low;
 
     private FlightQuery currentQuery = new FlightQuery();
 
@@ -202,7 +204,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             TextView txtFlightTimes = v.findViewById(R.id.txtFlightTimes);
             StringBuilder sb = new StringBuilder();
-            if (fShowFlightTimes) {
+            if (flightDetail != FlightDetail.Low) {
                 sb.append(formattedTimeForLabel(R.string.lblLandingsAlt, le.cLandings));
                 sb.append(formattedTimeForLabel(R.string.lblApproaches, le.cApproaches));
                 sb.append(formattedTimeForLabel(R.string.lblNight, le.decNight, em));
@@ -215,8 +217,11 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 sb.append(formattedTimeForLabel(R.string.lblSIC, le.decSIC, em));
                 sb.append(formattedTimeForLabel(R.string.lblPIC, le.decPIC, em));
                 sb.append(formattedTimeForLabel(R.string.lblTotal, le.decTotal, em));
-                sb.append(formattedTimeForLabel(R.string.autoEngine, le.dtEngineStart, le.dtEngineEnd));
-                sb.append(formattedTimeForLabel(R.string.autoFlight, le.dtFlightStart, le.dtFlightEnd));
+
+                if (flightDetail == FlightDetail.High) {
+                    sb.append(formattedTimeForLabel(R.string.autoEngine, le.dtEngineStart, le.dtEngineEnd));
+                    sb.append(formattedTimeForLabel(R.string.autoFlight, le.dtFlightStart, le.dtFlightEnd));
+                }
             }
             txtFlightTimes.setVisibility(sb.length() == 0 ? View.GONE : View.VISIBLE);
             txtFlightTimes.setText(Html.fromHtml(sb.toString()));

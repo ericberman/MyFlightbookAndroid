@@ -274,11 +274,22 @@
             android:id="@+id/ckShowFlightImages"
             android:text="@string/lblShowFlightImages" />
 
-        <CheckBox
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ckShowFlightTimes"
-            android:text="@string/lblShowFlightTimes" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5sp"
+                android:id="@+id/lblShowFlightTimes"
+                android:text="@string/lblShowFlightTimes" />
+            <Spinner
+                android:id="@+id/spnFlightDetail"
+                android:layout_width="wrap_content"
+                android:padding="5sp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <TextView
             style="@style/DividerBar"

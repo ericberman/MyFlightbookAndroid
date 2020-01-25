@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -116,10 +116,6 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         ck.setOnClickListener(this);
         ck.setChecked(ActRecentsWS.fShowFlightImages);
 
-        ck = (CheckBox) findViewById(R.id.ckShowFlightTimes);
-        ck.setOnClickListener(this);
-        ck.setChecked(ActRecentsWS.fShowFlightTimes);
-
         // Strings for spinner
         String[] rgAutoHobbs = {getString(R.string.autoNone),
                 getString(R.string.autoFlight),
@@ -190,6 +186,15 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setOnItemSelectedListener(this);
         sp.setPromptId(R.string.lblAutoFillOptions);
 
+        sp = (Spinner) findViewById(R.id.spnFlightDetail);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+                getString(R.string.lblFlightDetailLow), getString(R.string.lblFlightDetailMed), getString(R.string.lblFlightDetailHigh)
+        });
+        sp.setAdapter(adapter);
+        sp.setSelection(ActRecentsWS.flightDetail.ordinal());
+        sp.setOnItemSelectedListener(this);
+        sp.setPromptId(R.id.lblShowFlightTimes);
+
         TextView t = (TextView) findViewById(R.id.txtCopyright);
         if (MFBConstants.fIsDebug) {
             String s = String.format("%s - DEBUG (%s)",
@@ -233,6 +238,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 break;
             case R.id.spnNightLandingDef:
                 MFBLocation.NightLandingPref = MFBLocation.NightLandingCriteria.values()[i];
+                break;
+            case R.id.spnFlightDetail:
+                ActRecentsWS.flightDetail = ActRecentsWS.FlightDetail.values()[i];
                 break;
             case R.id.spnNightMode:
                 if (MFBMain.NightModePref != i) {
@@ -431,9 +439,6 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 break;
             case R.id.ckShowFlightImages:
                 ActRecentsWS.fShowFlightImages = ((CheckBox) v).isChecked();
-                break;
-            case R.id.ckShowFlightTimes:
-                ActRecentsWS.fShowFlightTimes = ((CheckBox) v).isChecked();
                 break;
             case R.id.btnContact:
                 this.ContactUs();

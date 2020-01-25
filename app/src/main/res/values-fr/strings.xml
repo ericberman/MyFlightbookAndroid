@@ -36,7 +36,10 @@
     <string name="lblOptNightLandingsSunsetPlus1hour">1 heure après le coucher du soleil</string>
     <string name="lblImageOptions">Affichage du vol</string>
     <string name="lblShowFlightImages">Afficher les images pour les vols</string>
-    <string name="lblShowFlightTimes">Afficher les heures de vol</string>
+    <string name="lblShowFlightTimes">Plan de vol</string>
+    <string name="lblFlightDetailLow">Bas</string>
+    <string name="lblFlightDetailMed">Moyen</string>
+    <string name="lblFlightDetailHigh">Haut</string>
     <string name="lblNightMode">Mode Nuit</string>
     <string name="lblNightModeOff">Désactivé</string>
     <string name="lblNightModeOn">Activé</string>

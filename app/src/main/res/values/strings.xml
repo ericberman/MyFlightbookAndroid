@@ -36,7 +36,10 @@
     <string name="lblOptNightLandingsSunsetPlus1hour">1 hour after sunset</string>
     <string name="lblImageOptions">Flight display Options</string>
     <string name="lblShowFlightImages">Show images for flights</string>
-    <string name="lblShowFlightTimes">Show times for flights</string>
+    <string name="lblShowFlightTimes">Flight Detail:</string>
+    <string name="lblFlightDetailLow">Low</string>
+    <string name="lblFlightDetailMed">Med</string>
+    <string name="lblFlightDetailHigh">High</string>
     <string name="lblNightMode">Night Mode</string>
     <string name="lblNightModeOff">Off</string>
     <string name="lblNightModeOn">On</string>
