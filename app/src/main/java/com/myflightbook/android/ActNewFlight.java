@@ -398,6 +398,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             return true;
         });
 
+        findViewById(R.id.btnFlightSet).setOnLongClickListener(v -> {
+            this.resetDateOfFlight();
+            return true;
+        });
+
         ImageButton b = (ImageButton) findViewById(R.id.btnPausePlay);
         b.setOnClickListener(this);
         b = (ImageButton) findViewById(R.id.btnViewOnMap);
@@ -667,7 +672,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             ActNewFlight.fPaused = mPrefs.getBoolean(m_KeysIsPaused, false);
             ActNewFlight.dtPauseTime = mPrefs.getLong(m_KeysPausedTime, 0);
             ActNewFlight.dtTimeOfLastPause = mPrefs.getLong(m_KeysTimeOfLastPause, 0);
-            ActNewFlight.accumulatedNight = (double) mPrefs.getFloat(m_KeysAccumulatedNight, (float) 0.0);
+            ActNewFlight.accumulatedNight = mPrefs.getFloat(m_KeysAccumulatedNight, (float) 0.0);
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         }
@@ -1182,8 +1187,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         if (m_rgac != null) {
             for (Aircraft ac : m_rgac)
-                if (ac.AircraftID == id)
+                if (ac.AircraftID == id) {
                     idAircraftToUse = id;
+                    break;
+                }
         }
 
         return idAircraftToUse;
