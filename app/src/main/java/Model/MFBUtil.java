@@ -148,6 +148,7 @@ public class MFBUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTime(dt);
         cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
 
