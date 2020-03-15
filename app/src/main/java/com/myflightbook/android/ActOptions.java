@@ -207,10 +207,24 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     private void updateStatus() {
         // refresh sign-in status
         TextView t = (TextView) findViewById(R.id.txtSignInStatus);
-        if (AuthToken.FIsValid())
+        View bSignIn = findViewById(R.id.btnSignIn);
+        View bSignOut = findViewById(R.id.btnSignOut);
+        View bCreateAccount = findViewById(R.id.btnCreateNewAccount);
+        View lblWhyAccount = findViewById(R.id.lblWhyAccount);
+        if (AuthToken.FIsValid()) {
             t.setText(String.format(this.getString(R.string.statusSignedIn), AuthToken.m_szEmail));
-        else
+            bSignIn.setVisibility(View.GONE);
+            bSignOut.setVisibility(View.VISIBLE);
+            bCreateAccount.setVisibility(View.GONE);
+            lblWhyAccount.setVisibility(View.GONE);
+        }
+        else {
             t.setText(this.getString(R.string.statusNotSignedIn));
+            bSignIn.setVisibility(View.VISIBLE);
+            bSignOut.setVisibility(View.GONE);
+            bCreateAccount.setVisibility(View.VISIBLE);
+            lblWhyAccount.setVisibility(View.VISIBLE);
+        }
 
         findViewById(R.id.btnSignOut).setVisibility(AuthToken.FIsValid() ? View.VISIBLE : View.GONE);
     }
