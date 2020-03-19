@@ -172,6 +172,8 @@
     <string name="lbl100Hour">100 Heures:</string>
     <string name="lblOilChange">Vidange:</string>
     <string name="lblNewEngine">Nouveau moteur</string>
+    <string name="lblMaintNotes">Remarques:</string>
+    <string name="lblMaintNotesHint">Par exemple, emplacement / type / erreur de vérification VOR</string>
     <string name="lblAircraftPrefsHeader">Remplir automatiquement de nouveaux vols dans cet avion</string>
     <string name="lblShowAircraft">Montrer cet avion pour de couveaux vols</string>
     <string name="lblRoleNone">Ne pas remplir automatiquement</string>

@@ -172,6 +172,8 @@
     <string name="lbl100Hour">100Hour:</string>
     <string name="lblOilChange">Oil Change:</string>
     <string name="lblNewEngine">New Engine</string>
+    <string name="lblMaintNotes">Notes:</string>
+    <string name="lblMaintNotesHint">E.g., location/type/error of VOR check</string>
     <string name="lblAircraftPrefsHeader">Autofill for new flights in this aircraft</string>
     <string name="lblShowAircraft">Show this aircraft for new flights</string>
     <string name="lblRoleNone">Do not autofill</string>

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -122,7 +122,6 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
     private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
-        private AircraftSvc m_acs = null;
         private final AsyncWeakContext<ActEditAircraft> m_ctxt;
 
         DeleteTask(Context c, ActEditAircraft aea) {
@@ -132,7 +131,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
-            m_acs = new AircraftSvc();
+            AircraftSvc m_acs = new AircraftSvc();
             m_acs.m_Progress = this;
             m_acs.DeleteAircraftForUser(AuthToken.m_szAuthToken, m_ctxt.getCallingActivity().m_ac.AircraftID, m_ctxt.getContext());
             return m_acs;
@@ -289,6 +288,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
         SetStringForField(R.id.txtPublicAircraftNotes, m_ac.PublicNotes);
         SetStringForField(R.id.txtPrivateAircraftNotes, m_ac.PrivateNotes);
+        SetStringForField(R.id.txtMaintNotes, m_ac.MaintenanceNote);
 
         SetCheckState(R.id.ckHideAircraftFromSelection, !m_ac.HideFromSelection);
         switch (m_ac.RoleForPilot) {
@@ -319,6 +319,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
         m_ac.PublicNotes = StringFromField(R.id.txtPublicAircraftNotes);
         m_ac.PrivateNotes = StringFromField(R.id.txtPrivateAircraftNotes);
+        m_ac.MaintenanceNote = StringFromField(R.id.txtMaintNotes);
     }
 
     public void onClick(View v) {

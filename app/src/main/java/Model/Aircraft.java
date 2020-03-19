@@ -55,7 +55,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         pidTailNumber, pidAircratID, pidModelID, pidInstanctTypeID, pidVersion, pidICAO,
         pidAvionicsTechnologyUpgrade, pidIsGlass, pidGlassUpgradeDate,
         pidLastVOR, pidLastAltimeter, pidLastTransponder, pidLastELT, pidLastStatic, pidLastAnnual, pidRegistrationDue,
-        pidLast100, pidLastOil, pidLastEngine, pidPublicNotes, pidPrivateNotes, pidDefaultImage, pidDefaultTemplates,
+        pidLast100, pidLastOil, pidLastEngine, pidMaintNotes, pidPublicNotes, pidPrivateNotes, pidDefaultImage, pidDefaultTemplates,
         pidHideFromSelection, pidPilotRole, pidCopyPICName
     }
 
@@ -82,6 +82,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     public double Last100;
     public double LastOil;
     public double LastEngine;
+    public String MaintenanceNote = "";
 
     // Glass
     public enum AvionicsTechnologyType { None, Glass, TAA }
@@ -201,6 +202,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         so.addProperty("Last100", Last100);
         so.addProperty("LastOilChange", LastOil);
         so.addProperty("LastNewEngine", LastEngine);
+        so.addProperty("MaintenanceNote", MaintenanceNote);
 
         so.addProperty("RoleForPilot", RoleForPilot);
         so.addProperty("CopyPICNameWithCrossfill", CopyPICNameWithCrossfill);
@@ -236,6 +238,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         Last100 = Double.parseDouble(so.getProperty("Last100").toString());
         LastOil = Double.parseDouble(so.getProperty("LastOilChange").toString());
         LastEngine = Double.parseDouble(so.getProperty("LastNewEngine").toString());
+        MaintenanceNote = ReadNullableString(so, "MaintenanceNote");
 
         HideFromSelection = Boolean.parseBoolean(so.getProperty("HideFromSelection").toString());
         CopyPICNameWithCrossfill = Boolean.parseBoolean(so.getProperty("CopyPICNameWithCrossfill").toString());
@@ -308,6 +311,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 return LastOil;
             case pidLastEngine:
                 return LastEngine;
+            case pidMaintNotes:
+                return MaintenanceNote;
             case pidHideFromSelection:
                 return HideFromSelection;
             case pidCopyPICName:
@@ -384,6 +389,9 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 break;
             case pidLastEngine:
                 LastEngine = Double.parseDouble(sz);
+                break;
+            case pidMaintNotes:
+                MaintenanceNote = sz;
                 break;
             case pidHideFromSelection:
                 HideFromSelection = Boolean.parseBoolean(sz);
@@ -489,6 +497,10 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
             case pidLastEngine:
                 pi.type = PropertyInfo.OBJECT_CLASS;
                 pi.name = "LastNewEngine";
+                break;
+            case pidMaintNotes:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "MaintenanceNote";
                 break;
             case pidHideFromSelection:
                 pi.type = PropertyInfo.BOOLEAN_CLASS;

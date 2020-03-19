@@ -150,6 +150,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lblPublicNoteHint"
+                    android:autofillHints=""
                     android:inputType="textCapSentences|textAutoCorrect" />
             </TableRow>
 
@@ -168,6 +169,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/lblPrivateNoteHint"
+                    android:autofillHints=""
                     android:inputType="textCapSentences|textAutoCorrect" />
             </TableRow>
         </TableLayout>
@@ -203,11 +205,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:width="100dip"
-                        android:text="@string/lblVORCheck" />
+                        android:text="@string/lblAnnual" />
 
                     <TextView
                         style="@style/DateButton"
-                        android:id="@+id/btnVORCheck"
+                        android:id="@+id/btnAnnual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblTouchForToday" />
@@ -215,7 +217,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:id="@+id/nextVOR"
+                        android:id="@+id/nextAnnual"
                         />
                 </TableRow>
 
@@ -328,11 +330,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:width="100dip"
-                        android:text="@string/lblAnnual" />
+                        android:text="@string/lblVORCheck" />
 
                     <TextView
                         style="@style/DateButton"
-                        android:id="@+id/btnAnnual"
+                        android:id="@+id/btnVORCheck"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lblTouchForToday" />
@@ -340,7 +342,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:id="@+id/nextAnnual"
+                        android:id="@+id/nextVOR"
                         />
                 </TableRow>
 
@@ -419,6 +421,26 @@
                         android:layout_height="wrap_content"
                         android:layout_span="2"
                         android:text="@string/lblTouchForToday" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:text="@string/lblMaintNotes" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="100dip"
+                        android:id="@+id/txtMaintNotes"
+                        android:hint="@string/lblMaintNotesHint"
+                        android:inputType="textCapSentences|textAutoCorrect"
+                        android:autofillHints="" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>
