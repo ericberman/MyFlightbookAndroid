@@ -540,4 +540,14 @@
     <!-- Widgets -->
     <string name="noCurrency">No currency to display</string>
     <string name="noTotals">No totals to display</string>
+
+    <!-- Totals Groups -->
+    <string name="totalsGroupNone">Other Totals</string>
+    <string name="totalsGroupCategoryClass">Totals by Category/Class</string>
+    <string name="totalsGroupICAO">Totals by ICAO code</string>
+    <string name="totalsGroupModel">Totals by Model</string>
+    <string name="totalsGroupCapabilities">Totals by aircraft features</string>
+    <string name="totalsGroupCore">Standard Logbook Times</string>
+    <string name="totalsGroupProperties">Other Totals</string>
+    <string name="totalsGroupTotal">Overall Total Flight Time</string>
 </resources>

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,21 +18,37 @@
  */
 package Model;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+
+import com.myflightbook.android.R;
 
 import org.ksoap2.serialization.SoapObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Totals extends SoapableObject implements Serializable {
     public enum NumType {Integer, Decimal, Time, Currency}
+    public enum TotalsGroup {
+        None,
+        CategoryClass,
+        ICAO,
+        Model,
+        Capabilities,
+        CoreFields,
+        Properties,
+        Total }
 
     public String Description = "";
     public double Value = 0.0;
     public String SubDescription = "";
     public NumType NumericType = NumType.Integer;
     public FlightQuery Query = null;
+    private TotalsGroup Group = TotalsGroup.None;
 
     public Totals(SoapObject so) {
         super();
@@ -47,12 +63,54 @@ public class Totals extends SoapableObject implements Serializable {
         return String.format(Locale.getDefault(), "%s %s %.2f", Description, SubDescription, Value);
     }
 
+    public String GroupName(Context c) {
+        switch (Group) {
+            default:
+            case None:
+                return c.getString(R.string.totalsGroupNone);
+            case CategoryClass:
+                return c.getString(R.string.totalsGroupCategoryClass);
+            case ICAO:
+                return c.getString(R.string.totalsGroupICAO);
+            case Model:
+                return c.getString(R.string.totalsGroupModel);
+            case Capabilities:
+                return c.getString(R.string.totalsGroupCapabilities);
+            case CoreFields:
+                return c.getString(R.string.totalsGroupCore);
+            case Properties:
+                return c.getString(R.string.totalsGroupProperties);
+            case Total:
+                return c.getString(R.string.totalsGroupTotal);
+        }
+    }
+
+    public static ArrayList<ArrayList<Totals>> groupTotals(Totals[] rgIn) {
+        ArrayList<ArrayList<Totals>> result = new ArrayList<>();
+        if (rgIn == null)
+            return result;
+
+        Hashtable<Integer, ArrayList<Totals>> d= new Hashtable<>();
+        for (Totals ti : rgIn) {
+            if (!d.containsKey(ti.Group.ordinal()))
+                d.put(ti.Group.ordinal(), new ArrayList<>());
+            Objects.requireNonNull(d.get(ti.Group.ordinal())).add(ti);
+        }
+
+        for (TotalsGroup tg : TotalsGroup.values()) {
+            if (d.containsKey(tg.ordinal()))
+                result.add(d.get(tg.ordinal()));
+        }
+        return result;
+    }
+
     public void ToProperties(SoapObject so) {
         so.addProperty("Value", Value);
         so.addProperty("Description", Description);
         so.addProperty("SubDescription", SubDescription);
         so.addProperty("NumericType", NumericType);
         so.addProperty("Query", Query);
+        so.addProperty("Group", Group);
     }
 
     protected void FromProperties(SoapObject so) {
@@ -72,7 +130,7 @@ public class Totals extends SoapableObject implements Serializable {
             Query.FromProperties(q);
         }
 
-
+        Group = TotalsGroup.valueOf(so.getProperty("Group").toString());
     }
 
 

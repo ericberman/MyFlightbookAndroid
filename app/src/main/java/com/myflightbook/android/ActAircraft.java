@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -170,13 +170,17 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             return m_aircraftRows[position].rowType.ordinal();
         }
 
+        private RowType checkRowType(View v) {
+            return v.findViewById(R.id.lblTableRowSectionHeader) == null ? RowType.DATA_ITEM : RowType.HEADER_ITEM;
+        }
+
         @Override
         public
         @NonNull
         View getView(int position, @Nullable View v, @NonNull ViewGroup parent) {
             RowType rt = RowType.values()[getItemViewType(position)];
 
-            if (v == null) {
+            if (v == null || checkRowType(v) != rt) {
                 LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.aircraft;
                 assert vi != null;

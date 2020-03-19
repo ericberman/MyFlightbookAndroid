@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.TotalsSvc;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -56,13 +57,31 @@ import Model.Totals;
 
 public class ActTotals extends ListFragment implements MFBMain.Invalidatable, OnItemClickListener {
     private static boolean fNeedsRefresh = true;
-    private static Totals[] mRgti = null;
+    private TotalsRowItem[] mTotalsRows = null;
 
     public static void SetNeedsRefresh(boolean f) {
         fNeedsRefresh = f;
     }
 
     private FlightQuery currentQuery = new FlightQuery();
+
+    private enum RowType {DATA_ITEM, HEADER_ITEM}
+
+    static class TotalsRowItem {
+
+        Totals totalItem = null;
+        String title = null;
+        RowType rowType = RowType.DATA_ITEM;
+
+        TotalsRowItem(Totals obj) {
+            totalItem = obj;
+        }
+
+        TotalsRowItem(String szTitle) {
+            rowType = RowType.HEADER_ITEM;
+            title = szTitle;
+        }
+    }
 
     private static class RefreshTotals extends AsyncTask<Void, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
@@ -100,13 +119,23 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
             if (at == null || !at.isAdded() || at.isDetached() || at.getActivity() == null)
                 return;
 
-            Totals[] rgti = (Totals[]) m_Result;
+            ArrayList<ArrayList<Totals>> rgti = Totals.groupTotals((Totals[]) m_Result);
 
-            if (rgti == null || svc.getLastError().length() > 0) {
+            if (svc.getLastError().length() > 0) {
                 MFBUtil.Alert(at, at.getString(R.string.txtError), svc.getLastError());
             } else {
                 SetNeedsRefresh(false);
-                mRgti = rgti;
+
+                ArrayList<TotalsRowItem> arr = new ArrayList<>();
+                // set up the rows
+                for (ArrayList<Totals> arTotals : rgti) {
+                    // add a header row first
+                    arr.add(new TotalsRowItem(arTotals.get(0).GroupName(m_ctxt.getContext())));
+
+                    for (Totals ti : arTotals)
+                        arr.add(new TotalsRowItem(ti));
+                }
+                at.mTotalsRows = arr.toArray(new TotalsRowItem[0]);
                 at.BindTable();
             }
         }
@@ -153,14 +182,13 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mRgti == null || position < 0 || position >= mRgti.length)
+        if (mTotalsRows == null || position < 0 || position >= mTotalsRows.length || mTotalsRows[position].rowType == RowType.HEADER_ITEM)
             return;
 
-        FlightQuery fq = mRgti[position].Query;
+        FlightQuery fq = mTotalsRows[position].totalItem.Query;
         if (fq == null)
             return;
 
-        // get any airport aliases
         Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
         Bundle b = new Bundle();
         b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
@@ -168,24 +196,46 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         startActivity(i);
     }
 
-    private class TotalsAdapter extends ArrayAdapter<Totals> {
+    private class TotalsAdapter extends ArrayAdapter<TotalsRowItem> {
         TotalsAdapter(Context c,
-                      Totals[] rgti) {
+                      TotalsRowItem[] rgti) {
             super(c, R.layout.totalsitem, rgti);
+        }
+
+        public int getItemViewType(int position) {
+            if (mTotalsRows == null || mTotalsRows.length == 0)
+                return RowType.DATA_ITEM.ordinal();
+
+            return mTotalsRows[position].rowType.ordinal();
+        }
+
+        private RowType checkViewType(View convertView) {
+            return convertView.findViewById(R.id.lblTableRowSectionHeader) == null ? RowType.DATA_ITEM : RowType.HEADER_ITEM;
         }
 
         @Override
         public
         @NonNull
         View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            RowType rt = RowType.values()[getItemViewType(position)];
             View v = convertView;
-            if (v == null) {
+            if (v == null || checkViewType(convertView) != rt) {
                 LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 assert vi != null;
-                v = vi.inflate(R.layout.totalsitem, parent, false);
+                int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.totalsitem;
+                v = vi.inflate(layoutID, parent, false);
             }
 
-            Totals ti = this.getItem(position);
+            if (rt == RowType.HEADER_ITEM) {
+                TextView tvSectionHeader = v.findViewById(R.id.lblTableRowSectionHeader);
+                tvSectionHeader.setText(mTotalsRows[position].title);
+                return v;
+            }
+
+            TotalsRowItem tri = this.getItem(position);
+            if (tri == null)
+                throw new NullPointerException("Empty totalsrowitem in getView in ActTotals");
+            Totals ti = tri.totalItem;
             if (ti == null)
                 throw new NullPointerException("Empty totals item in getView in ActTotals");
 
@@ -228,15 +278,15 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         TextView tv = v.findViewById(R.id.txtFlightQueryStatus);
         tv.setText(getString(currentQuery != null && currentQuery.HasCriteria() ? R.string.fqStatusNotAllflights : R.string.fqStatusAllFlights));
 
-        if (mRgti == null)
-            mRgti = new Totals[0];
-        TotalsAdapter ta = new TotalsAdapter(getActivity(), mRgti);
+        if (mTotalsRows == null)
+            mTotalsRows = new TotalsRowItem[0];
+        TotalsAdapter ta = new TotalsAdapter(getActivity(), mTotalsRows);
         setListAdapter(ta);
         getListView().setOnItemClickListener(this);
     }
 
     private void Refresh(Boolean fForce) {
-        if (AuthToken.FIsValid() && (fForce || fNeedsRefresh || mRgti == null)) {
+        if (AuthToken.FIsValid() && (fForce || fNeedsRefresh || mTotalsRows == null)) {
             RefreshTotals st = new RefreshTotals(getActivity(), this);
             st.execute();
         } else
