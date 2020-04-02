@@ -197,6 +197,14 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                             RedirectTo("FLIGHTREVIEW");
                             break;
                         case FlightExperience:
+                            if (csi.Query != null) {
+                                Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
+                                Bundle b = new Bundle();
+                                b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, csi.Query);
+                                i.putExtras(b);
+                                startActivity(i);
+                            }
+                            break;
                         case CustomCurrency:
                             if (csi.Query == null)
                                 RedirectTo("CUSTOMCURRENCY");
