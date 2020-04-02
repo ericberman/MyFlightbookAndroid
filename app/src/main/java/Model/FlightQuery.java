@@ -360,7 +360,10 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		this.HasPIC = Boolean.parseBoolean(so.getPropertySafelyAsString("HasPIC"));
 		this.HasTotalTime = Boolean.parseBoolean(so.getPropertySafelyAsString("HasTotalTime"));
 		this.IsSigned = Boolean.parseBoolean(so.getPropertySafelyAsString("IsSigned"));
-		this.FlightCharacteristicsConjunction = Enum.valueOf(FlightQuery.GroupConjunction.class, so.getPropertyAsString("FlightCharacteristicsConjunction"));
+
+		String szFlightCharacteristicsConj = so.getPropertySafelyAsString("FlightCharacteristicsConjunction");
+		if (szFlightCharacteristicsConj != null && szFlightCharacteristicsConj.length() > 0)
+			this.FlightCharacteristicsConjunction = Enum.valueOf(FlightQuery.GroupConjunction.class, szFlightCharacteristicsConj);
 
 		// Airports
 		SoapObject airports = (SoapObject) so.getProperty("AirportList");
@@ -440,7 +443,9 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 			cpt.FromProperties((SoapObject) properties.getProperty(i));
 			PropertyTypes[i] = cpt;
 		}
-		this.PropertiesConjunction = Enum.valueOf(FlightQuery.GroupConjunction.class, so.getPropertyAsString("PropertiesConjunction"));
+		String szPropsConj = so.getPropertySafelyAsString("PropertiesConjunction");
+		if (szPropsConj != null && szPropsConj.length() > 0)
+			this.PropertiesConjunction = Enum.valueOf(FlightQuery.GroupConjunction.class, szPropsConj);
 
 		QueryName = so.getPropertySafelyAsString("QueryName");
  	}

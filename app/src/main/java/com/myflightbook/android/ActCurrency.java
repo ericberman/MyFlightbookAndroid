@@ -174,7 +174,6 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                     switch (csi.CurrencyGroup) {
                         default:
                         case None:
-                        case FlightExperience:
                             break;
                         case Aircraft: {
                             Intent i = new Intent(getActivity(), EditAircraftActivity.class);
@@ -197,6 +196,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                         case FlightReview:
                             RedirectTo("FLIGHTREVIEW");
                             break;
+                        case FlightExperience:
                         case CustomCurrency:
                             if (csi.Query == null)
                                 RedirectTo("CUSTOMCURRENCY");
