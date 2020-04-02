@@ -18,10 +18,7 @@
  */
 package Model;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
-
-import com.myflightbook.android.R;
 
 import org.ksoap2.serialization.SoapObject;
 
@@ -49,6 +46,7 @@ public class Totals extends SoapableObject implements Serializable {
     public NumType NumericType = NumType.Integer;
     public FlightQuery Query = null;
     private TotalsGroup Group = TotalsGroup.None;
+    public String GroupName = "";
 
     public Totals(SoapObject so) {
         super();
@@ -61,28 +59,6 @@ public class Totals extends SoapableObject implements Serializable {
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "%s %s %.2f", Description, SubDescription, Value);
-    }
-
-    public String GroupName(Context c) {
-        switch (Group) {
-            default:
-            case None:
-                return c.getString(R.string.totalsGroupNone);
-            case CategoryClass:
-                return c.getString(R.string.totalsGroupCategoryClass);
-            case ICAO:
-                return c.getString(R.string.totalsGroupICAO);
-            case Model:
-                return c.getString(R.string.totalsGroupModel);
-            case Capabilities:
-                return c.getString(R.string.totalsGroupCapabilities);
-            case CoreFields:
-                return c.getString(R.string.totalsGroupCore);
-            case Properties:
-                return c.getString(R.string.totalsGroupProperties);
-            case Total:
-                return c.getString(R.string.totalsGroupTotal);
-        }
     }
 
     public static ArrayList<ArrayList<Totals>> groupTotals(Totals[] rgIn) {
@@ -111,6 +87,7 @@ public class Totals extends SoapableObject implements Serializable {
         so.addProperty("NumericType", NumericType);
         so.addProperty("Query", Query);
         so.addProperty("Group", Group);
+        so.addProperty("GroupName", GroupName);
     }
 
     protected void FromProperties(SoapObject so) {
@@ -131,6 +108,7 @@ public class Totals extends SoapableObject implements Serializable {
         }
 
         Group = TotalsGroup.valueOf(so.getProperty("Group").toString());
+        GroupName = so.getPropertySafelyAsString("GroupName");
     }
 
 

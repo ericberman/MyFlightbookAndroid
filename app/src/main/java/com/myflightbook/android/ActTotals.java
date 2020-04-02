@@ -130,7 +130,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
                 // set up the rows
                 for (ArrayList<Totals> arTotals : rgti) {
                     // add a header row first
-                    arr.add(new TotalsRowItem(arTotals.get(0).GroupName(m_ctxt.getContext())));
+                    arr.add(new TotalsRowItem(arTotals.get(0).GroupName));
 
                     for (Totals ti : arTotals)
                         arr.add(new TotalsRowItem(ti));
