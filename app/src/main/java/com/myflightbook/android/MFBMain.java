@@ -617,7 +617,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         try {
             // hide the view button if Maps aren't available; if they are available,
             // then hide the button if this is not a new flight.
-            Class.forName("com.google.android.maps.MapActivity");
+            Class.forName("com.google.android.gms.maps.MapFragment");
             return true;
         } catch (Exception ex) {
             return false;
