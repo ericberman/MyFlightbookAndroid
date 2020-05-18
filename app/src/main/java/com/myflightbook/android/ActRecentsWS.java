@@ -205,6 +205,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             TextView txtFlightTimes = v.findViewById(R.id.txtFlightTimes);
             StringBuilder sb = new StringBuilder();
             if (flightDetail != FlightDetail.Low) {
+                sb.append(formattedTimeForLabel(R.string.lblTotal, le.decTotal, em));
                 sb.append(formattedTimeForLabel(R.string.lblLandingsAlt, le.cLandings));
                 sb.append(formattedTimeForLabel(R.string.lblApproaches, le.cApproaches));
                 sb.append(formattedTimeForLabel(R.string.lblNight, le.decNight, em));
@@ -216,7 +217,6 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 sb.append(formattedTimeForLabel(R.string.lblCFI, le.decCFI, em));
                 sb.append(formattedTimeForLabel(R.string.lblSIC, le.decSIC, em));
                 sb.append(formattedTimeForLabel(R.string.lblPIC, le.decPIC, em));
-                sb.append(formattedTimeForLabel(R.string.lblTotal, le.decTotal, em));
 
                 if (flightDetail == FlightDetail.High) {
                     sb.append(formattedTimeForLabel(R.string.autoEngine, le.dtEngineStart, le.dtEngineEnd));
