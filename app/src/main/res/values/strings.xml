@@ -473,6 +473,8 @@
     <string name="lblAchievements">Achievements</string>
     <string name="lblRatingsProgress">Ratings Progress</string>
     <string name="lbl8710">8710 / IACRA</string>
+    <string name="lblModelRollup">Rollup by Model</string>
+    <string name="lblTimeRollup">Rollup by Time</string>
     <string name="lblReqSigs">Request Signatures</string>
     <string name="errTrainingNotAvailable">You must be signed in and have access to the Internet to view training items.</string>
 

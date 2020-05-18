@@ -63,6 +63,8 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
                     new TrainingItem(R.string.lblReqSigs, "reqsigs"),
                     new TrainingItem(R.string.lblEndorsements, endorseItem),
                     new TrainingItem(R.string.lbl8710, "8710"),
+                    new TrainingItem(R.string.lblModelRollup, "ModelRollup"),
+                    new TrainingItem(R.string.lblTimeRollup, "TimeRollup"),
                     new TrainingItem(R.string.lblAchievements, "badges"),
                     new TrainingItem(R.string.lblRatingsProgress, "progress")
             };

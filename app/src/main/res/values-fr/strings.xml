@@ -473,6 +473,8 @@
     <string name="lblAchievements">Réalisations</string>
     <string name="lblRatingsProgress">Progrès vers la certification</string>
     <string name="lbl8710">8710 / IACRA</string>
+    <string name="lblModelRollup">Rapport de vol par modèle</string>
+    <string name="lblTimeRollup">Rapport de vol par heure</string>
     <string name="lblReqSigs">Demander des signatures</string>
     <string name="errTrainingNotAvailable">Vous devez être connecté et avoir accès à Internet pour afficher les éléments de formation.</string>
 
