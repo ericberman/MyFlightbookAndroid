@@ -1388,11 +1388,15 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         Aircraft[] rgSelectibleAircraft = SelectibleAircraft();
         if (rgSelectibleAircraft != null) {
             Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
-            for (int i = 0; i < rgSelectibleAircraft.length; i++) {
-                if (m_le.idAircraft == rgSelectibleAircraft[i].AircraftID) {
-                    sp.setSelection(i);
-                    sp.setPrompt("Current Aircraft: " + rgSelectibleAircraft[i].TailNumber);
-                    break;
+            // Issue #188 set the spinner, but ONLY if it's not currently set to the correct tail.
+            Aircraft ac = (Aircraft) sp.getSelectedItem();
+            if (ac == null || ac.AircraftID != m_le.idAircraft) {
+                for (int i = 0; i < rgSelectibleAircraft.length; i++) {
+                    if (m_le.idAircraft == rgSelectibleAircraft[i].AircraftID) {
+                        sp.setSelection(i);
+                        sp.setPrompt("Current Aircraft: " + rgSelectibleAircraft[i].TailNumber);
+                        break;
+                    }
                 }
             }
         }
