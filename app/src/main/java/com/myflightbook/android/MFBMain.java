@@ -221,7 +221,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         }
     }
 
-    private class TabInfo {
+    private static class TabInfo {
         private final String tag;
         private final Class<?> clss;
         private final Bundle args;
@@ -234,7 +234,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         }
     }
 
-    private class TabFactory implements TabContentFactory {
+    private static class TabFactory implements TabContentFactory {
 
         private final Context mContext;
 
@@ -252,7 +252,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
     private static void addTab(MFBMain activity, TabHost tabHost, TabHost.TabSpec tabSpec, TabInfo tabInfo) {
         // Attach a Tab view factory to the spec
-        tabSpec.setContent(activity.new TabFactory(activity));
+        tabSpec.setContent(new TabFactory(activity));
         String tag = tabSpec.getTag();
 
         // Check to see if we already have a fragment for this tab, probably

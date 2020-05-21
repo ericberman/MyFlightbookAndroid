@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class PackAndGo {
-    private Context m_context;
+    private final Context m_context;
 
     private static final String keyCurrency = "packedCurrencyKey";
     private static final String keyTotals = "packedTotalsKey";

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -503,8 +503,6 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
 
     private void setMatrixOrientation(Matrix m, int o) {
         switch (o) {
-            case ExifInterface.ORIENTATION_NORMAL:
-                break;
             case ExifInterface.ORIENTATION_ROTATE_180:
                 m.postRotate(180);
                 break;
@@ -514,6 +512,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             case ExifInterface.ORIENTATION_ROTATE_90:
                 m.postRotate(90);
                 break;
+            case ExifInterface.ORIENTATION_NORMAL:
             default:
                 break;
         }
@@ -842,11 +841,10 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             case pidTHHeight:
                 this.HeightThumbnail = Integer.parseInt(sz);
                 break;
-            case pidLocation:
-                break;
             case pidImageType:
                 this.ImageType = ImageFileType.valueOf(sz);
                 break;
+            case pidLocation:
             default:
                 break;
         }
@@ -935,7 +933,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
         float ratioY = ((float) maxHeight / (float) Height);
         float minRatio = 1.0F;
         if (ratioX < 1.0 || ratioY < 1.0) {
-            minRatio = (ratioX < ratioY) ? ratioX : ratioY;
+            minRatio = Math.min(ratioX, ratioY);
         }
         return minRatio;
     }

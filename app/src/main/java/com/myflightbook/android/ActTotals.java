@@ -179,7 +179,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         super.onDestroy();
     }
 
-    protected TotalsRowItem[] GroupedTotals(ArrayList<ArrayList<Totals>> rgti) {
+    TotalsRowItem[] GroupedTotals(ArrayList<ArrayList<Totals>> rgti) {
         ArrayList<TotalsRowItem> arr = new ArrayList<>();
         // set up the rows
         for (ArrayList<Totals> arTotals  : rgti) {

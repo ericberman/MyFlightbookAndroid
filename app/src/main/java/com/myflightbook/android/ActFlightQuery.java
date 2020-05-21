@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -225,8 +225,10 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 fShowAllAircraft = true;
             else if (CurrentQuery != null && CurrentQuery.AircraftList != null) {
                 for (Aircraft ac : CurrentQuery.AircraftList)
-                    if (ac.HideFromSelection)
+                    if (ac.HideFromSelection) {
                         fShowAllAircraft = true;
+                        break;
+                    }
                 if (!fShowAllAircraft)
                     m_rgac = lst.toArray(new Aircraft[0]);
             }
