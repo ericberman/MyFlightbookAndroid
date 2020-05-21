@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -456,7 +456,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
                 m_GPXPath = GPX.getFlightDataStringAsGPX(m_rgFlightRoute);    // initialize the GPX path
             }
         } else if (idExisting > 0) {
-            m_le = RecentFlightsSvc.GetCachedFlightByID(idExisting);
+            m_le = RecentFlightsSvc.GetCachedFlightByID(idExisting, this);
             if (m_le != null) {
                 FetchFlightPathTask ffpt = new FetchFlightPathTask(idExisting);
                 new Thread(ffpt).start();

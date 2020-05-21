@@ -297,6 +297,38 @@
 
         <TextView
             style="@style/DividerBar"
+            android:id="@+id/headerPackAndGo"
+            android:text="@string/packAndGo" />
+        <LinearLayout
+            android:id="@+id/sectPackAndGo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/packAndGoDesc" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnPackAndGo"
+                android:text="@string/packAndGo"
+                style="?android:attr/buttonBarStyle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/lblLastPacked" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/DividerBar"
             android:text="@string/lblAdditionalOptions" />
 
         <LinearLayout

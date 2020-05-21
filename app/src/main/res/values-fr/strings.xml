@@ -531,7 +531,6 @@
     <string name="hintSearchVisitedAirports">Aéroports</string>
     <string name="hintSearchProperties">Propriétés</string>
 
-
     <!-- App Shortcuts -->
     <string name="shortcutCurrency">Expérience</string>
     <string name="shortcutTotals">Totaux</string>
@@ -553,4 +552,13 @@
     <string name="totalsGroupCore">Heures de journal de bord standard</string>
     <string name="totalsGroupProperties">Autres totaux</string>
     <string name="totalsGroupTotal">Temps total de vol total</string>
+
+    <!-- Pack and Go -->
+    <string name="packAndGo">Emballer et partir</string>
+    <string name="packAndGoDesc">Vous pouvez télécharger un instantané des vols, des devises et des totaux à utiliser hors ligne</string>
+    <string name="packAndGoStatusOK">Dernier emballage: %s</string>
+    <string name="packAndGoStatusNone">(Jamais emballé)</string>
+    <string name="packAndGoInProgress">Téléchargement des données du journal de bord…</string>
+    <string name="packAndGoUsingCached">Affichage des données compressées de: %s</string>
+    <string name="packAndGoOffline">Pas de connexion au serveur</string>
 </resources>

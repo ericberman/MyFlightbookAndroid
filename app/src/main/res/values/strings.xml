@@ -552,4 +552,13 @@
     <string name="totalsGroupCore">Standard Logbook Times</string>
     <string name="totalsGroupProperties">Other Totals</string>
     <string name="totalsGroupTotal">Overall Total Flight Time</string>
+
+    <!-- Pack and Go -->
+    <string name="packAndGo">Pack and go</string>
+    <string name="packAndGoDesc">You can download a snapshot of flights, currency, and totals for use while offline</string>
+    <string name="packAndGoStatusOK">Last packed: %s</string>
+    <string name="packAndGoStatusNone">(Never packed)</string>
+    <string name="packAndGoInProgress">Downloading logbook data…</string>
+    <string name="packAndGoUsingCached">Showing packed data from %s</string>
+    <string name="packAndGoOffline">No connection to server</string>
 </resources>

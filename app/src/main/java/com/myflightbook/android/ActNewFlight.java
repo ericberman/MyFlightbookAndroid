@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -469,7 +469,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             // view an existing flight
             if (idFlightToView > 0) // existing flight
             {
-                m_le = RecentFlightsSvc.GetCachedFlightByID(idFlightToView);
+                m_le = RecentFlightsSvc.GetCachedFlightByID(idFlightToView, getContext());
                 if (m_le == null) {
                     // Navigate back
                     MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errCannotFindFlight));

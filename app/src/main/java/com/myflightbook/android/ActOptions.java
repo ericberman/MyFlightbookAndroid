@@ -18,8 +18,11 @@
  */
 package com.myflightbook.android;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -38,15 +41,26 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.myflightbook.android.WebServices.AircraftSvc;
 import com.myflightbook.android.WebServices.AuthToken;
+import com.myflightbook.android.WebServices.CurrencySvc;
+import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
+import com.myflightbook.android.WebServices.TotalsSvc;
+import com.myflightbook.android.WebServices.VisitedAirportSvc;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
+import Model.Aircraft;
 import Model.Airport;
+import Model.CurrencyStatusItem;
+import Model.CustomPropertyType;
 import Model.DecimalEdit;
+import Model.FlightQuery;
 import Model.LogbookEntry;
 import Model.MFBConstants;
 import Model.MFBImageInfo;
@@ -54,8 +68,81 @@ import Model.MFBImageInfo.PictureDestination;
 import Model.MFBLocation;
 import Model.MFBTakeoffSpeed;
 import Model.MFBUtil;
+import Model.PackAndGo;
+import Model.Totals;
+import Model.VisitedAirport;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
+
+    private static class PackData extends AsyncTask<Void, Void, String> {
+        private ProgressDialog m_pd = null;
+        private final AsyncWeakContext<ActOptions> m_ctxt;
+
+        PackData(Context c, ActOptions opt) {
+            super();
+            m_ctxt = new AsyncWeakContext<>(c, opt);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // To be safe, update aircraft and properties.
+            AircraftSvc as = new AircraftSvc();
+            Aircraft[] rgac = as.AircraftForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
+
+            CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
+            CustomPropertyType[] rgcpt = cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, false, m_ctxt.getContext());
+
+            PackAndGo p = new PackAndGo(m_ctxt.getContext());
+
+            CurrencySvc cs = new CurrencySvc();
+            CurrencyStatusItem[] rgcsi = cs.CurrencyForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
+            if (cs.getLastError().length() > 0)
+                return cs.getLastError();
+            p.updateCurrency(rgcsi);
+
+            TotalsSvc ts = new TotalsSvc();
+            Totals[] rgti = ts.TotalsForUser(AuthToken.m_szAuthToken, new FlightQuery(), m_ctxt.getContext());
+            if (ts.getLastError().length() > 0)
+                return ts.getLastError();
+            p.updateTotals(rgti);
+
+            RecentFlightsSvc fs = new RecentFlightsSvc();
+            LogbookEntry[] rgle = fs.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, new FlightQuery(), 0, -1, m_ctxt.getContext());
+            if (fs.getLastError().length() > 0)
+                return fs.getLastError();
+            p.updateFlights(rgle);
+
+            VisitedAirportSvc vs = new VisitedAirportSvc();
+            VisitedAirport[] rgva = vs.VisitedAirportsForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
+            if (vs.getLastError().length() > 0)
+                return vs.getLastError();
+            p.updateAirports(rgva);
+
+            p.setLastPackDate(new Date());
+
+            return "";
+        }
+
+        protected void onPreExecute() {
+            m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.packAndGoInProgress));
+        }
+
+        protected void onPostExecute(String szErr) {
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+
+            if (szErr.length() > 0) {
+                MFBUtil.Alert(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.txtError), szErr);
+            } else {
+                ActOptions opt = m_ctxt.getCallingActivity();
+                opt.updateStatus();
+            }
+        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
@@ -75,6 +162,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         AddListener(R.id.btnCleanUp);
         AddListener(R.id.btnSupport);
         AddListener(R.id.btnAdditionalOptions);
+        AddListener(R.id.btnPackAndGo);
 
         boolean fHasGPS = MFBLocation.HasGPS(Objects.requireNonNull(getContext()));
         if (!fHasGPS)
@@ -217,6 +305,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             bSignOut.setVisibility(View.VISIBLE);
             bCreateAccount.setVisibility(View.GONE);
             lblWhyAccount.setVisibility(View.GONE);
+
+            findViewById(R.id.headerPackAndGo).setVisibility(View.VISIBLE);
+            findViewById(R.id.sectPackAndGo).setVisibility(View.VISIBLE);
         }
         else {
             t.setText(this.getString(R.string.statusNotSignedIn));
@@ -224,9 +315,16 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             bSignOut.setVisibility(View.GONE);
             bCreateAccount.setVisibility(View.VISIBLE);
             lblWhyAccount.setVisibility(View.VISIBLE);
+            findViewById(R.id.headerPackAndGo).setVisibility(View.GONE);
+            findViewById(R.id.sectPackAndGo).setVisibility(View.GONE);
         }
 
         findViewById(R.id.btnSignOut).setVisibility(AuthToken.FIsValid() ? View.VISIBLE : View.GONE);
+
+        t = (TextView) findViewById(R.id.lblLastPacked);
+        PackAndGo p = new PackAndGo(getContext());
+        Date dtLast = p.getLastPackDate();
+        t.setText((dtLast == null) ? getString(R.string.packAndGoStatusNone) : String.format(Locale.getDefault(), getString(R.string.packAndGoStatusOK), DateFormat.getDateTimeInstance().format(dtLast)));
     }
 
     public void onResume() {
@@ -410,6 +508,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             case R.id.btnSignOut:
                 AuthToken.m_szAuthToken = AuthToken.m_szEmail = AuthToken.m_szPass = "";
                 new AuthToken().FlushCache();
+                new PackAndGo(getContext()).clearPackedData();
                 MFBMain.invalidateAll();
                 updateStatus();
                 break;
@@ -474,6 +573,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 break;
             case R.id.btnFAQ:
                 ActWebView.ViewURL(getActivity(), MFBConstants.urlFAQ);
+                break;
+            case R.id.btnPackAndGo:
+                new PackData(getContext(), this).execute();
                 break;
             default:
                 break;

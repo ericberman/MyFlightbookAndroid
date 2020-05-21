@@ -70,6 +70,7 @@ import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBImageInfo.ImageCacheCompleted;
 import Model.MFBUtil;
+import Model.PackAndGo;
 
 public class ActRecentsWS extends ListFragment implements OnItemSelectedListener, ImageCacheCompleted, MFBMain.Invalidatable {
 
@@ -409,8 +410,6 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         }
 
         fCouldBeMore = true;
-        if (m_rgLe.length == 0)
-            refreshRecentFlights(false);
 
         SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
         if (srl != null) {
@@ -454,6 +453,15 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             }
         } else {
             this.m_rgLe = LogbookEntry.getQueuedAndPendingFlights();
+
+            PackAndGo p = new PackAndGo(getContext());
+            Date dtLastPack = p.lastFlightsPackDate();
+            if (dtLastPack != null) {
+                this.m_rgLe = LogbookEntry.mergeFlightLists(this.m_rgLe, p.cachedFlights());
+                MFBUtil.Alert(getContext(), getString(R.string.packAndGoOffline), String.format(Locale.getDefault(), getString(R.string.packAndGoUsingCached), java.text.DateFormat.getDateInstance().format(dtLastPack)));
+            } else
+                MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+
             this.fCouldBeMore = false;
             populateList();
         }
@@ -515,9 +523,12 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 refreshRecentFlights(true);
                 return true;
             case R.id.findFlights:
-                Intent i = new Intent(getActivity(), FlightQueryActivity.class);
-                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
-                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+                if (MFBSoap.IsOnline(getContext())) {
+                    Intent i = new Intent(getActivity(), FlightQueryActivity.class);
+                    i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
+                    startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+                } else
+                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

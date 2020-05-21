@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,11 +45,13 @@ import com.myflightbook.android.WebServices.VisitedAirportSvc;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
 import Model.MFBUtil;
+import Model.PackAndGo;
 import Model.VisitedAirport;
 
 public class ActVisitedAirports extends ExpandableListFragment implements MFBMain.Invalidatable {
@@ -92,8 +94,10 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
 
             if (ActVisitedAirports.visitedAirports == null || svc.getLastError().length() > 0)
                 MFBUtil.Alert(ava, ava.getString(R.string.txtError), svc.getLastError());
-            else
+            else {
+                new PackAndGo(m_ctxt.getContext()).updateAirports(ActVisitedAirports.visitedAirports);
                 ava.populateList();
+            }
         }
     }
 
@@ -136,7 +140,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
     public void onResume() {
         super.onResume();
         if (visitedAirports == null)
-            new RefreshVisitedAirports(getActivity(), this).execute();
+            refreshAirports();
         else
             populateList();
     }
@@ -148,7 +152,19 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
     }
 
     private void refreshAirports() {
-        new RefreshVisitedAirports(getActivity(), this).execute();
+        if (MFBSoap.IsOnline(getContext()))
+            new RefreshVisitedAirports(getActivity(), this).execute();
+        else {
+            PackAndGo p = new PackAndGo(getContext());
+            Date dt = p.lastAirportsPackDate();
+            if (dt != null) {
+                visitedAirports = p.cachedAirports();
+                populateList();
+                MFBUtil.Alert(getContext(), getString(R.string.packAndGoOffline), String.format(Locale.getDefault(), getString(R.string.packAndGoUsingCached), DateFormat.getDateInstance().format(dt)));
+            }
+            else
+                MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+        }
     }
 
     @Override
@@ -259,8 +275,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         // Auto-expand if 5 or fewer groups.
         boolean[] m_rgExpandedGroups = new boolean[alKeys.size()];
         if (m_rgExpandedGroups.length <= 5)
-            for (int i = 0; i < m_rgExpandedGroups.length; i++)
-                m_rgExpandedGroups[i] = true;
+            Arrays.fill(m_rgExpandedGroups, true);
 
         for (int i = 0; i < m_rgExpandedGroups.length; i++)
             if (m_rgExpandedGroups[i])
@@ -268,7 +283,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
 
         getExpandableListView().setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
 
-            if (!MFBMain.HasMaps())
+            if (!MFBMain.HasMaps() || !MFBSoap.IsOnline(getContext()))
                 return false;
 
             @SuppressWarnings("unchecked")

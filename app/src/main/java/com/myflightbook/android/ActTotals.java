@@ -43,8 +43,10 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.TotalsSvc;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -53,6 +55,7 @@ import Model.DecimalEdit.EditMode;
 import Model.FlightQuery;
 import Model.MFBConstants;
 import Model.MFBUtil;
+import Model.PackAndGo;
 import Model.Totals;
 
 public class ActTotals extends ListFragment implements MFBMain.Invalidatable, OnItemClickListener {
@@ -125,17 +128,12 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
                 MFBUtil.Alert(at, at.getString(R.string.txtError), svc.getLastError());
             } else {
                 SetNeedsRefresh(false);
+                at.mTotalsRows = at.GroupedTotals(rgti);
 
-                ArrayList<TotalsRowItem> arr = new ArrayList<>();
-                // set up the rows
-                for (ArrayList<Totals> arTotals : rgti) {
-                    // add a header row first
-                    arr.add(new TotalsRowItem(arTotals.get(0).GroupName));
-
-                    for (Totals ti : arTotals)
-                        arr.add(new TotalsRowItem(ti));
+                if (!at.currentQuery.HasCriteria()) {
+                    PackAndGo p = new PackAndGo(m_ctxt.getContext());
+                    p.updateTotals((Totals[]) m_Result);
                 }
-                at.mTotalsRows = arr.toArray(new TotalsRowItem[0]);
                 at.BindTable();
             }
         }
@@ -181,8 +179,25 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         super.onDestroy();
     }
 
+    protected TotalsRowItem[] GroupedTotals(ArrayList<ArrayList<Totals>> rgti) {
+        ArrayList<TotalsRowItem> arr = new ArrayList<>();
+        // set up the rows
+        for (ArrayList<Totals> arTotals  : rgti) {
+            // add a header row first
+            arr.add(new TotalsRowItem(arTotals.get(0).GroupName));
+
+            for (Totals ti : arTotals)
+                arr.add(new TotalsRowItem(ti));
+        }
+        return arr.toArray(new TotalsRowItem[0]);
+    }
+
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mTotalsRows == null || position < 0 || position >= mTotalsRows.length || mTotalsRows[position].rowType == RowType.HEADER_ITEM)
+            return;
+
+        // disable click on total when offline.
+        if (!MFBSoap.IsOnline(getContext()))
             return;
 
         FlightQuery fq = mTotalsRows[position].totalItem.Query;
@@ -287,8 +302,22 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
 
     private void Refresh(Boolean fForce) {
         if (AuthToken.FIsValid() && (fForce || fNeedsRefresh || mTotalsRows == null)) {
-            RefreshTotals st = new RefreshTotals(getActivity(), this);
-            st.execute();
+            if (MFBSoap.IsOnline(getContext())) {
+                RefreshTotals st = new RefreshTotals(getActivity(), this);
+                st.execute();
+            }
+            else {
+                PackAndGo p = new PackAndGo(getContext());
+                Date dt = p.lastTotalsPackDate();
+                if (dt != null) {
+                    mTotalsRows = GroupedTotals(Totals.groupTotals(p.cachedTotals()));
+                    SetNeedsRefresh(false);
+                    BindTable();
+                    MFBUtil.Alert(getContext(), getString(R.string.packAndGoOffline), String.format(Locale.getDefault(), getString(R.string.packAndGoUsingCached), DateFormat.getDateInstance().format(dt)));
+                }
+                else
+                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+            }
         } else
             BindTable();
     }
@@ -306,9 +335,12 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
                 Refresh(true);
                 return true;
             case R.id.findFlights:
-                Intent i = new Intent(getActivity(), FlightQueryActivity.class);
-                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
-                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+                if (MFBSoap.IsOnline(getContext())) {
+                    Intent i = new Intent(getActivity(), FlightQueryActivity.class);
+                    i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
+                    startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+                } else
+                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

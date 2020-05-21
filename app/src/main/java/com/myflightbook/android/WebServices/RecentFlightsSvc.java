@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ import Model.LogbookEntry;
 import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MakeModel;
+import Model.PackAndGo;
 
 public class RecentFlightsSvc extends MFBSoap {
 
@@ -211,13 +212,24 @@ public class RecentFlightsSvc extends MFBSoap {
         ActTotals.SetNeedsRefresh(true);
     }
 
-    public static LogbookEntry GetCachedFlightByID(int id) {
-        if (!HasCachedFlights())
-            return null;
+    public static LogbookEntry GetCachedFlightByID(int id, Context c) {
+        if (HasCachedFlights()) {
+            for (LogbookEntry le : m_CachedFlights) {
+                if (le.idFlight == id)
+                    return le;
+            }
+        }
 
-        for (LogbookEntry le : m_CachedFlights) {
-            if (le.idFlight == id)
-                return le;
+        // see if we have a packed flight.
+        if (c != null) {
+            PackAndGo p = new PackAndGo(c);
+            if (p.lastFlightsPackDate() != null)
+            {
+                LogbookEntry[] rgle = p.cachedFlights();
+                for (LogbookEntry le : rgle)
+                    if (le.idFlight == id)
+                        return le;
+            }
         }
 
         return null;

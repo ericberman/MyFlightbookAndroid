@@ -303,6 +303,10 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (!MFBSoap.IsOnline(getContext())) {
+            MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+            return true;
+        }
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuRefreshAircraft: {

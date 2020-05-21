@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,12 +43,15 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.CurrencySvc;
 import com.myflightbook.android.WebServices.MFBSoap;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
 import Model.CurrencyStatusItem;
 import Model.MFBConstants;
 import Model.MFBUtil;
+import Model.PackAndGo;
 
 public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     private static boolean fNeedsRefresh = true;
@@ -98,6 +101,8 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                 MFBUtil.Alert(ac, ac.getString(R.string.txtError), svc.getLastError());
             } else {
                 SetNeedsRefresh(false);
+                PackAndGo p = new PackAndGo(m_ctxt.getContext());
+                p.updateCurrency(m_rgcsi);
                 ac.BindTable();
             }
         }
@@ -114,7 +119,6 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         TextView tvDisclaimer = (TextView) findViewById(R.id.lnkCurrencyDisclaimer);
         tvDisclaimer.setOnClickListener((v) -> ActWebView.ViewURL(getActivity(), String.format(Locale.US, "https://%s/logbook/public/CurrencyDisclaimer.aspx?naked=1&%s", MFBConstants.szIP, MFBConstants.NightParam(getContext()))));
 
-        Refresh(fNeedsRefresh);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 
@@ -171,6 +175,9 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                 tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
                 tr.setOnClickListener(v -> {
+                    if (!MFBSoap.IsOnline(getContext()))
+                        return;
+
                     switch (csi.CurrencyGroup) {
                         default:
                         case None:
@@ -226,8 +233,21 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
 
     private void Refresh(Boolean fForce) {
         if (AuthToken.FIsValid() && (fForce || fNeedsRefresh || m_rgcsi == null)) {
-            RefreshCurrency ts = new RefreshCurrency(getActivity(), this);
-            ts.execute();
+            if (MFBSoap.IsOnline(getContext())) {
+                RefreshCurrency ts = new RefreshCurrency(getActivity(), this);
+                ts.execute();
+            } else {
+                PackAndGo p = new PackAndGo(getContext());
+                Date dt = p.lastCurrencyPackDate();
+                if (dt != null) {
+                    m_rgcsi = p.cachedCurrency();
+                    SetNeedsRefresh(false);
+                    BindTable();
+                    MFBUtil.Alert(getContext(), getString(R.string.packAndGoOffline), String.format(Locale.getDefault(), getString(R.string.packAndGoUsingCached), DateFormat.getDateInstance().format(dt)));
+                }
+                else
+                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+            }
         } else
             BindTable();
     }
@@ -248,7 +268,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     }
 
     public void onResume() {
-        Refresh(false);
+        Refresh(fNeedsRefresh);
         super.onResume();
     }
 

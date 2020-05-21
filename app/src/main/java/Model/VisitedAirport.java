@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,10 +25,14 @@ import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Hashtable;
 
-public class VisitedAirport extends SoapableObject implements KvmSerializable, Comparable<VisitedAirport> {
+public class VisitedAirport extends SoapableObject implements KvmSerializable, Comparable<VisitedAirport>, Serializable {
+
+    @SuppressWarnings("unused")
+    private static final long serialVersionUID = 1L;
 
     public String Code;
     public Date EarliestDate;

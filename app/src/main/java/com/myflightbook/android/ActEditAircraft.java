@@ -472,23 +472,33 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
                 TakePicture();
                 return true;
             case R.id.menuUpdateAircraft:
-                updateAircraft();
+                if (MFBSoap.IsOnline(getContext()))
+                    updateAircraft();
+                else
+                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
                 return true;
             case R.id.menuDeleteAircraft:
                 (new DeleteTask(getContext(), this)).execute();
                 return true;
             case R.id.menuViewSchedule:
-                ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams(String.format(Locale.US, "d=aircraftschedule&ac=%d", m_ac.AircraftID), getContext()));
+                if (MFBSoap.IsOnline(getContext()))
+                    ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams(String.format(Locale.US, "d=aircraftschedule&ac=%d", m_ac.AircraftID), getContext()));
+                else
+                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
                 return true;
             case R.id.findFlights:
-                FlightQuery fq = new FlightQuery();
-                fq.Init();
-                fq.AircraftList = new Aircraft[]{m_ac};
-                Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
-                Bundle b = new Bundle();
-                b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
-                i.putExtras(b);
-                startActivity(i);
+                if (MFBSoap.IsOnline(getContext())) {
+                    FlightQuery fq = new FlightQuery();
+                    fq.Init();
+                    fq.AircraftList = new Aircraft[]{m_ac};
+                    Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
+                    Bundle b = new Bundle();
+                    b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
+                    i.putExtras(b);
+                    startActivity(i);
+                }
+                else
+                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
