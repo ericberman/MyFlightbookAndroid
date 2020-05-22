@@ -74,7 +74,7 @@ import Model.VisitedAirport;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
 
-    private static class PackData extends AsyncTask<Void, Void, String> {
+    private static class PackData extends AsyncTask<Void, Integer, String> {
         private ProgressDialog m_pd = null;
         private final AsyncWeakContext<ActOptions> m_ctxt;
 
@@ -85,33 +85,39 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
         @Override
         protected String doInBackground(Void... params) {
+            publishProgress(R.string.prgAircraft);
             // To be safe, update aircraft and properties.
             AircraftSvc as = new AircraftSvc();
             Aircraft[] rgac = as.AircraftForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
 
+            publishProgress(R.string.prgCPT);
             CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
             CustomPropertyType[] rgcpt = cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, false, m_ctxt.getContext());
 
             PackAndGo p = new PackAndGo(m_ctxt.getContext());
 
+            publishProgress(R.string.prgCurrency);
             CurrencySvc cs = new CurrencySvc();
             CurrencyStatusItem[] rgcsi = cs.CurrencyForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
             if (cs.getLastError().length() > 0)
                 return cs.getLastError();
             p.updateCurrency(rgcsi);
 
+            publishProgress(R.string.prgTotals);
             TotalsSvc ts = new TotalsSvc();
             Totals[] rgti = ts.TotalsForUser(AuthToken.m_szAuthToken, new FlightQuery(), m_ctxt.getContext());
             if (ts.getLastError().length() > 0)
                 return ts.getLastError();
             p.updateTotals(rgti);
 
+            publishProgress(R.string.packAndGoInProgress);
             RecentFlightsSvc fs = new RecentFlightsSvc();
             LogbookEntry[] rgle = fs.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, new FlightQuery(), 0, -1, m_ctxt.getContext());
             if (fs.getLastError().length() > 0)
                 return fs.getLastError();
             p.updateFlights(rgle);
 
+            publishProgress(R.string.prgVisitedAirports);
             VisitedAirportSvc vs = new VisitedAirportSvc();
             VisitedAirport[] rgva = vs.VisitedAirportsForUser(AuthToken.m_szAuthToken, m_ctxt.getContext());
             if (vs.getLastError().length() > 0)
@@ -125,6 +131,10 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
         protected void onPreExecute() {
             m_pd = MFBUtil.ShowProgress(m_ctxt.getContext(), m_ctxt.getContext().getString(R.string.packAndGoInProgress));
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            m_pd.setMessage(m_ctxt.getContext().getString(progress[0]));
         }
 
         protected void onPostExecute(String szErr) {
