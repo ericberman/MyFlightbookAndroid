@@ -268,6 +268,49 @@
 
         <TextView
             style="@style/DividerBar"
+            android:text="@string/lblOptUnitsHeader" />
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5sp"
+            android:stretchColumns="1" >
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblOptAltUnitsHeader" />
+
+                <Spinner
+                    android:id="@+id/spnAltUnits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblOptSpeedUnitsHeader" />
+
+                <Spinner
+                    android:id="@+id/spnSpeedUnits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp">
+                </Spinner>
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/DividerBar"
             android:text="@string/lblImageOptions" />
         <CheckBox
             android:layout_width="match_parent"

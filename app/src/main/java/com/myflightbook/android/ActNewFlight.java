@@ -1640,6 +1640,35 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private SimpleDateFormat dfSunriseSunset = null;
 
+    private String displaySpeed(double s) {
+        Resources res = getResources();
+
+        if (s < 1)
+            return res.getString(R.string.lblNoSpeed);
+
+        switch (ActOptions.speedUnits) {
+            case Knots:
+                return String.format(Locale.getDefault(), res.getString(R.string.lblSpeedFormatKts), s * MFBConstants.MPS_TO_KNOTS);
+            case KmPerHour:
+                return String.format(Locale.getDefault(), res.getString(R.string.lblSpeedFormatKph), s * MFBConstants.MPS_TO_KPH);
+            case MilesPerHour:
+                return String.format(Locale.getDefault(), res.getString(R.string.lblSpeedFormatMph), s * MFBConstants.MPS_TO_MPH);
+        }
+        return res.getString(R.string.lblNoSpeed);
+    }
+
+    private String displayAlt(double a) {
+        Resources res = getResources();
+
+        switch (ActOptions.altitudeUnits) {
+            case Feet:
+                return String.format(Locale.getDefault(), res.getString(R.string.lblAltFormatFt), (int) Math.round(a * MFBConstants.METERS_TO_FEET));
+            case Meters:
+                return String.format(Locale.getDefault(), res.getString(R.string.lblAltFormatMeters), (int) Math.round(a));
+        }
+        return res.getString(R.string.lblNoAltitude);
+    }
+
     public void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc,
                              Boolean fRecording) {
         if (!isAdded() || isDetached() || getActivity() == null)
@@ -1668,9 +1697,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         if (loc != null) {
             txtQuality.setText(res.getString(idSzQuality));
-            double Speed = loc.getSpeed() * MFBConstants.MPS_TO_KNOTS;
-            txtSpeed.setText(Speed < 1.0 || !loc.hasSpeed() ? res.getString(R.string.lblNoSpeed) : String.format(Locale.getDefault(), "%.1fkts", Speed));
-            txtAltitude.setText((loc.hasAltitude() ? String.format(Locale.getDefault(), "%d%s", (int) Math.round(loc.getAltitude() * MFBConstants.METERS_TO_FEET), getString(R.string.lblFeet)) : getString(R.string.lblNoAltitude)));
+            txtSpeed.setText(displaySpeed(loc.getSpeed()));
+            txtAltitude.setText(displayAlt(loc.getAltitude()));
+
             double lat = loc.getLatitude();
             double lon = loc.getLongitude();
             txtLatitude.setText(String.format(Locale.getDefault(), "%.5f°%s", Math.abs(lat), lat > 0 ? "N" : "S"));

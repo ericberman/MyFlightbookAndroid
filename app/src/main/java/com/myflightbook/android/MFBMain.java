@@ -103,6 +103,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     static private final String m_KeysShowFlightImages = "showFlightImages";
     static private final String m_KeysShowFlightTimes = "showFlightTimes2";
 
+    static private final String m_KeysSpeedUnits = "speedUnits";
+    static private final String m_KeysAltUnits = "altUnits";
+
     static private final String m_KeysIsFlying = "isFlying";
     static private final String m_KeysIsRecording = "isRecording";
     static private final String m_KeysHasPendingFSLanding = "hasPendingLanding";
@@ -685,6 +688,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
             ActRecentsWS.fShowFlightImages = mPrefs.getBoolean(m_KeysShowFlightImages, true);
             ActRecentsWS.flightDetail = ActRecentsWS.FlightDetail.values()[mPrefs.getInt(m_KeysShowFlightTimes, 0)];
 
+            ActOptions.speedUnits = ActOptions.SpeedUnits.values()[mPrefs.getInt(m_KeysSpeedUnits, 0)];
+            ActOptions.altitudeUnits = ActOptions.AltitudeUnits.values()[mPrefs.getInt(m_KeysAltUnits, 0)];
+
             m_fSeenWarning = mPrefs.getBoolean(m_KeysHasSeenWarning, false);
             mLastTabIndex = mPrefs.getInt(m_KeysLastTab, 0);
             mLastVacuum = mPrefs.getLong(m_TimeOfLastVacuum, new Date().getTime());
@@ -727,6 +733,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
         ed.putBoolean(m_KeysShowFlightImages, ActRecentsWS.fShowFlightImages);
         ed.putInt(m_KeysShowFlightTimes, ActRecentsWS.flightDetail.ordinal());
+
+        ed.putInt(m_KeysAltUnits, ActOptions.altitudeUnits.ordinal());
+        ed.putInt(m_KeysSpeedUnits, ActOptions.speedUnits.ordinal());
 
         ed.putInt(m_KeysLastTab, mTabHost.getCurrentTab());
         ed.putLong(m_TimeOfLastVacuum, mLastVacuum);

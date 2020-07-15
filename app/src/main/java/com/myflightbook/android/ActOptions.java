@@ -74,6 +74,12 @@ import Model.VisitedAirport;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
 
+    public enum AltitudeUnits {Feet, Meters}
+    public enum SpeedUnits {Knots, KmPerHour, MilesPerHour }
+
+    public static AltitudeUnits altitudeUnits = AltitudeUnits.Feet;
+    public static SpeedUnits speedUnits = SpeedUnits.Knots;
+
     private static class PackData extends AsyncTask<Void, Integer, String> {
         private ProgressDialog m_pd = null;
         private final AsyncWeakContext<ActOptions> m_ctxt;
@@ -293,6 +299,22 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setOnItemSelectedListener(this);
         sp.setPromptId(R.id.lblShowFlightTimes);
 
+        sp = (Spinner) findViewById(R.id.spnAltUnits);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+              getString(R.string.lblOptUnitsFeet), getString(R.string.lblOptUnitsMeters)
+        });
+        sp.setAdapter(adapter);
+        sp.setSelection(ActOptions.altitudeUnits.ordinal());
+        sp.setOnItemSelectedListener(this);
+
+        sp = (Spinner) findViewById(R.id.spnSpeedUnits);
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+                getString(R.string.lblOptUnitsKnots), getString(R.string.lblOptUnitsKPH), getString(R.string.lblOptUnitsMPH)
+        });
+        sp.setAdapter(adapter);
+        sp.setSelection(ActOptions.speedUnits.ordinal());
+        sp.setOnItemSelectedListener(this);
+
         TextView t = (TextView) findViewById(R.id.txtCopyright);
         if (MFBConstants.fIsDebug) {
             String s = String.format("%s - DEBUG (%s)",
@@ -372,6 +394,12 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                         getActivity().recreate();
                     }
                 }
+                break;
+            case R.id.spnAltUnits:
+                altitudeUnits = AltitudeUnits.values()[i];
+                break;
+            case R.id.spnSpeedUnits:
+                speedUnits = SpeedUnits.values()[i];
                 break;
             default:
                 break;
@@ -529,7 +557,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             break;
             case R.id.ckAutodetect: {
                 CheckBox ck = (CheckBox) v;
-                Boolean newState = ck.isChecked();
+                boolean newState = ck.isChecked();
                 if (!newState || checkGPSPermissions(PERMISSION_REQUEST_AUTODETECT))
                     MFBLocation.fPrefAutoDetect = newState;
                 else
@@ -538,7 +566,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             break;
             case R.id.ckRecord: {
                 CheckBox ck = (CheckBox) v;
-                Boolean newState = ck.isChecked();
+                boolean newState = ck.isChecked();
                 if (!newState || checkGPSPermissions(PERMISSION_REQUEST_RECORD))
                     MFBLocation.fPrefRecordFlight = newState;
                 else

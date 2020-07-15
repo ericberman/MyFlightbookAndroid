@@ -43,7 +43,7 @@ public class MFBConstants {
     public static final String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
 
     // DB Versioning
-    public static final int DBVersionMain = 30;
+    public static final int DBVersionMain = 31;
     public static final int DBVersionAirports = 33;
 
     // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
@@ -56,6 +56,8 @@ public class MFBConstants {
     static final String szIMG_KEY_Aircraft = "txtAircraft";
 
     public static final double MPS_TO_KNOTS = 1.94384449;
+    public static final double MPS_TO_MPH = 2.23694;
+    public static final double MPS_TO_KPH = 3.6000059687997;
     public static final double METERS_TO_FEET = 3.2808399;
     public static final double METERS_TO_NM = (1.0 / 1852.0);
     public static final double MS_PER_HOUR = (1000.0 * 60 * 60); // ms per hour

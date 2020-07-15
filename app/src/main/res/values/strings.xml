@@ -34,6 +34,14 @@
     <string name="lblOptNightLandingsDefinition">Night landings occur:</string>
     <string name="lblOptNightLandingsNight">During  night flight</string>
     <string name="lblOptNightLandingsSunsetPlus1hour">1 hour after sunset</string>
+    <string name="lblOptUnitsHeader">Units</string>
+    <string name="lblOptAltUnitsHeader">Altitude</string>
+    <string name="lblOptSpeedUnitsHeader">Speed</string>
+    <string name="lblOptUnitsFeet">Feet</string>
+    <string name="lblOptUnitsMeters">Meters</string>
+    <string name="lblOptUnitsKnots">Knots</string>
+    <string name="lblOptUnitsMPH">Miles/hour</string>
+    <string name="lblOptUnitsKPH">Km/hour</string>
     <string name="lblImageOptions">Flight display Options</string>
     <string name="lblShowFlightImages">Show images for flights</string>
     <string name="lblShowFlightTimes">Flight Detail:</string>
@@ -201,6 +209,11 @@
     <string name="lblElapsedTime">Elapsed:</string>
     <string name="lblNoSpeed">--</string>
     <string name="lblNoAltitude">--</string>
+    <string name="lblSpeedFormatKts">%.1fkts</string>
+    <string name="lblSpeedFormatKph">%.1fkm/h</string>
+    <string name="lblSpeedFormatMph">%.1fmph</string>
+    <string name="lblAltFormatFt">%,dft</string>
+    <string name="lblAltFormatMeters">%,dm</string>
     <string name="lblStartingTime">00:00:00</string>
     <string name="lblSunrise">(Sunrise)</string>
     <string name="lblSunset">(Sunset)</string>
