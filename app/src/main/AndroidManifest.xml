@@ -25,7 +25,7 @@
         android:required="true" />
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name="androidx.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_app"
         android:roundIcon="@mipmap/ic_app_round"
@@ -169,7 +169,7 @@
             android:value="@string/GoogleMapsKey" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.myflightbook.android.provider"
             android:exported="false"
             android:grantUriPermissions="true">

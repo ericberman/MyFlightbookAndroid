@@ -40,7 +40,6 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.media.ExifInterface;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ImageView;
@@ -74,6 +73,8 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+
+import androidx.exifinterface.media.ExifInterface;
 
 public class MFBImageInfo extends SoapableObject implements KvmSerializable, Serializable {
 

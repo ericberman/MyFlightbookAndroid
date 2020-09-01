@@ -35,11 +35,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatDelegate;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,7 +63,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
@@ -76,6 +70,11 @@ import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBLocation;
 import Model.MFBUtil;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
 public class ActMFBForm extends Fragment {
     interface GallerySource {
@@ -133,7 +132,7 @@ public class ActMFBForm extends Fragment {
             if (fAddToGallery) {
                 File f = new File(szFilename);
                 Uri uriSource = FileProvider.getUriForFile(m_ctxt.getContext(), BuildConfig.APPLICATION_ID + ".provider", f);
-                Objects.requireNonNull(m_ctxt.getCallingActivity().getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
+                m_ctxt.getCallingActivity().requireActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource));
             }
 
             GallerySource gs = (GallerySource) m_ctxt.getCallingActivity();
@@ -172,14 +171,14 @@ public class ActMFBForm extends Fragment {
     }
 
     void finish() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 
     void AddGalleryImage(final Intent i) {
         Uri selectedImage = i.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA, MediaStore.Images.Media.MIME_TYPE};
 
-        ContentResolver cr = Objects.requireNonNull(getActivity()).getContentResolver();
+        ContentResolver cr = requireActivity().getContentResolver();
         assert selectedImage != null;
         Cursor cursor = cr.query(
                 selectedImage, filePathColumn, null, null, null);
@@ -202,7 +201,7 @@ public class ActMFBForm extends Fragment {
 
         super.onCreate(savedInstanceState);
         // need to restore this here because OnResume may come after the onActivityResult call
-        SharedPreferences mPrefs = Objects.requireNonNull(getActivity()).getPreferences(Activity.MODE_PRIVATE);
+        SharedPreferences mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
         m_TempFilePath = mPrefs.getString(keyTempFileInProgress, "");
     }
 
@@ -212,7 +211,7 @@ public class ActMFBForm extends Fragment {
     }
 
     void SetDateTime(int id, Date d, DateTimeUpdate delegate, DlgDatePicker.datePickMode dpm) {
-        DlgDatePicker dlg = new DlgDatePicker(this.getActivity(), dpm, d);
+        DlgDatePicker dlg = new DlgDatePicker(this.requireActivity(), dpm, d);
         dlg.m_delegate = delegate;
         dlg.m_id = id;
         dlg.show();
@@ -251,7 +250,7 @@ public class ActMFBForm extends Fragment {
         if (UTCDate.IsNullDate(d))
             b.setText(getString(R.string.lblTouchForToday));
         else
-            b.setText(DateFormat.getDateFormat(getActivity()).format(d));
+            b.setText(DateFormat.getDateFormat(requireActivity()).format(d));
     }
 
     String StringFromField(int id) {
@@ -290,9 +289,7 @@ public class ActMFBForm extends Fragment {
         if (headerView != null)
             headerView.setVisibility(rgMfbii.length == 0 ? View.GONE : View.VISIBLE);
 
-        Activity a = getActivity();
-        if (a == null)
-            return;
+        Activity a = requireActivity();
 
         LayoutInflater l = a.getLayoutInflater();
         TableLayout tl = (TableLayout) findViewById(idGallery);
@@ -315,10 +312,10 @@ public class ActMFBForm extends Fragment {
                 registerForContextMenu(tr);
 
                 final MFBImageInfo mfbiiFinal = mfbii;
-                tr.setOnClickListener((v) -> mfbiiFinal.ViewFullImageInWebView(getActivity()));
+                tr.setOnClickListener((v) -> mfbiiFinal.ViewFullImageInWebView(requireActivity()));
                 tr.setOnLongClickListener((View v) -> {
                     mfbiiLastClicked = mfbiiFinal;
-                    getActivity().openContextMenu(v);
+                    requireActivity().openContextMenu(v);
                     return true;
                 });
 
@@ -342,12 +339,12 @@ public class ActMFBForm extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.menuAddComment:
-                DlgImageComment dlgComment = new DlgImageComment(getActivity(),
+                DlgImageComment dlgComment = new DlgImageComment(requireActivity(),
                         mfbii, (mfbii2) -> setUpImageGallery(src.getGalleryID(), src.getImages(), src.getGalleryHeader()));
                 dlgComment.show();
                 break;
             case R.id.menuDeleteImage:
-                new AlertDialog.Builder(getActivity(), R.style.MFBDialog)
+                new AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.lblConfirmImageDelete)
@@ -375,7 +372,7 @@ public class ActMFBForm extends Fragment {
                         .show();
                 break;
             case R.id.menuViewImage:
-                mfbii.ViewFullImageInWebView(getActivity());
+                mfbii.ViewFullImageInWebView(requireActivity());
                 break;
         }
         mfbiiLastClicked = null;
@@ -388,16 +385,16 @@ public class ActMFBForm extends Fragment {
         switch (permission) {
             case CAMERA_PERMISSION_IMAGE:
             case CAMERA_PERMISSION_VIDEO:
-                if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     return true;
                 else
                     requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
                 break;
             case GALLERY_PERMISSION:
-                if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     return true;
                 else
                     requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
@@ -444,13 +441,13 @@ public class ActMFBForm extends Fragment {
 
     void TakePicture() {
         File fTemp;
-        File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         if (MFBConstants.fFakePix) {
             String[] rgSamples = {"sampleimg.jpg", "sampleimg2.jpg", "sampleimg3.jpg"};
             for (String szAsset : rgSamples) {
                 FileOutputStream fos = null;
                 try {
-                    InputStream is = getActivity().getAssets().open(szAsset);
+                    InputStream is = requireActivity().getAssets().open(szAsset);
 
                     fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir);
                     fTemp.deleteOnExit();
@@ -492,25 +489,25 @@ public class ActMFBForm extends Fragment {
             fTemp.deleteOnExit();
             m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
 
-            SharedPreferences mPrefs = getActivity().getPreferences(Activity.MODE_PRIVATE);
+            SharedPreferences mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
             SharedPreferences.Editor ed = mPrefs.edit();
             ed.putString(keyTempFileInProgress, m_TempFilePath);
             ed.apply();
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri uriImage = FileProvider.getUriForFile(Objects.requireNonNull(this.getContext()), BuildConfig.APPLICATION_ID + ".provider", fTemp);
+            Uri uriImage = FileProvider.getUriForFile(this.requireContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         } catch (IOException e) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-            MFBUtil.Alert(getActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
+            MFBUtil.Alert(requireActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
         }
     }
 
     void TakeVideo() {
         File fTemp;
-        File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         try {
             if (!fCheckImagePermissions(CAMERA_PERMISSION_VIDEO))
@@ -519,12 +516,12 @@ public class ActMFBForm extends Fragment {
             fTemp.deleteOnExit();
             m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
 
-            SharedPreferences mPrefs = getActivity().getPreferences(Activity.MODE_PRIVATE);
+            SharedPreferences mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
             SharedPreferences.Editor ed = mPrefs.edit();
             ed.putString(keyTempFileInProgress, m_TempFilePath);
             ed.apply();
 
-            Uri uriImage = FileProvider.getUriForFile(Objects.requireNonNull(this.getContext()), BuildConfig.APPLICATION_ID + ".provider", fTemp);
+            Uri uriImage = FileProvider.getUriForFile(this.requireContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
 
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
@@ -532,7 +529,7 @@ public class ActMFBForm extends Fragment {
             startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
         } catch (IOException e) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-            MFBUtil.Alert(getActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
+            MFBUtil.Alert(requireActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
         }
     }
     //endregion
@@ -599,13 +596,13 @@ public class ActMFBForm extends Fragment {
                 expandView(target);
             else
                 target.setVisibility(View.VISIBLE);
-            d = ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.collapse_light);
+            d = ContextCompat.getDrawable(requireActivity(), R.drawable.collapse_light);
         } else {
             if (fAnimated)
                 collapseView(target);
             else
                 target.setVisibility(View.GONE);
-            d = ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.expand_light);
+            d = ContextCompat.getDrawable(requireActivity(), R.drawable.expand_light);
         }
         v.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
     }

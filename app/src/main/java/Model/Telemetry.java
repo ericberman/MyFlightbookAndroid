@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -97,12 +97,12 @@ public abstract class Telemetry {
         Matcher m = m_pISODate.matcher(s);
 
         if (m.matches()) {
-            int year = Integer.parseInt(m.group(1));
-            int month = Integer.parseInt(m.group(2));
-            int day = Integer.parseInt(m.group(3));
-            int hour = Integer.parseInt(m.group(4));
-            int minute = Integer.parseInt(m.group(5));
-            double second = Double.parseDouble(m.group(6));
+            int year = Integer.parseInt(Objects.requireNonNull(m.group(1)));
+            int month = Integer.parseInt(Objects.requireNonNull(m.group(2)));
+            int day = Integer.parseInt(Objects.requireNonNull(m.group(3)));
+            int hour = Integer.parseInt(Objects.requireNonNull(m.group(4)));
+            int minute = Integer.parseInt(Objects.requireNonNull(m.group(5)));
+            double second = Double.parseDouble(Objects.requireNonNull(m.group(6)));
 
             GregorianCalendar gc = UTCDate.UTCCalendar();
             gc.set(year, month - 1, day, hour, minute, (int) second);

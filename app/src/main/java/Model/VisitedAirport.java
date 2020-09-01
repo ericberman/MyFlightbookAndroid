@@ -18,8 +18,6 @@
  */
 package Model;
 
-import android.support.annotation.NonNull;
-
 import org.kobjects.isodate.IsoDate;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
@@ -29,9 +27,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Hashtable;
 
+import androidx.annotation.NonNull;
+
 public class VisitedAirport extends SoapableObject implements KvmSerializable, Comparable<VisitedAirport>, Serializable {
 
-    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     public String Code;
@@ -97,7 +96,6 @@ public class VisitedAirport extends SoapableObject implements KvmSerializable, C
         return VisitedAirportProp.values().length;
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         VisitedAirportProp vap = VisitedAirportProp.values()[i];
         switch (vap) {

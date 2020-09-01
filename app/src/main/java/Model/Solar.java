@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -309,7 +309,6 @@ final class Solar {
     /// </summary>
     /// <param name="t"> t : number of Julian centuries since J2000.0</param>
     /// <returns>sun radius vector in AUs</returns>
-    @SuppressWarnings("unused")
     static double calcSunRadVector(double t) {
         double v = calcSunTrueAnomaly(t);
         double e = calcEccentricityEarthOrbit(t);
@@ -356,7 +355,6 @@ final class Solar {
     /// </summary>
     /// <param name="t"> t : number of Julian centuries since J2000.0</param>
     /// <returns>sun's right ascension in degrees</returns>
-    @SuppressWarnings("unused")
     static double calcSunRtAscension(double t) {
         double e = calcObliquityCorrection(t);
         double lambda = calcSunApparentLong(t);

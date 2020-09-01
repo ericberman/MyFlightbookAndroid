@@ -25,8 +25,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -57,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import Model.Aircraft;
 import Model.CountryCode;
@@ -66,6 +63,8 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBUtil;
 import Model.MakesandModels;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class ActNewAircraft extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener, ActMFBForm.GallerySource {
 
@@ -291,7 +290,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             rgszInstanceTypes[i] = getString(Aircraft.rgidInstanceTypes[i]);
 
         Spinner sp = (Spinner) findViewById(R.id.spnAircraftType);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgszInstanceTypes);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, rgszInstanceTypes);
         sp.setAdapter(adapter);
         sp.setSelection(0);
         sp.setOnItemSelectedListener(this);
@@ -301,7 +300,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         AutoCompleteTextView act = (AutoCompleteTextView) findViewById(R.id.txtTail);
         act.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT);
         act.setThreshold(3);
-        autoCompleteAdapter = new AutoCompleteAdapter(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_2);
+        autoCompleteAdapter = new AutoCompleteAdapter(requireContext(), android.R.layout.simple_list_item_2);
         final AutoCompleteAdapter aca = autoCompleteAdapter;
         act.setAdapter(autoCompleteAdapter);
         act.setOnItemClickListener(
@@ -353,8 +352,8 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
     private void Cancel() {
         Intent i = new Intent();
-        Objects.requireNonNull(getActivity()).setResult(Activity.RESULT_CANCELED, i);
-        getActivity().finish();
+        requireActivity().setResult(Activity.RESULT_CANCELED, i);
+        requireActivity().finish();
     }
 
     private void newAircraft() {
@@ -468,7 +467,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     }
 
     // @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.newaircraft, menu);
     }
 
@@ -496,9 +495,9 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.imagemenu, menu);
     }
 

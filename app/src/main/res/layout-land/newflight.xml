@@ -233,9 +233,9 @@
             android:id="@+id/txtViewInTheCockpit"
             style="@style/DividerBar"
             android:clickable="true"
-            android:drawableStart="@drawable/collapse_light"
             android:text="@string/lblCatCockpit"
-            android:focusable="true" />
+            android:focusable="true"
+            mfb:drawableStartCompat="@drawable/collapse_light" />
 
         <LinearLayout
             android:id="@+id/sectInTheCockpit"
@@ -728,7 +728,7 @@
             android:id="@+id/txtPinnedPropertiesHeader"
             style="@style/DividerBar"
             android:clickable="true"
-            android:drawableStart="@drawable/collapse_light"
+            mfb:drawableStartCompat="@drawable/collapse_light"
             android:text="@string/lblCatProperties"
             android:focusable="true" />
 
@@ -759,7 +759,7 @@
             android:id="@+id/txtSignatureHeader"
             style="@style/DividerBar"
             android:clickable="true"
-            android:drawableStart="@drawable/collapse_light"
+            mfb:drawableStartCompat="@drawable/collapse_light"
             android:text="@string/lblSignature"
             android:focusable="true" />
         <LinearLayout
@@ -813,7 +813,7 @@
             android:id="@+id/txtImageHeader"
             style="@style/DividerBar"
             android:clickable="true"
-            android:drawableStart="@drawable/collapse_light"
+            mfb:drawableStartCompat="@drawable/collapse_light"
             android:text="@string/cdImagesForFlight"
             android:focusable="true" />
 
@@ -853,7 +853,7 @@
                 android:id="@+id/ckMyFlightbook"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/icon"
+                mfb:drawableStartCompat="@drawable/icon"
                 android:drawablePadding="3dip"
                 android:text="@string/lblMyFlightbook" />
         </LinearLayout>

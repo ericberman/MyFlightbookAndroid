@@ -608,7 +608,6 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         }
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         FlightProp fp = FlightProp.values()[i];
         switch (fp) {

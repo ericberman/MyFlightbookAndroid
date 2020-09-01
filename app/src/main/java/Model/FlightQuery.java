@@ -260,8 +260,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		Init();
 	}
 
-    @SuppressWarnings("unused")
-	public static String DateRangeToString(DateRanges dr)
+    public static String DateRangeToString(DateRanges dr)
     {
         switch (dr)
         {
@@ -312,8 +311,7 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
             HasFlightCriteria();
     }	
 
-    @SuppressWarnings("unused")
-	public Boolean HasSearchProperty(CustomPropertyType cpt)
+    public Boolean HasSearchProperty(CustomPropertyType cpt)
     {
     	for (CustomPropertyType cpt2 : PropertyTypes)
     		if (cpt.idPropType == cpt2.idPropType)
@@ -561,7 +559,6 @@ public class FlightQuery extends SoapableObject implements KvmSerializable, Seri
 		return FlightQueryProp.values().length;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void getPropertyInfo(int i, Hashtable arg1, PropertyInfo pi) {
 		FlightQueryProp fqp = FlightQueryProp.values()[i];
 		switch (fqp) {

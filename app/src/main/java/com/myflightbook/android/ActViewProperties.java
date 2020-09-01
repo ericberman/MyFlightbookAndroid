@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -43,6 +42,7 @@ import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
 import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -52,6 +52,7 @@ import Model.DecimalEdit;
 import Model.FlightProperty;
 import Model.MFBConstants;
 import Model.MFBUtil;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActViewProperties extends FixedExpandableListActivity implements PropertyEdit.PropertyListener, DecimalEdit.CrossFillDelegate {
 
@@ -411,8 +412,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
         else if (m_rgExpandedGroups.length != alKeys.size()) {
             m_rgExpandedGroups = new boolean[alKeys.size()];
             if (m_rgExpandedGroups.length <= 5) // autoexpand if fewer than 5 groups.
-                for (int i = 0; i < m_rgExpandedGroups.length; i++)
-                    m_rgExpandedGroups[i] = true;
+                Arrays.fill(m_rgExpandedGroups, true);
         }
 
         ExpandablePropertyListAdapter mAdapter = new ExpandablePropertyListAdapter(this, headerList, childrenList);

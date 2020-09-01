@@ -21,7 +21,6 @@ package Model;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -41,9 +40,10 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+
 public class Airport extends SoapableObject implements KvmSerializable, Serializable, Comparable<Airport> {
 
-    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     public String AirportID;

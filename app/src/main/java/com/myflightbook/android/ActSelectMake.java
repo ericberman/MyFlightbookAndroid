@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
@@ -37,6 +36,7 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.MakesandModelsSvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
@@ -44,6 +44,7 @@ import java.util.Objects;
 import Model.MFBConstants;
 import Model.MFBUtil;
 import Model.MakesandModels;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActSelectMake extends FixedExpandableListActivity {
 
@@ -201,8 +202,7 @@ public class ActSelectMake extends FixedExpandableListActivity {
         if (expandedGroupIndex > 0 && expandedGroupIndex < alKeys.size())
             m_rgExpandedGroups[expandedGroupIndex] = true;
         if (m_rgExpandedGroups.length <= 5)
-            for (int i = 0; i < m_rgExpandedGroups.length; i++)
-                m_rgExpandedGroups[i] = true;
+            Arrays.fill(m_rgExpandedGroups, true);
 
         // put the above into arrayLists, but in the order that the keys were encountered.  .values() is an undefined order.
         ArrayList<HashMap<String, String>> headerList = new ArrayList<>();

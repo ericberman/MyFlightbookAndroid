@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +57,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import Model.Aircraft;
 import Model.Airport;
@@ -71,6 +69,7 @@ import Model.FlightQuery.DateRanges;
 import Model.MFBConstants;
 import Model.MFBUtil;
 import Model.MakeModel;
+import androidx.annotation.NonNull;
 
 public class ActFlightQuery extends ActMFBForm implements android.view.View.OnClickListener, DlgDatePicker.DateTimeUpdate {
     private FlightQuery CurrentQuery = null;
@@ -273,13 +272,13 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Intent i = Objects.requireNonNull(getActivity()).getIntent();
+        Intent i = requireActivity().getIntent();
         CurrentQuery = (FlightQuery) i.getSerializableExtra(QUERY_TO_EDIT);
         if (CurrentQuery == null)
             CurrentQuery = new FlightQuery();
 
         if (CannedQuery.getCannedQueries() == null)
-            new GetCannedQueryTask(getActivity(), this).execute();
+            new GetCannedQueryTask(requireActivity(), this).execute();
         else
             setUpNamedQueries();
 
@@ -371,7 +370,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
 
         String szQueryName = StringFromField(R.id.txtNameForQuery);
         if (CurrentQuery.HasCriteria() && szQueryName.length() >0)
-            new AddCannedQueryTask(getActivity(), CurrentQuery, szQueryName).execute();
+            new AddCannedQueryTask(requireActivity(), CurrentQuery, szQueryName).execute();
 
         // in case things change before next time, clear out the cached arrays.
         m_rgac = null;
@@ -393,7 +392,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
             return;
         tl.removeAllViews();
 
-        LayoutInflater l = Objects.requireNonNull(getActivity()).getLayoutInflater();
+        LayoutInflater l = requireActivity().getLayoutInflater();
 
         assert listener != null;
 
@@ -531,7 +530,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
             return;
         tl.removeAllViews();
 
-        LayoutInflater l = Objects.requireNonNull(getActivity()).getLayoutInflater();
+        LayoutInflater l = requireActivity().getLayoutInflater();
 
         if (rgItems == null)
             rgItems = new CannedQuery[0];
@@ -545,11 +544,11 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 fCannedQueryClicked = true;
                 Intent i = new Intent();
                 i.putExtra(QUERY_TO_EDIT, o);
-                getActivity().setResult(Activity.RESULT_OK, i);
-                getActivity().finish();
+                requireActivity().setResult(Activity.RESULT_OK, i);
+                requireActivity().finish();
             });
             ImageButton btnDelete = tr.findViewById(R.id.btnDeleteNamedQuery);
-            btnDelete.setOnClickListener(view -> new AlertDialog.Builder(getActivity(), R.style.MFBDialog)
+            btnDelete.setOnClickListener(view -> new AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(R.string.lblConfirm)
                     .setMessage(R.string.fqQueryDeleteConfirm)
@@ -764,7 +763,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.flightquerymenu, menu);
     }
 
@@ -796,7 +795,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
 
     private void toggleHeader(View v, int idTarget) {
-        View vFocus = Objects.requireNonNull(getActivity()).getCurrentFocus();
+        View vFocus = requireActivity().getCurrentFocus();
         if (vFocus != null)
             vFocus.clearFocus();  // prevent scrolling to the top (where the first text box is)
         View target = findViewById(idTarget);
@@ -808,7 +807,7 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
         switch (id) {
             case R.id.btnfqDateEnd:
             case R.id.btnfqDateStart:
-                DlgDatePicker dlg = new DlgDatePicker(getActivity(),
+                DlgDatePicker dlg = new DlgDatePicker(requireActivity(),
                         DlgDatePicker.datePickMode.LOCALDATEONLY,
                         id == R.id.btnfqDateStart ?
                                 MFBUtil.LocalDateFromUTCDate(CurrentQuery.DateMin) :

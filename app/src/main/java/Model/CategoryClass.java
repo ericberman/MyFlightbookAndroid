@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 package Model;
 
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
 
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.R;
@@ -31,6 +30,8 @@ import org.ksoap2.serialization.SoapObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import androidx.annotation.NonNull;
 
 public class CategoryClass extends SoapableObject implements KvmSerializable, Serializable {
 

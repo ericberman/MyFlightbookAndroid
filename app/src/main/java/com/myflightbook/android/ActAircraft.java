@@ -25,10 +25,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,7 +45,6 @@ import com.myflightbook.android.WebServices.MFBSoap;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
 
 import Model.Aircraft;
 import Model.LazyThumbnailLoader;
@@ -57,6 +52,10 @@ import Model.LazyThumbnailLoader.ThumbnailedItem;
 import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBUtil;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.ListFragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActAircraft extends ListFragment implements OnItemClickListener, MFBMain.Invalidatable {
     private AircraftRowItem[] m_aircraftRows = null;
@@ -181,7 +180,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             RowType rt = RowType.values()[getItemViewType(position)];
 
             if (v == null || checkRowType(v) != rt) {
-                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.aircraft;
                 assert vi != null;
                 v = vi.inflate(layoutID, parent, false);
@@ -234,7 +233,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         super.onActivityCreated(savedInstanceState);
         MFBMain.registerNotifyResetAll(this);
 
-        SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
+        SwipeRefreshLayout srl = requireView().findViewById(R.id.swiperefresh);
         srl.setOnRefreshListener(() -> {
             srl.setRefreshing(false);
             refreshAircraft();
@@ -290,7 +289,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.aircraftmenu, menu);
     }
 
@@ -302,7 +301,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (!MFBSoap.IsOnline(getContext())) {
             MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
             return true;

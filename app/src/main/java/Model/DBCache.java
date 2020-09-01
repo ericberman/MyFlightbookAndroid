@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -105,6 +105,7 @@ public class DBCache {
                     dtLastRefresh = (DateFormat.getDateInstance()).parse(s);
                 }
 
+                assert dtLastRefresh != null;
                 long l = (dtNow.getTime() - dtLastRefresh.getTime() + ONE_HOUR) / (ONE_HOUR * 24);
 
                 if (l < CACHE_VALID_WINDOW)

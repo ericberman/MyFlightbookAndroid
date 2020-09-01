@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class LocSample extends LatLong {
@@ -113,11 +114,11 @@ public class LocSample extends LatLong {
             while ((szRow = r.readLine()) != null) {
                 rgszRow = szRow.split(",");
                 LocSample l = new LocSample(
-                        nf.parse(rgszRow[0]).doubleValue(),    // lat
-                        nf.parse(rgszRow[1]).doubleValue(), // lon
-                        nf.parse(rgszRow[2]).intValue(),    // alt
-                        nf.parse(rgszRow[3]).doubleValue(), // speed
-                        nf.parse(rgszRow[4]).doubleValue(), // error
+                        Objects.requireNonNull(nf.parse(rgszRow[0])).doubleValue(),    // lat
+                        Objects.requireNonNull(nf.parse(rgszRow[1])).doubleValue(), // lon
+                        Objects.requireNonNull(nf.parse(rgszRow[2])).intValue(),    // alt
+                        Objects.requireNonNull(nf.parse(rgszRow[3])).doubleValue(), // speed
+                        Objects.requireNonNull(nf.parse(rgszRow[4])).doubleValue(), // error
                         rgszRow[5]);
                 al.add(l);
             }

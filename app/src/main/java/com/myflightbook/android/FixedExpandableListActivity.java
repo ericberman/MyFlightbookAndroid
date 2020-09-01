@@ -4,8 +4,6 @@ package com.myflightbook.android;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -17,6 +15,10 @@ import android.widget.SimpleExpandableListAdapter;
 
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 /**
  * An activity that displays an expandable list of items by binding to a data
@@ -186,10 +188,10 @@ public class FixedExpandableListActivity extends AppCompatActivity implements
      * Ensures the expandable list view has been created before Activity restores all
      * of the view states.
      * 
-     *@see Activity#onRestoreInstanceState(Bundle)
+     *@see AppCompatActivity#onRestoreInstanceState(Bundle)
      */
     @Override
-    protected void onRestoreInstanceState(Bundle state) {
+    protected void onRestoreInstanceState(@NonNull Bundle state) {
         ensureList();
         super.onRestoreInstanceState(state);
     }
@@ -198,7 +200,7 @@ public class FixedExpandableListActivity extends AppCompatActivity implements
      * Updates the screen state (current list and other views) when the
      * content changes.
      * 
-     * @see Activity#onContentChanged()
+     * @see AppCompatActivity#onContentChanged()
      */
     @Override
     public void onContentChanged() {

@@ -26,10 +26,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -71,6 +67,10 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.ImageCacheCompleted;
 import Model.MFBUtil;
 import Model.PackAndGo;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.ListFragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActRecentsWS extends ListFragment implements OnItemSelectedListener, ImageCacheCompleted, MFBMain.Invalidatable {
 
@@ -122,7 +122,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 assert vi != null;
                 v = vi.inflate(R.layout.flightitem, parent, false);
             }
@@ -402,7 +402,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 
-        Intent i = Objects.requireNonNull(getActivity()).getIntent();
+        Intent i = requireActivity().getIntent();
         if (i != null) {
             Object o = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
             if (o != null)
@@ -411,7 +411,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
         fCouldBeMore = true;
 
-        SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
+        SwipeRefreshLayout srl = requireView().findViewById(R.id.swiperefresh);
         if (srl != null) {
             srl.setOnRefreshListener(() -> refreshRecentFlights(true));
         }
@@ -511,7 +511,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.recentswsmenu, menu);
     }
 
@@ -536,7 +536,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     }
 
     public void imgCompleted(MFBImageInfo sender) {
-        ((FlightAdapter) this.getListAdapter()).notifyDataSetChanged();
+        ((FlightAdapter) Objects.requireNonNull(this.getListAdapter())).notifyDataSetChanged();
     }
 
     public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,

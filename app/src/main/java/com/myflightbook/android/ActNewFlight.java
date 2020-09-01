@@ -33,9 +33,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ShareCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -95,6 +92,9 @@ import Model.MFBLocation;
 import Model.MFBUtil;
 import Model.PropertyTemplate;
 import Model.SunriseSunsetTimes;
+import androidx.annotation.NonNull;
+import androidx.core.app.ShareCompat;
+import androidx.core.content.ContextCompat;
 
 public class ActNewFlight extends ActMFBForm implements android.view.View.OnClickListener, MFBFlightListener.ListenerFragmentDelegate,
         DlgDatePicker.DateTimeUpdate, PropertyEdit.PropertyListener, ActMFBForm.GallerySource, CrossFillDelegate, MFBMain.Invalidatable {
@@ -225,7 +225,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         protected void onPostExecute(MFBSoap svc) {
             ActNewFlight act = m_ctxt.getCallingActivity();
             Context c = m_ctxt.getContext();
-            if (act == null || c == null || act.getActivity() == null || !act.isAdded() || act.isDetached())
+            if (act == null || c == null || !act.isAdded() || act.isDetached())
                 return;
 
             if ((Boolean) m_Result) {
@@ -251,7 +251,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     };
                     lelocal = m_le = null; // so that onPause won't cause it to be saved on finish() call.
                 }
-                new AlertDialog.Builder(act.getActivity(), R.style.MFBDialog)
+                new AlertDialog.Builder(act.requireActivity(), R.style.MFBDialog)
                         .setMessage(c.getString(R.string.txtSavedFlight))
                         .setTitle(c.getString(R.string.txtSuccess))
                         .setNegativeButton("OK", ocl)
@@ -292,7 +292,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 InputStream str = new java.net.URL(url).openStream();
                 bm = BitmapFactory.decodeStream(str);
             } catch (Exception e) {
-                Log.e(MFBConstants.LOG_TAG, e.getMessage());
+                Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(e.getMessage()));
             }
             return bm;
         }
@@ -334,8 +334,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             }
 
             ActNewFlight anf = m_ctxt.getCallingActivity();
-            if (anf == null || !anf.isAdded() || anf.isDetached() || anf.getActivity() == null)
+            if (anf == null || !anf.isAdded() || anf.isDetached()) {
                 return;
+            } else {
+                anf.requireActivity();
+            }
 
             Aircraft[] rgac = (Aircraft[]) m_Result;
             if (rgac == null)
@@ -392,7 +395,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         enableCrossFill(R.id.txtHobbsStart);
 
         findViewById(R.id.txtTotal).setOnLongClickListener(v -> {
-            Intent i = new Intent(getActivity(), ActTimeCalc.class);
+            Intent i = new Intent(requireActivity(), ActTimeCalc.class);
             i.putExtra(ActTimeCalc.INITIAL_TIME, DoubleFromField(R.id.txtTotal));
             startActivityForResult(i, ActTimeCalc.TIME_CALC_REQUEST_CODE);
             return true;
@@ -429,7 +432,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         findViewById(R.id.txtHobbsStart).setOnFocusChangeListener(s);
         findViewById(R.id.txtHobbsEnd).setOnFocusChangeListener(s);
 
-        Intent i = Objects.requireNonNull(getActivity()).getIntent();
+        Intent i = requireActivity().getIntent();
         int idFlightToView = i.getIntExtra(ActRecentsWS.VIEWEXISTINGFLIGHTID, 0);
         long idLocalFlightToView = i.getLongExtra(ActRecentsWS.VIEWEXISTINGFLIGHTLOCALID, 0);
         boolean fIsNewFlight = (idFlightToView == 0);
@@ -460,9 +463,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         if (fIsNewFlight) {
             // re-use the existing in-progress flight
-            m_le = MFBMain.getNewFlightListener().getInProgressFlight(getActivity());
+            m_le = MFBMain.getNewFlightListener().getInProgressFlight(requireActivity());
             MFBMain.registerNotifyResetAll(this);
-            SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences pref = requireActivity().getPreferences(Context.MODE_PRIVATE);
             Boolean fExpandCockpit = pref.getBoolean(m_KeyShowInCockpit, true);
             setExpandedState((TextView) findViewById(R.id.txtViewInTheCockpit), findViewById(R.id.sectInTheCockpit), fExpandCockpit, false);
         } else {
@@ -550,7 +553,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             }
             // Create a list of the aircraft to show, which are the ones that are not hidden OR the active one for the flight
             ArrayAdapter<Aircraft> adapter = new ArrayAdapter<>(
-                    Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgFilteredAircraft);
+                    requireActivity(), R.layout.mfbsimpletextitem, rgFilteredAircraft);
             spnAircraft.setAdapter(adapter);
             spnAircraft.setSelection(pos);
             // need to notifydatasetchanged or else setselection doesn't
@@ -568,7 +571,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         super.onResume();
 
         if (!AuthToken.FIsValid()) {
-            DlgSignIn d = new DlgSignIn(getActivity());
+            DlgSignIn d = new DlgSignIn(requireActivity());
             d.show();
         }
 
@@ -584,7 +587,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // Not sure why le can sometimes be empty here...
         if (m_le == null)
-            m_le = MFBMain.getNewFlightListener().getInProgressFlight(getActivity());
+            m_le = MFBMain.getNewFlightListener().getInProgressFlight(requireActivity());
 
         // show/hide GPS controls based on whether this is a new flight or existing.
         boolean fIsNewFlight = m_le.IsNewFlight();
@@ -592,7 +595,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         LinearLayout l = (LinearLayout) findViewById(R.id.sectGPS);
         l.setVisibility(fIsNewFlight ? View.VISIBLE : View.GONE);
 
-        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBLocation.HasGPS(Objects.requireNonNull(getContext())) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.btnAppendNearest).setVisibility(fIsNewFlight && MFBLocation.HasGPS(requireContext()) ? View.VISIBLE : View.GONE);
         ImageButton btnViewFlight = (ImageButton) findViewById(R.id.btnViewOnMap);
         btnViewFlight.setVisibility((MFBMain.HasMaps()) ? View.VISIBLE : View.GONE);
 
@@ -667,7 +670,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private void RestoreState() {
         try {
-            SharedPreferences mPrefs = Objects.requireNonNull(getActivity()).getPreferences(Activity.MODE_PRIVATE);
+            SharedPreferences mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
 
             ActNewFlight.fPaused = mPrefs.getBoolean(m_KeysIsPaused, false);
             ActNewFlight.dtPauseTime = mPrefs.getLong(m_KeysPausedTime, 0);
@@ -682,7 +685,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        SharedPreferences.Editor ed = Objects.requireNonNull(getActivity()).getPreferences(Activity.MODE_PRIVATE).edit();
+        SharedPreferences.Editor ed = requireActivity().getPreferences(Activity.MODE_PRIVATE).edit();
         ed.putBoolean(m_KeysIsPaused, ActNewFlight.fPaused);
         ed.putLong(m_KeysPausedTime, ActNewFlight.dtPauseTime);
         ed.putLong(m_KeysTimeOfLastPause, ActNewFlight.dtTimeOfLastPause);
@@ -696,7 +699,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // and we only want to save the current flightID if it is a new (not pending!) flight
         if (m_le.IsNewFlight())
-            MFBMain.getNewFlightListener().saveCurrentFlightId(getActivity());
+            MFBMain.getNewFlightListener().saveCurrentFlightId(requireActivity());
     }
 
     private void SetLogbookEntry(LogbookEntry le) {
@@ -710,7 +713,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         int idMenu;
         if (m_le != null) {
             if (m_le.IsExistingFlight())
@@ -727,14 +730,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.imagemenu, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Should never happen.
         if (m_le == null)
             return false;
@@ -752,7 +755,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 return true;
             case R.id.menuSignFlight:
                 try {
-                    ActWebView.ViewURL(getActivity(), String.format(Locale.US, MFBConstants.urlSign,
+                    ActWebView.ViewURL(requireActivity(), String.format(Locale.US, MFBConstants.urlSign,
                             MFBConstants.szIP,
                             m_le.idFlight,
                             URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
@@ -761,7 +764,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 }
                 return true;
             case R.id.btnDeleteFlight:
-                new AlertDialog.Builder(getActivity(), R.style.MFBDialog)
+                new AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.lblConfirmFlightDelete)
@@ -793,7 +796,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 choosePictureClicked();
                 return true;
             case R.id.menuChooseTemplate: {
-                Intent i = new Intent(getActivity(), ViewTemplatesActivity.class);
+                Intent i = new Intent(requireActivity(), ViewTemplatesActivity.class);
                 Bundle b = new Bundle();
                 b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, m_activeTemplates);
                 i.putExtras(b);
@@ -809,7 +812,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 FlightProperty.RewritePropertiesForFlight(leNew.idLocalDB, leNew.rgCustomProperties);
                 leNew.SyncProperties();
                 RecentFlightsSvc.ClearCachedFlights();
-                new AlertDialog.Builder(ActNewFlight.this.getActivity(), R.style.MFBDialog)
+                new AlertDialog.Builder(ActNewFlight.this.requireActivity(), R.style.MFBDialog)
                         .setMessage(getString(R.string.txtRepeatFlightComplete))
                         .setTitle(getString(R.string.txtSuccess))
                         .setNegativeButton("OK", (d, id) -> {
@@ -836,7 +839,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             return;
         }
 
-        ShareCompat.IntentBuilder.from(Objects.requireNonNull(getActivity()))
+        ShareCompat.IntentBuilder.from(requireActivity())
                 .setType("message/rfc822")
                 .setSubject(getString(R.string.sendFlightSubject))
                 .setText(String.format(Locale.getDefault(), getString(R.string.sendFlightBody), m_le.sendLink))
@@ -887,7 +890,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private Boolean checkGPSPermissions() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
 
         // Should we show an explanation?
@@ -973,7 +976,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     SetDateTime(id, m_le.dtFlightEnd, this, DlgDatePicker.datePickMode.UTCDATETIME);
                 break;
             case R.id.btnFlightSet:
-                DlgDatePicker dlg = new DlgDatePicker(getActivity(), DlgDatePicker.datePickMode.LOCALDATEONLY, m_le.dtFlight);
+                DlgDatePicker dlg = new DlgDatePicker(requireActivity(), DlgDatePicker.datePickMode.LOCALDATEONLY, m_le.dtFlight);
                 dlg.m_delegate = this;
                 dlg.m_id = id;
                 dlg.show();
@@ -985,13 +988,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 AppendNearest();
                 break;
             case R.id.btnAddApproach: {
-                Intent i = new Intent(getActivity(), ActAddApproach.class);
+                Intent i = new Intent(requireActivity(), ActAddApproach.class);
                 i.putExtra(ActAddApproach.AIRPORTSFORAPPROACHES, m_le.szRoute);
                 startActivityForResult(i, ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE);
             }
             break;
             case R.id.btnViewOnMap:
-                Intent i = new Intent(getActivity(), ActFlightMap.class);
+                Intent i = new Intent(requireActivity(), ActFlightMap.class);
                 i.putExtra(ActFlightMap.ROUTEFORFLIGHT, m_le.szRoute);
                 i.putExtra(ActFlightMap.EXISTINGFLIGHTID, m_le.IsExistingFlight() ? m_le.idFlight : 0);
                 i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsPendingFlight() ? m_le.idLocalDB : 0);
@@ -1007,7 +1010,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 boolean fExpandCockpit = target.getVisibility() != View.VISIBLE;
 
                 if (m_le != null && m_le.IsNewFlight()) {
-                    SharedPreferences.Editor e = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE).edit();
+                    SharedPreferences.Editor e = requireActivity().getPreferences(Context.MODE_PRIVATE).edit();
                     e.putBoolean(m_KeyShowInCockpit, fExpandCockpit);
                     e.apply();
                 }
@@ -1031,7 +1034,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             break;
             case R.id.txtSocialNetworkHint: {
                 String szURLProfile = MFBConstants.AuthRedirWithParams("d=profile&pane=social", getContext());
-                ActWebView.ViewURL(getActivity(), szURLProfile);
+                ActWebView.ViewURL(requireActivity(), szURLProfile);
             }
             default:
                 break;
@@ -1069,12 +1072,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     updateTemplatesForAircraft(true);
                     ToView();
                 } catch (ClassCastException ex) {
-                    Log.e(MFBConstants.LOG_TAG, ex.getMessage());
+                    Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getMessage()));
                 }
                 break;
             case ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE:
                 String approachDesc = data.getStringExtra(ActAddApproach.APPROACHDESCRIPTIONRESULT);
-                if (approachDesc.length() > 0) {
+                if (Objects.requireNonNull(approachDesc).length() > 0) {
                     m_le.AddApproachDescription(approachDesc);
 
                     int cApproachesToAdd = data.getIntExtra(ActAddApproach.APPROACHADDTOTOTALSRESULT, 0);
@@ -1091,7 +1094,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void ViewPropsForFlight() {
-        Intent i = new Intent(getActivity(), ActViewProperties.class);
+        Intent i = new Intent(requireActivity(), ActViewProperties.class);
         i.putExtra(PROPSFORFLIGHTID, m_le.idLocalDB);
         i.putExtra(PROPSFORFLIGHTEXISTINGID, m_le.idFlight);
         i.putExtra(PROPSFORFLIGHTCROSSFILLVALUE, m_le.decTotal);
@@ -1223,8 +1226,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private void SubmitFlight(Boolean fForcePending) {
         FromView();
 
-        Activity a = getActivity();
-        if (a != null && a.getCurrentFocus() != null)
+        Activity a = requireActivity();
+        if (a.getCurrentFocus() != null)
             a.getCurrentFocus().clearFocus();   // force any in-progress edit to commit, particularly for properties.
 
         Boolean fIsNew = m_le.IsNewFlight(); // hold onto this because we can change the status.
@@ -1250,7 +1253,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
             // Existing flights can't be saved for later.  No good reason for that except work.
             if (m_le.IsExistingFlight()) {
-                new AlertDialog.Builder(ActNewFlight.this.getActivity(), R.style.MFBDialog)
+                new AlertDialog.Builder(ActNewFlight.this.requireActivity(), R.style.MFBDialog)
                         .setMessage(getString(R.string.errNoInternetNoSave))
                         .setTitle(getString(R.string.txtError))
                         .setNegativeButton(getString(R.string.lblOK), (d, id) -> {
@@ -1287,7 +1290,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 ResetFlight(true);
                 MFBUtil.Alert(this, getString(R.string.txtSuccess), getString(R.string.txtSavedPendingFlight));
             } else {
-                new AlertDialog.Builder(ActNewFlight.this.getActivity(), R.style.MFBDialog)
+                new AlertDialog.Builder(ActNewFlight.this.requireActivity(), R.style.MFBDialog)
                         .setMessage(getString(R.string.txtSavedPendingFlight))
                         .setTitle(getString(R.string.txtSuccess))
                         .setNegativeButton("OK", (d, id) -> {
@@ -1361,12 +1364,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
             String szSigInfo1 = String.format(Locale.getDefault(),
                     getString(R.string.lblSignatureTemplate1),
-                    DateFormat.getDateFormat(getActivity()).format(m_le.signatureDate),
+                    DateFormat.getDateFormat(requireActivity()).format(m_le.signatureDate),
                     m_le.signatureCFIName);
             String szSigInfo2 = String.format(Locale.getDefault(),
                     getString(R.string.lblSignatureTemplate2),
                     m_le.signatureCFICert,
-                    DateFormat.getDateFormat(getActivity()).format(m_le.signatureCFIExpiration));
+                    DateFormat.getDateFormat(requireActivity()).format(m_le.signatureCFIExpiration));
             ((TextView) findViewById(R.id.txtSigInfo1)).setText(szSigInfo1);
             ((TextView) findViewById(R.id.txtSigInfo2)).setText(szSigInfo2);
             ((TextView) findViewById(R.id.txtSigComment)).setText(m_le.signatureComments);
@@ -1671,8 +1674,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     public void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc,
                              Boolean fRecording) {
-        if (!isAdded() || isDetached() || getActivity() == null)
+        if (!isAdded() || isDetached()) {
             return;
+        } else {
+            requireActivity();
+        }
 
         ShowRecordingIndicator();
 
@@ -1905,9 +1911,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void setUpPropertiesForFlight() {
-        Activity a = getActivity();
-        if (a == null)
-            return;
+        Activity a = requireActivity();
         LayoutInflater l = a.getLayoutInflater();
         TableLayout tl = (TableLayout) findViewById(R.id.tblPinnedProperties);
         if (tl == null)
@@ -1922,7 +1926,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le.rgCustomProperties == null)
             return;
 
-        HashSet<Integer> pinnedProps = CustomPropertyType.getPinnedProperties(getActivity().getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, Activity.MODE_PRIVATE));
+        HashSet<Integer> pinnedProps = CustomPropertyType.getPinnedProperties(requireActivity().getSharedPreferences(CustomPropertyType.prefSharedPinnedProps, Activity.MODE_PRIVATE));
         HashSet<Integer> templateProps = PropertyTemplate.mergeTemplates(m_activeTemplates.toArray(new PropertyTemplate[0]));
 
         CustomPropertyType[] rgcptAll = CustomPropertyTypesSvc.getCachedPropertyTypes();
@@ -2038,9 +2042,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     // region Templates
     private void updateTemplatesForAircraft(boolean noDefault) {
-        Activity a = getActivity();
-        if (a == null)
-            return;
+        Activity a = requireActivity();
         if (PropertyTemplate.sharedTemplates == null && PropertyTemplate.getSharedTemplates(a.getSharedPreferences(PropertyTemplate.PREF_KEY_TEMPLATES, Activity.MODE_PRIVATE)) == null)
             return;
 

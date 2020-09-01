@@ -35,6 +35,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.CannedQuery;
@@ -189,7 +190,7 @@ public class RecentFlightsSvc extends MFBSoap {
                     rgLocalIDs[i++] = c.getInt(c.getColumnIndex("_id"));
             }
         } catch (Exception ex) {
-            Log.e(MFBConstants.LOG_TAG, ex.getLocalizedMessage());
+            Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getLocalizedMessage()));
         }
 
         // now clean up the local ID's that were found

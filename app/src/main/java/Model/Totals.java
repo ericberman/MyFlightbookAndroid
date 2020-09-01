@@ -18,8 +18,6 @@
  */
 package Model;
 
-import android.support.annotation.NonNull;
-
 import org.ksoap2.serialization.SoapObject;
 
 import java.io.Serializable;
@@ -27,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Objects;
+
+import androidx.annotation.NonNull;
 
 public class Totals extends SoapableObject implements Serializable {
     public enum NumType {Integer, Decimal, Time, Currency}

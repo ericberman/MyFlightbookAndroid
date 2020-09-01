@@ -22,9 +22,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ListFragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,10 +33,11 @@ import android.widget.TextView;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 
-import java.util.Objects;
-
 import Model.MFBConstants;
 import Model.MFBUtil;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.ListFragment;
 
 public class ActTraining extends ListFragment implements OnItemClickListener {
 
@@ -82,7 +80,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 assert vi != null;
                 v = vi.inflate(R.layout.trainingitem, parent, false);
             }
@@ -146,7 +144,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
             return;
 
         if (m_rgTrainingItems[position].szURLDest.compareToIgnoreCase(endorseItem) == 0 &&
-                ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PERMISSION);
             return;
         }

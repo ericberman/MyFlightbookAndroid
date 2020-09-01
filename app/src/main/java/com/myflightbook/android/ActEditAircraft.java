@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -42,7 +41,6 @@ import com.myflightbook.android.WebServices.UTCDate;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import Model.Aircraft;
 import Model.Aircraft.PilotRole;
@@ -51,6 +49,7 @@ import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBUtil;
+import androidx.annotation.NonNull;
 
 public class ActEditAircraft extends ActMFBForm implements android.view.View.OnClickListener,
         DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource {
@@ -199,7 +198,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         AddListener(R.id.txtACMaintenance);
         AddListener(R.id.txtImageHeader);
 
-        Intent i = Objects.requireNonNull(getActivity()).getIntent();
+        Intent i = requireActivity().getIntent();
         int idAircraft = i.getIntExtra(AIRCRAFTID, 0);
         if (idAircraft > 0) {
             AircraftSvc acs = new AircraftSvc();
@@ -235,9 +234,9 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
+        MenuInflater inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.imagemenu, menu);
     }
 
@@ -457,7 +456,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.editaircraftmenu, menu);
     }
 

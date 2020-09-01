@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
@@ -11,13 +12,12 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_margin="4dp"
-        android:drawableStart="@drawable/icon"
         android:background="@color/colorDialog"
         android:shadowRadius="4.0"
         android:padding="5dp"
         android:drawablePadding="3dp"
         android:text="@string/noTotals"
-        />
+        app:drawableStartCompat="@drawable/icon" />
     <ListView
         android:id="@android:id/list"
         android:background="@drawable/roundedborder"

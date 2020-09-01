@@ -4,9 +4,6 @@ package com.myflightbook.android;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -23,7 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.Objects;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 public class ExpandableListFragment extends Fragment
     implements OnCreateContextMenuListener,
@@ -194,7 +193,6 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the position of the currently selected list item.
 */
-    @SuppressWarnings("unused")
     public int getSelectedItemPosition() {
         ensureList();
         return mExpandableList.getSelectedItemPosition();
@@ -203,7 +201,6 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the cursor row ID of the currently selected list item.
 */
-    @SuppressWarnings("unused")
     public long getSelectedItemId() {
         ensureList();
         return mExpandableList.getSelectedItemId();
@@ -212,7 +209,6 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the activity's list view widget.
 */
-    @SuppressWarnings("unused")
     public ExpandableListView getListView() {
         ensureList();
         return mExpandableList;
@@ -223,7 +219,6 @@ public class ExpandableListFragment extends Fragment
 * be shown when the list is empty. If you would like to have it
 * shown, call this method to supply the text it should use.
 */
-    @SuppressWarnings("unused")
     public void setEmptyText(CharSequence text) {
         ensureList();
         if (mStandardEmptyView == null) {
@@ -250,7 +245,6 @@ public class ExpandableListFragment extends Fragment
 * @param shown If true, the list view is shown; if false, the progress
 * indicator. The initial value is true.
 */
-    @SuppressWarnings("unused")
     public void setListShown(boolean shown) {
         setListShown(shown, true);
     }
@@ -259,7 +253,6 @@ public class ExpandableListFragment extends Fragment
 * Like {@link #setListShown(boolean)}, but no animation is used when
 * transitioning from the previous state.
 */
-    @SuppressWarnings("unused")
     public void setListShownNoAnimation(boolean shown) {
         setListShown(shown, false);
     }
@@ -313,7 +306,6 @@ public class ExpandableListFragment extends Fragment
     /**
 * Get the ListAdapter associated with this activity's ListView.
 */
-    @SuppressWarnings("unused")
     public ExpandableListAdapter getListAdapter() {
         return mAdapter;
     }
@@ -359,7 +351,7 @@ public class ExpandableListFragment extends Fragment
         mExpandableListShown = true;
         mExpandableList.setOnItemClickListener(mOnClickListener);
         // add invisible indicator
-        mExpandableList.setGroupIndicator(ContextCompat.getDrawable(Objects.requireNonNull(getContext()),  R.drawable.expander_group));
+        mExpandableList.setGroupIndicator(ContextCompat.getDrawable(requireContext(),  R.drawable.expander_group));
         if (mAdapter != null) {
             ExpandableListAdapter adapter = mAdapter;
             mAdapter = null;
@@ -384,7 +376,7 @@ public class ExpandableListFragment extends Fragment
 * {@inheritDoc}
 */
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenuInfo menuInfo) {
     }
 
     /**
@@ -427,7 +419,6 @@ public class ExpandableListFragment extends Fragment
 *
 */
 
-    @SuppressWarnings("unused")
     public void onContentChanged() {
 // super.onContentChanged();
         View v = getView();
@@ -468,7 +459,6 @@ public class ExpandableListFragment extends Fragment
 * Get the ExpandableListAdapter associated with this activity's
 * ExpandableListView.
 */
-    @SuppressWarnings("unused")
     public ExpandableListAdapter getExpandableListAdapter() {
         return mAdapter;
     }
@@ -478,7 +468,6 @@ public class ExpandableListFragment extends Fragment
 *
 * @return The ID of the currently selected group or child.
 */
-    @SuppressWarnings("unused")
     public long getSelectedId() {
         return mExpandableList.getSelectedId();
     }
@@ -494,7 +483,6 @@ public class ExpandableListFragment extends Fragment
 * @return A packed position representation containing the currently
 * selected group or child's position and type.
 */
-    @SuppressWarnings("unused")
     public long getSelectedPosition() {
         return mExpandableList.getSelectedPosition();
     }
@@ -510,7 +498,6 @@ public class ExpandableListFragment extends Fragment
 * it is collapsed.
 * @return Whether the selection was successfully set on the child.
 */
-    @SuppressWarnings("unused")
     public boolean setSelectedChild(int groupPosition, int childPosition, boolean shouldExpandGroup) {
         return mExpandableList.setSelectedChild(groupPosition, childPosition, shouldExpandGroup);
     }
@@ -519,7 +506,6 @@ public class ExpandableListFragment extends Fragment
 * Sets the selection to the specified group.
 * @param groupPosition The position of the group that should be selected.
 */
-    @SuppressWarnings("unused")
     public void setSelectedGroup(int groupPosition) {
         mExpandableList.setSelectedGroup(groupPosition);
     }

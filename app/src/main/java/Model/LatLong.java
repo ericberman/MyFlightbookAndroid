@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 package Model;
 
 import android.location.Location;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -30,8 +29,11 @@ import org.ksoap2.serialization.SoapObject;
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
 
 public class LatLong extends SoapableObject implements KvmSerializable, Serializable {
 
@@ -64,8 +66,8 @@ public class LatLong extends SoapableObject implements KvmSerializable, Serializ
         if (m.find()) {
             try {
                 LatLong ll = new LatLong();
-                ll.Latitude = Double.parseDouble(m.group(1)) * ((m.group(2).compareToIgnoreCase("N") == 0) ? 1 : -1);
-                ll.Longitude = Double.parseDouble(m.group(3)) * ((m.group(4).compareToIgnoreCase("E") == 0) ? 1 : -1);
+                ll.Latitude = Double.parseDouble(Objects.requireNonNull(m.group(1))) * ((Objects.requireNonNull(m.group(2)).compareToIgnoreCase("N") == 0) ? 1 : -1);
+                ll.Longitude = Double.parseDouble(Objects.requireNonNull(m.group(3))) * ((Objects.requireNonNull(m.group(4)).compareToIgnoreCase("E") == 0) ? 1 : -1);
                 return ll.IsValid() ? ll : null;
             } catch (Exception ex) {
                 return null;
@@ -108,7 +110,6 @@ public class LatLong extends SoapableObject implements KvmSerializable, Serializ
         return FPProp.values().length;
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         FPProp fp = FPProp.values()[i];
         switch (fp) {

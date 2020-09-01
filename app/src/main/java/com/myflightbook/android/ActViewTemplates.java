@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,10 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +45,10 @@ import Model.MFBConstants;
 import Model.MFBUtil;
 import Model.PropertyTemplate;
 import Model.TemplateGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.ListFragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActViewTemplates extends ListFragment implements OnItemClickListener {
     private enum RowType {DATA_ITEM, HEADER_ITEM}
@@ -135,7 +135,7 @@ public class ActViewTemplates extends ListFragment implements OnItemClickListene
             RowType rt = RowType.values()[getItemViewType(position)];
 
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.propertytemplateitem;
                 assert vi != null;
                 v = vi.inflate(layoutID, parent, false);
@@ -173,23 +173,23 @@ public class ActViewTemplates extends ListFragment implements OnItemClickListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Intent i = Objects.requireNonNull(getActivity()).getIntent();
+        Intent i = requireActivity().getIntent();
         try {
             Bundle b = i.getExtras();
             assert b != null;
             m_activeTemplates = (HashSet<PropertyTemplate>) b.getSerializable(ACTIVE_PROPERTYTEMPLATES);
         }
         catch (ClassCastException ex) {
-            Log.e(MFBConstants.LOG_TAG, ex.getMessage());
+            Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getMessage()));
         }
 
-        SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
+        SwipeRefreshLayout srl = requireView().findViewById(R.id.swiperefresh);
         srl.setOnRefreshListener(() -> {
             srl.setRefreshing(false);
             refresh();
         });
 
-        PropertyTemplate[] rgpt =PropertyTemplate.getSharedTemplates(getActivity().getSharedPreferences(PropertyTemplate.PREF_KEY_TEMPLATES, Activity.MODE_PRIVATE));
+        PropertyTemplate[] rgpt =PropertyTemplate.getSharedTemplates(requireActivity().getSharedPreferences(PropertyTemplate.PREF_KEY_TEMPLATES, Activity.MODE_PRIVATE));
         if (rgpt == null || rgpt.length == 0)
             refresh();
     }

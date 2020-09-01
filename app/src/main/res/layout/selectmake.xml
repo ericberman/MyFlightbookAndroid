@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="@string/lblAddMakes" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -27,5 +27,5 @@
             android:descendantFocusability="afterDescendants"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

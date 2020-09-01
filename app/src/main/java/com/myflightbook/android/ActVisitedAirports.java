@@ -24,8 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -53,6 +51,8 @@ import java.util.Objects;
 import Model.MFBUtil;
 import Model.PackAndGo;
 import Model.VisitedAirport;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActVisitedAirports extends ExpandableListFragment implements MFBMain.Invalidatable {
 
@@ -147,7 +147,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
 
     @Override
     // reuse currency menu here.
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.currencymenu, menu);
     }
 
@@ -208,7 +208,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         alAllAirports.add(hmAllAirports);
         childrenMaps.put(szKeyLast, alAllAirports);
 
-        String szRestrict = ((EditText) Objects.requireNonNull(getActivity()).findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
+        String szRestrict = ((EditText) requireActivity().findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
 
         // slice and dice into headers/first names
         for (int i = 0; i < visitedAirports.length; i++) {

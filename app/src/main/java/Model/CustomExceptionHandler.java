@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+
 public class CustomExceptionHandler implements UncaughtExceptionHandler {
 
     private final UncaughtExceptionHandler defaultUEH;
@@ -63,7 +65,7 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
         this.defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
     }
 
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(@NonNull Thread t, Throwable e) {
         Date dt = new Date();
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
@@ -108,6 +110,8 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
         new Thread(() -> {
                 File dir = new File(localPath);
                 File[] files = dir.listFiles();
+                if (files == null)
+                    return;
                 StringBuilder sb = new StringBuilder();
                 for (File f : files) {
                     if (!f.getName().endsWith(".stacktrace"))

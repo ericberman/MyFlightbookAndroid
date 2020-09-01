@@ -25,8 +25,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,12 +44,13 @@ import com.myflightbook.android.WebServices.MFBSoap;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import Model.CurrencyStatusItem;
 import Model.MFBConstants;
 import Model.MFBUtil;
 import Model.PackAndGo;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     private static boolean fNeedsRefresh = true;
@@ -140,7 +139,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
         if (tl == null)
             throw new NullPointerException("tl is null in BindTable (ActCurrency)!");
         tl.removeAllViews();
-        LayoutInflater l = Objects.requireNonNull(getActivity()).getLayoutInflater();
+        LayoutInflater l = requireActivity().getLayoutInflater();
 
         if (m_rgcsi == null)
             return;
@@ -253,7 +252,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.currencymenu, menu);
     }
 

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.myflightbook.android.MFBMain;
@@ -42,6 +41,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import androidx.annotation.NonNull;
 
 public class FlightProperty extends SoapableObject implements KvmSerializable, Serializable {
 
@@ -153,7 +154,6 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
         m_rgcptCached = CustomPropertyTypesSvc.getCachedPropertyTypes();
     }
 
-    @SuppressWarnings("unused")
     public String format(Boolean fLocal, Context c) {
         // try to find the custom property type if not already filled in.  This COULD miss
         if (m_cpt == null) {
@@ -269,7 +269,6 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
         return FPProp.values().length;
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int arg0, Hashtable h, PropertyInfo pi) {
         FPProp f = FPProp.values()[arg0];
         switch (f) {

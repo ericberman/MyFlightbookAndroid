@@ -35,7 +35,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Objects;
 
-public class DecimalEdit extends android.support.v7.widget.AppCompatEditText implements OnLongClickListener {
+public class DecimalEdit extends androidx.appcompat.widget.AppCompatEditText implements OnLongClickListener {
 
     public interface CrossFillDelegate {
         void CrossFillRequested(DecimalEdit sender);
@@ -168,7 +168,7 @@ public class DecimalEdit extends android.support.v7.widget.AppCompatEditText imp
                 }
             } else {
                 NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
-                return format.parse(sz).doubleValue();
+                return Objects.requireNonNull(format.parse(sz)).doubleValue();
             }
         } catch (Exception e) {
             return 0.0;

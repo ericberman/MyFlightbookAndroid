@@ -19,7 +19,6 @@
 package Model;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
 
 import com.myflightbook.android.R;
@@ -39,6 +38,7 @@ import java.util.Locale;
 import java.util.Vector;
 
 import Model.MFBImageInfo.PictureDestination;
+import androidx.annotation.NonNull;
 
 
 public class Aircraft extends SoapableObject implements KvmSerializable, Serializable, LazyThumbnailLoader.ThumbnailedItem {
@@ -430,8 +430,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    public void getPropertyInfo(int i, @SuppressWarnings("rawtypes") Hashtable h, PropertyInfo pi) {
+    public void getPropertyInfo(int i, Hashtable h, PropertyInfo pi) {
         AircraftProp ap = AircraftProp.values()[i];
         switch (ap) {
             case pidTailNumber:

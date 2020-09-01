@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ package Model;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
@@ -32,8 +31,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
+
+import androidx.annotation.NonNull;
 
 public class CustomPropertyType extends SoapableObject implements Comparable<CustomPropertyType>, Serializable, KvmSerializable {
     private static final long serialVersionUID = 1L;
@@ -198,7 +200,6 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         return cptPropID.values().length;
     }
 
-    @SuppressWarnings("rawtypes")
     public void getPropertyInfo(int arg0, Hashtable arg1, PropertyInfo pi) {
         cptPropID pid = cptPropID.values()[arg0];
         switch (pid) {
@@ -285,8 +286,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public static HashSet<Integer> getPinnedProperties(SharedPreferences pref) {
         Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
         HashSet<Integer> result = new HashSet<>();
-        assert stringVals != null;
-        for (String s : stringVals)
+        for (String s : Objects.requireNonNull(stringVals))
             result.add(Integer.parseInt(s));
         return result;
     }
@@ -301,6 +301,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
 
     public static void setPinnedProperty(SharedPreferences pref, int id) {
         Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
+        assert stringVals != null;
         HashSet<String> newSet = new HashSet<>(stringVals);
         newSet.add(String.format(Locale.US, "%d", id));
         SharedPreferences.Editor e = pref.edit();
@@ -312,8 +313,7 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
         Set<String> stringVals = pref.getStringSet(prefKeyPinnedProperties, new HashSet<>());
 
         String sRemove = String.format(Locale.US, "%d", id);
-        assert stringVals != null;
-        if (!stringVals.contains(sRemove))
+        if (!Objects.requireNonNull(stringVals).contains(sRemove))
             return;
 
         // Can't modify the returned set; need to create a new one.

@@ -30,11 +30,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +68,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Airport;
 import Model.FlightQuery;
@@ -84,6 +80,11 @@ import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBLocation;
 import Model.MFBUtil;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCheckedChangeListener, OnMapLongClickListener {
 
@@ -391,7 +392,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         try {
             mf.getMapAsync(this);
         } catch (Exception ex) {
-            Log.e(MFBConstants.LOG_TAG, ex.getLocalizedMessage());
+            Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getLocalizedMessage()));
         }
         return null;
     }

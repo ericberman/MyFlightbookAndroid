@@ -24,9 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,7 +45,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
@@ -57,6 +53,9 @@ import Model.MFBConstants;
 import Model.MFBUtil;
 import Model.PackAndGo;
 import Model.Totals;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.ListFragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ActTotals extends ListFragment implements MFBMain.Invalidatable, OnItemClickListener {
     private static boolean fNeedsRefresh = true;
@@ -150,14 +149,14 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 
-        Intent i = Objects.requireNonNull(getActivity()).getIntent();
+        Intent i = requireActivity().getIntent();
         if (i != null) {
             Object o = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
             if (o != null)
                 currentQuery = (FlightQuery) o;
         }
 
-        SwipeRefreshLayout srl = Objects.requireNonNull(getView()).findViewById(R.id.swiperefresh);
+        SwipeRefreshLayout srl = requireView().findViewById(R.id.swiperefresh);
         if (srl != null) {
             srl.setOnRefreshListener(() -> {
                 srl.setRefreshing(false);
@@ -235,7 +234,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
             RowType rt = RowType.values()[getItemViewType(position)];
             View v = convertView;
             if (v == null || checkViewType(convertView) != rt) {
-                LayoutInflater vi = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 assert vi != null;
                 int layoutID = (rt == RowType.HEADER_ITEM) ? R.layout.listviewsectionheader : R.layout.totalsitem;
                 v = vi.inflate(layoutID, parent, false);
@@ -323,7 +322,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.totalsmenu, menu);
     }
 

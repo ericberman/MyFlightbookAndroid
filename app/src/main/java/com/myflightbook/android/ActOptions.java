@@ -24,9 +24,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,7 +50,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import Model.Aircraft;
 import Model.Airport;
@@ -71,6 +67,9 @@ import Model.MFBUtil;
 import Model.PackAndGo;
 import Model.Totals;
 import Model.VisitedAirport;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
 
@@ -180,7 +179,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         AddListener(R.id.btnAdditionalOptions);
         AddListener(R.id.btnPackAndGo);
 
-        boolean fHasGPS = MFBLocation.HasGPS(Objects.requireNonNull(getContext()));
+        boolean fHasGPS = MFBLocation.HasGPS(requireContext());
         if (!fHasGPS)
             MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight = MFBLocation.fPrefRecordFlightHighRes = false;
 
@@ -237,27 +236,27 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 };
 
         Spinner sp = (Spinner) findViewById(R.id.spnAutoHobbs);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), R.layout.mfbsimpletextitem, rgAutoHobbs);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, rgAutoHobbs);
         sp.setAdapter(adapter);
         sp.setSelection(MFBLocation.fPrefAutoFillHobbs.ordinal());
         sp.setOnItemSelectedListener(this);
         sp.setPromptId(R.string.lblAutoFillOptions);
 
         sp = (Spinner) findViewById(R.id.spnAutoTime);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, rgAutoTotals);
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, rgAutoTotals);
         sp.setAdapter(adapter);
         sp.setSelection(MFBLocation.fPrefAutoFillTime.ordinal());
         sp.setOnItemSelectedListener(this);
         sp.setPromptId(R.string.lblAutoFillOptions);
 
         sp = (Spinner) findViewById(R.id.spnTOSpeed);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, MFBTakeoffSpeed.GetDisplaySpeeds().toArray(new String[0]));
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, MFBTakeoffSpeed.GetDisplaySpeeds().toArray(new String[0]));
         sp.setAdapter(adapter);
         sp.setSelection(MFBTakeoffSpeed.getTakeOffSpeedIndex());
         sp.setOnItemSelectedListener(this);
 
         sp = (Spinner) findViewById(R.id.spnNightDef);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, new String[] {
                 getString(R.string.lblOptNightDefinitionCivilTwilight),
                 getString(R.string.lblOptNightDefinitionSunset),
                 getString(R.string.lblOptNightDefinitionSunsetPlus15),
@@ -270,7 +269,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setPromptId(R.string.lblAutoFillOptions);
 
         sp = (Spinner) findViewById(R.id.spnNightMode);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, new String[] {
                 getString(R.string.lblNightModeAuto),
                 getString(R.string.lblNightModeOff),
                 getString(R.string.lblNightModeOn)
@@ -281,7 +280,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setPromptId(R.string.lblAutoFillOptions);
 
         sp = (Spinner) findViewById(R.id.spnNightLandingDef);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, new String[] {
                 getString(R.string.lblOptNightLandingsSunsetPlus1hour),
                 getString(R.string.lblOptNightLandingsNight)
         });
@@ -291,7 +290,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setPromptId(R.string.lblAutoFillOptions);
 
         sp = (Spinner) findViewById(R.id.spnFlightDetail);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, new String[] {
                 getString(R.string.lblFlightDetailLow), getString(R.string.lblFlightDetailMed), getString(R.string.lblFlightDetailHigh)
         });
         sp.setAdapter(adapter);
@@ -300,7 +299,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setPromptId(R.id.lblShowFlightTimes);
 
         sp = (Spinner) findViewById(R.id.spnAltUnits);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, new String[] {
               getString(R.string.lblOptUnitsFeet), getString(R.string.lblOptUnitsMeters)
         });
         sp.setAdapter(adapter);
@@ -308,7 +307,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setOnItemSelectedListener(this);
 
         sp = (Spinner) findViewById(R.id.spnSpeedUnits);
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.mfbsimpletextitem, new String[] {
+        adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, new String[] {
                 getString(R.string.lblOptUnitsKnots), getString(R.string.lblOptUnitsKPH), getString(R.string.lblOptUnitsMPH)
         });
         sp.setAdapter(adapter);
@@ -451,7 +450,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         }
 
         // Now delete the flight images that are not in our list
-        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.FlightImage, alImages, Objects.requireNonNull(getActivity()));
+        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.FlightImage, alImages, requireActivity());
 
         // Clean up any orphaned aircraft images
         // We can delete ALL aircraft images - if they weren't submitted, they aren't going to be picked up.
@@ -463,14 +462,14 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 mfbii.deleteFromDB();
 
         // now delete any remaining aircraft images that might be in our files.
-        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<>(), getActivity());
+        MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<>(), requireActivity());
 
         //noinspection ConstantConditions
         MFBUtil.Alert(this, getString(R.string.lblCleanup), getString(fOrphansFound ? R.string.errCleanupOrphansFound : R.string.txtCleanupComplete));
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.optionsmenu, menu);
     }
 
@@ -528,7 +527,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     }
 
     private Boolean checkGPSPermissions(int req) {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             return true;
 
         // Should we show an explanation?

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,9 +24,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -40,6 +37,9 @@ import android.widget.Toast;
 import java.io.File;
 
 import Model.MFBConstants;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 public class ActWebView extends AppCompatActivity {
 
@@ -68,7 +68,6 @@ public class ActWebView extends AppCompatActivity {
         wv.setWebChromeClient(new WebChromeClient() {
             // For 3.0+ Devices (Start)
             // onActivityResult attached before constructor
-            @SuppressWarnings("unused")
             protected void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType)
             {
                 mUploadMessage = uploadMsg;
@@ -104,7 +103,6 @@ public class ActWebView extends AppCompatActivity {
             }
 
             //For Android 4.1 only
-            @SuppressWarnings("unused")
             protected void openFileChooser(ValueCallback<Uri> uploadMsg, @SuppressWarnings("UnusedParameters") String acceptType, @SuppressWarnings("UnusedParameters") String capture)
             {
                 mUploadMessage = uploadMsg;
@@ -114,7 +112,6 @@ public class ActWebView extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "File Browser"), FILECHOOSER_RESULTCODE);
             }
 
-            @SuppressWarnings("unused")
             protected void openFileChooser(ValueCallback<Uri> uploadMsg)
             {
                 mUploadMessage = uploadMsg;
@@ -191,6 +188,7 @@ public class ActWebView extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
+        super.onActivityResult(requestCode, resultCode, intent);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
             if (requestCode == REQUEST_SELECT_FILE)

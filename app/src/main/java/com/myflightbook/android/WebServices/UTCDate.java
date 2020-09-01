@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ public class UTCDate {
     /**
      *
      */
-    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     static public TimeZone getUTCTimeZone() {

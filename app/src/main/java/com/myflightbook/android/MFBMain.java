@@ -39,13 +39,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -71,6 +64,13 @@ import Model.MFBLocation;
 import Model.MFBTakeoffSpeed;
 import Model.MFBUtil;
 import Model.Telemetry;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
@@ -115,7 +115,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     static private final String m_KeysNightLandingOption = "nightLandingOption";
 
     static private final String m_KeysNightMode = "nightModeOption";
-    static public int NightModePref = AppCompatDelegate.MODE_NIGHT_AUTO;
+    static public int NightModePref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
 
     static private final String m_TimeOfLastVacuum = "LastVacuum";
 
@@ -350,7 +350,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         if (nightMode != Configuration.UI_MODE_NIGHT_NO)
             new WebView(this);
 
-        MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_AUTO);
+        MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
 
         setContentView(R.layout.main);
@@ -745,13 +745,13 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         SaveState();
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         RestoreState();
     }
