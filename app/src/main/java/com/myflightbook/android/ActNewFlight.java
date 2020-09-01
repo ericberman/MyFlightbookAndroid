@@ -1752,6 +1752,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         }
     }
 
+    public boolean isPaused() {
+        return ActNewFlight.fPaused;
+    }
+
     public void togglePausePlay() {
         if (fPaused)
             unPauseFlight();
