@@ -105,7 +105,6 @@ public class MFBLocation implements LocationListener {
                             onLocationChanged((Location) l);
                     }
                 };
-            this.startListening(c);
         }
     }
 
@@ -153,9 +152,11 @@ public class MFBLocation implements LocationListener {
         }
     }
 
-    public MFBLocation(Context c) {
+    public MFBLocation(Context c, boolean fStartNow) {
         super();
         Init(c);
+        if (fStartNow)
+            startListening(c);
     }
 
     public void SetListener(FlightEvents l) {
@@ -167,6 +168,7 @@ public class MFBLocation implements LocationListener {
         super();
         m_Listener = l;
         Init(c);
+        startListening(c);
     }
 
     public Location CurrentLoc() {

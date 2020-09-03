@@ -453,7 +453,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
         // Set up the GPS service, but don't start it until OnResume
         if (MFBLocation.GetMainLocation() == null)
-            MFBLocation.setMainLocation(new MFBLocation(this));
+            MFBLocation.setMainLocation(new MFBLocation(this, false));
     }
 
     private void OpenRequestedTelemetry() {
@@ -582,7 +582,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
             return;
 
         if (MFBLocation.GetMainLocation() == null)
-            MFBLocation.setMainLocation(new MFBLocation(this));
+            MFBLocation.setMainLocation(new MFBLocation(this, true));
 
         if (MFBLocation.GetMainLocation() != null)
             MFBLocation.GetMainLocation().startListening(this);
