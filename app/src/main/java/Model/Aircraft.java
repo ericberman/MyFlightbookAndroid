@@ -109,7 +109,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     @NonNull
     @Override
     public String toString() {
-        return String.format("%s (%s)", TailNumber, ModelDescription);
+        return IsAnonymous() ? displayTailNumber() : String.format("%s (%s)", TailNumber, ModelDescription);
     }
 
     public Aircraft(SoapObject so) {
