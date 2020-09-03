@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,13 +29,54 @@ import android.widget.EditText;
 
 import com.myflightbook.android.WebServices.AircraftSvc;
 import com.myflightbook.android.WebServices.AuthToken;
+import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
 import com.myflightbook.android.WebServices.MFBSoap;
 
 import Model.Aircraft;
+import Model.AuthResult;
+import Model.CustomPropertyType;
 import Model.MFBConstants;
 import Model.MFBUtil;
 
 class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
+
+    private static class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
+        private ProgressDialog m_pd = null;
+        Boolean fAllowCache = true;
+        CustomPropertyType[] m_rgcpt;
+        final AsyncWeakContext<DlgSignIn> m_ctxt;
+
+        RefreshCPTTask(Context c, DlgSignIn d) {
+            super();
+            m_ctxt = new AsyncWeakContext<>(c, d);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            CustomPropertyTypesSvc cptSvc = new CustomPropertyTypesSvc();
+            m_rgcpt = cptSvc.GetCustomPropertyTypes(AuthToken.m_szAuthToken, fAllowCache, m_ctxt.getContext());
+            return m_rgcpt != null && m_rgcpt.length > 0;
+        }
+
+        protected void onPreExecute() {
+            Context c = m_ctxt.getContext();
+            if (c != null)
+                m_pd = MFBUtil.ShowProgress(c, c.getString(R.string.prgCPT));
+        }
+
+        protected void onPostExecute(Boolean b) {
+            DlgSignIn d = m_ctxt.getCallingActivity();
+            if (d != null)
+                d.dismiss();
+
+            try {
+                if (m_pd != null)
+                    m_pd.dismiss();
+            } catch (Exception e) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+            }
+        }
+    }
 
     private static class AircraftTask extends AsyncTask<String, Void, MFBSoap> {
         private Object m_Result = null;
@@ -64,9 +105,9 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
             DlgSignIn d = m_ctxt.getCallingActivity();
             if (c != null && (rgac == null || svc.getLastError().length() > 0)) {
                 MFBUtil.Alert(c, c.getString(R.string.txtError), svc.getLastError());
+                if (d != null)
+                    d.dismiss();
             }
-            if (d != null)
-                d.dismiss();
 
             try {
                 if (m_pd != null)
@@ -74,12 +115,15 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
             }
+
+            RefreshCPTTask cptTask = new RefreshCPTTask(c, d);
+            cptTask.execute();
         }
     }
 
     private static class SignInTask extends AsyncTask<String, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
-        Object m_Result = null;
+        AuthResult m_Result = null;
         final AuthToken m_Svc;
         final AsyncWeakContext<DlgSignIn> m_ctxt;
 
@@ -91,7 +135,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
         @Override
         protected MFBSoap doInBackground(String... params) {
-            m_Result = m_Svc.Authorize(params[0], params[1], m_ctxt.getContext());
+            m_Result = m_Svc.Authorize(params[0], params[1], params[2], m_ctxt.getContext());
             return m_Svc;
         }
 
@@ -105,14 +149,20 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
             if (c == null)
                 return;
 
-            if (((String) m_Result).length() == 0) {
-                MFBUtil.Alert(c, c.getString(R.string.txtError), svc.getLastError());
-                d.dismiss();
+            if (m_Result.authStatus == AuthResult.AuthStatus.TwoFactorCodeRequired) {
+                d.findViewById(R.id.layout2FA).setVisibility(View.VISIBLE);
+                d.findViewById(R.id.layoutCredentials).setVisibility(View.GONE);
             } else {
-                MFBMain.invalidateAll();
-                // now download aircraft
-                AircraftTask act = new AircraftTask(c, d);
-                act.execute();
+                if (m_Result.authStatus == AuthResult.AuthStatus.Success) {
+                    MFBMain.invalidateAll();
+                    // now download aircraft
+                    AircraftTask act = new AircraftTask(c, d);
+                    act.execute();
+                } else  {
+                    MFBUtil.Alert(c, c.getString(R.string.txtError), svc.getLastError());
+                    if (d.findViewById(R.id.layout2FA).getVisibility() != View.VISIBLE)
+                        d.dismiss();
+                }
             }
 
             try {
@@ -156,6 +206,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
         EditText txtUser = findViewById(R.id.editEmail);
         EditText txtPass = findViewById(R.id.editPass);
+        EditText txt2FA = findViewById(R.id.txt2FA);
 
         AuthToken at = new AuthToken();
         // make sure we don't use any existing credentials!!
@@ -166,6 +217,6 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
         ac.FlushCache();
 
         SignInTask st = new SignInTask(m_CallingContext == null ? this.getContext() : m_CallingContext, this, at);
-        st.execute(txtUser.getText().toString(), txtPass.getText().toString());
+        st.execute(txtUser.getText().toString(), txtPass.getText().toString(), txt2FA.getText().toString());
     }
 }
