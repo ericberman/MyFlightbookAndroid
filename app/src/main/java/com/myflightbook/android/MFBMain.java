@@ -277,21 +277,6 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         return "";
     }
 
-    private void refreshAuth() {
-        // finally, sign in if necessary.
-        // a) if we're already signed in, just go to the last tab.
-        // b) if we're not already signed in or need a refresh, refresh as necessary
-        // c) else, just go to the options tab to sign in from there.
-        AuthToken auth = new AuthToken();
-        if (!auth.HasValidCache()) {
-            mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
-            if (auth.FHasCredentials()) {
-                RefreshTask rt = new RefreshTask(getApplicationContext(), this);
-                rt.execute(auth);
-            }
-        }
-    }
-
     private void initDB(Boolean fRetryOnFailure) {
         SQLiteDatabase db = null;
 
@@ -428,8 +413,6 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
             m_fSeenWarning = true;
             SaveState();
         }
-
-        refreshAuth();
 
         OpenRequestedTelemetry();
 
@@ -593,11 +576,14 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
         fIsPaused = false;
         // check to see if we need to refresh auth.
-        AuthToken at = new AuthToken();
-        if (!at.HasValidCache()) {
-            RefreshTask rt = new RefreshTask(getApplicationContext(), this);
-            rt.execute(at);
-        }
+        // a) if we're already signed in, just go to the last tab.
+        // b) if we're not already signed in or need a refresh, refresh as necessary
+        // c) else, just go to the options tab to sign in from there.
+        AuthToken auth = new AuthToken();
+        if (!auth.HasValidCache())
+            mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
+
+        new RefreshTask(getApplicationContext(), this).execute((auth));
 
         // This is a hack, but we get a lot of crashes about too much time between startForegroundService being
         // called and startForeground being called.
@@ -628,7 +614,6 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     }
 
     private static class RefreshTask extends AsyncTask<AuthToken, Void, Boolean> {
-        private ProgressDialog m_pd;
         final AsyncWeakContext<MFBMain> m_ctxt;
 
         RefreshTask(Context c, MFBMain m) {
@@ -642,24 +627,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         }
 
         protected void onPreExecute() {
-            m_pd = MFBUtil.ShowProgress(m_ctxt.getCallingActivity(), m_ctxt.getContext().getString(R.string.prgSigningIn));
         }
 
         protected void onPostExecute(Boolean f) {
-            MFBMain m = m_ctxt.getCallingActivity();
-            if (m == null)
-                return;
-
-            if (f)
-                m.mTabHost.setCurrentTabByTag(m.mLastTab.tag);
-            else
-                m.mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
-            try {
-                if (m_pd != null)
-                    m_pd.dismiss();
-            } catch (Exception e) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-            }
         }
     }
 

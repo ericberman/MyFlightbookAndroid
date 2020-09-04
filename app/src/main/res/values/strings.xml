@@ -8,6 +8,9 @@
     <string name="UserName">Please type your email address:</string>
     <string name="Password">Please type your password</string>
     <string name="signin">Sign in</string>
+    <string name="TFATitle">Enter Authetication Code</string>
+    <string name="TFAWatermark">######</string>
+    <string name="TFAPrompt">Please enter the 6-digit code from your authenticator app</string>
 
     <string name="signInPrompt">You need to have an account on MyFlightbook.com to use MyFlightbook for Android.</string>
     <string name="statusNotSignedIn">You are not currently signed in.  Please sign in or create an account.</string>

@@ -5,34 +5,72 @@
     android:orientation="vertical"
     android:padding="5dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/UserName" />
+        android:orientation="vertical"
+        android:id="@+id/layoutCredentials">
 
-    <EditText
-        android:id="@+id/editEmail"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/lblEmail"
-        android:inputType="textEmailAddress"
-        android:padding="8sp"
-        android:text="" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/UserName" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:labelFor="@+id/editPass"
-        android:text="@string/Password" />
+        <EditText
+            android:id="@+id/editEmail"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/lblEmail"
+            android:inputType="textEmailAddress"
+            android:padding="8sp"
+            android:text=""
+            android:autofillHints="AUTOFILL_HINT_EMAIL_ADDRESS" />
 
-    <EditText
-        android:id="@id/editPass"
-        android:layout_width="fill_parent"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/editPass"
+            android:text="@string/Password" />
+
+        <EditText
+            android:id="@id/editPass"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:padding="8sp"
+            android:maxLines="1"
+            android:autofillHints="AUTOFILL_HINT_PASSWORD"
+            android:text="" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:padding="8sp"
-        android:maxLines="1"
-        android:text="" />
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:id="@+id/layout2FA">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/TFATitle"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/TFAPrompt"
+            />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/TFAWatermark"
+            android:id="@+id/txt2FA"
+            android:maxLines="1"
+            android:text=""
+            android:inputType="number"
+            android:autofillHints="AUTOFILL_TYPE_NONE"
+            android:padding="8sp"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import android.content.Context;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
+import Model.AuthResult;
 import Model.DBCache;
 
 
@@ -56,7 +57,45 @@ public class AuthToken extends MFBSoap {
         // we need to display UI to the user
         // try to authorize.  This will use cache if cache is valid, but will
         // attempt a refresh if possible.  Otherwise it is silent.
-        return FHasCredentials() && Authorize(m_szEmail, m_szPass, c).length() > 0;
+        if (!FHasCredentials() || m_szAuthToken == null || m_szAuthToken.length() == 0)
+            return false;
+
+        if (HasValidCache())
+            return true;
+
+        if (!MFBSoap.IsOnline(c))
+            return false;
+
+        // if it is invalid, or if it is valid but we should retry, try
+        // the SOAP call
+        SoapObject Request = setMethod("RefreshAuthToken");
+        Request.addProperty("szAppToken", APPTOKEN);
+        Request.addProperty("szUser", m_szEmail);
+        Request.addProperty("szPass", m_szPass);
+        Request.addProperty("szPreviousToken", m_szAuthToken);
+
+        try {
+            SoapPrimitive sp = (SoapPrimitive) Invoke(c);
+
+            String szResult = sp.toString();
+            if (szResult.length() == 0)
+                return false;
+
+            DBCache dbc = new DBCache();
+            m_szAuthToken = szResult;
+
+            // success!
+            dbc.updateCache(TABLE_AUTH);
+            if (dbc.errorString.length() > 0) {
+                setLastError(dbc.errorString);
+                return true;
+            }
+            return true;
+
+        } catch (Exception e) {
+            setLastError("Refresh auth failed.  Please check your email address and password.  " + getLastError());
+            return false;
+        }
     }
 
     public Boolean HasValidCache() {
@@ -68,19 +107,8 @@ public class AuthToken extends MFBSoap {
         return (dbcs == DBCache.DBCacheStatus.VALID && FIsValid());
     }
 
-    public String Authorize(String szUser, String szPass, Context c) {
+    public AuthResult Authorize(String szUser, String szPass, String sz2fa, Context c) {
         DBCache dbc = new DBCache();
-
-        DBCache.DBCacheStatus dbcs = dbc.Status(TABLE_AUTH);
-
-        if (dbc.errorString.length() > 0) {
-            setLastError(dbc.errorString);
-            return "";
-        }
-
-        // if the cached token is valid and unexpired, use it.
-        if (dbcs == DBCache.DBCacheStatus.VALID && FIsValid())
-            return m_szAuthToken;
 
         // flush the cache preemptively if the saved authtoken isn't actually valid
         // (i.e., even if it hasn't expired but for some reason has been deleted)
@@ -89,35 +117,32 @@ public class AuthToken extends MFBSoap {
 
         // if it is invalid, or if it is valid but we should retry, try
         // the SOAP call
-        SoapObject Request = setMethod("AuthTokenForUser");
+        SoapObject Request = setMethod("AuthTokenForUserNew");
         Request.addProperty("szAppToken", APPTOKEN);
         Request.addProperty("szUser", szUser);
         Request.addProperty("szPass", szPass);
+        Request.addProperty("sz2FactorAuth", sz2fa);
 
         m_szEmail = szUser;
         m_szPass = szPass;
 
+        AuthResult result;
         try {
-            SoapPrimitive sp = (SoapPrimitive) Invoke(c);
-            m_szAuthToken = sp.toString();
+            result = new AuthResult((SoapObject) Invoke(c));
 
-            // success!
-            dbc.updateCache(TABLE_AUTH);
-            if (dbc.errorString.length() > 0) {
-                setLastError(dbc.errorString);
-                return "";
+            if (result.authStatus == AuthResult.AuthStatus.Success) {
+                m_szAuthToken = result.authToken;
+                // success!
+                dbc.updateCache(TABLE_AUTH);
+                if (dbc.errorString.length() > 0) {
+                    setLastError(dbc.errorString);
+                }
             }
         } catch (Exception e) {
-            // if the cache is still valid, use it despite the failure.
-            if (dbcs == DBCache.DBCacheStatus.VALID_BUT_RETRY && m_szAuthToken.length() > 0)
-                return m_szAuthToken;
-
-            FlushCache(); // we may have been VALID_BUT_RETRY before, but we're invalid now.
+            result = new AuthResult();
             m_szAuthToken = "";
-            setLastError("Authentication failed.  Please check your email address and password.  " + getLastError());
-
         }
 
-        return m_szAuthToken;
+        return result;
     }
 }
