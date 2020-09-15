@@ -44,7 +44,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ImageView;
 
-import com.myflightbook.android.ActLocalVideo;
 import com.myflightbook.android.ActWebView;
 import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.R;
@@ -1005,10 +1004,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                     fos.close();
                     m_imgData = null;    // clean up for memory
                     System.gc();
-                    if (IsVideo())
-                        ActLocalVideo.ViewTempFile(a, fTemp);
-                    else
-                        ActWebView.ViewTempFile(a, fTemp);
+                    ActWebView.ViewTempFile(a, fTemp);
                 } catch (IOException e) {
                     Log.e(MFBConstants.LOG_TAG, "Error saving image full file: " + e.getMessage());
                     Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
