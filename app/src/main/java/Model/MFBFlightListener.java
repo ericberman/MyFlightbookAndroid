@@ -161,7 +161,7 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
         }
 
         // Issue #195 - don't accrue night flight if paused.
-        if (!m_leNewFlight.FlightInProgress() || m_delegate.isPaused())
+        if (!m_leNewFlight.FlightInProgress() || (m_delegate != null &&  m_delegate.isPaused()))
             return;
 
         double night = (ActNewFlight.accumulatedNight += t);
