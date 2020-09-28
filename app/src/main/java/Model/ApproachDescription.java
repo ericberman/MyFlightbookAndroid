@@ -64,7 +64,7 @@ public class ApproachDescription {
             "VOR/DME",
             "VOR/DME-ARC"};
 
-    public static final String[] ApproachSuffixes = {"", "-A", "-B", "-C", "-D", "-X", "-Y", "-Z"};
+    public static final String[] ApproachSuffixes = {"", "-A", "-B", "-C", "-D", "-V", "-W", "-X", "-Y", "-Z"};
 
     public static final String[] RunwayNames = {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
