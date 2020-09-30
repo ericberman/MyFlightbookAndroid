@@ -180,6 +180,9 @@ public class MFBLocation implements LocationListener {
     }
 
     public static boolean HasGPS(Context c) {
+        if (c == null)
+            return false;
+
         try {
             LocationManager lm = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
             assert lm != null;
