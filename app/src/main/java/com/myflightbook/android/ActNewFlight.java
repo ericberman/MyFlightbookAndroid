@@ -697,6 +697,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (!m_le.IsExistingFlight())
             m_le.ToDB();
 
+        if (getActivity() == null)  // sometimes not yet set up
+            return;
+
         // and we only want to save the current flightID if it is a new (not pending!) flight
         if (m_le.IsNewFlight())
             MFBMain.getNewFlightListener().saveCurrentFlightId(getActivity());
