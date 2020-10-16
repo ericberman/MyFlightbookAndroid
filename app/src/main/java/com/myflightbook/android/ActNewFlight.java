@@ -344,7 +344,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             if (rgac == null)
                 MFBUtil.Alert(anf, anf.getString(R.string.txtError), svc.getLastError());
             else {
-                anf.refreshAircraft(rgac);
+                anf.refreshAircraft(rgac, false);
             }
         }
     }
@@ -441,15 +441,22 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - onCreate - Viewing flight idflight=%d, idlocal=%d", idFlightToView, idLocalFlightToView));
 
-        ((Spinner) findViewById(R.id.spnAircraft)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
+        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Aircraft ac = (Aircraft) parent.getSelectedItem();
                 if (ac != null && m_le.idAircraft != ac.AircraftID) {
-                    FromView();
+                    if (ac.AircraftID == -1) {   // show all!
+                        refreshAircraft(m_rgac, true);
+                        sp.performClick();
+                    }
+                    else {
+                        FromView();
                         m_le.idAircraft = ac.AircraftID;
-                    updateTemplatesForAircraft(false);
-                    ToView();
+                        updateTemplatesForAircraft(false);
+                        ToView();
+                    }
                 }
             }
 
@@ -534,15 +541,27 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             if (!ac.HideFromSelection || (m_le != null && ac.AircraftID == m_le.idAircraft))
                 lst.add(ac);
         }
+
+        if (lst.size() == 0)
+            return m_rgac;
+
+        if (lst.size() != m_rgac.length) {    // some aircraft are filtered
+            // Issue #202 - add a "Show all Aircraft" option
+            Aircraft ac = new Aircraft();
+            ac.AircraftID = -1;
+            ac.ModelDescription = getString(R.string.fqShowAllAircraft);
+            ac.TailNumber = "#";
+            lst.add(ac);
+        }
         return lst.toArray(new Aircraft[0]);
     }
 
-    private  void refreshAircraft(Aircraft[] rgac) {
+    private  void refreshAircraft(Aircraft[] rgac, boolean fShowAll) {
         m_rgac = rgac;
 
         Spinner spnAircraft = (Spinner) findViewById(R.id.spnAircraft);
 
-        Aircraft[] rgFilteredAircraft = SelectibleAircraft();
+        Aircraft[] rgFilteredAircraft = fShowAll ? rgac : SelectibleAircraft();
         if (rgFilteredAircraft != null && rgFilteredAircraft.length > 0) {
             int pos = 0;
             for (int i = 0; i < rgFilteredAircraft.length; i++) {
@@ -551,6 +570,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     break;
                 }
             }
+
             // Create a list of the aircraft to show, which are the ones that are not hidden OR the active one for the flight
             ArrayAdapter<Aircraft> adapter = new ArrayAdapter<>(
                     requireActivity(), R.layout.mfbsimpletextitem, rgFilteredAircraft);
@@ -579,7 +599,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             Aircraft[] rgac = (new AircraftSvc()).getCachedAircraft();
             if (rgac != null)
                 m_rgac = rgac;
-            refreshAircraft(m_rgac);
+            refreshAircraft(m_rgac, false);
         }
 
         // fix up the link to the user's profile.
