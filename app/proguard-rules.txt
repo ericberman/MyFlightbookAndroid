@@ -77,12 +77,6 @@
  public static <fields>;
 }
 
--keep class android.support.v4.app.** { *; }
--keep class org.xmlpull.v2.XmlPullParser.** { *; }
--keep class java.nio.file.** { *; }
--keep interface android.support.v4.app.** { *; }
--keep class com.actionbarsherlock.** { *; }
--keep interface com.actionbarsherlock.** { *; }
 # The support library contains references to newer platform versions.
 # Don't warn about those in case this app is linking against an older
 # platform version. We know about them, and they are safe.
