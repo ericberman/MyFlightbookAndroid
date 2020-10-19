@@ -60,6 +60,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -107,7 +108,7 @@ public class ActMFBForm extends Fragment {
     private static class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         MFBImageInfo mfbii = null;
         final Boolean fGeoTag;
-        final Boolean fDeleteFileWhenDone;
+        public Boolean fDeleteFileWhenDone;
         final Boolean fAddToGallery;
         final Boolean m_fVideo;
         final AsyncWeakContext<ActMFBForm> m_ctxt;
@@ -191,7 +192,52 @@ public class ActMFBForm extends Fragment {
             cursor.close();
 
             AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo, this);
-            act.execute(szFilename);
+
+            if (szFilename == null || szFilename.length() == 0) { // try reading it into a temp file
+                InputStream in = null;
+                OutputStream o = null;
+                try {
+                    File fTemp = File.createTempFile("img", null, requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+                    fTemp.deleteOnExit();
+                    in = cr.openInputStream(selectedImage);
+                    o = new FileOutputStream(fTemp);
+
+                    byte[] rgBuffer = new byte[1024];
+
+                    int length;
+                    try {
+                        while ((length = in.read(rgBuffer)) > 0) {
+                            o.write(rgBuffer, 0, length);
+                        }
+                    } catch (IOException e) {
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                    }
+
+                    szFilename = fTemp.getAbsolutePath();
+                    act.fDeleteFileWhenDone = true; // delete the temp file when done.
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception ex) {
+                    Log.e(MFBConstants.LOG_TAG, "Error copying input telemetry to new flight: " + ex.getMessage());
+                }
+                finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException ignored) { }
+                    }
+                    if (o != null) {
+                        try {
+                            o.close();
+                        } catch (IOException ignored) { }
+                    }
+                }
+
+                if (szFilename == null || szFilename.length() == 0)
+                    return;
+            }
+
+            act.execute(szFilename == null || szFilename.length() == 0 ? selectedImage.toString() : szFilename);
         }
     }
 
