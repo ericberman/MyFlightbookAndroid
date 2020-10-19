@@ -39,7 +39,6 @@ public class MFBConstants {
     private static final String szIPRelease = "myflightbook.com";
 
     // Configuration constants
-    @SuppressWarnings("ConstantConditions")
     public static final String szIP = fIsDebug ? (fDebugLocal ? szIPDebug : szIPDebugRoam) : szIPRelease;
 
     // DB Versioning
@@ -75,10 +74,8 @@ public class MFBConstants {
 
     static final int FULL_STOP_SPEED = 5; // 5kts or less is full stop
 
-    @SuppressWarnings("ConstantConditions")
     static final double MIN_SAMPLE_RATE_TAXI = fIsDebug ? MIN_SAMPLE_RATE_TAXI_DEBUG
             : MIN_SAMPLE_RATE_TAXI_RELEASE;
-    @SuppressWarnings("ConstantConditions")
     public static final double MIN_SAMPLE_RATE_AIRBORNE = fIsDebug ? MIN_SAMPLE_RATE_AIRBORNE_DEBUG
             : MIN_SAMPLE_RATE_AIRBORNE_RELEASE;
 
