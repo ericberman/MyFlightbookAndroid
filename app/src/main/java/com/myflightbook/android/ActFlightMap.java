@@ -552,21 +552,18 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnUpdateMapRoute:
-                updateMapElements();
-                break;
-            case R.id.btnExportGPX:
-                if (!checkDocPermissions())
-                    return;
+        int id = v.getId();
+        if (id == R.id.btnUpdateMapRoute)
+            updateMapElements();
+        else if (id == R.id.btnExportGPX) {
+            if (!checkDocPermissions())
+                return;
 
-                if (m_GPXPath == null && m_le != null && !m_le.IsPendingFlight() && !m_le.IsNewFlight()) {
-                    SendGPXTask st = new SendGPXTask(this, this, m_le.idFlight);
-                    st.execute();
-                }
-                else
-                    sendGPX(m_GPXPath);
-                break;
+            if (m_GPXPath == null && m_le != null && !m_le.IsPendingFlight() && !m_le.IsNewFlight()) {
+                SendGPXTask st = new SendGPXTask(this, this, m_le.idFlight);
+                st.execute();
+            } else
+                sendGPX(m_GPXPath);
         }
     }
 

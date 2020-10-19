@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -66,20 +66,18 @@ class DlgImageComment extends Dialog implements android.view.View.OnClickListene
     }
 
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnOK:
-                m_mfbii.Comment = ((EditText) findViewById(R.id.txtComment)).getText().toString();
-                // Note that an image can be BOTH on the server AND local (Aircraft images).
-                if (m_mfbii.IsLocal())
-                    m_mfbii.toDB();
-                if (m_mfbii.IsOnServer()) {
-                    ImagesSvc is = new ImagesSvc();
-                    is.UpdateImageAnnotation(AuthToken.m_szAuthToken, m_mfbii, m_Context);
-                }
-                break;
-            case R.id.btnCancel:
-                break;
-        }
+        int id = v.getId();
+        if (id == R.id.btnOK) {
+            m_mfbii.Comment = ((EditText) findViewById(R.id.txtComment)).getText().toString();
+            // Note that an image can be BOTH on the server AND local (Aircraft images).
+            if (m_mfbii.IsLocal())
+                m_mfbii.toDB();
+            if (m_mfbii.IsOnServer()) {
+                ImagesSvc is = new ImagesSvc();
+                is.UpdateImageAnnotation(AuthToken.m_szAuthToken, m_mfbii, m_Context);
+            }
+        }  // else if (id == R.id.btnCancel) { }
+
         if (m_delegate != null)
             m_delegate.updateAnnotation(m_mfbii);
         dismiss();

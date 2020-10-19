@@ -366,43 +366,31 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         Spinner sp = (Spinner) parent;
         int i = sp.getSelectedItemPosition();
-        switch (sp.getId()) {
-            case R.id.spnAutoHobbs:
-                MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[i];
-                break;
-            case R.id.spnAutoTime:
-                MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[i];
-                break;
-            case R.id.spnTOSpeed:
-                MFBTakeoffSpeed.setTakeOffSpeedIndex(i);
-                break;
-            case R.id.spnNightDef:
-                MFBLocation.NightPref = MFBLocation.NightCriteria.values()[i];
-                break;
-            case R.id.spnNightLandingDef:
-                MFBLocation.NightLandingPref = MFBLocation.NightLandingCriteria.values()[i];
-                break;
-            case R.id.spnFlightDetail:
-                ActRecentsWS.flightDetail = ActRecentsWS.FlightDetail.values()[i];
-                break;
-            case R.id.spnNightMode:
-                if (MFBMain.NightModePref != i) {
-                    MFBMain.NightModePref = i;
-                    AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
-                    if (getActivity() != null) {
-                        getActivity().recreate();
-                    }
+        int spid = sp.getId();
+        if (spid == R.id.spnAutoHobbs)
+            MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[i];
+        else if (spid == R.id.spnAutoTime)
+            MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[i];
+        else if (spid == R.id.spnTOSpeed)
+            MFBTakeoffSpeed.setTakeOffSpeedIndex(i);
+        else if (spid == R.id.spnNightDef)
+            MFBLocation.NightPref = MFBLocation.NightCriteria.values()[i];
+        else if (spid == R.id.spnNightLandingDef)
+            MFBLocation.NightLandingPref = MFBLocation.NightLandingCriteria.values()[i];
+        else if (spid == R.id.spnFlightDetail)
+            ActRecentsWS.flightDetail = ActRecentsWS.FlightDetail.values()[i];
+        else if (spid == R.id.spnNightMode) {
+            if (MFBMain.NightModePref != i) {
+                MFBMain.NightModePref = i;
+                AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
+                if (getActivity() != null) {
+                    getActivity().recreate();
                 }
-                break;
-            case R.id.spnAltUnits:
-                altitudeUnits = AltitudeUnits.values()[i];
-                break;
-            case R.id.spnSpeedUnits:
-                speedUnits = SpeedUnits.values()[i];
-                break;
-            default:
-                break;
-        }
+            }
+        } else if (spid == R.id.spnAltUnits)
+            altitudeUnits = AltitudeUnits.values()[i];
+        else if (spid == R.id.spnSpeedUnits)
+            speedUnits = SpeedUnits.values()[i];
     }
 
     private void ContactUs() {
@@ -464,7 +452,6 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         // now delete any remaining aircraft images that might be in our files.
         MFBImageInfo.DeleteOrphansNotInList(PictureDestination.AircraftImage, new ArrayList<>(), requireActivity());
 
-        //noinspection ConstantConditions
         MFBUtil.Alert(this, getString(R.string.lblCleanup), getString(fOrphansFound ? R.string.errCleanupOrphansFound : R.string.txtCleanupComplete));
     }
 
@@ -476,19 +463,15 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuContact:
-                ContactUs();
-                break;
-            case R.id.menuFacebook:
-                ViewFacebook();
-                break;
-            case R.id.menuTwitter:
-                ViewTwitter();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        int id = item.getItemId();
+        if (id == R.id.menuContact)
+            ContactUs();
+        else if (id == R.id.menuFacebook)
+            ViewFacebook();
+        else if (id == R.id.menuTwitter)
+            ViewTwitter();
+        else
+            return super.onOptionsItemSelected(item);
         return true;
     }
 
@@ -536,86 +519,61 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
     }
 
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnSignIn:
-                DlgSignIn d = new DlgSignIn(getActivity());
-                d.setOnDismissListener((dialog) -> updateStatus());
-                d.show();
-                break;
-            case R.id.btnSignOut:
-                AuthToken.m_szAuthToken = AuthToken.m_szEmail = AuthToken.m_szPass = "";
-                new AuthToken().FlushCache();
-                new PackAndGo(getContext()).clearPackedData();
-                MFBMain.invalidateAll();
-                updateStatus();
-                break;
-            case R.id.btnCreateNewAccount: {
-                Intent i = new Intent(v.getContext(), ActNewUser.class);
-                startActivityForResult(i, 0);
-            }
-            break;
-            case R.id.ckAutodetect: {
-                CheckBox ck = (CheckBox) v;
-                boolean newState = ck.isChecked();
-                if (!newState || checkGPSPermissions(PERMISSION_REQUEST_AUTODETECT))
-                    MFBLocation.fPrefAutoDetect = newState;
-                else
-                    ck.setChecked(MFBLocation.fPrefAutoDetect = false);
-            }
-            break;
-            case R.id.ckRecord: {
-                CheckBox ck = (CheckBox) v;
-                boolean newState = ck.isChecked();
-                if (!newState || checkGPSPermissions(PERMISSION_REQUEST_RECORD))
-                    MFBLocation.fPrefRecordFlight = newState;
-                else
-                    ck.setChecked(MFBLocation.fPrefRecordFlight = false);
-            }
-            break;
-            case R.id.ckRecordHighRes:
-                MFBLocation.fPrefRecordFlightHighRes = ((CheckBox) v).isChecked();
-                break;
-            case R.id.ckHeliports:
-                Airport.fPrefIncludeHeliports = ((CheckBox) v).isChecked();
-                break;
-            case R.id.ckUseHHMM:
-                DecimalEdit.DefaultHHMM = ((CheckBox) v).isChecked();
-                break;
-            case R.id.ckUseLocalTime:
-                DlgDatePicker.fUseLocalTime = ((CheckBox) v).isChecked();
-                break;
-            case R.id.ckRoundNearestTenth:
-                MFBLocation.fPrefRoundNearestTenth = ((CheckBox) v).isChecked();
-                break;
-            case R.id.ckShowFlightImages:
-                ActRecentsWS.fShowFlightImages = ((CheckBox) v).isChecked();
-                break;
-            case R.id.btnContact:
-                this.ContactUs();
-                break;
-            case R.id.btnFacebook:
-                this.ViewFacebook();
-                break;
-            case R.id.btnTwitter:
-                this.ViewTwitter();
-                break;
-            case R.id.btnCleanUp:
-                CleanUp();
-                break;
-            case R.id.btnSupport:
-                ViewPreferences(MFBConstants.AuthRedirWithParams("d=donate", getContext(), false));
-                break;
-            case R.id.btnAdditionalOptions:
-                ViewPreferences(MFBConstants.AuthRedirWithParams("d=profile", getContext()));
-                break;
-            case R.id.btnFAQ:
-                ActWebView.ViewURL(getActivity(), MFBConstants.urlFAQ);
-                break;
-            case R.id.btnPackAndGo:
-                new PackData(getContext(), this).execute();
-                break;
-            default:
-                break;
-        }
+        int id = v.getId();
+        if (id == R.id.btnSignIn) {
+            DlgSignIn d = new DlgSignIn(getActivity());
+            d.setOnDismissListener((dialog) -> updateStatus());
+            d.show();
+        } else if (id == R.id.btnSignOut) {
+            AuthToken.m_szAuthToken = AuthToken.m_szEmail = AuthToken.m_szPass = "";
+            new AuthToken().FlushCache();
+            new PackAndGo(getContext()).clearPackedData();
+            MFBMain.invalidateAll();
+            updateStatus();
+        } else if (id == R.id.btnCreateNewAccount) {
+            Intent i = new Intent(v.getContext(), ActNewUser.class);
+            startActivityForResult(i, 0);
+        } else if (id == R.id.ckAutodetect) {
+            CheckBox ck = (CheckBox) v;
+            boolean newState = ck.isChecked();
+            if (!newState || checkGPSPermissions(PERMISSION_REQUEST_AUTODETECT))
+                MFBLocation.fPrefAutoDetect = newState;
+            else
+                ck.setChecked(MFBLocation.fPrefAutoDetect = false);
+        } else if (id == R.id.ckRecord) {
+            CheckBox ck = (CheckBox) v;
+            boolean newState = ck.isChecked();
+            if (!newState || checkGPSPermissions(PERMISSION_REQUEST_RECORD))
+                MFBLocation.fPrefRecordFlight = newState;
+            else
+                ck.setChecked(MFBLocation.fPrefRecordFlight = false);
+        } else if (id == R.id.ckRecordHighRes)
+            MFBLocation.fPrefRecordFlightHighRes = ((CheckBox) v).isChecked();
+        else if (id == R.id.ckHeliports)
+            Airport.fPrefIncludeHeliports = ((CheckBox) v).isChecked();
+        else if (id == R.id.ckUseHHMM)
+            DecimalEdit.DefaultHHMM = ((CheckBox) v).isChecked();
+        else if (id == R.id.ckUseLocalTime)
+            DlgDatePicker.fUseLocalTime = ((CheckBox) v).isChecked();
+        else if (id == R.id.ckRoundNearestTenth)
+            MFBLocation.fPrefRoundNearestTenth = ((CheckBox) v).isChecked();
+        else if (id == R.id.ckShowFlightImages)
+            ActRecentsWS.fShowFlightImages = ((CheckBox) v).isChecked();
+        else if (id == R.id.btnContact)
+            this.ContactUs();
+        else if (id == R.id.btnFacebook)
+            this.ViewFacebook();
+        else if (id == R.id.btnTwitter)
+            this.ViewTwitter();
+        else if (id == R.id.btnCleanUp)
+            CleanUp();
+        else if (id == R.id.btnSupport)
+            ViewPreferences(MFBConstants.AuthRedirWithParams("d=donate", getContext(), false));
+        else if (id == R.id.btnAdditionalOptions)
+            ViewPreferences(MFBConstants.AuthRedirWithParams("d=profile", getContext()));
+        else if (id == R.id.btnFAQ)
+            ActWebView.ViewURL(getActivity(), MFBConstants.urlFAQ);
+        else if (id == R.id.btnPackAndGo)
+            new PackData(getContext(), this).execute();
     }
 }

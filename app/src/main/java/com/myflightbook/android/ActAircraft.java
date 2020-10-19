@@ -306,18 +306,15 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
             return true;
         }
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuRefreshAircraft: {
-                refreshAircraft();
-            }
-            return true;
-            case R.id.menuNewAircraft:
-                AddAircraft();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+
+        if (item.getItemId() == R.id.menuRefreshAircraft)
+            refreshAircraft();
+        else if (item.getItemId() == R.id.menuNewAircraft)
+            AddAircraft();
+        else
+            return super.onOptionsItemSelected(item);
+
+        return true;
     }
 
     public void invalidate() {

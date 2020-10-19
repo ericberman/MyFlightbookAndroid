@@ -442,16 +442,13 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     }
 
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnMakeModel:
-                Intent i = new Intent(getActivity(), ActSelectMake.class);
-                i.putExtra(MODELFORAIRCRAFT, m_ac.ModelID);
-                startActivityForResult(i, SELECT_MAKE_ACTIVITY_REQUEST_CODE);
-                break;
-            case R.id.ckAnonymous:
-                toggleAnonymous((CheckBox) v);
-                break;
-        }
+        int id = v.getId();
+        if (id == R.id.btnMakeModel) {
+            Intent i = new Intent(getActivity(), ActSelectMake.class);
+            i.putExtra(MODELFORAIRCRAFT, m_ac.ModelID);
+            startActivityForResult(i, SELECT_MAKE_ACTIVITY_REQUEST_CODE);
+        } else if (id == R.id.ckAnonymous)
+            toggleAnonymous((CheckBox) v);
     }
 
     public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
@@ -474,24 +471,22 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuChoosePicture:
-                ChoosePicture();
-                return true;
-            case R.id.menuTakePicture:
-                TakePicture();
-                return true;
-            case R.id.menuAddAircraft:
-                fromView();
+        int id = item.getItemId();
+        if (id == R.id.menuChoosePicture)
+            ChoosePicture();
+        else if (id == R.id.menuTakePicture)
+            TakePicture();
+        else if (id == R.id.menuAddAircraft) {
+            fromView();
 
-                if (m_ac.FIsValid(getContext())) {
-                    SaveAircraftTask st = new SaveAircraftTask(getActivity(), m_ac, this);
-                    st.execute(m_ac);
-                } else
-                    MFBUtil.Alert(this, getString(R.string.txtError), m_ac.ErrorString);
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+            if (m_ac.FIsValid(getContext())) {
+                SaveAircraftTask st = new SaveAircraftTask(getActivity(), m_ac, this);
+                st.execute(m_ac);
+            } else
+                MFBUtil.Alert(this, getString(R.string.txtError), m_ac.ErrorString);
+        } else
+            return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
@@ -503,14 +498,9 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuAddComment:
-            case R.id.menuDeleteImage:
-            case R.id.menuViewImage:
-                return onImageContextItemSelected(item, this);
-            default:
-                break;
-        }
+        int id = item.getItemId();
+        if (id == R.id.menuAddComment || id == R.id.menuDeleteImage || id == R.id.menuViewImage)
+            return onImageContextItemSelected(item, this);
         return true;
     }
 

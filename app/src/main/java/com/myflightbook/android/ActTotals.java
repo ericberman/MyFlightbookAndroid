@@ -328,22 +328,19 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuRefresh:
-                Refresh(true);
-                return true;
-            case R.id.findFlights:
-                if (MFBSoap.IsOnline(getContext())) {
-                    Intent i = new Intent(getActivity(), FlightQueryActivity.class);
-                    i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
-                    startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
-                } else
-                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        int id = item.getItemId();
+        if (id == R.id.menuRefresh)
+            Refresh(true);
+        else if (id == R.id.findFlights) {
+            if (MFBSoap.IsOnline(getContext())) {
+                Intent i = new Intent(getActivity(), FlightQueryActivity.class);
+                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
+                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+            } else
+                MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+        } else
+            return super.onOptionsItemSelected(item);
+        return true;
     }
 
     public void onResume() {

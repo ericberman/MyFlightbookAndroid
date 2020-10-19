@@ -72,23 +72,20 @@ public class ActTimeCalc extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnCopySegement:
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                String s = DecimalEdit.StringForMode(ComputedTotal(), DecimalEdit.DefaultHHMM ? DecimalEdit.EditMode.HHMM : DecimalEdit.EditMode.DECIMAL);
-                if (clipboard != null) {
-                    clipboard.setPrimaryClip(ClipData.newPlainText("total", s));
-                }
-                break;
-            case R.id.btnAddSegment:
-                addSpecifiedTime();
-                updateEquationString();
-                break;
-            case R.id.btnAddAndUpdate:
-                addSpecifiedTime();
-                returnValue(ComputedTotal());
-                super.onBackPressed();
-                break;
+        int id = v.getId();
+        if (id == R.id.btnCopySegement) {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            String s = DecimalEdit.StringForMode(ComputedTotal(), DecimalEdit.DefaultHHMM ? DecimalEdit.EditMode.HHMM : DecimalEdit.EditMode.DECIMAL);
+            if (clipboard != null) {
+                clipboard.setPrimaryClip(ClipData.newPlainText("total", s));
+            }
+        } else if (id == R.id.btnAddSegment) {
+            addSpecifiedTime();
+            updateEquationString();
+        } else if (id == R.id.btnAddAndUpdate) {
+            addSpecifiedTime();
+            returnValue(ComputedTotal());
+            super.onBackPressed();
         }
     }
 

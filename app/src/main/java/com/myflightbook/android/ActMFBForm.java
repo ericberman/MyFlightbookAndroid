@@ -337,44 +337,42 @@ public class ActMFBForm extends Fragment {
 
         final MFBImageInfo mfbii = mfbiiLastClicked;
 
-        switch (item.getItemId()) {
-            case R.id.menuAddComment:
-                DlgImageComment dlgComment = new DlgImageComment(requireActivity(),
-                        mfbii, (mfbii2) -> setUpImageGallery(src.getGalleryID(), src.getImages(), src.getGalleryHeader()));
-                dlgComment.show();
-                break;
-            case R.id.menuDeleteImage:
-                new AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(R.string.lblConfirm)
-                        .setMessage(R.string.lblConfirmImageDelete)
-                        .setPositiveButton(R.string.lblOK, (dialog, which) -> {
-                            // Image can be both local AND on server (aircraft)
-                            // Need to delete in both places, as appropriate.
-                            if (mfbii.IsLocal())
-                                mfbii.deleteFromDB();
-                            if (mfbii.IsOnServer()) {
-                                ImagesSvc is = new ImagesSvc();
-                                is.DeleteImage(AuthToken.m_szAuthToken, mfbii, getContext());
-                            }
+        int id = item.getItemId();
 
-                            // Now remove this from the existing images in the source
-                            ArrayList<MFBImageInfo> alNewImages = new ArrayList<>();
-                            MFBImageInfo[] rgMfbii = src.getImages();
-                            for (MFBImageInfo m : rgMfbii) // re-add images that are NOT the one being deleted
-                                if (mfbii.getID() != m.getID() || m.ThumbnailFile.compareTo(mfbii.ThumbnailFile) != 0)
-                                    alNewImages.add(m);
-                            src.setImages(alNewImages.toArray(new MFBImageInfo[0]));
+        if (id == R.id.menuAddComment) {
+            DlgImageComment dlgComment = new DlgImageComment(requireActivity(),
+                    mfbii, (mfbii2) -> setUpImageGallery(src.getGalleryID(), src.getImages(), src.getGalleryHeader()));
+            dlgComment.show();
+        } else if (id == R.id.menuDeleteImage) {
+            new AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle(R.string.lblConfirm)
+                    .setMessage(R.string.lblConfirmImageDelete)
+                    .setPositiveButton(R.string.lblOK, (dialog, which) -> {
+                        // Image can be both local AND on server (aircraft)
+                        // Need to delete in both places, as appropriate.
+                        if (mfbii.IsLocal())
+                            mfbii.deleteFromDB();
+                        if (mfbii.IsOnServer()) {
+                            ImagesSvc is = new ImagesSvc();
+                            is.DeleteImage(AuthToken.m_szAuthToken, mfbii, getContext());
+                        }
 
-                            setUpImageGallery(src.getGalleryID(), src.getImages(), src.getGalleryHeader());
-                        })
-                        .setNegativeButton(R.string.lblCancel, null)
-                        .show();
-                break;
-            case R.id.menuViewImage:
-                mfbii.ViewFullImageInWebView(requireActivity());
-                break;
-        }
+                        // Now remove this from the existing images in the source
+                        ArrayList<MFBImageInfo> alNewImages = new ArrayList<>();
+                        MFBImageInfo[] rgMfbii = src.getImages();
+                        for (MFBImageInfo m : rgMfbii) // re-add images that are NOT the one being deleted
+                            if (mfbii.getID() != m.getID() || m.ThumbnailFile.compareTo(mfbii.ThumbnailFile) != 0)
+                                alNewImages.add(m);
+                        src.setImages(alNewImages.toArray(new MFBImageInfo[0]));
+
+                        setUpImageGallery(src.getGalleryID(), src.getImages(), src.getGalleryHeader());
+                    })
+                    .setNegativeButton(R.string.lblCancel, null)
+                    .show();
+        } else if (id == R.id.menuViewImage)
+            mfbii.ViewFullImageInWebView(requireActivity());
+
         mfbiiLastClicked = null;
         return true;
     }

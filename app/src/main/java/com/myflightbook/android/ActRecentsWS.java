@@ -518,21 +518,19 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.refreshRecents:
-                refreshRecentFlights(true);
-                return true;
-            case R.id.findFlights:
-                if (MFBSoap.IsOnline(getContext())) {
-                    Intent i = new Intent(getActivity(), FlightQueryActivity.class);
-                    i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
-                    startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
-                } else
-                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        int id = item.getItemId();
+        if (id == R.id.refreshRecents)
+            refreshRecentFlights(true);
+        else if (id == R.id.findFlights) {
+            if (MFBSoap.IsOnline(getContext())) {
+                Intent i = new Intent(getActivity(), FlightQueryActivity.class);
+                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
+                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+            } else
+                MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+        } else
+            return super.onOptionsItemSelected(item);
+        return true;
     }
 
     public void imgCompleted(MFBImageInfo sender) {

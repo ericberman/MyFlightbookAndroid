@@ -767,26 +767,22 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // Handle item selection
         int menuId = item.getItemId();
-        switch (menuId) {
-            case R.id.menuUploadLater:
+        if (menuId == R.id.menuUploadLater)
                 SubmitFlight(true);
-                return true;
-            case R.id.menuResetFlight:
-                if (m_le.idLocalDB > 0)
-                    m_le.DeletePendingFlight();
-                ResetFlight(false);
-                return true;
-            case R.id.menuSignFlight:
-                try {
-                    ActWebView.ViewURL(requireActivity(), String.format(Locale.US, MFBConstants.urlSign,
-                            MFBConstants.szIP,
-                            m_le.idFlight,
-                            URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
-                            MFBConstants.NightParam(getContext())));
-                } catch (UnsupportedEncodingException ignored) {
-                }
-                return true;
-            case R.id.btnDeleteFlight:
+        else if (menuId == R.id.menuResetFlight) {
+            if (m_le.idLocalDB > 0)
+                m_le.DeletePendingFlight();
+            ResetFlight(false);
+        } else if (menuId == R.id.menuSignFlight) {
+            try {
+                ActWebView.ViewURL(requireActivity(), String.format(Locale.US, MFBConstants.urlSign,
+                        MFBConstants.szIP,
+                        m_le.idFlight,
+                        URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
+                        MFBConstants.NightParam(getContext())));
+            } catch (UnsupportedEncodingException ignored) {
+            }
+        } else if (menuId == R.id.btnDeleteFlight)
                 new AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.lblConfirm)
@@ -804,30 +800,21 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         })
                         .setNegativeButton(R.string.lblCancel, null)
                         .show();
-                return true;
-            case R.id.btnSubmitFlight:
-            case R.id.btnUpdateFlight:
+            else if (menuId == R.id.btnSubmitFlight || menuId == R.id.btnUpdateFlight)
                 SubmitFlight(false);
-                return true;
-            case R.id.menuTakePicture:
+            else if (menuId == R.id.menuTakePicture)
                 takePictureClicked();
-                return true;
-            case R.id.menuTakeVideo:
+            else if (menuId == R.id.menuTakeVideo)
                 takeVideoClicked();
-                return true;
-            case R.id.menuChoosePicture:
+            else if (menuId == R.id.menuChoosePicture)
                 choosePictureClicked();
-                return true;
-            case R.id.menuChooseTemplate: {
+            else if (menuId == R.id.menuChooseTemplate) {
                 Intent i = new Intent(requireActivity(), ViewTemplatesActivity.class);
                 Bundle b = new Bundle();
                 b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, m_activeTemplates);
                 i.putExtras(b);
                 startActivityForResult(i, CHOOSE_TEMPLATE_ACTIVITY_REQUEST_CODE);
-            }
-                return true;
-            case R.id.menuRepeatFlight:
-            case R.id.menuReverseFlight: {
+            } else if (menuId == R.id.menuRepeatFlight || menuId == R.id.menuReverseFlight) {
                 assert m_le != null;
                 LogbookEntry leNew = (menuId == R.id.menuRepeatFlight) ? m_le.Clone() : m_le.CloneAndReverse();
                 leNew.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;
@@ -844,16 +831,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         })
                         .create().show();
                 return true;
-            }
-            case R.id.menuSendFlight:
+            } else if (menuId == R.id.menuSendFlight)
                 sendFlight();
-                return true;
-            case R.id.menuShareFlight:
+            else if (menuId == R.id.menuShareFlight)
                 shareFlight();
-                return true;
-            default:
+            else
                 return super.onOptionsItemSelected(item);
-        }
+
+        return true;
     }
 
     private void sendFlight() {
@@ -886,14 +871,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuAddComment:
-            case R.id.menuDeleteImage:
-            case R.id.menuViewImage:
-                return onImageContextItemSelected(item, this);
-            default:
-                break;
-        }
+        int menuID = item.getItemId();
+
+        if (menuID == R.id.menuAddComment || menuID == R.id.menuDeleteImage || menuID == R.id.menuViewImage)
+            return onImageContextItemSelected(item, this);
         return true;
     }
 
@@ -969,98 +950,75 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public void onClick(View v) {
         FromView();
         int id = v.getId();
-        switch (id) {
-            case R.id.btnEngineStartSet:
-                if (!m_le.isKnownEngineStart()) {
-                    m_le.dtEngineStart = MFBUtil.nowWith0Seconds();
-                    EngineStart();
-                } else
-                    SetDateTime(id, m_le.dtEngineStart, this, DlgDatePicker.datePickMode.UTCDATETIME);
-                break;
-            case R.id.btnEngineEndSet:
-                if (!m_le.isKnownEngineEnd()) {
-                    m_le.dtEngineEnd = MFBUtil.nowWith0Seconds();
-                    EngineStop();
-                } else
-                    SetDateTime(id, m_le.dtEngineEnd, this, DlgDatePicker.datePickMode.UTCDATETIME);
-                break;
-            case R.id.btnFlightStartSet:
-                if (!m_le.isKnownFlightStart()) {
-                    m_le.dtFlightStart = MFBUtil.nowWith0Seconds();
-                    FlightStart();
-                } else
-                    SetDateTime(id, m_le.dtFlightStart, this, DlgDatePicker.datePickMode.UTCDATETIME);
-                break;
-            case R.id.btnFlightEndSet:
-                if (!m_le.isKnownFlightEnd()) {
-                    m_le.dtFlightEnd = MFBUtil.nowWith0Seconds();
-                    FlightStop();
-                } else
-                    SetDateTime(id, m_le.dtFlightEnd, this, DlgDatePicker.datePickMode.UTCDATETIME);
-                break;
-            case R.id.btnFlightSet:
-                DlgDatePicker dlg = new DlgDatePicker(requireActivity(), DlgDatePicker.datePickMode.LOCALDATEONLY, m_le.dtFlight);
-                dlg.m_delegate = this;
-                dlg.m_id = id;
-                dlg.show();
-                break;
-            case R.id.btnProps:
-                ViewPropsForFlight();
-                break;
-            case R.id.btnAppendNearest:
-                AppendNearest();
-                break;
-            case R.id.btnAddApproach: {
-                Intent i = new Intent(requireActivity(), ActAddApproach.class);
-                i.putExtra(ActAddApproach.AIRPORTSFORAPPROACHES, m_le.szRoute);
-                startActivityForResult(i, ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE);
-            }
-            break;
-            case R.id.btnViewOnMap:
-                Intent i = new Intent(requireActivity(), ActFlightMap.class);
-                i.putExtra(ActFlightMap.ROUTEFORFLIGHT, m_le.szRoute);
-                i.putExtra(ActFlightMap.EXISTINGFLIGHTID, m_le.IsExistingFlight() ? m_le.idFlight : 0);
-                i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsPendingFlight() ? m_le.idLocalDB : 0);
-                i.putExtra(ActFlightMap.NEWFLIGHTID, m_le.IsNewFlight() ? LogbookEntry.ID_NEW_FLIGHT : 0);
-                i.putExtra(ActFlightMap.ALIASES, "");
-                startActivityForResult(i, ActFlightMap.REQUEST_ROUTE);
-                break;
-            case R.id.btnPausePlay:
-                toggleFlightPause();
-                break;
-            case R.id.txtViewInTheCockpit: {
-                View target = findViewById(R.id.sectInTheCockpit);
-                boolean fExpandCockpit = target.getVisibility() != View.VISIBLE;
+        if (id == R.id.btnEngineStartSet) {
+            if (!m_le.isKnownEngineStart()) {
+                m_le.dtEngineStart = MFBUtil.nowWith0Seconds();
+                EngineStart();
+            } else
+                SetDateTime(id, m_le.dtEngineStart, this, DlgDatePicker.datePickMode.UTCDATETIME);
+        } else if (id == R.id.btnEngineEndSet) {
+            if (!m_le.isKnownEngineEnd()) {
+                m_le.dtEngineEnd = MFBUtil.nowWith0Seconds();
+                EngineStop();
+            } else
+                SetDateTime(id, m_le.dtEngineEnd, this, DlgDatePicker.datePickMode.UTCDATETIME);
+        } else if (id == R.id.btnFlightStartSet) {
+            if (!m_le.isKnownFlightStart()) {
+                m_le.dtFlightStart = MFBUtil.nowWith0Seconds();
+                FlightStart();
+            } else
+                SetDateTime(id, m_le.dtFlightStart, this, DlgDatePicker.datePickMode.UTCDATETIME);
+        } else if (id == R.id.btnFlightEndSet) {
+            if (!m_le.isKnownFlightEnd()) {
+                m_le.dtFlightEnd = MFBUtil.nowWith0Seconds();
+                FlightStop();
+            } else
+                SetDateTime(id, m_le.dtFlightEnd, this, DlgDatePicker.datePickMode.UTCDATETIME);
+        } else if (id == R.id.btnFlightSet) {
+            DlgDatePicker dlg = new DlgDatePicker(requireActivity(), DlgDatePicker.datePickMode.LOCALDATEONLY, m_le.dtFlight);
+            dlg.m_delegate = this;
+            dlg.m_id = id;
+            dlg.show();
+        } else if (id == R.id.btnProps)
+            ViewPropsForFlight();
+        else if (id == R.id.btnAppendNearest)
+            AppendNearest();
+        else if (id == R.id.btnAddApproach) {
+            Intent i = new Intent(requireActivity(), ActAddApproach.class);
+            i.putExtra(ActAddApproach.AIRPORTSFORAPPROACHES, m_le.szRoute);
+            startActivityForResult(i, ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE);
+        } else if (id == R.id.btnViewOnMap) {
+            Intent i = new Intent(requireActivity(), ActFlightMap.class);
+            i.putExtra(ActFlightMap.ROUTEFORFLIGHT, m_le.szRoute);
+            i.putExtra(ActFlightMap.EXISTINGFLIGHTID, m_le.IsExistingFlight() ? m_le.idFlight : 0);
+            i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsPendingFlight() ? m_le.idLocalDB : 0);
+            i.putExtra(ActFlightMap.NEWFLIGHTID, m_le.IsNewFlight() ? LogbookEntry.ID_NEW_FLIGHT : 0);
+            i.putExtra(ActFlightMap.ALIASES, "");
+            startActivityForResult(i, ActFlightMap.REQUEST_ROUTE);
+        } else if (id == R.id.btnPausePlay)
+            toggleFlightPause();
+                else if (id == R.id.txtViewInTheCockpit) {
+            View target = findViewById(R.id.sectInTheCockpit);
+            boolean fExpandCockpit = target.getVisibility() != View.VISIBLE;
 
-                if (m_le != null && m_le.IsNewFlight()) {
-                    SharedPreferences.Editor e = requireActivity().getPreferences(Context.MODE_PRIVATE).edit();
-                    e.putBoolean(m_KeyShowInCockpit, fExpandCockpit);
-                    e.apply();
-                }
-                setExpandedState((TextView) v, target, fExpandCockpit);
+            if (m_le != null && m_le.IsNewFlight()) {
+                SharedPreferences.Editor e = requireActivity().getPreferences(Context.MODE_PRIVATE).edit();
+                e.putBoolean(m_KeyShowInCockpit, fExpandCockpit);
+                e.apply();
             }
-            break;
-            case R.id.txtImageHeader: {
-                View target = findViewById(R.id.tblImageTable);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-            }
-            break;
-            case R.id.txtSignatureHeader: {
-                View target = findViewById(R.id.sectSignature);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-            }
-            break;
-            case R.id.txtPinnedPropertiesHeader: {
-                View target = findViewById(R.id.sectPinnedProperties);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-            }
-            break;
-            case R.id.txtSocialNetworkHint: {
-                String szURLProfile = MFBConstants.AuthRedirWithParams("d=profile&pane=social", getContext());
-                ActWebView.ViewURL(requireActivity(), szURLProfile);
-            }
-            default:
-                break;
+            setExpandedState((TextView) v, target, fExpandCockpit);
+        } else if (id == R.id.txtImageHeader) {
+            View target = findViewById(R.id.tblImageTable);
+            setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+        } else if (id == R.id.txtSignatureHeader) {
+            View target = findViewById(R.id.sectSignature);
+            setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+        } else if (id == R.id.txtPinnedPropertiesHeader) {
+            View target = findViewById(R.id.sectPinnedProperties);
+            setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+        } else if (id == R.id.txtSocialNetworkHint) {
+            String szURLProfile = MFBConstants.AuthRedirWithParams("d=profile&pane=social", getContext());
+            ActWebView.ViewURL(requireActivity(), szURLProfile);
         }
         ToView();
     }
@@ -1146,31 +1104,23 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         dt = MFBUtil.removeSeconds(dt);
 
-        switch (id) {
-            case R.id.btnEngineStartSet:
-                m_le.dtEngineStart = dt;
-                fEngineChanged = true;
-                resetDateOfFlight();
-                break;
-            case R.id.btnEngineEndSet:
-                m_le.dtEngineEnd = dt;
-                fEngineChanged = true;
-                ShowRecordingIndicator();
-                break;
-            case R.id.btnFlightStartSet:
-                m_le.dtFlightStart = dt;
-                resetDateOfFlight();
-                fFlightChanged = true;
-                break;
-            case R.id.btnFlightEndSet:
-                m_le.dtFlightEnd = dt;
-                fFlightChanged = true;
-                break;
-            case R.id.btnFlightSet:
-                m_le.dtFlight = dt;
-                break;
-            default:
-                break;
+        if (id == R.id.btnEngineStartSet) {
+            m_le.dtEngineStart = dt;
+            fEngineChanged = true;
+            resetDateOfFlight();
+        } else if (id == R.id.btnEngineEndSet) {
+            m_le.dtEngineEnd = dt;
+            fEngineChanged = true;
+            ShowRecordingIndicator();
+        } else if (id == R.id.btnFlightStartSet) {
+            m_le.dtFlightStart = dt;
+            resetDateOfFlight();
+            fFlightChanged = true;
+        } else if (id == R.id.btnFlightEndSet) {
+            m_le.dtFlightEnd = dt;
+            fFlightChanged = true;
+        } else if (id == R.id.btnFlightSet) {
+            m_le.dtFlight = dt;
         }
         ToView();
 

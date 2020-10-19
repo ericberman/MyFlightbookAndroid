@@ -778,17 +778,14 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
     }
 
     public void updateDate(int id, Date dt) {
-        switch (id) {
-            case R.id.btnfqDateStart:
-                CurrentQuery.DateMin = MFBUtil.UTCDateFromLocalDate(dt);
-                CurrentQuery.DateRange = DateRanges.Custom;
-                ((RadioButton) findViewById(R.id.rbCustom)).setChecked(true);
-                break;
-            case R.id.btnfqDateEnd:
-                CurrentQuery.DateMax = MFBUtil.UTCDateFromLocalDate(dt);
-                CurrentQuery.DateRange = DateRanges.Custom;
-                ((RadioButton) findViewById(R.id.rbCustom)).setChecked(true);
-                break;
+        if (id == R.id.btnfqDateStart) {
+            CurrentQuery.DateMin = MFBUtil.UTCDateFromLocalDate(dt);
+            CurrentQuery.DateRange = DateRanges.Custom;
+            ((RadioButton) findViewById(R.id.rbCustom)).setChecked(true);
+        } else if (id == R.id.btnfqDateEnd) {
+            CurrentQuery.DateMax = MFBUtil.UTCDateFromLocalDate(dt);
+            CurrentQuery.DateRange = DateRanges.Custom;
+            ((RadioButton) findViewById(R.id.rbCustom)).setChecked(true);
         }
 
         toForm();
@@ -804,144 +801,96 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
 
     public void onClick(View v) {
         int id = v.getId();
-        switch (id) {
-            case R.id.btnfqDateEnd:
-            case R.id.btnfqDateStart:
-                DlgDatePicker dlg = new DlgDatePicker(requireActivity(),
-                        DlgDatePicker.datePickMode.LOCALDATEONLY,
-                        id == R.id.btnfqDateStart ?
-                                MFBUtil.LocalDateFromUTCDate(CurrentQuery.DateMin) :
-                                MFBUtil.LocalDateFromUTCDate(CurrentQuery.DateMax));
-                dlg.m_delegate = this;
-                dlg.m_id = id;
-                dlg.show();
-                return;
-
-            // All of the remaining items below are radio buttons
-            case R.id.rbAlltime:
-                CurrentQuery.SetDateRange(DateRanges.AllTime);
-                break;
-            case R.id.rbCustom:
-                CurrentQuery.SetDateRange(DateRanges.Custom);
-                break;
-            case R.id.rbPreviousMonth:
-                CurrentQuery.SetDateRange(DateRanges.PrevMonth);
-                break;
-            case R.id.rbPreviousYear:
-                CurrentQuery.SetDateRange(DateRanges.PrevYear);
-                break;
-            case R.id.rbThisMonth:
-                CurrentQuery.SetDateRange(DateRanges.ThisMonth);
-                break;
-            case R.id.rbTrailing12:
-                CurrentQuery.SetDateRange(DateRanges.Trailing12Months);
-                break;
-            case R.id.rbTrailing6:
-                CurrentQuery.SetDateRange(DateRanges.Tailing6Months);
-                break;
-            case R.id.rbTrailing30:
-                CurrentQuery.SetDateRange(DateRanges.Trailing30);
-                break;
-            case R.id.rbTrailing90:
-                CurrentQuery.SetDateRange(DateRanges.Trailing90);
-                break;
-            case R.id.rbYTD:
-                CurrentQuery.SetDateRange(DateRanges.YTD);
-                break;
-
-            case R.id.rbAllEngines:
-                CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.AllEngines;
-                break;
-            case R.id.rbEngineJet:
-                CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Jet;
-                break;
-            case R.id.rbEnginePiston:
-                CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Piston;
-                break;
-            case R.id.rbEngineTurbine:
-                CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.AnyTurbine;
-                break;
-            case R.id.rbEngineTurboprop:
-                CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Turboprop;
-                break;
-            case R.id.rbEngineElectric:
-                CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Electric;
-                break;
-
-            case R.id.rbInstanceAny:
-                CurrentQuery.AircraftInstanceTypes = FlightQuery.AircraftInstanceRestriction.AllAircraft;
-                break;
-            case R.id.rbInstanceReal:
-                CurrentQuery.AircraftInstanceTypes = FlightQuery.AircraftInstanceRestriction.RealOnly;
-                break;
-            case R.id.rbInstanceTraining:
-                CurrentQuery.AircraftInstanceTypes = FlightQuery.AircraftInstanceRestriction.TrainingOnly;
-                break;
-
-            case R.id.rbConjunctionAllFeature:
-                CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.All;
-                readFlightCharacteristics();
-                break;
-
-            case R.id.rbConjunctionAnyFeature:
-                CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.Any;
-                readFlightCharacteristics();
-                break;
-
-            case R.id.rbConjunctionNoFeature:
-                CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.None;
-                readFlightCharacteristics();
-                break;
-
-            case R.id.rbConjunctionAllProps:
-                CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.All;
-                break;
-
-            case R.id.rbConjunctionAnyProps:
-                CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.Any;
-                break;
-
-            case R.id.rbConjunctionNoProps:
-                CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.None;
-                break;
-
-            case R.id.rbDistanceAny:
-                CurrentQuery.Distance = FlightQuery.FlightDistance.AllFlights;
-                break;
-            case R.id.rbDistanceLocal:
-                CurrentQuery.Distance = FlightQuery.FlightDistance.LocalOnly;
-                break;
-            case R.id.rbDistanceNonlocal:
-                CurrentQuery.Distance = FlightQuery.FlightDistance.NonLocalOnly;
-                break;
-            case R.id.txtFQACFeatures:
-                toggleHeader(v, R.id.sectFQAircraftFeatures);
-                break;
-            case R.id.txtFQDatesHeader:
-                toggleHeader(v, R.id.sectFQDates);
-                break;
-            case R.id.txtFQAirportsHeader:
-                toggleHeader(v, R.id.tblFQAirports);
-                break;
-            case R.id.txtFQFlightFeatures:
-                toggleHeader(v, R.id.sectFQFlightFeatures);
-                break;
-            case R.id.txtFQAircraftHeader:
-                toggleHeader(v, R.id.llfqAircraft);
-                break;
-            case R.id.txtFQModelsHeader:
-                toggleHeader(v, R.id.sectFQModels);
-                break;
-            case R.id.txtFQCatClassHeader:
-                toggleHeader(v, R.id.tblFQCatClass);
-                break;
-            case R.id.txtFQPropsHeader:
-                toggleHeader(v, R.id.fqPropsBody);
-                break;
-            case R.id.txtFQNamedQueryHeader:
-                toggleHeader(v, R.id.sectFQNamedQueries);
-                break;
+        if (id == R.id.btnfqDateEnd || id == R.id.btnfqDateStart) {
+            DlgDatePicker dlg = new DlgDatePicker(requireActivity(),
+                    DlgDatePicker.datePickMode.LOCALDATEONLY,
+                    id == R.id.btnfqDateStart ?
+                            MFBUtil.LocalDateFromUTCDate(CurrentQuery.DateMin) :
+                            MFBUtil.LocalDateFromUTCDate(CurrentQuery.DateMax));
+            dlg.m_delegate = this;
+            dlg.m_id = id;
+            dlg.show();
+            return;
         }
+
+        // All of the remaining items below are radio buttons
+        if (id == R.id.rbAlltime)
+            CurrentQuery.SetDateRange(DateRanges.AllTime);
+        else if (id == R.id.rbCustom)
+            CurrentQuery.SetDateRange(DateRanges.Custom);
+        else if (id == R.id.rbPreviousMonth)
+            CurrentQuery.SetDateRange(DateRanges.PrevMonth);
+        else if (id == R.id.rbPreviousYear)
+            CurrentQuery.SetDateRange(DateRanges.PrevYear);
+        else if (id == R.id.rbThisMonth)
+            CurrentQuery.SetDateRange(DateRanges.ThisMonth);
+        else if (id == R.id.rbTrailing12)
+            CurrentQuery.SetDateRange(DateRanges.Trailing12Months);
+        else if (id == R.id.rbTrailing6)
+            CurrentQuery.SetDateRange(DateRanges.Tailing6Months);
+        else if (id == R.id.rbTrailing30)
+            CurrentQuery.SetDateRange(DateRanges.Trailing30);
+        else if (id == R.id.rbTrailing90)
+            CurrentQuery.SetDateRange(DateRanges.Trailing90);
+        else if (id == R.id.rbYTD)
+            CurrentQuery.SetDateRange(DateRanges.YTD);
+        else if (id == R.id.rbAllEngines)
+            CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.AllEngines;
+        else if (id == R.id.rbEngineJet)
+            CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Jet;
+        else if (id == R.id.rbEnginePiston)
+            CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Piston;
+        else if (id == R.id.rbEngineTurbine)
+            CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.AnyTurbine;
+        else if (id == R.id.rbEngineTurboprop)
+            CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Turboprop;
+        else if (id == R.id.rbEngineElectric)
+            CurrentQuery.EngineType = FlightQuery.EngineTypeRestriction.Electric;
+        else if (id == R.id.rbInstanceAny)
+            CurrentQuery.AircraftInstanceTypes = FlightQuery.AircraftInstanceRestriction.AllAircraft;
+        else if (id == R.id.rbInstanceReal)
+            CurrentQuery.AircraftInstanceTypes = FlightQuery.AircraftInstanceRestriction.RealOnly;
+        else if (id == R.id.rbInstanceTraining)
+            CurrentQuery.AircraftInstanceTypes = FlightQuery.AircraftInstanceRestriction.TrainingOnly;
+        else if (id == R.id.rbConjunctionAllFeature) {
+            CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.All;
+            readFlightCharacteristics();
+        } else if (id == R.id.rbConjunctionAnyFeature) {
+            CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.Any;
+            readFlightCharacteristics();
+        } else if (id == R.id.rbConjunctionNoFeature) {
+            CurrentQuery.FlightCharacteristicsConjunction = FlightQuery.GroupConjunction.None;
+            readFlightCharacteristics();
+        } else if (id == R.id.rbConjunctionAllProps)
+            CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.All;
+        else if (id == R.id.rbConjunctionAnyProps)
+            CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.Any;
+        else if (id == R.id.rbConjunctionNoProps)
+            CurrentQuery.PropertiesConjunction = FlightQuery.GroupConjunction.None;
+        else if (id == R.id.rbDistanceAny)
+            CurrentQuery.Distance = FlightQuery.FlightDistance.AllFlights;
+        else if (id == R.id.rbDistanceLocal)
+            CurrentQuery.Distance = FlightQuery.FlightDistance.LocalOnly;
+        else if (id == R.id.rbDistanceNonlocal)
+            CurrentQuery.Distance = FlightQuery.FlightDistance.NonLocalOnly;
+        else if (id == R.id.txtFQACFeatures)
+            toggleHeader(v, R.id.sectFQAircraftFeatures);
+        else if (id == R.id.txtFQDatesHeader)
+            toggleHeader(v, R.id.sectFQDates);
+        else if (id == R.id.txtFQAirportsHeader)
+            toggleHeader(v, R.id.tblFQAirports);
+        else if (id == R.id.txtFQFlightFeatures)
+            toggleHeader(v, R.id.sectFQFlightFeatures);
+        else if (id == R.id.txtFQAircraftHeader)
+            toggleHeader(v, R.id.llfqAircraft);
+        else if (id == R.id.txtFQModelsHeader)
+            toggleHeader(v, R.id.sectFQModels);
+        else if (id == R.id.txtFQCatClassHeader)
+            toggleHeader(v, R.id.tblFQCatClass);
+        else if (id == R.id.txtFQPropsHeader)
+            toggleHeader(v, R.id.fqPropsBody);
+        else if (id == R.id.txtFQNamedQueryHeader)
+            toggleHeader(v, R.id.sectFQNamedQueries);
 
         toForm();
     }

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -126,22 +126,15 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
 
     public void onClick(View v) {
         int id = v.getId();
-        switch (id) {
-            case R.id.btnDateNone:
-                m_Date = UTCDate.NullDate();
-                NotifyDelegate();
-                dismiss();
-                break;
-            case R.id.btnDateNow:
-                setDate(new Date());
-                NotifyDelegate();
-                break;
-            case R.id.btnOK:
-                dismiss();
-                break;
-            default:
-                break;
-        }
+        if (id == R.id.btnDateNone) {
+            m_Date = UTCDate.NullDate();
+            NotifyDelegate();
+            dismiss();
+        } else if (id == R.id.btnDateNow) {
+            setDate(new Date());
+            NotifyDelegate();
+        } else if (id == R.id.btnOK)
+            dismiss();
     }
 
     private GregorianCalendar getCalendar() {

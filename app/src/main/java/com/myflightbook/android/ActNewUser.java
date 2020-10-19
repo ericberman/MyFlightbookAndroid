@@ -151,37 +151,27 @@ public class ActNewUser extends AppCompatActivity implements
     }
 
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnCreateUser:
-                if (FIsValid()) {
-                    AddUserTask st = new AddUserTask(this, this);
-                    st.execute(txtEmail.getText().toString(), txtPass
-                                    .getText().toString(), txtFirst.getText().toString(),
-                            txtLast.getText().toString(),
-                            txtQ.getText().toString(), txtA.getText().toString());
-                }
-                break;
-            case R.id.btnCancel: {
-                Intent i = new Intent();
-                setResult(RESULT_CANCELED, i);
-                finish();
+        int id = v.getId();
+        if (id == R.id.btnCreateUser) {
+            if (FIsValid()) {
+                AddUserTask st = new AddUserTask(this, this);
+                st.execute(txtEmail.getText().toString(), txtPass
+                                .getText().toString(), txtFirst.getText().toString(),
+                        txtLast.getText().toString(),
+                        txtQ.getText().toString(), txtA.getText().toString());
             }
-            break;
-            case R.id.btnViewPrivacy: {
-                Intent i = new Intent(v.getContext(), ActWebView.class);
-                i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlPrivacy, MFBConstants.szIP, MFBConstants.NightParam(this)));
-                startActivityForResult(i, 0);
-            }
-            break;
-
-            case R.id.btnViewTandC: {
-                Intent i = new Intent(v.getContext(), ActWebView.class);
-                i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlTandC, MFBConstants.szIP, MFBConstants.NightParam(this)));
-                startActivityForResult(i, 0);
-            }
-            break;
-            default:
-                break;
+        } else if (id == R.id.btnCancel) {
+            Intent i = new Intent();
+            setResult(RESULT_CANCELED, i);
+            finish();
+        } else if (id == R.id.btnViewPrivacy) {
+            Intent i = new Intent(v.getContext(), ActWebView.class);
+            i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlPrivacy, MFBConstants.szIP, MFBConstants.NightParam(this)));
+            startActivityForResult(i, 0);
+        } else if (id == R.id.btnViewTandC) {
+            Intent i = new Intent(v.getContext(), ActWebView.class);
+            i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlTandC, MFBConstants.szIP, MFBConstants.NightParam(this)));
+            startActivityForResult(i, 0);
         }
     }
 }

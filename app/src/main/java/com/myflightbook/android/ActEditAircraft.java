@@ -242,14 +242,9 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuAddComment:
-            case R.id.menuDeleteImage:
-            case R.id.menuViewImage:
-                return onImageContextItemSelected(item, this);
-            default:
-                break;
-        }
+        int id = item.getItemId();
+        if (id == R.id.menuAddComment || id == R.id.menuDeleteImage || id == R.id.menuViewImage)
+            return onImageContextItemSelected(item, this);
         return true;
     }
 
@@ -324,85 +319,65 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     public void onClick(View v) {
         fromView();
         int id = v.getId();
-        switch (id) {
-            case R.id.btnVORCheck:
-                if (UTCDate.IsNullDate(m_ac.LastVOR))
-                    m_ac.LastVOR = MFBUtil.UTCDateFromLocalDate(new Date());
-                else
-                    SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastVOR), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
-                break;
-            case R.id.btnAltimeter:
-                if (UTCDate.IsNullDate(m_ac.LastAltimeter))
-                    m_ac.LastAltimeter = MFBUtil.UTCDateFromLocalDate(new Date());
-                else
-                    SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastAltimeter), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
-                break;
-            case R.id.btnAnnual:
-                if (UTCDate.IsNullDate(m_ac.LastAnnual))
-                    m_ac.LastAnnual = MFBUtil.UTCDateFromLocalDate(new Date());
-                else
-                    SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastAnnual), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
-                break;
-            case R.id.btnTransponder:
-                if (UTCDate.IsNullDate(m_ac.LastTransponder))
-                    m_ac.LastTransponder = MFBUtil.UTCDateFromLocalDate(new Date());
-                else
-                    SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastTransponder), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
-                break;
-            case R.id.btnELT:
-                if (UTCDate.IsNullDate(m_ac.LastELT))
-                    m_ac.LastELT = MFBUtil.UTCDateFromLocalDate(new Date());
-                else
-                    SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastELT), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
-                break;
-            case R.id.btnPitotStatic:
-                if (UTCDate.IsNullDate(m_ac.LastStatic))
-                    m_ac.LastStatic = MFBUtil.UTCDateFromLocalDate(new Date());
-                else
-                    SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastStatic), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
-                break;
-            case R.id.btnRegistration:
-                if (UTCDate.IsNullDate(m_ac.RegistrationDue))
-                    m_ac.RegistrationDue = MFBUtil.UTCDateFromLocalDate(new Date());
-                else
-                    SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.RegistrationDue), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
-                break;
-            case R.id.ckHideAircraftFromSelection:
-                m_ac.HideFromSelection = !CheckState(id);
-                break;
-            case R.id.rbRoleNone:
-                m_ac.RoleForPilot = PilotRole.None;
-                break;
-            case R.id.rbRolePIC:
-                m_ac.RoleForPilot = PilotRole.PIC;
-                break;
-            case R.id.rbRoleSIC:
-                m_ac.RoleForPilot = PilotRole.SIC;
-                break;
-            case R.id.rbRoleCFI:
-                m_ac.RoleForPilot = PilotRole.CFI;
-                break;
-            case R.id.acNotesHeader: {
-                View target = findViewById(R.id.sectACNotes);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-                break;
-            }
-            case R.id.acPrefsHeader: {
-                View target = findViewById(R.id.rbgPilotRole);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-                break;
-            }
-            case R.id.txtACMaintenance: {
-                View target = findViewById(R.id.sectACMaintenance);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-                break;
-            }
-            case R.id.txtImageHeader: {
-                View target = findViewById(R.id.tblImageTable);
-                setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-                break;
-            }
+        if (id ==R.id.btnVORCheck) {
+            if (UTCDate.IsNullDate(m_ac.LastVOR))
+                m_ac.LastVOR = MFBUtil.UTCDateFromLocalDate(new Date());
+            else
+                SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastVOR), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
+        } else if (id == R.id.btnAltimeter) {
+            if (UTCDate.IsNullDate(m_ac.LastAltimeter))
+                m_ac.LastAltimeter = MFBUtil.UTCDateFromLocalDate(new Date());
+            else
+                SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastAltimeter), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
+        } else if (id == R.id.btnAnnual) {
+            if (UTCDate.IsNullDate(m_ac.LastAnnual))
+                m_ac.LastAnnual = MFBUtil.UTCDateFromLocalDate(new Date());
+            else
+                SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastAnnual), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
+        } else if (id == R.id.btnTransponder) {
+            if (UTCDate.IsNullDate(m_ac.LastTransponder))
+                m_ac.LastTransponder = MFBUtil.UTCDateFromLocalDate(new Date());
+            else
+                SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastTransponder), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
+        } else if (id == R.id.btnELT) {
+            if (UTCDate.IsNullDate(m_ac.LastELT))
+                m_ac.LastELT = MFBUtil.UTCDateFromLocalDate(new Date());
+            else
+                SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastELT), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
+        } else if (id == R.id.btnPitotStatic) {
+            if (UTCDate.IsNullDate(m_ac.LastStatic))
+                m_ac.LastStatic = MFBUtil.UTCDateFromLocalDate(new Date());
+            else
+                SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.LastStatic), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
+        } else if (id == R.id.btnRegistration) {
+            if (UTCDate.IsNullDate(m_ac.RegistrationDue))
+                m_ac.RegistrationDue = MFBUtil.UTCDateFromLocalDate(new Date());
+            else
+                SetDateTime(id, MFBUtil.LocalDateFromUTCDate(m_ac.RegistrationDue), this, DlgDatePicker.datePickMode.LOCALDATENULLABLE);
+        } else if (id == R.id.ckHideAircraftFromSelection)
+            m_ac.HideFromSelection = !CheckState(id);
+        else if (id == R.id.rbRoleNone)
+            m_ac.RoleForPilot = PilotRole.None;
+        else if (id == R.id.rbRolePIC)
+            m_ac.RoleForPilot = PilotRole.PIC;
+        else if (id == R.id.rbRoleSIC)
+            m_ac.RoleForPilot = PilotRole.SIC;
+        else if (id == R.id.rbRoleCFI)
+            m_ac.RoleForPilot = PilotRole.CFI;
+        else if (id == R.id.acNotesHeader) {
+            View target = findViewById(R.id.sectACNotes);
+            setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+        } else if (id == R.id.acPrefsHeader) {
+            View target = findViewById(R.id.rbgPilotRole);
+            setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+        } else if (id == R.id.txtACMaintenance) {
+            View target = findViewById(R.id.sectACMaintenance);
+            setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
+        } else if (id == R.id.txtImageHeader) {
+            View target = findViewById(R.id.tblImageTable);
+            setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
         }
+
         toView();
     }
 
@@ -416,35 +391,27 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     public void updateDate(int id, Date dt) {
         fromView();
         dt = MFBUtil.UTCDateFromLocalDate(dt);
-        switch (id) {
-            case R.id.btnVORCheck:
-                m_ac.LastVOR = dt;
-                SetLocalDateForField(R.id.btnVORCheck, m_ac.LastVOR);
-                break;
-            case R.id.btnAltimeter:
-                m_ac.LastAltimeter = dt;
-                SetLocalDateForField(R.id.btnAltimeter, m_ac.LastAltimeter);
-                break;
-            case R.id.btnAnnual:
-                m_ac.LastAnnual = dt;
-                SetLocalDateForField(R.id.btnAnnual, m_ac.LastAnnual);
-                break;
-            case R.id.btnTransponder:
-                m_ac.LastTransponder = dt;
-                SetLocalDateForField(R.id.btnTransponder, m_ac.LastTransponder);
-                break;
-            case R.id.btnELT:
-                m_ac.LastELT = dt;
-                SetLocalDateForField(R.id.btnELT, m_ac.LastELT);
-                break;
-            case R.id.btnPitotStatic:
-                m_ac.LastStatic = dt;
-                SetLocalDateForField(R.id.btnPitotStatic, m_ac.LastStatic);
-                break;
-            case R.id.btnRegistration:
-                m_ac.RegistrationDue = dt;
-                SetLocalDateForField(R.id.btnRegistration, m_ac.RegistrationDue);
-                break;
+        if (id == R.id.btnVORCheck) {
+            m_ac.LastVOR = dt;
+            SetLocalDateForField(R.id.btnVORCheck, m_ac.LastVOR);
+        }else if (id == R.id.btnAltimeter) {
+            m_ac.LastAltimeter = dt;
+            SetLocalDateForField(R.id.btnAltimeter, m_ac.LastAltimeter);
+        } else if (id == R.id.btnAnnual) {
+            m_ac.LastAnnual = dt;
+            SetLocalDateForField(R.id.btnAnnual, m_ac.LastAnnual);
+        } else if (id == R.id.btnTransponder) {
+            m_ac.LastTransponder = dt;
+            SetLocalDateForField(R.id.btnTransponder, m_ac.LastTransponder);
+        } else if (id == R.id.btnELT) {
+            m_ac.LastELT = dt;
+            SetLocalDateForField(R.id.btnELT, m_ac.LastELT);
+        } else if (id == R.id.btnPitotStatic) {
+            m_ac.LastStatic = dt;
+            SetLocalDateForField(R.id.btnPitotStatic, m_ac.LastStatic);
+        } else if (id == R.id.btnRegistration) {
+            m_ac.RegistrationDue = dt;
+            SetLocalDateForField(R.id.btnRegistration, m_ac.RegistrationDue);
         }
         toView();
     }
@@ -462,46 +429,38 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuChoosePicture:
-                ChoosePicture();
-                return true;
-            case R.id.menuTakePicture:
-                TakePicture();
-                return true;
-            case R.id.menuUpdateAircraft:
-                if (MFBSoap.IsOnline(getContext()))
-                    updateAircraft();
-                else
-                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
-                return true;
-            case R.id.menuDeleteAircraft:
-                (new DeleteTask(getContext(), this)).execute();
-                return true;
-            case R.id.menuViewSchedule:
-                if (MFBSoap.IsOnline(getContext()))
-                    ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams(String.format(Locale.US, "d=aircraftschedule&ac=%d", m_ac.AircraftID), getContext()));
-                else
-                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
-                return true;
-            case R.id.findFlights:
-                if (MFBSoap.IsOnline(getContext())) {
-                    FlightQuery fq = new FlightQuery();
-                    fq.Init();
-                    fq.AircraftList = new Aircraft[]{m_ac};
-                    Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
-                    Bundle b = new Bundle();
-                    b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
-                    i.putExtras(b);
-                    startActivity(i);
-                }
-                else
-                    MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        int id = item.getItemId();
+        if (id == R.id.menuChoosePicture)
+            ChoosePicture();
+        else if (id == R.id.menuTakePicture)
+            TakePicture();
+        else if (id == R.id.menuUpdateAircraft) {
+            if (MFBSoap.IsOnline(getContext()))
+                updateAircraft();
+            else
+                MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+        } else if (id == R.id.menuDeleteAircraft)
+            (new DeleteTask(getContext(), this)).execute();
+        else if (id == R.id.menuViewSchedule) {
+            if (MFBSoap.IsOnline(getContext()))
+                ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams(String.format(Locale.US, "d=aircraftschedule&ac=%d", m_ac.AircraftID), getContext()));
+            else
+                MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+        } else if (id == R.id.findFlights) {
+            if (MFBSoap.IsOnline(getContext())) {
+                FlightQuery fq = new FlightQuery();
+                fq.Init();
+                fq.AircraftList = new Aircraft[]{m_ac};
+                Intent i = new Intent(getActivity(), RecentFlightsActivity.class);
+                Bundle b = new Bundle();
+                b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq);
+                i.putExtras(b);
+                startActivity(i);
+            } else
+                MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
+        } else
+            return super.onOptionsItemSelected(item);
+        return true;
     }
 
     /*

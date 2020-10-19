@@ -444,18 +444,15 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuBackToFlight:
-                updateProps();
-                finish();
-                return true;
-            case R.id.menuRefreshProperties:
-                refreshProps();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        int id = item.getItemId();
+        if (id == R.id.menuBackToFlight) {
+            updateProps();
+            finish();
+        } else if (id == R.id.menuRefreshProperties)
+            refreshProps();
+        else
+            return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private void DeleteDefaultedProperty(FlightProperty fp) {
