@@ -28,6 +28,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -531,6 +532,9 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     private final int PERMISSION_REQUEST_WRITE_GPX = 50372;
 
     private Boolean checkDocPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) // no need to request WRITE_EXTERNAL_STORAGE in 29 and later.
+            return true;
+
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
             return true;
 

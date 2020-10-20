@@ -21,6 +21,7 @@ package com.myflightbook.android;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,7 +128,7 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
             }
 
         if (requestCode == GALLERY_PERMISSION) {
-            if (fAllGranted && grantResults.length == 2)
+            if (fAllGranted)
                 clickItem(lastPositionClicked);
         }
     }
@@ -143,9 +144,12 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         if (position < 0 || position > m_rgTrainingItems.length)
             return;
 
+        boolean fNeedsWritePerm = (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q); // no need to request WRITE_EXTERNAL_STORAGE in 29 and later.
+
         if (m_rgTrainingItems[position].szURLDest.compareToIgnoreCase(endorseItem) == 0 &&
                 ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_PERMISSION);
+            requestPermissions(fNeedsWritePerm ? new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION);
             return;
         }
 

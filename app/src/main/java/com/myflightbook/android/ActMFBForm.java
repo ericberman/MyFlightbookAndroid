@@ -32,6 +32,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -426,22 +427,29 @@ public class ActMFBForm extends Fragment {
     //region Image/video permissions
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean fCheckImagePermissions(int permission) {
+        boolean fNeedWritePerm;
+
+        fNeedWritePerm = (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q); // no need to request WRITE_EXTERNAL_STORAGE in 29 and later.
+
         switch (permission) {
             case CAMERA_PERMISSION_IMAGE:
             case CAMERA_PERMISSION_VIDEO:
                 if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                         ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                        (!fNeedWritePerm || ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
                     return true;
                 else
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
+                    requestPermissions(fNeedWritePerm ? new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
+                            new String[] {Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}
+                    , permission);
                 break;
             case GALLERY_PERMISSION:
                 if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                        (!fNeedWritePerm || ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
                     return true;
                 else
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
+                    requestPermissions(fNeedWritePerm ? new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, permission);
                 break;
         }
         return false;
@@ -459,15 +467,15 @@ public class ActMFBForm extends Fragment {
 
         switch (requestCode) {
             case CAMERA_PERMISSION_IMAGE:
-                if (fAllGranted && grantResults.length == 3)
+                if (fAllGranted)
                     TakePicture();
                 break;
             case CAMERA_PERMISSION_VIDEO:
-                if (fAllGranted && grantResults.length == 3)
+                if (fAllGranted)
                     TakeVideo();
                 break;
             case GALLERY_PERMISSION:
-                if (fAllGranted && grantResults.length == 2)
+                if (fAllGranted)
                     ChoosePicture();
                 break;
         }
