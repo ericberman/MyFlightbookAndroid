@@ -49,8 +49,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -370,7 +370,8 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             settings.setZoomControlsEnabled(false);
             settings.setZoomGesturesEnabled(true);
 
-            View mapView = getFragmentManager().findFragmentById(R.id.mfbMap).getView();
+            SupportMapFragment mf = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mfbMap);
+            View mapView = mf.getView();
             if (mapView != null && mapView.getViewTreeObserver() != null && mapView.getViewTreeObserver().isAlive()) {
                 mapView.getViewTreeObserver().addOnGlobalLayoutListener(this);
             }
@@ -389,7 +390,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         if (m_gMap != null)
             return m_gMap;
 
-        MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.mfbMap);
+        SupportMapFragment mf = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mfbMap);
         try {
             mf.getMapAsync(this);
         } catch (Exception ex) {

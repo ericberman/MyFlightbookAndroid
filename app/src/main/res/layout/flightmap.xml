@@ -32,7 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".7"
                 android:hint="@string/emptyWaterMarkRoute"
-                android:inputType="textCapCharacters|textNoSuggestions|textMultiLine" />
+                android:inputType="textCapCharacters|textNoSuggestions|textMultiLine"
+                android:importantForAutofill="no" />
 
             <ImageButton
                 style="?android:attr/buttonBarStyle"
@@ -54,9 +55,9 @@
         </LinearLayout>
     </LinearLayout>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mfbMap"
-        android:name="com.google.android.gms.maps.MapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
