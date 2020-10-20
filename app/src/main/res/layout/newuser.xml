@@ -31,6 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
+                    android:autofillHints=".AUTOFILL_HINT_EMAIL_ADDRESS"
                     android:hint="@string/lblEmailHint"
                     android:inputType="textEmailAddress"
                     android:nextFocusDown="@+id/txtEmail2" />
@@ -50,6 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
+                    android:autofillHints=".AUTOFILL_HINT_EMAIL_ADDRESS"
                     android:hint="@string/lblEmailConfirmHint"
                     android:inputType="textEmailAddress"
                     android:nextFocusDown="@+id/txtPass" />
@@ -70,6 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
+                    android:autofillHints=".AUTOFILL_HINT_PASSWORD"
                     android:inputType="textPassword"
                     android:nextFocusDown="@+id/txtPass2" />
             </TableRow>
@@ -90,6 +93,7 @@
                     android:layout_height="wrap_content"
                     android:width="170dip"
                     android:inputType="textPassword"
+                    android:autofillHints=".AUTOFILL_HINT_PASSWORD"
                     android:nextFocusDown="@+id/txtFirstName"
                     android:nextFocusUp="@+id/txtPass2" />
             </TableRow>
@@ -122,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:width="170dip"
                     android:hint="@string/lblFirstName"
+                    android:autofillHints=".AUTOFILL_HINT_PERSON_NAME_GIVEN"
                     android:inputType="textPersonName|textCapWords"
                     android:nextFocusDown="@+id/txtLastName"
                     android:nextFocusUp="@+id/txtFirstName" />
@@ -155,6 +160,7 @@
                     android:layout_height="wrap_content"
                     android:width="170dip"
                     android:hint="@string/lblLastName"
+                    android:autofillHints=".AUTOFILL_HINT_PERSON_NAME_FAMILY"
                     android:inputType="textPersonName|textCapWords"
                     android:nextFocusDown="@+id/txtQuestion"
                     android:nextFocusUp="@+id/txtFirstName" />
@@ -192,6 +198,7 @@
                         android:layout_height="wrap_content"
                         android:width="170dip"
                         android:inputType="text|textCapSentences"
+                        android:importantForAutofill="no"
                         android:hint="@string/lblQuestionHint"
                         android:nextFocusDown="@+id/txtAnswer"
                         android:nextFocusUp="@+id/txtLastName" />
@@ -219,6 +226,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:width="170dip"
+                    android:importantForAutofill="no"
                     android:inputType="text|textCapSentences"
                     android:hint="@string/lblAnswerHint"
                     android:nextFocusUp="@+id/txtQuestion" />

@@ -60,6 +60,7 @@
                     android:layout_weight="0.8"
                     android:hint="@string/lblComments"
                     android:inputType="text|textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine"
+                    android:importantForAutofill="no"
                     android:minLines="2"
                     android:nextFocusDown="@+id/txtRoute"
                     android:nextFocusUp="@+id/spnAircraft"
@@ -76,6 +77,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.8"
                         android:hint="@string/lblRoute"
+                        android:importantForAutofill="no"
                         android:inputType="textCapCharacters|textNoSuggestions|textMultiLine"
                         android:minLines="2"
                         android:text="" />

@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_action_search"
         android:hint="@string/strEmpty"
+        android:importantForAutofill="no"
         android:inputType="text"
         android:id="@+id/txtSearchProp"
         />

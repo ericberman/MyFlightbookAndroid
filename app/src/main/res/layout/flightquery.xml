@@ -24,6 +24,7 @@
                 android:id="@+id/fqGeneralText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="no"
                 android:inputType="text"
                 android:hint="@string/fqTextContainsPrompt" />
         </LinearLayout>
@@ -176,6 +177,7 @@
                     android:id="@+id/fqAirports"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:importantForAutofill="no"
                     android:hint="@string/fqAirportsContainsPrompt"
                     android:inputType="textCapCharacters|textNoSuggestions" />
             </TableRow>
@@ -411,6 +413,7 @@
             <EditText
                 android:id="@+id/fqModelName"
                 android:layout_width="fill_parent"
+                android:importantForAutofill="no"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:hint="@string/fqFlightModelNamePrompt" />
@@ -684,6 +687,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapWords"
+                android:importantForAutofill="no"
                 android:hint="@string/fqQueryNamePrompt"
                 android:id="@+id/txtNameForQuery" />
             <TableLayout
