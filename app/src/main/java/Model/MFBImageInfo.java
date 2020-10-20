@@ -344,7 +344,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     }
 
     public String getImageFile() {
-        return String.format("%s%s%s", getImagePrefix(), Long.toString(m_id), getImageSuffix());
+        return String.format(Locale.US, "%s%d%s", getImagePrefix(), m_id, getImageSuffix());
     }
 
     private String getAbsoluteImageFile() {
