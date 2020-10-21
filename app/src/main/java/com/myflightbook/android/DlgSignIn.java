@@ -42,7 +42,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
     private static class RefreshCPTTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog m_pd = null;
-        Boolean fAllowCache = true;
+        final boolean fAllowCache = true;
         CustomPropertyType[] m_rgcpt;
         final AsyncWeakContext<DlgSignIn> m_ctxt;
 

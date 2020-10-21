@@ -371,7 +371,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             settings.setZoomGesturesEnabled(true);
 
             SupportMapFragment mf = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mfbMap);
-            View mapView = mf.getView();
+            View mapView = Objects.requireNonNull(mf).getView();
             if (mapView != null && mapView.getViewTreeObserver() != null && mapView.getViewTreeObserver().isAlive()) {
                 mapView.getViewTreeObserver().addOnGlobalLayoutListener(this);
             }
@@ -392,7 +392,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
 
         SupportMapFragment mf = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mfbMap);
         try {
-            mf.getMapAsync(this);
+            Objects.requireNonNull(mf).getMapAsync(this);
         } catch (Exception ex) {
             Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getLocalizedMessage()));
         }

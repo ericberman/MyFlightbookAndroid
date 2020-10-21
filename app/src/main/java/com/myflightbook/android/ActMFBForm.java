@@ -65,6 +65,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
@@ -207,7 +208,7 @@ public class ActMFBForm extends Fragment {
 
                     int length;
                     try {
-                        while ((length = in.read(rgBuffer)) > 0) {
+                        while ((length = Objects.requireNonNull(in).read(rgBuffer)) > 0) {
                             o.write(rgBuffer, 0, length);
                         }
                     } catch (IOException e) {
@@ -238,7 +239,7 @@ public class ActMFBForm extends Fragment {
                     return;
             }
 
-            act.execute(szFilename == null || szFilename.length() == 0 ? selectedImage.toString() : szFilename);
+            act.execute(szFilename);
         }
     }
 

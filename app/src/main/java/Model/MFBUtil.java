@@ -137,7 +137,7 @@ public class MFBUtil {
         return c.getTime();
     }
 
-    static Date AddDays(Date dt, int cDays) {
+    static Date AddDays(Date dt, @SuppressWarnings("SameParameterValue") int cDays) {
         GregorianCalendar c = new GregorianCalendar(UTCDate.getUTCTimeZone());
         c.setTime(dt);
         c.add(Calendar.DATE, cDays);
