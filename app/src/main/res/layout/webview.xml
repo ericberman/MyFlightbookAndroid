@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#010101">
+        android:background="@color/webBarBckground">
         <Button
             android:id="@+id/btnWebBack"
             android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:id="@+id/btnWebRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_action_refresh_dk"
+            android:drawableStart="@drawable/ic_action_refresh"
             style="?android:attr/buttonBarStyle"
             android:text="" />
 
