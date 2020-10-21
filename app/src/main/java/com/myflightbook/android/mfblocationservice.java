@@ -28,12 +28,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -44,15 +42,13 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
+import Model.MFBConstants;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 // Background location service, modeled on the code sample at http://devdeeds.com/android-location-tracking-in-background-service/; thanks!!
-public class mfblocationservice  extends Service implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+public class mfblocationservice  extends Service implements LocationListener {
 
     class MFBLocationCallback extends LocationCallback {
         @Override
@@ -103,43 +99,16 @@ public class mfblocationservice  extends Service implements
     @Override
     public void onCreate() {
         super.onCreate();
-        startInForeground();
-    }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        startInForeground();
-        GoogleApiClient mLocationClient;
-        mLocationClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
 
         mLocationRequest.setInterval(500)
                 .setFastestInterval(250)
                 .setMaxWaitTime(10000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationClient.connect();
 
-        //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
-        return START_STICKY;
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    /*
-     * LOCATION CALLBACKS
-     */
-    @Override
-    public void onConnected(Bundle dataBundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
         mFusedLocationProvider = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationProvider.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
 
@@ -151,8 +120,29 @@ public class mfblocationservice  extends Service implements
                             _initialLoc = location;
                             onLocationChanged(location);
                         }
+                    }).addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null)
+                            onLocationChanged(task.getResult());
+                        else
+                            Log.e(MFBConstants.LOG_TAG, "No location!");
                     });
         }
+
+        startInForeground();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startInForeground();
+
+        //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
+        return START_STICKY;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
@@ -160,14 +150,6 @@ public class mfblocationservice  extends Service implements
         if (mFusedLocationProvider != null)
             mFusedLocationProvider.removeLocationUpdates(mLocationCallback);
         super.onDestroy();
-    }
-
-    /*
-     * Called by Location Services if the connection to the
-     * location client drops because of an error.
-     */
-    @Override
-    public void onConnectionSuspended(int i) {
     }
 
     //to get the location change
@@ -179,9 +161,5 @@ public class mfblocationservice  extends Service implements
             intent.putExtra(EXTRA_LOCATION, location);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 }
