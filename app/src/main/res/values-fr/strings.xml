@@ -199,7 +199,6 @@
     <string name="lblSchedule">Programme</string>
 
     <string name="lblFlightStatus">Type de Vol</string>
-    <string name="lblFeet">pieds</string>
     <string name="lblFlightGPSQuality">Qualité GPS </string>
     <string name="lblUnknown">(inconnu)</string>
     <string name="lblGPSUnknown">(inconnu)</string>
@@ -559,16 +558,6 @@
     <string name="noCurrency">Aucune donnée d\'expérience à afficher</string>
     <string name="noTotals">Pas de données totales à afficher</string>
     
-    <!-- Totals Groups -->
-    <string name="totalsGroupNone">Autres totaux</string>
-    <string name="totalsGroupCategoryClass">Totaux par catégorie / classe</string>
-    <string name="totalsGroupICAO">Totaux par code ICAO</string>
-    <string name="totalsGroupModel">Totaux par modèle</string>
-    <string name="totalsGroupCapabilities">Totaux par caractéristiques d\'aéronef</string>
-    <string name="totalsGroupCore">Heures de journal de bord standard</string>
-    <string name="totalsGroupProperties">Autres totaux</string>
-    <string name="totalsGroupTotal">Temps total de vol total</string>
-
     <!-- Pack and Go -->
     <string name="packAndGo">Emballer et partir</string>
     <string name="packAndGoDesc">Vous pouvez télécharger un instantané des vols, des devises et des totaux à utiliser hors ligne</string>

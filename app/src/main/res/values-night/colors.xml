@@ -6,7 +6,6 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="colorBackground">#000000</color>
     <color name="colorDialog">#878787</color>
-    <color name="colorMenu">#878787</color>
     <color name="divider_background">#555555</color>
     <color name="divider_text">#00BCD4</color>
     <color name="progressTextColor">#FFFFFF</color>

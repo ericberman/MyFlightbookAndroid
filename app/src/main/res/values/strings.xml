@@ -199,7 +199,6 @@
     <string name="lblSchedule">Schedule</string>
 
     <string name="lblFlightStatus">Flight Status</string>
-    <string name="lblFeet">ft</string>
     <string name="lblFlightGPSQuality">GPS Quality</string>
     <string name="lblUnknown">(unknown)</string>
     <string name="lblGPSUnknown">(unknown)</string>
@@ -558,16 +557,6 @@
     <!-- Widgets -->
     <string name="noCurrency">No currency to display</string>
     <string name="noTotals">No totals to display</string>
-
-    <!-- Totals Groups -->
-    <string name="totalsGroupNone">Other Totals</string>
-    <string name="totalsGroupCategoryClass">Totals by Category/Class</string>
-    <string name="totalsGroupICAO">Totals by ICAO code</string>
-    <string name="totalsGroupModel">Totals by Model</string>
-    <string name="totalsGroupCapabilities">Totals by aircraft features</string>
-    <string name="totalsGroupCore">Standard Logbook Times</string>
-    <string name="totalsGroupProperties">Other Totals</string>
-    <string name="totalsGroupTotal">Overall Total Flight Time</string>
 
     <!-- Pack and Go -->
     <string name="packAndGo">Pack and go</string>
