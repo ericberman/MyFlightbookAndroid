@@ -553,6 +553,7 @@
     <string name="shortcutStopEngine">Arrêter le moteur</string>
     <string name="shortcutPause">Pauser</string>
     <string name="shortcutResume">Reprendre</string>
+    <string name="shortcutCurrentFlight">Vol actuel</string>
 
     <!-- Widgets -->
     <string name="noCurrency">Aucune donnée d\'expérience à afficher</string>

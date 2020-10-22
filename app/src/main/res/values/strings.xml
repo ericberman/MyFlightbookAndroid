@@ -553,6 +553,7 @@
     <string name="shortcutStopEngine">Stop Engine</string>
     <string name="shortcutPause">Pause</string>
     <string name="shortcutResume">Resume</string>
+    <string name="shortcutCurrentFlight">Current Flight</string>
 
     <!-- Widgets -->
     <string name="noCurrency">No currency to display</string>

@@ -139,6 +139,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
     public static final String ACTION_VIEW_CURRENCY = "com.myflightbook.android.VIEWCURRENCY";
     public static final String ACTION_VIEW_TOTALS = "com.myflightbook.android.VIEWTOTALS";
+    private static final String ACTION_VIEW_CURRENT = "com.myflightbook.android.VIEWCURRENT";
     private static final String ACTION_START_ENGINE = "com.myflightbook.android.STARTENGINE";
     private static final String ACTION_STOP_ENGINE = "com.myflightbook.android.STOPENGINE";
     private static final String ACTION_PAUSE_FLIGHT = "com.myflightbook.android.PAUSEFLIGHT";
@@ -426,6 +427,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
                 case ACTION_VIEW_TOTALS:
                     this.mTabHost.setCurrentTabByTag(MFBConstants.tabTotals);
                     break;
+                case ACTION_VIEW_CURRENT:
+                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabNewFlight);
+                    break;
                 default:
                     this.mTabHost.setCurrentTabByTag(MFBConstants.tabNewFlight);
                     MFBMain.pendingAction = szAction;
@@ -520,6 +524,13 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
                             .setLongLabel(getString(R.string.shortcutStartEngine))
                             .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
                             .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_START_ENGINE))
+                            .build());
+                else
+                    lst.add(new ShortcutInfo.Builder(this, "viewCurrent")
+                            .setShortLabel(getString(R.string.shortcutCurrentFlight))
+                            .setLongLabel(getString(R.string.shortcutCurrentFlight))
+                            .setIcon(Icon.createWithResource(this, R.drawable.ic_tab_newflight))
+                            .setIntent(new Intent(this, MFBMain.class).setAction(ACTION_VIEW_CURRENT))
                             .build());
 
                 // Now add Currency and Totals
