@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019 MyFlightbook, LLC
+    Copyright (C) 2019-2020 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public class TotalsWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (Objects.equals(intent.getAction(), MFBMain.ACTION_VIEW_TOTALS)) {
-            context.startActivity(new Intent(context, MFBMain.class).setAction(intent.getAction()));
+            context.startActivity(new Intent(context, MFBMain.class).setAction(intent.getAction()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         super.onReceive(context, intent);
     }
