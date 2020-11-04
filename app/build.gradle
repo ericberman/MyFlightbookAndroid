@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.myflightbook.android"
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 29
         multiDexEnabled true
 

@@ -5,6 +5,15 @@
     <string name="lblConfirm">Confirmer</string>
     <string name="app_name">MyFlightbook</string>
 
+    <string name="tabNewFlight">Nouveau</string>
+    <string name="tabAircraft">Aéronefs</string>
+    <string name="tabRecent">Historique</string>
+    <string name="tabCurrency">Statut</string>
+    <string name="tabTotals">Totaux</string>
+    <string name="tabVisited">Visités</string>
+    <string name="tabTraining">Formation</string>
+    <string name="tabProfile">Profile</string>
+
     <string name="UserName">Entrez votre adresse mail:</string>
     <string name="Password">Entrez votre mot de passe</string>
     <string name="signin">Se connecter</string>
