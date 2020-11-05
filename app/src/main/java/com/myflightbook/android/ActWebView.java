@@ -131,11 +131,6 @@ public class ActWebView extends AppCompatActivity {
 
         wv.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return false;
-            }
-
-            @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest url) {
                 return false;
             }
