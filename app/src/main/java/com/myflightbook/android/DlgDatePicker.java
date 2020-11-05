@@ -83,8 +83,8 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
         dpDate.init(y, m, d, this);
         tpTime.setOnTimeChangedListener(this);
         tpTime.setIs24HourView(true);
-        tpTime.setCurrentHour(h);
-        tpTime.setCurrentMinute(min);
+        tpTime.setHour(h);
+        tpTime.setMinute(min);
     }
 
     private void updatePickers(Date dt) {
@@ -100,8 +100,8 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
         if (dpDate != null)
             dpDate.updateDate(y, m, d);
         if (tpTime != null) {
-            tpTime.setCurrentHour(h);
-            tpTime.setCurrentMinute(min);
+            tpTime.setHour(h);
+            tpTime.setMinute(min);
         }
     }
 
@@ -149,7 +149,7 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
 
     public void onDateChanged(DatePicker vw, int year, int monthOfYear, int dayOfMonth) {
         GregorianCalendar c = getCalendar();
-        c.set(year, monthOfYear, dayOfMonth, tpTime.getCurrentHour(), tpTime.getCurrentMinute());
+        c.set(year, monthOfYear, dayOfMonth, tpTime.getHour(), tpTime.getMinute());
 
         this.m_Date = c.getTime();
 
