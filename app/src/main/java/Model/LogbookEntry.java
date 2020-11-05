@@ -21,7 +21,6 @@ package Model;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.Html;
 import android.util.Log;
 
 import com.myflightbook.android.ActRecentsWS;
@@ -46,6 +45,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import Model.MFBImageInfo.PictureDestination;
+import androidx.core.text.HtmlCompat;
 
 public class LogbookEntry extends SoapableObject implements KvmSerializable, Serializable, LazyThumbnailLoader.ThumbnailedItem {
 
@@ -865,8 +865,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         fHold = Boolean.parseBoolean(so.getProperty("fHoldingProcedures")
                 .toString());
 
-        szRoute = Html.fromHtml(ReadNullableString(so, "Route")).toString();
-        szComments = Html.fromHtml(ReadNullableString(so, "Comment")).toString();
+        szRoute = HtmlCompat.fromHtml(ReadNullableString(so, "Route"), HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
+        szComments = HtmlCompat.fromHtml(ReadNullableString(so, "Comment"), HtmlCompat.FROM_HTML_MODE_LEGACY).toString();
         fPublic = Boolean.parseBoolean(so.getProperty("fIsPublic").toString());
         dtFlight = IsoDate.stringToDate(so.getProperty("Date").toString(), IsoDate.DATE);
 

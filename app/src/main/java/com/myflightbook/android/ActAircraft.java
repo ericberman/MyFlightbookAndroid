@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,6 +53,7 @@ import Model.MFBImageInfo;
 import Model.MFBUtil;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -217,7 +217,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             String szInstanceType = " " + (ac.IsReal() ? "" : getString(Aircraft.rgidInstanceTypes[ac.InstanceTypeID - 1]));
 
             String szAircraftDetails = String.format(Locale.getDefault(), "<big><b>%s</b></big> <i>%s</i><br />%s %s", ac.displayTailNumber(), (ac.ModelDescription + " " + ac.ModelCommonName).trim() + szInstanceType, ac.PrivateNotes, ac.PublicNotes);
-            tvTail.setText(Html.fromHtml(szAircraftDetails));
+            tvTail.setText(HtmlCompat.fromHtml(szAircraftDetails, HtmlCompat.FROM_HTML_MODE_LEGACY));
 
             return v;
         }

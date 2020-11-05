@@ -26,7 +26,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -69,6 +68,7 @@ import Model.MFBUtil;
 import Model.PackAndGo;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -192,7 +192,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                     TextUtils.htmlEncode(szTailNumber.trim()),
                     TextUtils.htmlEncode(ac == null ? "" : String.format(Locale.getDefault(), " (%s)", ac.ModelDescription)),
                     TextUtils.htmlEncode(le.szRoute.trim()));
-            txtHeader.setText(Html.fromHtml(szHeaderHTML));
+            txtHeader.setText(HtmlCompat.fromHtml(szHeaderHTML, HtmlCompat.FROM_HTML_MODE_LEGACY));
 
             Pattern pBold = Pattern.compile("(\\*)([^*_\\r\\n]*)(\\*)", Pattern.CASE_INSENSITIVE);
             Pattern pItalic = Pattern.compile("(_)([^*_\\r\\n]*)_", Pattern.CASE_INSENSITIVE);
@@ -201,7 +201,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             TextView txtComments = v.findViewById(R.id.txtComments);
             txtComments.setVisibility(szComments.length() == 0 ? View.GONE : View.VISIBLE);
-            txtComments.setText(Html.fromHtml(szComments));
+            txtComments.setText(HtmlCompat.fromHtml(szComments, HtmlCompat.FROM_HTML_MODE_LEGACY));
 
             TextView txtFlightTimes = v.findViewById(R.id.txtFlightTimes);
             StringBuilder sb = new StringBuilder();
@@ -225,7 +225,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 }
             }
             txtFlightTimes.setVisibility(sb.length() == 0 ? View.GONE : View.VISIBLE);
-            txtFlightTimes.setText(Html.fromHtml(sb.toString()));
+            txtFlightTimes.setText(HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
 
             // show pending flights different from others.
             Typeface tf = Typeface.DEFAULT;
