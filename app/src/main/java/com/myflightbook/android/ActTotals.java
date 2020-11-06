@@ -54,6 +54,7 @@ import Model.MFBUtil;
 import Model.PackAndGo;
 import Model.Totals;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -141,6 +142,12 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
         return inflater.inflate(R.layout.totalslist, container, false);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);    // preserve state across rotation.
     }
 
     @Override

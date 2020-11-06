@@ -40,18 +40,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.webkit.WebView;
-import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TabHost.TabContentFactory;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Locale;
 
 import Model.Airport;
 import Model.CustomExceptionHandler;
@@ -71,13 +69,54 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
-public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
+public class MFBMain extends AppCompatActivity {
 
     interface Invalidatable {
         void invalidate();
+    }
+
+    public enum MFBTab {NewFlight, Aircraft, Recent, Currency, Totals, Visited, Training, Options}
+
+    public static class MFBTabAdapter extends FragmentStateAdapter {
+        public MFBTabAdapter(FragmentActivity f) {
+            super(f);
+        }
+
+        // Return a NEW fragment instance in createFragment(int)
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            MFBTab tab = MFBTab.values()[position];
+            switch (tab) {
+                case NewFlight:
+                    return new ActNewFlight();
+                case Aircraft:
+                    return new ActAircraft();
+                case Recent:
+                    return new ActRecentsWS();
+                case Currency:
+                    return new ActCurrency();
+                case Totals:
+                    return new ActTotals();
+                case Visited:
+                    return new ActVisitedAirports();
+                case Training:
+                    return new ActTraining();
+                case Options:
+                    return new ActOptions();
+                default:
+                    throw new RuntimeException(String.format(Locale.getDefault(), "Unknown Tab position requested %d", position));
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return 8;
+        }
     }
 
     static private final ArrayList<Invalidatable> rgNotifyDataChanged = new ArrayList<>();
@@ -125,9 +164,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     private Boolean m_fSeenWarning = false;
     private long mLastVacuum = 0; // ms of last vacuum
 
-    private TabHost mTabHost = null;
-    private final HashMap<String, TabInfo> mapTabInfo = new HashMap<>();
-    private TabInfo mLastTab = null;
+    private ViewPager2 mViewPager = null;
     private int mLastTabIndex = -1;
 
     public static DataBaseHelper mDBHelper = null;
@@ -220,57 +257,9 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
             if (i != null)
                 i.setData(null);
 
-            TabInfo ti = m.mapTabInfo.get(MFBConstants.tabRecents);
-            assert ti != null;
-            if (ti.fragment != null)
-                ((ActRecentsWS) ti.fragment).refreshRecentFlights(false);
+            MFBMain.invalidateAll();
+            m.mViewPager.setCurrentItem(MFBTab.Recent.ordinal());
         }
-    }
-
-    private static class TabInfo {
-        private final String tag;
-        private final Class<?> clss;
-        private Fragment fragment;
-
-        TabInfo(String tag, Class<?> clazz) {
-            this.tag = tag;
-            this.clss = clazz;
-        }
-    }
-
-    private static class TabFactory implements TabContentFactory {
-
-        private final Context mContext;
-
-        TabFactory(Context context) {
-            mContext = context;
-        }
-
-        public View createTabContent(String tag) {
-            View v = new View(mContext);
-            v.setMinimumWidth(0);
-            v.setMinimumHeight(0);
-            return v;
-        }
-    }
-
-    private static void addTab(MFBMain activity, TabHost tabHost, TabHost.TabSpec tabSpec, TabInfo tabInfo) {
-        // Attach a Tab view factory to the spec
-        tabSpec.setContent(new TabFactory(activity));
-        String tag = tabSpec.getTag();
-
-        // Check to see if we already have a fragment for this tab, probably
-        // from a previously saved state.  If so, deactivate it, because our
-        // initial state is that a tab isn't shown.
-        tabInfo.fragment = activity.getSupportFragmentManager().findFragmentByTag(tag);
-        if (tabInfo.fragment != null && !tabInfo.fragment.isDetached()) {
-            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-            ft.detach(tabInfo.fragment);
-            ft.commitAllowingStateLoss();
-            activity.getSupportFragmentManager().executePendingTransactions();
-        }
-
-        tabHost.addTab(tabSpec);
     }
 
     private void initDB(Boolean fRetryOnFailure) {
@@ -361,38 +350,58 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
 
         ceh.sendPendingReports();
 
-        // Set up the tabs
-        mTabHost = findViewById(android.R.id.tabhost);
-        mTabHost.setup();
-        mTabHost.setBackgroundColor(0xFFffffff);
-        mTabHost.getTabWidget().setDividerDrawable(null);
-        TabInfo tabInfo;
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabNewFlight).setIndicator(getString(R.string.tabNewFlight), ContextCompat.getDrawable(this, R.drawable.ic_tab_newflight)), (tabInfo = new TabInfo(MFBConstants.tabNewFlight, ActNewFlight.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabAircraft).setIndicator(getString(R.string.tabAircraft), ContextCompat.getDrawable(this, R.drawable.ic_tab_aircraft)), (tabInfo = new TabInfo(MFBConstants.tabAircraft, ActAircraft.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabRecents).setIndicator(getString(R.string.tabRecent), ContextCompat.getDrawable(this, R.drawable.ic_tab_recents)), (tabInfo = new TabInfo(MFBConstants.tabRecents, ActRecentsWS.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabCurrency).setIndicator(getString(R.string.tabCurrency), ContextCompat.getDrawable(this, R.drawable.ic_tab_currency)), (tabInfo = new TabInfo(MFBConstants.tabCurrency, ActCurrency.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabTotals).setIndicator(getString(R.string.tabTotals), ContextCompat.getDrawable(this, R.drawable.ic_tab_totals)), (tabInfo = new TabInfo(MFBConstants.tabTotals, ActTotals.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabVisitedAirports).setIndicator(getString(R.string.tabVisited), ContextCompat.getDrawable(this, R.drawable.ic_tab_visitedairport)), (tabInfo = new TabInfo(MFBConstants.tabVisitedAirports, ActVisitedAirports.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabTraining).setIndicator(getString(R.string.tabTraining), ContextCompat.getDrawable(this, R.drawable.ic_tab_training)), (tabInfo = new TabInfo(MFBConstants.tabTraining, ActTraining.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
-        MFBMain.addTab(this, this.mTabHost, this.mTabHost.newTabSpec(MFBConstants.tabOptions).setIndicator(getString(R.string.tabProfile), ContextCompat.getDrawable(this, R.drawable.ic_tab_profile)), (tabInfo = new TabInfo(MFBConstants.tabOptions, ActOptions.class)));
-        this.mapTabInfo.put(tabInfo.tag, tabInfo);
+        mViewPager = findViewById(R.id.pager);
+        mViewPager.setOffscreenPageLimit(MFBTab.values().length);
+        mViewPager.setAdapter(new MFBTabAdapter(this));
 
-        mTabHost.setOnTabChangedListener(this);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        new TabLayoutMediator(tabLayout, mViewPager, (tab, position) -> {
+            MFBTab tabID = MFBTab.values()[position];
+            switch (tabID) {
+                case NewFlight:
+                    tab.setContentDescription(R.string.tabNewFlight);
+                    tab.setText(R.string.tabNewFlight);
+                    tab.setIcon(R.drawable.ic_tab_newflight);
+                    break;
+                case Recent:
+                    tab.setContentDescription(R.string.tabRecent);
+                    tab.setText(R.string.tabRecent);
+                    tab.setIcon(R.drawable.ic_tab_recents);
+                    break;
+                case Aircraft:
+                    tab.setContentDescription(R.string.tabAircraft);
+                    tab.setText(R.string.tabAircraft);
+                    tab.setIcon(R.drawable.ic_tab_aircraft);
+                    break;
+                case Totals:
+                    tab.setContentDescription(R.string.tabTotals);
+                    tab.setText(R.string.tabTotals);
+                    tab.setIcon(R.drawable.ic_tab_totals);
+                    break;
+                case Currency:
+                    tab.setContentDescription(R.string.tabCurrency);
+                    tab.setText(R.string.tabCurrency);
+                    tab.setIcon(R.drawable.ic_tab_currency);
+                    break;
+                case Visited:
+                    tab.setContentDescription(R.string.tabVisited);
+                    tab.setText(R.string.tabVisited);
+                    tab.setIcon(R.drawable.ic_tab_visitedairport);
+                    break;
+                case Training:
+                    tab.setContentDescription(R.string.tabTraining);
+                    tab.setText(R.string.tabTraining);
+                    tab.setIcon(R.drawable.ic_tab_training);
+                    break;
+                case Options:
+                    tab.setContentDescription(R.string.tabProfile);
+                    tab.setText(R.string.tabProfile);
+                    tab.setIcon(R.drawable.ic_tab_profile);
+                    break;
+            }
 
-        // try to restore the previous tab
-        if (mLastTabIndex < mTabHost.getTabWidget().getTabCount()) {
-            mTabHost.setCurrentTab(mLastTabIndex);
-            if (mLastTabIndex == 0)    // hack: default tab index is already 0, so if we're restoring to first tab, need to force it.
-                this.onTabChanged(MFBConstants.tabNewFlight);
-        } else
-            this.mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
+            tab.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_LABELED);
+        }).attach();
 
         // Periodically (every 7 days) vacuum (compact) the database.
         long t = new Date().getTime();
@@ -421,16 +430,22 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         if (szAction != null) {
             switch (szAction) {
                 case ACTION_VIEW_CURRENCY:
-                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabCurrency);
+                    mLastTabIndex = MFBTab.Currency.ordinal();
                     break;
                 case ACTION_VIEW_TOTALS:
-                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabTotals);
+                    mLastTabIndex = MFBTab.Totals.ordinal();
                     break;
                 case ACTION_VIEW_CURRENT:
-                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabNewFlight);
+                    mLastTabIndex = MFBTab.NewFlight.ordinal();
+                    break;
+                case ACTION_START_ENGINE:
+                case ACTION_STOP_ENGINE:
+                case ACTION_PAUSE_FLIGHT:
+                case ACTION_RESUME_FLIGHT:
+                    mLastTabIndex = MFBTab.NewFlight.ordinal();
+                    MFBMain.pendingAction = szAction;
                     break;
                 default:
-                    this.mTabHost.setCurrentTabByTag(MFBConstants.tabNewFlight);
                     MFBMain.pendingAction = szAction;
                     break;
             }
@@ -584,13 +599,16 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         super.onResume();
 
         fIsPaused = false;
+
         // check to see if we need to refresh auth.
         // a) if we're already signed in, just go to the last tab.
         // b) if we're not already signed in or need a refresh, refresh as necessary
         // c) else, just go to the options tab to sign in from there.
         AuthToken auth = new AuthToken();
-        if (!auth.HasValidCache())
-            mTabHost.setCurrentTabByTag(MFBConstants.tabOptions);
+        if (!auth.HasValidCache() || mLastTabIndex < 0 || mLastTabIndex >= MFBTab.values().length)
+            mViewPager.setCurrentItem(MFBTab.Options.ordinal());
+        else
+            mViewPager.setCurrentItem(mLastTabIndex);
 
         new RefreshTask(getApplicationContext(), this).execute((auth));
 
@@ -716,7 +734,7 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
         ed.putInt(m_KeysAltUnits, ActOptions.altitudeUnits.ordinal());
         ed.putInt(m_KeysSpeedUnits, ActOptions.speedUnits.ordinal());
 
-        ed.putInt(m_KeysLastTab, mTabHost.getCurrentTab());
+        ed.putInt(m_KeysLastTab, mViewPager.getCurrentItem());
         ed.putLong(m_TimeOfLastVacuum, mLastVacuum);
 
         ed.putInt(m_KeysTOSpeed, MFBTakeoffSpeed.getTakeOffSpeedIndex());
@@ -733,36 +751,6 @@ public class MFBMain extends AppCompatActivity implements OnTabChangeListener {
     public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         RestoreState();
-    }
-
-    public void onTabChanged(String tag) {
-
-        TabInfo newTab = this.mapTabInfo.get(tag);
-        if (isFinishing() || isDestroyed())
-            return;
-
-        if (mLastTab != newTab) {
-            FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
-            if (mLastTab != null) {
-                if (mLastTab.fragment != null) {
-                    ft.detach(mLastTab.fragment);
-                }
-            }
-            if (newTab != null) {
-                if (newTab.fragment == null) {
-                    FragmentManager fm = getSupportFragmentManager();
-                    newTab.fragment = fm.getFragmentFactory().instantiate(ClassLoader.getSystemClassLoader(),
-                            newTab.clss.getName());
-                    ft.add(R.id.realtabcontent, newTab.fragment, newTab.tag);
-                } else {
-                    ft.attach(newTab.fragment);
-                }
-            }
-
-            mLastTab = newTab;
-            ft.commitAllowingStateLoss();
-            this.getSupportFragmentManager().executePendingTransactions();
-        }
     }
 
     public static MFBFlightListener getNewFlightListener() {
