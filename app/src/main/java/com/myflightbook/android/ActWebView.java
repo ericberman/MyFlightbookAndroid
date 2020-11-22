@@ -184,26 +184,12 @@ public class ActWebView extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
         super.onActivityResult(requestCode, resultCode, intent);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (requestCode == REQUEST_SELECT_FILE)
         {
-            if (requestCode == REQUEST_SELECT_FILE)
-            {
-                if (uploadMessage == null)
-                    return;
-                uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
-                uploadMessage = null;
-            }
-        }
-        else if (requestCode == FILECHOOSER_RESULTCODE)
-        {
-            if (null == mUploadMessage)
+            if (uploadMessage == null)
                 return;
-
-            Uri result = intent == null || resultCode != RESULT_OK ? null : intent.getData();
-            mUploadMessage.onReceiveValue(result);
-            mUploadMessage = null;
+            uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
+            uploadMessage = null;
         }
-        else
-            Toast.makeText(this.getApplicationContext(), "Failed to Upload Image", Toast.LENGTH_LONG).show();
     }
 }
