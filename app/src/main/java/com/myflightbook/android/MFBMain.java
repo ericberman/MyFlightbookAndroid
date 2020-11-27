@@ -353,6 +353,7 @@ public class MFBMain extends AppCompatActivity {
         mViewPager = findViewById(R.id.pager);
         mViewPager.setOffscreenPageLimit(MFBTab.values().length);
         mViewPager.setAdapter(new MFBTabAdapter(this));
+        mViewPager.setUserInputEnabled(false);
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         new TabLayoutMediator(tabLayout, mViewPager, (tab, position) -> {
@@ -734,7 +735,7 @@ public class MFBMain extends AppCompatActivity {
         ed.putInt(m_KeysAltUnits, ActOptions.altitudeUnits.ordinal());
         ed.putInt(m_KeysSpeedUnits, ActOptions.speedUnits.ordinal());
 
-        ed.putInt(m_KeysLastTab, mViewPager.getCurrentItem());
+        ed.putInt(m_KeysLastTab, mLastTabIndex = mViewPager.getCurrentItem());
         ed.putLong(m_TimeOfLastVacuum, mLastVacuum);
 
         ed.putInt(m_KeysTOSpeed, MFBTakeoffSpeed.getTakeOffSpeedIndex());
