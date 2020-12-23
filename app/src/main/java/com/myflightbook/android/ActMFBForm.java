@@ -487,9 +487,9 @@ public class ActMFBForm extends Fragment {
     void ChoosePicture() {
         if (!fCheckImagePermissions(GALLERY_PERMISSION))
             return;
-        Intent i = new Intent(Intent.ACTION_PICK);
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
         i.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/* video/*");
-        startActivityForResult(i, SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(i, ""), SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
     void TakePicture() {
