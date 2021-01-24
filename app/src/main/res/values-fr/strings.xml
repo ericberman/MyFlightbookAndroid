@@ -104,6 +104,7 @@
     <string name="lblSignature">Signature</string>
     <string name="lblSignatureTemplate1">Signé %1$s par %2$s</string>
     <string name="lblSignatureTemplate2">(CFI #%1$s, expiration %2$s)</string>
+    <string name="lblSignatureTemplate2NoExp">(Certificat# %1$s)</string>
 
     <string name="lblNow">Maintenant</string>
     <string name="lblNone">Aucun</string>

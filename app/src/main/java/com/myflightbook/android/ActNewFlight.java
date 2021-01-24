@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ import com.myflightbook.android.WebServices.DeleteFlightSvc;
 import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
+import com.myflightbook.android.WebServices.UTCDate;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -1339,10 +1340,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                     getString(R.string.lblSignatureTemplate1),
                     DateFormat.getDateFormat(requireActivity()).format(m_le.signatureDate),
                     m_le.signatureCFIName);
-            String szSigInfo2 = String.format(Locale.getDefault(),
-                    getString(R.string.lblSignatureTemplate2),
-                    m_le.signatureCFICert,
-                    DateFormat.getDateFormat(requireActivity()).format(m_le.signatureCFIExpiration));
+            String szSigInfo2 = UTCDate.IsNullDate(m_le.signatureCFIExpiration) ?
+                    String.format(Locale.getDefault(), getString(R.string.lblSignatureTemplate2NoExp), m_le.signatureCFICert) :
+                    String.format(Locale.getDefault(), getString(R.string.lblSignatureTemplate2), m_le.signatureCFICert, DateFormat.getDateFormat(requireActivity()).format(m_le.signatureCFIExpiration));
             ((TextView) findViewById(R.id.txtSigInfo1)).setText(szSigInfo1);
             ((TextView) findViewById(R.id.txtSigInfo2)).setText(szSigInfo2);
             ((TextView) findViewById(R.id.txtSigComment)).setText(m_le.signatureComments);
