@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020
+    Copyright (C) 2017-2021
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ public class DecimalEdit extends androidx.appcompat.widget.AppCompatEditText imp
         if (em == EditMode.HHMM)
             return DoubleToHHMM(d);
         else
-            return new DecimalFormat("#,###.##").format(d);
+            return new DecimalFormat("#,##0.0#").format(d);
     }
 
     public void setDoubleValue(double d) {
