@@ -1537,6 +1537,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
             if (dtHobbs > 0) {
                 m_le.hobbsEnd = m_le.hobbsStart + (dtHobbs / MFBConstants.MS_PER_HOUR);
+                if (MFBLocation.fPrefRoundNearestTenth)
+                    m_le.hobbsEnd = Math.round(m_le.hobbsEnd * 10.0) / 10.0;
+
                 ToView(); // sync the view to the change we just made - especially since autototals can read it.
 
                 // if total is linked to hobbs, need to do autotime too
