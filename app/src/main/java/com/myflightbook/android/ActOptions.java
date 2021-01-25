@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -164,9 +164,40 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         return inflater.inflate(R.layout.options, container, false);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void updateStatus() {
+        // refresh sign-in status
+        TextView t = (TextView) findViewById(R.id.txtSignInStatus);
+        View bSignIn = findViewById(R.id.btnSignIn);
+        View bSignOut = findViewById(R.id.btnSignOut);
+        View bCreateAccount = findViewById(R.id.btnCreateNewAccount);
+        View lblWhyAccount = findViewById(R.id.lblWhyAccount);
+        if (AuthToken.FIsValid()) {
+            t.setText(String.format(this.getString(R.string.statusSignedIn), AuthToken.m_szEmail));
+            bSignIn.setVisibility(View.GONE);
+            bSignOut.setVisibility(View.VISIBLE);
+            bCreateAccount.setVisibility(View.GONE);
+            lblWhyAccount.setVisibility(View.GONE);
+
+            findViewById(R.id.headerPackAndGo).setVisibility(View.VISIBLE);
+            findViewById(R.id.sectPackAndGo).setVisibility(View.VISIBLE);
+        }
+        else {
+            t.setText(this.getString(R.string.statusNotSignedIn));
+            bSignIn.setVisibility(View.VISIBLE);
+            bSignOut.setVisibility(View.GONE);
+            bCreateAccount.setVisibility(View.VISIBLE);
+            lblWhyAccount.setVisibility(View.VISIBLE);
+            findViewById(R.id.headerPackAndGo).setVisibility(View.GONE);
+            findViewById(R.id.sectPackAndGo).setVisibility(View.GONE);
+        }
+
+        findViewById(R.id.btnSignOut).setVisibility(AuthToken.FIsValid() ? View.VISIBLE : View.GONE);
+
+        t = (TextView) findViewById(R.id.lblLastPacked);
+        PackAndGo p = new PackAndGo(getContext());
+        Date dtLast = p.getLastPackDate();
+        t.setText((dtLast == null) ? getString(R.string.packAndGoStatusNone) : String.format(Locale.getDefault(), getString(R.string.packAndGoStatusOK), DateFormat.getDateTimeInstance().format(dtLast)));
+
         AddListener(R.id.btnSignIn);
         AddListener(R.id.btnSignOut);
         AddListener(R.id.btnCreateNewAccount);
@@ -300,7 +331,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
         sp = (Spinner) findViewById(R.id.spnAltUnits);
         adapter = new ArrayAdapter<>(requireActivity(), R.layout.mfbsimpletextitem, new String[] {
-              getString(R.string.lblOptUnitsFeet), getString(R.string.lblOptUnitsMeters)
+                getString(R.string.lblOptUnitsFeet), getString(R.string.lblOptUnitsMeters)
         });
         sp.setAdapter(adapter);
         sp.setSelection(ActOptions.altitudeUnits.ordinal());
@@ -314,48 +345,13 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         sp.setSelection(ActOptions.speedUnits.ordinal());
         sp.setOnItemSelectedListener(this);
 
-        TextView t = (TextView) findViewById(R.id.txtCopyright);
+        t = (TextView) findViewById(R.id.txtCopyright);
         if (MFBConstants.fIsDebug) {
             String s = String.format("%s - DEBUG (%s)",
                     t.getText().toString(),
                     String.format(Locale.getDefault(), "%s %d %d", MFBConstants.szIP, MFBTakeoffSpeed.getLandingSpeed(), MFBTakeoffSpeed.getTakeOffspeed()));
             t.setText(s);
         }
-    }
-
-    private void updateStatus() {
-        // refresh sign-in status
-        TextView t = (TextView) findViewById(R.id.txtSignInStatus);
-        View bSignIn = findViewById(R.id.btnSignIn);
-        View bSignOut = findViewById(R.id.btnSignOut);
-        View bCreateAccount = findViewById(R.id.btnCreateNewAccount);
-        View lblWhyAccount = findViewById(R.id.lblWhyAccount);
-        if (AuthToken.FIsValid()) {
-            t.setText(String.format(this.getString(R.string.statusSignedIn), AuthToken.m_szEmail));
-            bSignIn.setVisibility(View.GONE);
-            bSignOut.setVisibility(View.VISIBLE);
-            bCreateAccount.setVisibility(View.GONE);
-            lblWhyAccount.setVisibility(View.GONE);
-
-            findViewById(R.id.headerPackAndGo).setVisibility(View.VISIBLE);
-            findViewById(R.id.sectPackAndGo).setVisibility(View.VISIBLE);
-        }
-        else {
-            t.setText(this.getString(R.string.statusNotSignedIn));
-            bSignIn.setVisibility(View.VISIBLE);
-            bSignOut.setVisibility(View.GONE);
-            bCreateAccount.setVisibility(View.VISIBLE);
-            lblWhyAccount.setVisibility(View.VISIBLE);
-            findViewById(R.id.headerPackAndGo).setVisibility(View.GONE);
-            findViewById(R.id.sectPackAndGo).setVisibility(View.GONE);
-        }
-
-        findViewById(R.id.btnSignOut).setVisibility(AuthToken.FIsValid() ? View.VISIBLE : View.GONE);
-
-        t = (TextView) findViewById(R.id.lblLastPacked);
-        PackAndGo p = new PackAndGo(getContext());
-        Date dtLast = p.getLastPackDate();
-        t.setText((dtLast == null) ? getString(R.string.packAndGoStatusNone) : String.format(Locale.getDefault(), getString(R.string.packAndGoStatusOK), DateFormat.getDateTimeInstance().format(dtLast)));
     }
 
     public void onResume() {
