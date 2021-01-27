@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
     public String AirportID;
     public String FacilityName;
     public String Type;
+    public String Country;
+    public String Admin1;
     private double Latitude;
     private double Longitude;
     public double Distance;
@@ -186,6 +188,8 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
         ap.FacilityName = ll.toString();
         ap.Type = "FX";
         ap.IsPreferred = false;
+        ap.Country = "";
+        ap.Admin1 = "";
         return ap;
     }
 
@@ -284,6 +288,8 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
                 int colLon = c.getColumnIndex("Longitude");
                 int colType = c.getColumnIndex("Type");
                 int colPref = c.getColumnIndex("Preferred");
+                int colCountry = c.getColumnIndex("Country");
+                int colAdmin1 = c.getColumnIndex("Admin1");
                 while (c.moveToNext()) {
                     Airport ap = new Airport();
                     ap.AirportID = c.getString(colAirportId);
@@ -292,6 +298,8 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
                     ap.Longitude = c.getDouble(colLon);
                     ap.Type = c.getString(colType);
                     ap.IsPreferred = (c.getInt(colPref) != 0);
+                    ap.Country = c.isNull(colCountry) ? "" : c.getString(colCountry);
+                    ap.Admin1 = c.isNull(colAdmin1) ? "" : c.getString(colAdmin1);
 
                     if (loc != null) {
                         Location lAirport = new Location(loc);

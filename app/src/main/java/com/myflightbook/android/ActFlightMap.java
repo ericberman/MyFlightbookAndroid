@@ -305,12 +305,14 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         for (Airport ap : m_rgapRoute) {
             LatLong ll = ap.getLatLong();
             String szNM = getString(R.string.abbrevNauticalMiles);
-            String szContent = String.format("%s (%s) %s", ap.FacilityName, ap.AirportID, (ap.Distance > 0) ? String.format(Locale.getDefault(), " (%.1f%s)", ap.Distance, szNM) : "");
+            String szTitle = String.format(Locale.getDefault(), "%s %s", ap.AirportID, (ap.Distance > 0) ? String.format(Locale.getDefault(), " (%.1f%s)", ap.Distance, szNM) : "");
+            String szLocale = String.format(Locale.getDefault(), "%s %s", ap.Country, ap.Admin1).trim();
+            String szSnippet = String.format("%s %s", ap.FacilityName, szLocale.length() == 0 ? "" : String.format(Locale.getDefault(), "(%s)", szLocale)).trim();
             llb.include(ll.getLatLng());
 
             Marker m = map.addMarker(new MarkerOptions()
                     .position(ll.getLatLng()).anchor(0.5f, 0.5f)
-                    .icon(BitmapDescriptorFactory.fromResource(ap.IsPort() ? R.drawable.airport : R.drawable.tower)).title(szContent));
+                    .icon(BitmapDescriptorFactory.fromResource(ap.IsPort() ? R.drawable.airport : R.drawable.tower)).title(szTitle).snippet(szSnippet));
             if (ap.IsPort())
                 m_hmAirports.put(m.getId(), ap);
         }
