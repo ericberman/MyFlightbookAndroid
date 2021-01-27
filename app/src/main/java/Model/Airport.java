@@ -61,7 +61,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
     private static final String szNavaidPrefix = "@";
     private static final String USAirportPrefix = "K";
 
-    private enum AirportProp {pidAirportID, pidFacilityName, pidType, pidLatitude, pidLongitude, pidDistance}
+    private enum AirportProp {pidAirportID, pidFacilityName, pidType, pidLatitude, pidLongitude, pidDistance, pidCountry, pidAdmin1}
 
     private static final int minNavaidCodeLength = 2;
     private static final int minAirportCodeLength = 3;
@@ -443,6 +443,10 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
                 return Longitude;
             case pidDistance:
                 return Distance;
+            case pidCountry:
+                return Country;
+            case pidAdmin1:
+                return Admin1;
         }
         return null;
     }
@@ -478,6 +482,14 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
                 pi.type = PropertyInfo.OBJECT_CLASS;
                 pi.name = "DistanceFromPosition";
                 break;
+            case pidAdmin1:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "Admin1";
+                break;
+            case pidCountry:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "Country";
+                break;
         }
     }
 
@@ -496,5 +508,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
         Latitude = Double.parseDouble(so.getProperty("Latitude").toString());
         Longitude = Double.parseDouble(so.getProperty("Longitude").toString());
         Distance = Double.parseDouble(so.getProperty("DistanceFromPosition").toString());
+        Country = so.getPropertySafelyAsString("Country");
+        Admin1 = so.getPropertySafelyAsString("Admin1");
     }
 }

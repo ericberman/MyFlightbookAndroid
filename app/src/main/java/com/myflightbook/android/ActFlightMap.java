@@ -306,7 +306,17 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             LatLong ll = ap.getLatLong();
             String szNM = getString(R.string.abbrevNauticalMiles);
             String szTitle = String.format(Locale.getDefault(), "%s %s", ap.AirportID, (ap.Distance > 0) ? String.format(Locale.getDefault(), " (%.1f%s)", ap.Distance, szNM) : "");
-            String szLocale = ap.Country.startsWith("--") ? "" : String.format(Locale.getDefault(), "%s %s", ap.Country, ap.Admin1).trim();
+            StringBuilder sb = new StringBuilder();
+
+            if (ap.Country != null && ap.Country.length() > 0 && !ap.Country.startsWith("--")) {
+                if (ap.Admin1 != null && ap.Admin1.length() > 0) {
+                    sb.append(ap.Admin1);
+                    sb.append(", ");
+                }
+                sb.append(ap.Country);
+            }
+
+            String szLocale = sb.toString();
             String szSnippet = String.format("%s %s", ap.FacilityName, szLocale.length() == 0 ? "" : String.format(Locale.getDefault(), "(%s)", szLocale)).trim();
             llb.include(ll.getLatLng());
 
