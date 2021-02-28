@@ -363,8 +363,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         AddListener(R.id.btnFlightSet);
         AddListener(R.id.btnFlightStartSet);
         AddListener(R.id.btnEngineStartSet);

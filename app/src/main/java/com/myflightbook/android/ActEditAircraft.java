@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -177,8 +177,8 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         AddListener(R.id.btnVORCheck);
         AddListener(R.id.btnTransponder);
         AddListener(R.id.btnPitotStatic);

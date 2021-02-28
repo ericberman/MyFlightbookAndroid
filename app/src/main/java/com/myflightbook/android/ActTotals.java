@@ -150,8 +150,8 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 

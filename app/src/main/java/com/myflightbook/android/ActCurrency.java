@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -113,8 +113,8 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         TextView tvDisclaimer = (TextView) findViewById(R.id.lnkCurrencyDisclaimer);
         tvDisclaimer.setOnClickListener((v) -> ActWebView.ViewURL(getActivity(), String.format(Locale.US, "https://%s/logbook/public/CurrencyDisclaimer.aspx?naked=1&%s", MFBConstants.szIP, MFBConstants.NightParam(getContext()))));
 

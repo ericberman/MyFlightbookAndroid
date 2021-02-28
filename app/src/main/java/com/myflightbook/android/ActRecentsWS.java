@@ -402,8 +402,8 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 

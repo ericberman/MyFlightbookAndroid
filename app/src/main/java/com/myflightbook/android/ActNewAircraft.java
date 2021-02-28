@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -270,8 +270,8 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         if (!AuthToken.FIsValid()) {
             MFBUtil.Alert(this, getString(R.string.errCannotAddAircraft), getString(R.string.errMustBeSignedInToCreateAircraft));
@@ -304,7 +304,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         final AutoCompleteAdapter aca = autoCompleteAdapter;
         act.setAdapter(autoCompleteAdapter);
         act.setOnItemClickListener(
-                (parent, view, position, id) -> {
+                (parent, v, position, id) -> {
                     m_ac = aca.getObject(position);
                     setCurrentMakeModel(MakesandModels.getMakeModelByID(m_ac.ModelID, AvailableMakesAndModels));
                     toView();
