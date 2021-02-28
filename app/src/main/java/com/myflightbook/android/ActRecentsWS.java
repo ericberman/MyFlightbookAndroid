@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -188,7 +188,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             String szHeaderHTML = String.format(Locale.getDefault(),
                     "<strong><big>%s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>",
                     TextUtils.htmlEncode(DateFormat.getDateFormat(this.getContext()).format(le.dtFlight)),
-                    (le.IsPendingFlight() ? (" " + getString(R.string.txtPending)) : ""),
+                    (le.IsPendingFlight() ? (" " + getString(R.string.txtAwaitingUpload)) : ""),
                     TextUtils.htmlEncode(szTailNumber.trim()),
                     TextUtils.htmlEncode(ac == null ? "" : String.format(Locale.getDefault(), " (%s)", ac.ModelDescription)),
                     TextUtils.htmlEncode(le.szRoute.trim()));

@@ -281,7 +281,7 @@
     <string name="txtRepeatFlightComplete">Flight has been created. You can edit it in recent flights.</string>
     <string name="txtSuccess">Success</string>
     <string name="txtSavedFlight">Your flight has been saved on MyFlightbook.com</string>
-    <string name="txtPending"> (PENDING)</string>
+    <string name="txtAwaitingUpload"> (AWAITING UPLOAD)</string>
 
     <string name="txtError">Error</string>
     <string name="errMainDBFailure">Unable to create/copy main database - the app won\'t work!</string>
