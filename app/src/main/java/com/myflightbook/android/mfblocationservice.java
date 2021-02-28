@@ -69,7 +69,7 @@ public class mfblocationservice  extends Service implements LocationListener {
         }
     }
 
-    private final LocationRequest mLocationRequest = new LocationRequest();
+    private final LocationRequest mLocationRequest = LocationRequest.create();
     private final LocationCallback mLocationCallback = new MFBLocationCallback();
     private FusedLocationProviderClient mFusedLocationProvider;
 
