@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ public class ActVisitedAirports extends ExpandableListFragment implements MFBMai
         alAllAirports.add(hmAllAirports);
         childrenMaps.put(szKeyLast, alAllAirports);
 
-        String szRestrict = ((EditText) getView().findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
+        String szRestrict = ((EditText) requireView().findViewById(R.id.txtSearchProp)).getText().toString().toUpperCase(Locale.getDefault());
 
         // slice and dice into headers/first names
         for (int i = 0; i < visitedAirports.length; i++) {

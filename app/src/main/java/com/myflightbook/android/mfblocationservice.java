@@ -2,7 +2,7 @@ package com.myflightbook.android;
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2018-2020 MyFlightbook, LLC
+    Copyright (C) 2018-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,8 +41,10 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
+import java.util.Objects;
 
 import Model.MFBConstants;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -52,12 +54,10 @@ public class mfblocationservice  extends Service implements LocationListener {
 
     class MFBLocationCallback extends LocationCallback {
         @Override
-        public void onLocationAvailability(LocationAvailability availability) { }
+        public void onLocationAvailability(@NonNull LocationAvailability availability) { }
 
         @Override
-        public void onLocationResult(LocationResult result) {
-            if (result == null)
-                return;
+        public void onLocationResult(@NonNull LocationResult result) {
             List<Location> lst = result.getLocations();
             if (lst.size() == 0) {
                 mfblocationservice.this.onLocationChanged(result.getLastLocation());
@@ -110,7 +110,7 @@ public class mfblocationservice  extends Service implements LocationListener {
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         mFusedLocationProvider = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocationProvider.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        mFusedLocationProvider.requestLocationUpdates(mLocationRequest, mLocationCallback, Objects.requireNonNull(Looper.myLooper()));
 
         // initialize with last known location.
         if (_initialLoc == null) {
@@ -154,12 +154,9 @@ public class mfblocationservice  extends Service implements LocationListener {
 
     //to get the location change
     @Override
-    public void onLocationChanged(Location location) {
-
-        if (location != null) {
-            Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
-            intent.putExtra(EXTRA_LOCATION, location);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        }
+    public void onLocationChanged(@NonNull Location location) {
+        Intent intent = new Intent(ACTION_LOCATION_BROADCAST);
+        intent.putExtra(EXTRA_LOCATION, location);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
