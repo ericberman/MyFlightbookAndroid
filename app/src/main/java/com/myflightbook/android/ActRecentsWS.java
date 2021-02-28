@@ -399,7 +399,6 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);    // preserve state across rotation.
     }
 
     @Override

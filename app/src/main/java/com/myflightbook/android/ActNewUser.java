@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,12 +38,16 @@ import java.util.Locale;
 
 import Model.MFBConstants;
 import Model.MFBUtil;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ActNewUser extends AppCompatActivity implements
         android.view.View.OnClickListener {
     private TextView txtEmail, txtEmail2, txtPass, txtPass2, txtFirst, txtLast,
             txtQ, txtA;
+
+    private ActivityResultLauncher<Intent> activityLauncher;
 
     private static class AddUserTask extends AsyncTask<String, Void, MFBSoap> {
         private ProgressDialog m_pd = null;
@@ -129,6 +133,9 @@ public class ActNewUser extends AppCompatActivity implements
                 txtQ.setText("");
             }
         });
+
+        activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> { });
     }
 
     private Boolean FIsValid() {
@@ -167,11 +174,11 @@ public class ActNewUser extends AppCompatActivity implements
         } else if (id == R.id.btnViewPrivacy) {
             Intent i = new Intent(v.getContext(), ActWebView.class);
             i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlPrivacy, MFBConstants.szIP, MFBConstants.NightParam(this)));
-            startActivityForResult(i, 0);
+            activityLauncher.launch(i);
         } else if (id == R.id.btnViewTandC) {
             Intent i = new Intent(v.getContext(), ActWebView.class);
             i.putExtra(MFBConstants.intentViewURL, String.format(Locale.US, MFBConstants.urlTandC, MFBConstants.szIP, MFBConstants.NightParam(this)));
-            startActivityForResult(i, 0);
+            activityLauncher.launch(i);
         }
     }
 }
