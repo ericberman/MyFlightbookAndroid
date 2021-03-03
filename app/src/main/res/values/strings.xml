@@ -277,7 +277,7 @@
     <string name="lblConfirmImageDelete">Delete this image?  This cannot be undone.</string>
     <string name="lblConfirmFlightDelete">Delete this flight?  This cannot be undone.</string>
 
-    <string name="txtSavedPendingFlight">Flight has been saved for uploading later.  You can find it in Recent flights.</string>
+    <string name="txtFlightQueued">Flight has been saved for uploading later.  You can find it in Recent flights.</string>
     <string name="txtRepeatFlightComplete">Flight has been created. You can edit it in recent flights.</string>
     <string name="txtSuccess">Success</string>
     <string name="txtSavedFlight">Your flight has been saved on MyFlightbook.com</string>

@@ -1,0 +1,131 @@
+/*
+	MyFlightbook for Android - provides native access to MyFlightbook
+	pilot's logbook
+    Copyright (C) 2021 MyFlightbook, LLC
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.myflightbook.android.WebServices;
+
+import android.content.Context;
+
+import com.myflightbook.android.Marshal.MarshalDate;
+import com.myflightbook.android.Marshal.MarshalDouble;
+
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+
+import Model.Aircraft;
+import Model.CannedQuery;
+import Model.CategoryClass;
+import Model.CustomPropertyType;
+import Model.FlightProperty;
+import Model.FlightQuery;
+import Model.LatLong;
+import Model.LogbookEntry;
+import Model.MFBImageInfo;
+import Model.MakeModel;
+import Model.PendingFlight;
+
+public class PendingFlightSvc extends MFBSoap {
+    public PendingFlightSvc() {
+    }
+
+    @Override
+    public void AddMappings(SoapSerializationEnvelope e) {
+        e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
+        e.addMapping(NAMESPACE, "LatLong", LatLong.class);
+        e.addMapping(NAMESPACE, "LogbookEntry", LogbookEntry.class);
+        e.addMapping(NAMESPACE, "CustomFlightProperty", FlightProperty.class);
+        e.addMapping(NAMESPACE, "Aircraft", Aircraft.class);
+        e.addMapping(NAMESPACE, "MakeModel", MakeModel.class);
+        e.addMapping(NAMESPACE, "CategoryClass", CategoryClass.class);
+        e.addMapping(NAMESPACE, "CustomPropertyType", CustomPropertyType.class);
+        e.addMapping(NAMESPACE, "FlightQuery", FlightQuery.class);
+        e.addMapping(NAMESPACE, "CannedQuery", CannedQuery.class);
+
+        MarshalDate mdt = new MarshalDate();
+        mdt.register(e);
+        MarshalDouble md = new MarshalDouble();
+        md.register(e);
+    }
+
+    private PendingFlight[] ReadResults(SoapObject result) {
+        if (result == null)
+            return new PendingFlight[0];
+
+        PendingFlight[] rgpf;
+        try {
+            rgpf = new PendingFlight[result.getPropertyCount()];
+
+            for (int i = 0; i < rgpf.length; i++)
+                rgpf[i] = new PendingFlight((SoapObject) result.getProperty(i));
+        } catch (Exception e) {
+            rgpf = new PendingFlight[0]; // don't want to show any bad data!
+            setLastError(getLastError() + e.getMessage());
+        }
+
+        return rgpf;
+    }
+
+    public PendingFlight[] CreatePendingFlight(String szAuthToken, LogbookEntry le, Context c) {
+        PendingFlight[] rgpf;
+
+        SoapObject Request = setMethod("CreatePendingFlight");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("le", le);
+
+        return ReadResults((SoapObject) Invoke(c));
+    }
+
+    public PendingFlight[] PendingFlightsForUser(String szAuthToken, Context c) {
+        PendingFlight[] rgpf;
+
+        SoapObject Request = setMethod("PendingFlightsForUser");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+
+        return ReadResults((SoapObject) Invoke(c));
+    }
+
+    public PendingFlight[] UpdatePendingFlight(String szAuthToken, PendingFlight pf, Context c) {
+        PendingFlight[] rgpf;
+
+        SoapObject Request = setMethod("UpdatePendingFlight");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("pf", pf);
+
+        return ReadResults((SoapObject) Invoke(c));
+    }
+
+    public PendingFlight[] DeletePendingFlight(String szAuthToken, String idpending, Context c) {
+        PendingFlight[] rgpf;
+
+        SoapObject Request = setMethod("DeletePendingFlight");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("idpending", idpending);
+
+        return ReadResults((SoapObject) Invoke(c));
+    }
+
+    public PendingFlight[] CommitPendingFlight(String szAuthToken, PendingFlight pf, Context c) {
+        PendingFlight[] rgpf;
+
+        SoapObject Request = setMethod("CommitPendingFlight");
+        Request.addProperty("szAuthUserToken", szAuthToken);
+        Request.addProperty("pf", pf);
+
+        return ReadResults((SoapObject) Invoke(c));
+    }
+}

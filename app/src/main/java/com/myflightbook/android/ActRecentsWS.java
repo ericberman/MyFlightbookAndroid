@@ -141,7 +141,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (m_rgac == null)
                 m_rgac = (new AircraftSvc()).getCachedAircraft();
 
-            Boolean fIsPending;
+            Boolean fIsAwaitingUpload;
 
             Aircraft ac = Aircraft.getAircraftById(le.idAircraft, m_rgac);
             EditMode em = DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
@@ -176,7 +176,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                     break;
             }
 
-            fIsPending = le.IsPendingFlight();
+            fIsAwaitingUpload = le.IsAwaitingUpload();
 
             txtError.setText(le.szError);
             txtError.setVisibility(le.szError != null && le.szError.length() > 0 ? View.VISIBLE : View.GONE);
@@ -188,7 +188,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             String szHeaderHTML = String.format(Locale.getDefault(),
                     "<strong><big>%s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>",
                     TextUtils.htmlEncode(DateFormat.getDateFormat(this.getContext()).format(le.dtFlight)),
-                    (le.IsPendingFlight() ? (" " + getString(R.string.txtAwaitingUpload)) : ""),
+                    (le.IsAwaitingUpload() ? (" " + getString(R.string.txtAwaitingUpload)) : ""),
                     TextUtils.htmlEncode(szTailNumber.trim()),
                     TextUtils.htmlEncode(ac == null ? "" : String.format(Locale.getDefault(), " (%s)", ac.ModelDescription)),
                     TextUtils.htmlEncode(le.szRoute.trim()));
@@ -227,24 +227,24 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             txtFlightTimes.setVisibility(sb.length() == 0 ? View.GONE : View.VISIBLE);
             txtFlightTimes.setText(HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
 
-            // show pending flights different from others.
+            // show queued flights different from others.
             Typeface tf = Typeface.DEFAULT;
-            txtComments.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
-            txtHeader.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
-            txtFlightTimes.setTypeface(tf, fIsPending ? Typeface.ITALIC : Typeface.NORMAL);
+            txtComments.setTypeface(tf, fIsAwaitingUpload ? Typeface.ITALIC : Typeface.NORMAL);
+            txtHeader.setTypeface(tf, fIsAwaitingUpload ? Typeface.ITALIC : Typeface.NORMAL);
+            txtFlightTimes.setTypeface(tf, fIsAwaitingUpload ? Typeface.ITALIC : Typeface.NORMAL);
 
             return v;
         }
     }
 
-    private static class SubmitPendingFlightsTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
+    private static class SubmitQueuedFlightsTask extends AsyncTask<Void, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private final AsyncWeakContext<ActRecentsWS> m_ctxt;
         private final LogbookEntry[] m_rgle;
         boolean m_fErrorsFound = false;
         boolean m_fFlightsPosted = false;
 
-        SubmitPendingFlightsTask(Context c, ActRecentsWS arws, LogbookEntry[] rgle) {
+        SubmitQueuedFlightsTask(Context c, ActRecentsWS arws, LogbookEntry[] rgle) {
             super();
             m_ctxt = new AsyncWeakContext<>(c, arws);
             m_rgle = rgle;
@@ -271,7 +271,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 le.SyncProperties();    // pull in the properties for the flight.
                 if (cf.FCommitFlight(AuthToken.m_szAuthToken, le, c)) {
                     m_fFlightsPosted = true;
-                    le.DeletePendingFlight();
+                    le.DeleteUnsubmittedFlightFromLocalDB();
                 } else {
                     le.szError = cf.getLastError();
                     le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;    // don't auto-resubmit until the error is fixed.
@@ -310,7 +310,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 arws.refreshRecentFlights(true);
             }
             else if (m_fErrorsFound) {
-                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndPendingFlights(), arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndUnsubmittedFlights(), arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
                 arws.populateList();
             }
         }
@@ -342,7 +342,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 return false;
 
             m_rfSvc = new RecentFlightsSvc();
-            LogbookEntry[] rglePending = LogbookEntry.getQueuedAndPendingFlights();
+            LogbookEntry[] rgleQueuedAndUnsubmitted = LogbookEntry.getQueuedAndUnsubmittedFlights();
 
             if (fClearCache)
                 RecentFlightsSvc.ClearCachedFlights();
@@ -353,7 +353,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             if (rgle != null) {
                 arws.m_rgExistingFlights.addAll(Arrays.asList(rgle));
-                arws.m_rgLe = LogbookEntry.mergeFlightLists(rglePending, arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(rgleQueuedAndUnsubmitted, arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
             }
             return rgle != null;
         }
@@ -457,7 +457,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 rft.execute();
             }
         } else {
-            this.m_rgLe = LogbookEntry.getQueuedAndPendingFlights();
+            this.m_rgLe = LogbookEntry.getQueuedAndUnsubmittedFlights();
 
             PackAndGo p = new PackAndGo(getContext());
             Date dtLastPack = p.lastFlightsPackDate();
@@ -508,9 +508,9 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
         if (ActRecentsWS.fShowFlightImages)
             new Thread(new LazyThumbnailLoader(m_rgLe, (FlightAdapter) this.getListAdapter())).start();
 
-        LogbookEntry[] rglePending = LogbookEntry.getPendingFlights();
-        if (rglePending != null && rglePending.length > 0 && MFBSoap.IsOnline(getContext())) {
-            SubmitPendingFlightsTask spft = new SubmitPendingFlightsTask(getContext(), this, rglePending);
+        LogbookEntry[] rgUnsubmitted = LogbookEntry.getUnsubmittedFlights();
+        if (rgUnsubmitted != null && rgUnsubmitted.length > 0 && MFBSoap.IsOnline(getContext())) {
+            SubmitQueuedFlightsTask spft = new SubmitQueuedFlightsTask(getContext(), this, rgUnsubmitted);
             spft.execute();
         }
     }

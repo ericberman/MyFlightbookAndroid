@@ -425,7 +425,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         }
 
         // Now look for orphaned flight image files.  Start with the known flight images
-        LogbookEntry[] rgLeAll = LogbookEntry.mergeFlightLists(rgLeNew, LogbookEntry.getQueuedAndPendingFlights());
+        LogbookEntry[] rgLeAll = LogbookEntry.mergeFlightLists(rgLeNew, LogbookEntry.getQueuedAndUnsubmittedFlights());
         ArrayList<String> alImages = new ArrayList<>();
         for (LogbookEntry le : rgLeAll) {
             le.getImagesForFlight();

@@ -238,7 +238,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 DialogInterface.OnClickListener ocl;
 
                 // the flight was successfully saved, so delete any local copy regardless
-                lelocal.DeletePendingFlight();
+                lelocal.DeleteUnsubmittedFlightFromLocalDB();
 
                 if (fIsNew) {
                     // Reset the flight and we stay on this page
@@ -674,7 +674,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public void onPause() {
         super.onPause();
 
-        // should only happen when we are returning from viewing an existing/pending flight, may have been submitted
+        // should only happen when we are returning from viewing an existing/queued/pending flight, may have been submitted
         // either way, no need to save this
         if (m_le == null)
             return;
@@ -721,7 +721,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (getActivity() == null)  // sometimes not yet set up
             return;
 
-        // and we only want to save the current flightID if it is a new (not pending!) flight
+        // and we only want to save the current flightID if it is a new (not queued!) flight
         if (m_le.IsNewFlight())
             MFBMain.getNewFlightListener().saveCurrentFlightId(getActivity());
     }
@@ -745,9 +745,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             else if (m_le.IsNewFlight())
                 idMenu = R.menu.mfbnewflightmenu;
             else if (m_le.IsQueuedFlight())
-                idMenu = R.menu.mfbpendingflightmenu;
+                idMenu = R.menu.mfbqueuedflightmenu;
             else
-                idMenu = R.menu.mfbpendingflightmenu;
+                idMenu = R.menu.mfbqueuedflightmenu;
             inflater.inflate(idMenu, menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
@@ -772,7 +772,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 SubmitFlight(true);
         else if (menuId == R.id.menuResetFlight) {
             if (m_le.idLocalDB > 0)
-                m_le.DeletePendingFlight();
+                m_le.DeleteUnsubmittedFlightFromLocalDB();
             ResetFlight(false);
         } else if (menuId == R.id.menuSignFlight) {
             try {
@@ -789,8 +789,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.lblConfirmFlightDelete)
                         .setPositiveButton(R.string.lblOK, (dialog, which) -> {
-                            if (m_le.IsPendingFlight()) {
-                                m_le.DeletePendingFlight();
+                            if (m_le.IsAwaitingUpload()) {
+                                m_le.DeleteUnsubmittedFlightFromLocalDB();
                                 m_le = null; // clear this out since we're going to finish().
                                 RecentFlightsSvc.ClearCachedFlights();
                                 finish();
@@ -992,7 +992,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             Intent i = new Intent(requireActivity(), ActFlightMap.class);
             i.putExtra(ActFlightMap.ROUTEFORFLIGHT, m_le.szRoute);
             i.putExtra(ActFlightMap.EXISTINGFLIGHTID, m_le.IsExistingFlight() ? m_le.idFlight : 0);
-            i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsPendingFlight() ? m_le.idLocalDB : 0);
+            i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsAwaitingUpload() ? m_le.idLocalDB : 0);
             i.putExtra(ActFlightMap.NEWFLIGHTID, m_le.IsNewFlight() ? LogbookEntry.ID_NEW_FLIGHT : 0);
             i.putExtra(ActFlightMap.ALIASES, "");
             startActivityForResult(i, ActFlightMap.REQUEST_ROUTE);
@@ -1197,7 +1197,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ActNewFlight.accumulatedNight = 0.0;
     }
 
-    private void SubmitFlight(Boolean fForcePending) {
+    private void SubmitFlight(Boolean forceQueued) {
         FromView();
 
         Activity a = requireActivity();
@@ -1217,13 +1217,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le.IsNewFlight())
             m_le.szFlightData = MFBLocation.GetMainLocation().getFlightDataString();
 
-        // Save for later if offline or if fForcePending
+        // Save for later if offline or if forceQueued
         boolean fIsOnline = MFBSoap.IsOnline(getContext());
-        if (fForcePending || !fIsOnline) {
+        if (forceQueued || !fIsOnline) {
 
             // save the flight with id of -2 if it's a new flight
             if (fIsNew)
-                m_le.idFlight = (fForcePending ? LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED : LogbookEntry.ID_PENDING_FLIGHT);
+                m_le.idFlight = (forceQueued ? LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED : LogbookEntry.ID_PENDING_FLIGHT);
 
             // Existing flights can't be saved for later.  No good reason for that except work.
             if (m_le.IsExistingFlight()) {
@@ -1262,10 +1262,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             MFBMain.invalidateCachedTotals();
             if (fIsNew) {
                 ResetFlight(true);
-                MFBUtil.Alert(this, getString(R.string.txtSuccess), getString(R.string.txtSavedPendingFlight));
+                MFBUtil.Alert(this, getString(R.string.txtSuccess), getString(R.string.txtFlightQueued));
             } else {
                 new AlertDialog.Builder(ActNewFlight.this.requireActivity(), R.style.MFBDialog)
-                        .setMessage(getString(R.string.txtSavedPendingFlight))
+                        .setMessage(getString(R.string.txtFlightQueued))
                         .setTitle(getString(R.string.txtSuccess))
                         .setNegativeButton("OK", (d, id) -> {
                             d.cancel();

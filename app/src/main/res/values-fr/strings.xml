@@ -277,7 +277,7 @@
     <string name="lblConfirmImageDelete">Effacer cette image?  Ne peut être annulé.</string>
     <string name="lblConfirmFlightDelete">Effacer ce vol ?  Ne peut être annulé.</string>
 
-    <string name="txtSavedPendingFlight">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
+    <string name="txtFlightQueued">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
     <string name="txtRepeatFlightComplete">Le vol a été créé. Vous pouvez le modifier dans les vols récents.</string>
     <string name="txtSuccess">Succès</string>
     <string name="txtSavedFlight">Votre vol a été enregistré sur MyFlightbook.com</string>

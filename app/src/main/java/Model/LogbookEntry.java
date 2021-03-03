@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         piddCFI, piddSIC, piddTotal, pidfHold, pidszCommets, pidszRoute, pidfPublic, pidszErr,
         piddtFStart, piddtFEnd, piddtEStart, piddtEEnd, piddHobbsStart, piddHobbsEnd,
         pidszModelDisplay, pidszTailDisplay, pidszCatClassDisplay, pidfHasData, pidszData,
-        pidProperties, pidExistingImages, pidSend, pidShare
+        pidProperties, pidExistingImages, pidSend, pidShare, pidPendingID
     }
 
     public enum SigStatus {
@@ -121,6 +121,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
     public Date signatureCFIExpiration = null;
     public String signatureCFIName = "";
     public Boolean signatureHasDigitizedSig = false;
+
+    protected String pendingID = "";    // error to use in LogbookEntry; used for PendingFlight serialization
 
     private void Init() {
         this.szUser = AuthToken.m_szEmail;
@@ -273,7 +275,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         return this.idFlight == LogbookEntry.ID_NEW_FLIGHT;
     }
 
-    public Boolean IsPendingFlight() {
+    public Boolean IsAwaitingUpload() {
         return this.idFlight <= LogbookEntry.ID_PENDING_FLIGHT;
     }
 
@@ -474,6 +476,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 return this.sendLink;
             case pidShare:
                 return this.shareLink;
+            case pidPendingID:
+                return this.pendingID;
             default:
                 break;
         }
@@ -781,6 +785,10 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 pi.type = PropertyInfo.STRING_CLASS;
                 pi.name = "SocialMediaLink";
                 break;
+            case pidPendingID:
+                pi.type = PropertyInfo.STRING_CLASS;
+                pi.name = "PendingID";
+                break;
             default:
                 break;
         }
@@ -924,7 +932,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         }
     }
 
-    public void DeletePendingFlight() {
+    public void DeleteUnsubmittedFlightFromLocalDB() {
         if (idLocalDB <= 0)
             return;
 
@@ -942,7 +950,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
             db.delete(FlightProperty.TABLENAME, "idFlight = ?", rgIdArg);
             this.idLocalDB = -1;
         } catch (Exception e) {
-            Log.v(MFBConstants.LOG_TAG, "Error deleting pending flight - " + e.getMessage());
+            Log.v(MFBConstants.LOG_TAG, "Error deleting unsubmitted flight - " + e.getMessage());
         }
     }
 
@@ -1064,18 +1072,18 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
     }
 
     private static LogbookEntry[] getFlightsWithIdFlight(int idFlight) {
-        LogbookEntry[] rglePending = new LogbookEntry[0];
+        LogbookEntry[] rgleLocal = new LogbookEntry[0];
 
         SQLiteDatabase db = MFBMain.mDBHelper.getWritableDatabase();
 
         try (Cursor c = db.query("Flights", null, "idFlight = ?", new String[]{String.format(Locale.US, "%d", idFlight)}, null, null, null)) {
 
             if (c != null) {
-                rglePending = new LogbookEntry[c.getCount()];
+                rgleLocal = new LogbookEntry[c.getCount()];
                 int i = 0;
                 while (c.moveToNext()) {
                     LogbookEntry le = new LogbookEntry();
-                    rglePending[i++] = le;
+                    rgleLocal[i++] = le;
                     le.FromCursor(c);
                     le.idLocalDB = c.getLong(c.getColumnIndex("_id"));
                     le.rgFlightImages = MFBImageInfo.getLocalImagesForId(le.idLocalDB, PictureDestination.FlightImage);
@@ -1083,13 +1091,13 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
             } else
                 throw new Exception("Query for flight from db failed!");
         } catch (Exception e) {
-            Log.e("LogbookEntry", "Error retrieving pending flights: " + e.getLocalizedMessage());
+            Log.e("LogbookEntry", "Error retrieving local flights: " + e.getLocalizedMessage());
         }
 
-        return rglePending;
+        return rgleLocal;
     }
 
-    public static LogbookEntry[] getPendingFlights() {
+    public static LogbookEntry[] getUnsubmittedFlights() {
         return getFlightsWithIdFlight(LogbookEntry.ID_PENDING_FLIGHT);
     }
 
@@ -1097,8 +1105,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         return getFlightsWithIdFlight(LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED);
     }
 
-    public static LogbookEntry[] getQueuedAndPendingFlights() {
-        return mergeFlightLists(getPendingFlights(), getQueuedFlights());
+    public static LogbookEntry[] getQueuedAndUnsubmittedFlights() {
+        return mergeFlightLists(getUnsubmittedFlights(), getQueuedFlights());
     }
 
     public static LogbookEntry[] getNewFlights() {
