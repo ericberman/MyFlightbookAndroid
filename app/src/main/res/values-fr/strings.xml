@@ -277,11 +277,12 @@
     <string name="lblConfirmImageDelete">Effacer cette image?  Ne peut être annulé.</string>
     <string name="lblConfirmFlightDelete">Effacer ce vol ?  Ne peut être annulé.</string>
 
-    <string name="txtSavedPendingFlight">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
+    <string name="txtFlightQueued">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
     <string name="txtRepeatFlightComplete">Le vol a été créé. Vous pouvez le modifier dans les vols récents.</string>
     <string name="txtSuccess">Succès</string>
     <string name="txtSavedFlight">Votre vol a été enregistré sur MyFlightbook.com</string>
     <string name="txtAwaitingUpload">En attente de téléchargement</string>
+    <string name="txtPendingAddition"> (VOL EN ATTENTE)</string>
 
     <string name="txtError">Errreur</string>
     <string name="errMainDBFailure">Impossible de créer/copier base de données principale - l\'application ne fonctionnera pas!</string>
@@ -352,6 +353,8 @@
     <string name="menuAddFlight">Ajouter un vol</string>
     <string name="menuAddFlightLaterShort">Ajouter plus tard</string>
     <string name="menuAddFlightLater">Ajouter plus tard</string>
+    <string name="menuSavePending">Enregistrer en tant que vol en attente</string>
+    <string name="menuSavePendingShort">Ajouter en attente</string>
     <string name="menuRepeatFlight">Répétez ce vol</string>
     <string name="menuRepeatReverseFlight">Répétez et inversez ce vol</string>
     <string name="menuRepeatShort">Répétez</string>

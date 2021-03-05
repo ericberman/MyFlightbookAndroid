@@ -61,6 +61,7 @@ import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
 import com.myflightbook.android.WebServices.DeleteFlightSvc;
 import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.WebServices.PendingFlightSvc;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 import com.myflightbook.android.WebServices.UTCDate;
 
@@ -91,6 +92,7 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBLocation;
 import Model.MFBUtil;
+import Model.PendingFlight;
 import Model.PropertyTemplate;
 import Model.SunriseSunsetTimes;
 import androidx.annotation.NonNull;
@@ -138,23 +140,35 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
         private Object m_Result = null;
-        private final int m_idFlight;
+        private final LogbookEntry m_le;
         private final AsyncWeakContext<ActNewFlight> m_ctxt;
 
-        DeleteTask(Context c, ActNewFlight act, int idFlight) {
+        DeleteTask(Context c, ActNewFlight act, LogbookEntry le) {
             super();
             m_ctxt = new AsyncWeakContext<>(c, act);
-            m_idFlight = idFlight;
+            m_le = le;
         }
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
-            DeleteFlightSvc dfs = new DeleteFlightSvc();
-            dfs.m_Progress = this;
-            dfs.DeleteFlight(AuthToken.m_szAuthToken, m_idFlight, m_ctxt.getContext());
-            m_Result = (dfs.getLastError().length() == 0);
+            PendingFlight pf = (m_le instanceof PendingFlight) ? (PendingFlight) m_le : null;
 
-            return dfs;
+            MFBSoap s;
+            if (pf != null && pf.getPendingID() != null && pf.getPendingID().length() > 0) {
+                PendingFlightSvc dfs = new PendingFlightSvc();
+                s = dfs;
+                dfs.m_Progress = this;
+                ActRecentsWS.cachedPendingFlights = dfs.DeletePendingFlight(AuthToken.m_szAuthToken, pf.getPendingID(), m_ctxt.getContext());
+            }
+            else {
+                DeleteFlightSvc dfs = new DeleteFlightSvc();
+                s = dfs;
+                dfs.m_Progress = this;
+                dfs.DeleteFlight(AuthToken.m_szAuthToken, m_le.idFlight, m_ctxt.getContext());
+            }
+
+            m_Result = s.getLastError().length() == 0;
+            return s;
         }
 
         protected void onPreExecute() {
@@ -209,10 +223,56 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         @Override
         protected MFBSoap doInBackground(Void... params) {
-            CommitFlightSvc cf = new CommitFlightSvc();
-            cf.m_Progress = this;
-            m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_ctxt.getContext());
-            return cf;
+            /*
+                Scenarios:
+                 - fForcePending is false, Regular flight, new or existing: call CommitFlightWithOptions
+                 - fForcePending is false, Pending flight without a pending ID call CommitFlightWithOptions.  Shouldn't happen, but no big deal if it does
+                 - fForcePending is false, Pending flight with a Pending ID: call CommitPendingFlight to commit it
+                 - fForcePending is false, Pending flight without a pending ID: THROW EXCEPTION, how did this happen?
+
+                 - fForcePending is true, Regular flight that is not new/pending (sorry about ambiguous "pending"): THROW EXCEPTION; this is an error
+                 - fForcePending is true, Regular flight that is NEW: call CreatePendingFlight
+                 - fForcePending is true, PendingFlight without a PendingID: call CreatePendingFlight.  Shouldn't happen, but no big deal if it does
+                 - fForcePending is true, PendingFlight with a PendingID: call UpdatePendingFlight
+             */
+
+            PendingFlight pf = (m_le instanceof PendingFlight) ? (PendingFlight) m_le : null;
+            if (m_le.fForcePending) {
+                if (m_le.IsExistingFlight())
+                    throw new IllegalStateException("Attempt to save an existing flight as a pending flight");
+                if (pf == null || pf.getPendingID().length() == 0) {
+                    PendingFlightSvc pfs = new PendingFlightSvc();
+                    pfs.m_Progress = this;
+                    m_Result = ((ActRecentsWS.cachedPendingFlights = pfs.CreatePendingFlight(AuthToken.m_szAuthToken, m_le, m_ctxt.getContext())) != null);
+                    return pfs;
+                } else {
+                    // existing pending flight but still force pending - call updatependingflight
+                    PendingFlightSvc pfs = new PendingFlightSvc();
+                    pfs.m_Progress = this;
+                    m_Result = ((ActRecentsWS.cachedPendingFlights = pfs.UpdatePendingFlight(AuthToken.m_szAuthToken, pf, m_ctxt.getContext())) != null);
+                    return pfs;
+                }
+            } else {
+                // Not force pending.
+                // If regular flight (new or existing), or pending without a pendingID
+                if (pf == null || pf.getPendingID().length() == 0) {
+                    CommitFlightSvc cf = new CommitFlightSvc();
+                    cf.m_Progress = this;
+                    m_Result = cf.FCommitFlight(AuthToken.m_szAuthToken, m_le, m_ctxt.getContext());
+                    return cf;
+                } else {
+                    // By definition, here pf is non-null and it has a pending ID so it is a valid pending flight and we are not forcing - call commitpendingflight
+                    PendingFlightSvc pfs = new PendingFlightSvc();
+                    pfs.m_Progress = this;
+                    PendingFlight[] rgpf = pfs.CommitPendingFlight(AuthToken.m_szAuthToken, pf, m_ctxt.getContext());
+                    if (rgpf != null)
+                        ActRecentsWS.cachedPendingFlights = rgpf;
+
+                    pf.szError = pfs.getLastError();
+                    m_Result = (rgpf != null &&  pf.szError.length() == 0);  // we want to show any error
+                    return pfs;
+                }
+            }
         }
 
         protected void onPreExecute() {
@@ -238,7 +298,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 DialogInterface.OnClickListener ocl;
 
                 // the flight was successfully saved, so delete any local copy regardless
-                lelocal.DeletePendingFlight();
+                lelocal.DeleteUnsubmittedFlightFromLocalDB();
 
                 if (fIsNew) {
                     // Reset the flight and we stay on this page
@@ -434,13 +494,11 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         findViewById(R.id.txtHobbsEnd).setOnFocusChangeListener(s);
 
         Intent i = requireActivity().getIntent();
-        int idFlightToView = i.getIntExtra(ActRecentsWS.VIEWEXISTINGFLIGHTID, 0);
-        long idLocalFlightToView = i.getLongExtra(ActRecentsWS.VIEWEXISTINGFLIGHTLOCALID, 0);
-        boolean fIsNewFlight = (idFlightToView == 0);
+
+        LogbookEntry leToView = (LogbookEntry) i.getSerializableExtra(ActRecentsWS.VIEWEXISTINGFLIGHT);
+        boolean fIsNewFlight = (leToView == null);
         if (!fIsNewFlight && m_rgac == null)
             m_rgac = (new AircraftSvc()).getCachedAircraft();
-
-        Log.w(MFBConstants.LOG_TAG, String.format("ActNewFlight - onCreate - Viewing flight idflight=%d, idlocal=%d", idFlightToView, idLocalFlightToView));
 
         Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -478,36 +536,19 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             setExpandedState((TextView) findViewById(R.id.txtViewInTheCockpit), findViewById(R.id.sectInTheCockpit), fExpandCockpit, false);
         } else {
             // view an existing flight
-            if (idFlightToView > 0) // existing flight
-            {
-                m_le = RecentFlightsSvc.GetCachedFlightByID(idFlightToView, getContext());
-                if (m_le == null) {
-                    // Navigate back
-                    MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errCannotFindFlight));
-                    finish();
-                    return;
-                } else {
-                    if (m_le.IsExistingFlight()) {
-                        m_le.ToDB();    // ensure that this is in the database - above call could have pulled from cache
-                        FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
-                    }
-                }
-
-                setUpPropertiesForFlight();
-
-                // get any existing props, if they're on the server
-                if (m_le.IsExistingFlight())
-                    m_le.SyncProperties();
-            } else {
-                m_le = new LogbookEntry(idLocalFlightToView);
-                m_le.SyncProperties();
+            m_le = leToView;
+            if (m_le.IsExistingFlight()) {
+                m_le.ToDB();    // ensure that this is in the database - above call could have pulled from cache
+                FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
             }
+
+            setUpPropertiesForFlight();
         }
 
         if (m_le != null && m_le.rgFlightImages == null)
             m_le.getImagesForFlight();
 
-        // Refresh aircraft on create.
+        // Refresh aircraft on create
         if (AuthToken.FIsValid() && (m_rgac == null || m_rgac.length == 0)) {
             RefreshAircraftTask rat = new RefreshAircraftTask(getContext(), this);
             rat.execute();
@@ -674,7 +715,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public void onPause() {
         super.onPause();
 
-        // should only happen when we are returning from viewing an existing/pending flight, may have been submitted
+        // should only happen when we are returning from viewing an existing/queued/pending flight, may have been submitted
         // either way, no need to save this
         if (m_le == null)
             return;
@@ -721,7 +762,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (getActivity() == null)  // sometimes not yet set up
             return;
 
-        // and we only want to save the current flightID if it is a new (not pending!) flight
+        // and we only want to save the current flightID if it is a new (not queued!) flight
         if (m_le.IsNewFlight())
             MFBMain.getNewFlightListener().saveCurrentFlightId(getActivity());
     }
@@ -744,10 +785,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 idMenu = R.menu.mfbexistingflightmenu;
             else if (m_le.IsNewFlight())
                 idMenu = R.menu.mfbnewflightmenu;
+            else if (m_le instanceof PendingFlight)
+                idMenu = R.menu.mfbpendingflightmenu;
             else if (m_le.IsQueuedFlight())
-                idMenu = R.menu.mfbpendingflightmenu;
+                idMenu = R.menu.mfbqueuedflightmenu;
             else
-                idMenu = R.menu.mfbpendingflightmenu;
+                idMenu = R.menu.mfbqueuedflightmenu;
             inflater.inflate(idMenu, menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
@@ -772,7 +815,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 SubmitFlight(true);
         else if (menuId == R.id.menuResetFlight) {
             if (m_le.idLocalDB > 0)
-                m_le.DeletePendingFlight();
+                m_le.DeleteUnsubmittedFlightFromLocalDB();
             ResetFlight(false);
         } else if (menuId == R.id.menuSignFlight) {
             try {
@@ -789,13 +832,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         .setTitle(R.string.lblConfirm)
                         .setMessage(R.string.lblConfirmFlightDelete)
                         .setPositiveButton(R.string.lblOK, (dialog, which) -> {
-                            if (m_le.IsPendingFlight()) {
-                                m_le.DeletePendingFlight();
+                            if (m_le.IsAwaitingUpload()) {
+                                m_le.DeleteUnsubmittedFlightFromLocalDB();
                                 m_le = null; // clear this out since we're going to finish().
                                 RecentFlightsSvc.ClearCachedFlights();
                                 finish();
-                            } else if (m_le.IsExistingFlight()) {
-                                DeleteTask dt = new DeleteTask(getContext(), this, m_le.idFlight);
+                            } else if (m_le.IsExistingFlight() || m_le instanceof PendingFlight) {
+                                DeleteTask dt = new DeleteTask(getContext(), this, m_le);
                                 dt.execute();
                             }
                         })
@@ -803,6 +846,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         .show();
             else if (menuId == R.id.btnSubmitFlight || menuId == R.id.btnUpdateFlight)
                 SubmitFlight(false);
+            else if (menuId == R.id.btnSavePending) {
+                m_le.fForcePending = true;
+                SubmitFlight(false);
+            }
             else if (menuId == R.id.menuTakePicture)
                 takePictureClicked();
             else if (menuId == R.id.menuTakeVideo)
@@ -992,7 +1039,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             Intent i = new Intent(requireActivity(), ActFlightMap.class);
             i.putExtra(ActFlightMap.ROUTEFORFLIGHT, m_le.szRoute);
             i.putExtra(ActFlightMap.EXISTINGFLIGHTID, m_le.IsExistingFlight() ? m_le.idFlight : 0);
-            i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsPendingFlight() ? m_le.idLocalDB : 0);
+            i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsAwaitingUpload() ? m_le.idLocalDB : 0);
             i.putExtra(ActFlightMap.NEWFLIGHTID, m_le.IsNewFlight() ? LogbookEntry.ID_NEW_FLIGHT : 0);
             i.putExtra(ActFlightMap.ALIASES, "");
             startActivityForResult(i, ActFlightMap.REQUEST_ROUTE);
@@ -1197,7 +1244,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ActNewFlight.accumulatedNight = 0.0;
     }
 
-    private void SubmitFlight(Boolean fForcePending) {
+    private void SubmitFlight(Boolean forceQueued) {
         FromView();
 
         Activity a = requireActivity();
@@ -1217,13 +1264,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le.IsNewFlight())
             m_le.szFlightData = MFBLocation.GetMainLocation().getFlightDataString();
 
-        // Save for later if offline or if fForcePending
+        // Save for later if offline or if forceQueued
         boolean fIsOnline = MFBSoap.IsOnline(getContext());
-        if (fForcePending || !fIsOnline) {
+        if (forceQueued || !fIsOnline) {
 
             // save the flight with id of -2 if it's a new flight
             if (fIsNew)
-                m_le.idFlight = (fForcePending ? LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED : LogbookEntry.ID_PENDING_FLIGHT);
+                m_le.idFlight = (forceQueued ? LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED : LogbookEntry.ID_UNSUBMITTED_FLIGHT);
 
             // Existing flights can't be saved for later.  No good reason for that except work.
             if (m_le.IsExistingFlight()) {
@@ -1262,10 +1309,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             MFBMain.invalidateCachedTotals();
             if (fIsNew) {
                 ResetFlight(true);
-                MFBUtil.Alert(this, getString(R.string.txtSuccess), getString(R.string.txtSavedPendingFlight));
+                MFBUtil.Alert(this, getString(R.string.txtSuccess), getString(R.string.txtFlightQueued));
             } else {
                 new AlertDialog.Builder(ActNewFlight.this.requireActivity(), R.style.MFBDialog)
-                        .setMessage(getString(R.string.txtSavedPendingFlight))
+                        .setMessage(getString(R.string.txtFlightQueued))
                         .setTitle(getString(R.string.txtSuccess))
                         .setNegativeButton("OK", (d, id) -> {
                             d.cancel();

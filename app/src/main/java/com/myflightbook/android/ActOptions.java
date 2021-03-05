@@ -417,7 +417,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             for (LogbookEntry le : rgLeNew)
                 if (le.idLocalDB != ActNewFlight.lastNewFlightID) {
                     Log.e(MFBConstants.LOG_TAG, String.format("DELETING FOUND ORPHANED FLIGHT: %d", le.idLocalDB));
-                    le.idFlight = LogbookEntry.ID_PENDING_FLIGHT;
+                    le.idFlight = LogbookEntry.ID_UNSUBMITTED_FLIGHT;
                     le.ToDB();
                     RecentFlightsSvc.ClearCachedFlights();
                     fOrphansFound = true;
@@ -425,7 +425,7 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         }
 
         // Now look for orphaned flight image files.  Start with the known flight images
-        LogbookEntry[] rgLeAll = LogbookEntry.mergeFlightLists(rgLeNew, LogbookEntry.getQueuedAndPendingFlights());
+        LogbookEntry[] rgLeAll = LogbookEntry.mergeFlightLists(rgLeNew, LogbookEntry.getQueuedAndUnsubmittedFlights());
         ArrayList<String> alImages = new ArrayList<>();
         for (LogbookEntry le : rgLeAll) {
             le.getImagesForFlight();

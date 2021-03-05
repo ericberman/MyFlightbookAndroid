@@ -10,4 +10,5 @@
     <color name="divider_text">#00BCD4</color>
     <color name="progressTextColor">#FFFFFF</color>
     <color name="webBarBckground">#222222</color>
+    <color name="pendingBackground">#212121</color>
 </resources>

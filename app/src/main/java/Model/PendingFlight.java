@@ -16,20 +16,38 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.myflightbook.android.WebServices;
 
-import android.content.Context;
+package Model;
 
 import org.ksoap2.serialization.SoapObject;
 
-public class FlightPropertiesSvc extends MFBSoap {
+public class PendingFlight extends LogbookEntry {
 
-    public void DeletePropertyForFlight(String szAuthToken, int idFlight, int propId, Context c) {
-        SoapObject Request = setMethod("DeletePropertyForFlight");
-        Request.addProperty("szAuthUserToken", szAuthToken);
-        Request.addProperty("idFlight", idFlight);
-        Request.addProperty("propId", propId);
+    public String getPendingID() {
+        return pendingID;
+    }
 
-        Invoke(c);
+    public PendingFlight() {
+        super();
+        pendingID = null;
+    }
+
+    public PendingFlight(SoapObject o) {
+        super(o);
+        if (getPendingID().length() > 0)
+            this.idFlight = 0;
+    }
+
+    @Override
+    public void FromProperties(SoapObject so) {
+        super.FromProperties(so);
+        pendingID = so.getProperty("PendingID").toString();
+    }
+
+    @Override
+    public void ToProperties(SoapObject so) {
+        super.ToProperties(so);
+        if (pendingID != null && pendingID.length() > 0)
+            so.addProperty("PendingID", pendingID);
     }
 }

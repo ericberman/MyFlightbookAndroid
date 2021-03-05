@@ -7,36 +7,13 @@
         android:titleCondensed="@string/menuAddFlightShort"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menuUploadLater"
-        android:title="@string/menuSaveFlight"
-        android:titleCondensed="@string/menuSaveFlightShort"
+        android:id="@+id/btnSavePending"
+        android:title="@string/menuSavePending"
+        android:titleCondensed="@string/menuSavePendingShort"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menuTakePicture"
-        android:icon="@drawable/ic_action_camera"
-        android:title="@string/menuTakePicture"
-        android:titleCondensed="@string/menuTakePictureShort"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menuTakeVideo"
-        android:icon="@drawable/ic_action_video"
-        android:title="@string/menuTakeVideo"
-        android:titleCondensed="@string/menuTakeVideoShort"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menuChoosePicture"
-        android:icon="@drawable/ic_action_picture"
-        android:title="@string/menuChoosePicture"
-        android:titleCondensed="@string/menuChoosePictureShort"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menuChooseTemplate"
-        android:title="@string/menuChooseTemplate"
-        android:titleCondensed="@string/menuChooseTemplateShort" />
     <item
         android:id="@+id/btnDeleteFlight"
         android:icon="@drawable/ic_action_discard"
         android:title="@string/menuDeleteFlight"
-        android:titleCondensed="@string/menuDeleteFlightShort"
         app:showAsAction="ifRoom" />
 </menu>
