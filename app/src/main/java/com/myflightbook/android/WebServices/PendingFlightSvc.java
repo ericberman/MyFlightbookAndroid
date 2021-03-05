@@ -48,6 +48,7 @@ public class PendingFlightSvc extends MFBSoap {
         e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo.class);
         e.addMapping(NAMESPACE, "LatLong", LatLong.class);
         e.addMapping(NAMESPACE, "LogbookEntry", LogbookEntry.class);
+        e.addMapping(NAMESPACE, "PendingFlight", PendingFlight.class);
         e.addMapping(NAMESPACE, "CustomFlightProperty", FlightProperty.class);
         e.addMapping(NAMESPACE, "Aircraft", Aircraft.class);
         e.addMapping(NAMESPACE, "MakeModel", MakeModel.class);
@@ -81,8 +82,6 @@ public class PendingFlightSvc extends MFBSoap {
     }
 
     public PendingFlight[] CreatePendingFlight(String szAuthToken, LogbookEntry le, Context c) {
-        PendingFlight[] rgpf;
-
         SoapObject Request = setMethod("CreatePendingFlight");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("le", le);
@@ -91,8 +90,6 @@ public class PendingFlightSvc extends MFBSoap {
     }
 
     public PendingFlight[] PendingFlightsForUser(String szAuthToken, Context c) {
-        PendingFlight[] rgpf;
-
         SoapObject Request = setMethod("PendingFlightsForUser");
         Request.addProperty("szAuthUserToken", szAuthToken);
 
@@ -100,8 +97,6 @@ public class PendingFlightSvc extends MFBSoap {
     }
 
     public PendingFlight[] UpdatePendingFlight(String szAuthToken, PendingFlight pf, Context c) {
-        PendingFlight[] rgpf;
-
         SoapObject Request = setMethod("UpdatePendingFlight");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("pf", pf);
@@ -110,8 +105,6 @@ public class PendingFlightSvc extends MFBSoap {
     }
 
     public PendingFlight[] DeletePendingFlight(String szAuthToken, String idpending, Context c) {
-        PendingFlight[] rgpf;
-
         SoapObject Request = setMethod("DeletePendingFlight");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("idpending", idpending);
@@ -120,12 +113,19 @@ public class PendingFlightSvc extends MFBSoap {
     }
 
     public PendingFlight[] CommitPendingFlight(String szAuthToken, PendingFlight pf, Context c) {
-        PendingFlight[] rgpf;
-
         SoapObject Request = setMethod("CommitPendingFlight");
         Request.addProperty("szAuthUserToken", szAuthToken);
         Request.addProperty("pf", pf);
 
-        return ReadResults((SoapObject) Invoke(c));
+        String szPendingID = pf.getPendingID();
+        PendingFlight[] rgpf = ReadResults((SoapObject) Invoke(c));
+
+        if (rgpf != null) {
+            for (PendingFlight pfresult : rgpf) {
+                if (pfresult.getPendingID().compareToIgnoreCase(szPendingID) == 0 && pfresult.szError != null && pfresult.szError.length() > 0)
+                    setLastError(pfresult.szError);
+            }
+        }
+        return rgpf;
     }
 }

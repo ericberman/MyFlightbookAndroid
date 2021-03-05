@@ -23,14 +23,19 @@ import org.ksoap2.serialization.SoapObject;
 
 public class PendingFlight extends LogbookEntry {
 
-    public String getPendingID() { return pendingID; }
+    public String getPendingID() {
+        return pendingID;
+    }
 
     public PendingFlight() {
         super();
+        pendingID = null;
     }
 
     public PendingFlight(SoapObject o) {
         super(o);
+        if (getPendingID().length() > 0)
+            this.idFlight = 0;
     }
 
     @Override
@@ -42,7 +47,7 @@ public class PendingFlight extends LogbookEntry {
     @Override
     public void ToProperties(SoapObject so) {
         super.ToProperties(so);
-        if (pendingID != null && pendingID.length()>0)
+        if (pendingID != null && pendingID.length() > 0)
             so.addProperty("PendingID", pendingID);
     }
 }

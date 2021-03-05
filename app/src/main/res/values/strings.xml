@@ -282,6 +282,7 @@
     <string name="txtSuccess">Success</string>
     <string name="txtSavedFlight">Your flight has been saved on MyFlightbook.com</string>
     <string name="txtAwaitingUpload"> (AWAITING UPLOAD)</string>
+    <string name="txtPendingAddition"> (PENDING)</string>
 
     <string name="txtError">Error</string>
     <string name="errMainDBFailure">Unable to create/copy main database - the app won\'t work!</string>
@@ -352,6 +353,8 @@
     <string name="menuAddFlight">Add Flight</string>
     <string name="menuAddFlightLaterShort">Add Later</string>
     <string name="menuAddFlightLater">Add Flight Later</string>
+    <string name="menuSavePending">Add as Pending Flight</string>
+    <string name="menuSavePendingShort">Add Pending</string>
     <string name="menuRepeatFlight">Repeat Flight</string>
     <string name="menuRepeatReverseFlight">Repeat and Reverse Flight</string>
     <string name="menuRepeatShort">Repeat</string>

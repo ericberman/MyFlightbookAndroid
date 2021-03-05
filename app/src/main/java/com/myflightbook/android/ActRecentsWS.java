@@ -45,6 +45,7 @@ import com.myflightbook.android.WebServices.AircraftSvc;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.CommitFlightSvc;
 import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.WebServices.PendingFlightSvc;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 import com.myflightbook.android.WebServices.UTCDate;
 
@@ -66,8 +67,10 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.ImageCacheCompleted;
 import Model.MFBUtil;
 import Model.PackAndGo;
+import Model.PendingFlight;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -77,11 +80,11 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     private LogbookEntry[] m_rgLe = new LogbookEntry[0];
 
     private final ArrayList<LogbookEntry> m_rgExistingFlights = new ArrayList<>();
+    public static PendingFlight[] cachedPendingFlights = null;
 
     private boolean fCouldBeMore = true;
 
-    public static final String VIEWEXISTINGFLIGHTID = "com.myflightbook.android.ViewFlightID";
-    public static final String VIEWEXISTINGFLIGHTLOCALID = "com.myflightbook.android.ViewFlightLocalID";
+    public static final String VIEWEXISTINGFLIGHT = "com.myflightbook.android.ViewFlight";
 
     private static Boolean m_fIsRefreshing = false;
 
@@ -134,14 +137,15 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             LogbookEntry le = this.getItem(position);
             assert le != null;
 
+            boolean fIsAwaitingUpload = le.IsAwaitingUpload();
+            boolean fIsPendingFlight = le instanceof PendingFlight;
+
             TextView txtError = v.findViewById(R.id.txtError);
             ImageView ivCamera = v.findViewById(R.id.imgCamera);
             ImageView ivSigState = v.findViewById(R.id.imgSigState);
 
             if (m_rgac == null)
                 m_rgac = (new AircraftSvc()).getCachedAircraft();
-
-            Boolean fIsAwaitingUpload;
 
             Aircraft ac = Aircraft.getAircraftById(le.idAircraft, m_rgac);
             EditMode em = DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
@@ -176,8 +180,6 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                     break;
             }
 
-            fIsAwaitingUpload = le.IsAwaitingUpload();
-
             txtError.setText(le.szError);
             txtError.setVisibility(le.szError != null && le.szError.length() > 0 ? View.VISIBLE : View.GONE);
 
@@ -188,7 +190,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             String szHeaderHTML = String.format(Locale.getDefault(),
                     "<strong><big>%s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>",
                     TextUtils.htmlEncode(DateFormat.getDateFormat(this.getContext()).format(le.dtFlight)),
-                    (le.IsAwaitingUpload() ? (" " + getString(R.string.txtAwaitingUpload)) : ""),
+                    (fIsAwaitingUpload ? getString(R.string.txtAwaitingUpload) : (fIsPendingFlight ? getString(R.string.txtPendingAddition) : "")),
                     TextUtils.htmlEncode(szTailNumber.trim()),
                     TextUtils.htmlEncode(ac == null ? "" : String.format(Locale.getDefault(), " (%s)", ac.ModelDescription)),
                     TextUtils.htmlEncode(le.szRoute.trim()));
@@ -229,9 +231,19 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             // show queued flights different from others.
             Typeface tf = Typeface.DEFAULT;
-            txtComments.setTypeface(tf, fIsAwaitingUpload ? Typeface.ITALIC : Typeface.NORMAL);
-            txtHeader.setTypeface(tf, fIsAwaitingUpload ? Typeface.ITALIC : Typeface.NORMAL);
-            txtFlightTimes.setTypeface(tf, fIsAwaitingUpload ? Typeface.ITALIC : Typeface.NORMAL);
+            int tfNew = (fIsAwaitingUpload || fIsPendingFlight) ? Typeface.ITALIC : Typeface.NORMAL;
+            txtComments.setTypeface(tf, tfNew);
+            txtHeader.setTypeface(tf, tfNew);
+            txtFlightTimes.setTypeface(tf, tfNew);
+
+            int backColor = ContextCompat.getColor(getContext(), fIsAwaitingUpload || fIsPendingFlight ? R.color.pendingBackground : R.color.colorBackground);
+            v.setBackgroundColor(backColor);
+            ivCamera.setBackgroundColor(backColor);
+            ivSigState.setBackgroundColor(backColor);
+            txtError.setBackgroundColor(backColor);
+            txtComments.setBackgroundColor(backColor);
+            txtFlightTimes.setBackgroundColor(backColor);
+            txtHeader.setBackgroundColor(backColor);
 
             return v;
         }
@@ -250,6 +262,51 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             m_rgle = rgle;
         }
 
+        protected boolean submitFlight(LogbookEntry le) {
+            /*
+                Scenarios:
+                 - fForcePending is false, Regular flight, new or existing: call CommitFlightWithOptions
+                 - fForcePending is false, Pending flight without a pending ID call CommitFlightWithOptions.  Shouldn't happen, but no big deal if it does
+                 - fForcePending is false, Pending flight with a Pending ID: call CommitPendingFlight to commit it
+                 - fForcePending is false, Pending flight without a pending ID: THROW EXCEPTION, how did this happen?
+
+                 - fForcePending is true, Regular flight that is not new/pending (sorry about ambiguous "pending"): THROW EXCEPTION; this is an error
+                 - fForcePending is true, Regular flight that is NEW: call CreatePendingFlight
+                 - fForcePending is true, PendingFlight without a PendingID: call CreatePendingFlight.  Shouldn't happen, but no big deal if it does
+                 - fForcePending is true, PendingFlight with a PendingID: call UpdatePendingFlight
+             */
+            PendingFlight pf = (le instanceof PendingFlight) ? (PendingFlight) le : null;
+            if (le.fForcePending) {
+                if (le.IsExistingFlight())
+                    throw new IllegalStateException("Attempt to save an existing flight as a pending flight");
+                if (pf == null || pf.getPendingID().length() == 0) {
+                    PendingFlightSvc pfs = new PendingFlightSvc();
+                    return ((ActRecentsWS.cachedPendingFlights = pfs.CreatePendingFlight(AuthToken.m_szAuthToken, le, m_ctxt.getContext())) != null);
+                } else {
+                    // existing pending flight but still force pending - call updatependingflight
+                    PendingFlightSvc pfs = new PendingFlightSvc();
+                    return ((ActRecentsWS.cachedPendingFlights = pfs.UpdatePendingFlight(AuthToken.m_szAuthToken, pf, m_ctxt.getContext())) != null);
+                }
+            } else {
+                // Not force pending.
+                // If regular flight (new or existing), or pending without a pendingID
+                if (pf == null || pf.getPendingID().length() == 0) {
+                    CommitFlightSvc cf = new CommitFlightSvc();
+                    return cf.FCommitFlight(AuthToken.m_szAuthToken, le, m_ctxt.getContext());
+                } else {
+                    // By definition, here pf is non-null and it has a pending ID so it is a valid pending flight and we are not forcing - call commitpendingflight
+                    PendingFlightSvc pfs = new PendingFlightSvc();
+                    pfs.m_Progress = this;
+                    PendingFlight[] rgpf = pfs.CommitPendingFlight(AuthToken.m_szAuthToken, pf, m_ctxt.getContext());
+                    if (rgpf != null)
+                        ActRecentsWS.cachedPendingFlights = rgpf;
+
+                    pf.szError = pfs.getLastError();
+                    return (rgpf != null && (pf.szError == null || pf.szError.length() == 0));  // we want to show any error
+                }
+            }
+        }
+
         @Override
         protected Boolean doInBackground(Void... params) {
             if (m_rgle == null || m_rgle.length == 0)
@@ -257,11 +314,9 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
             m_fErrorsFound = m_fFlightsPosted = false;
 
-            Context c = m_ctxt.getContext();
-            CommitFlightSvc cf = new CommitFlightSvc();
-            cf.m_Progress = this;
             int cFlights = m_rgle.length;
             int iFlight = 1;
+            Context c = m_ctxt.getContext();
             String szFmtUploadProgress = c.getString(R.string.prgSavingFlights);
             for (LogbookEntry le : m_rgle) {
                 String szStatus = String.format(szFmtUploadProgress, iFlight, cFlights);
@@ -269,11 +324,10 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                     NotifyProgress((iFlight * 100) / cFlights, szStatus);
                 iFlight++;
                 le.SyncProperties();    // pull in the properties for the flight.
-                if (cf.FCommitFlight(AuthToken.m_szAuthToken, le, c)) {
+                if (submitFlight(le)) {
                     m_fFlightsPosted = true;
                     le.DeleteUnsubmittedFlightFromLocalDB();
                 } else {
-                    le.szError = cf.getLastError();
                     le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;    // don't auto-resubmit until the error is fixed.
                     le.ToDB();  // save the error so that we will display it on refresh.
                     m_fErrorsFound = true;
@@ -310,7 +364,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 arws.refreshRecentFlights(true);
             }
             else if (m_fErrorsFound) {
-                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndUnsubmittedFlights(), arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.mergeFlightLists(LogbookEntry.getQueuedAndUnsubmittedFlights(), arws.currentQuery.HasCriteria() ? null : ActRecentsWS.cachedPendingFlights), arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
                 arws.populateList();
             }
         }
@@ -349,11 +403,15 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             final int cFlightsPageSize = 15;
             LogbookEntry[] rgle = m_rfSvc.RecentFlightsWithQueryAndOffset(AuthToken.m_szAuthToken, arws.currentQuery, arws.m_rgExistingFlights.size(), cFlightsPageSize, c);
 
+            // Refresh pending flights, if it's null
+            if (ActRecentsWS.cachedPendingFlights == null)
+                ActRecentsWS.cachedPendingFlights = new PendingFlightSvc().PendingFlightsForUser(AuthToken.m_szAuthToken, c);
+
             arws.fCouldBeMore = (rgle != null && rgle.length >= cFlightsPageSize);
 
             if (rgle != null) {
                 arws.m_rgExistingFlights.addAll(Arrays.asList(rgle));
-                arws.m_rgLe = LogbookEntry.mergeFlightLists(rgleQueuedAndUnsubmitted, arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
+                arws.m_rgLe = LogbookEntry.mergeFlightLists(LogbookEntry.mergeFlightLists(rgleQueuedAndUnsubmitted, arws.currentQuery.HasCriteria() ? null : ActRecentsWS.cachedPendingFlights), arws.m_rgExistingFlights.toArray(new LogbookEntry[0]));
             }
             return rgle != null;
         }
@@ -444,6 +502,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
         if (fClearAll) {
             m_rgExistingFlights.clear();
+            cachedPendingFlights = null;  // force fetch of these on first batch
             fCouldBeMore = true;
             this.getListView().setSelectionFromTop(0, 0);
         }
@@ -501,8 +560,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 return;
 
             Intent i = new Intent(getActivity(), EditFlightActivity.class);
-            i.putExtra(VIEWEXISTINGFLIGHTID, m_rgLe[position].idFlight);
-            i.putExtra(VIEWEXISTINGFLIGHTLOCALID, m_rgLe[position].idLocalDB);
+            i.putExtra(VIEWEXISTINGFLIGHT, m_rgLe[position]);
             startActivity(i);
         });
         if (ActRecentsWS.fShowFlightImages)

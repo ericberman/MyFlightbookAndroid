@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/btnSubmitFlight"
+        android:title="@string/menuAddFlight"
+        android:titleCondensed="@string/menuAddFlightShort"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/btnSavePending"
+        android:title="@string/menuSavePending"
+        android:titleCondensed="@string/menuSavePendingShort"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/btnDeleteFlight"
+        android:icon="@drawable/ic_action_discard"
+        android:title="@string/menuDeleteFlight"
+        app:showAsAction="ifRoom" />
+</menu>
