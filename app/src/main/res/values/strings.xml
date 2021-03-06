@@ -80,9 +80,9 @@
     <string name="lblSimIMC">Sim. IMC</string>
     <string name="lblIMC">IMC</string>
     <string name="lblXC">X-Country</string>
-    <string name="lblDual">Dual</string>
+    <string name="lblDual">Dual Rcvd.</string>
     <string name="lblGround">Ground Sim</string>
-    <string name="lblCFI">CFI</string>
+    <string name="lblCFI">Instructor</string>
     <string name="lblSIC">SIC</string>
     <string name="lblPIC">PIC</string>
     <string name="lblTotal">Total Time</string>
@@ -198,9 +198,9 @@
     <string name="lblAircraftPrefsHeader">Autofill for new flights in this aircraft</string>
     <string name="lblShowAircraft">Show this aircraft for new flights</string>
     <string name="lblRoleNone">Do not autofill</string>
-    <string name="lblRolePIC">If PIC is empty, set it equal to Total Time</string>
-    <string name="lblRoleSIC">If SIC is empty, set it equal to Total Time</string>
-    <string name="lblRoleCFI">If CFI is empty, set it equal to Total Time</string>
+    <string name="lblRolePIC">Autofill total time to PIC time, if empty</string>
+    <string name="lblRoleSIC">Autofill total time to SIC, if empty</string>
+    <string name="lblRoleCFI">Autofill total time to Instructor time, if empty</string>
     <string name="lblNotesHeader">Notes about this aircraft</string>
     <string name="lblPublicNotes">Public Notes:</string>
     <string name="lblPrivateNotes">Private Notes:</string>
@@ -454,8 +454,8 @@
     <string name="ffNight">Night flight time</string>
     <string name="ffIsPublic">Flight data is shared</string>
     <string name="ffIsSigned">Flight is signed</string>
-    <string name="ffDual">Dual time</string>
-    <string name="ffCFI">CFI time</string>
+    <string name="ffDual">Dual Received time</string>
+    <string name="ffCFI">Instructor time</string>
     <string name="ffSIC">SIC time</string>
     <string name="ffPIC">PIC time</string>
     <string name="ffTotal">Total time</string>

@@ -80,7 +80,7 @@
     <string name="lblSimIMC">Sim. VSV</string>
     <string name="lblIMC">VSV</string>
     <string name="lblXC">Navigation</string>
-    <string name="lblDual">Double</string>
+    <string name="lblDual">Double reçu</string>
     <string name="lblGround">Simulateur </string>
     <string name="lblCFI">Instruction</string>
     <string name="lblSIC">Copilote</string>
@@ -200,7 +200,7 @@
     <string name="lblRoleNone">Ne pas remplir automatiquement</string>
     <string name="lblRolePIC">Si PIC est vide, elle a mis égal au Temps Total</string>
     <string name="lblRoleSIC">Si SIC est vide, elle a mis égal au Temps Total</string>
-    <string name="lblRoleCFI">Si CFI est vide, elle a mis égal au Temps Total</string>
+    <string name="lblRoleCFI">Si Instruction est vide, elle a mis égal au Temps Total</string>
     <string name="lblNotesHeader">Remarques sur cet avion</string>
     <string name="lblPublicNotes">Les notes publiques:</string>
     <string name="lblPrivateNotes">Les notes privées:</string>
@@ -454,7 +454,7 @@
     <string name="ffNight">Nuit</string>
     <string name="ffIsPublic">Données du vol partagées</string>
     <string name="ffIsSigned">Vol est signé</string>
-    <string name="ffDual">Double commande</string>
+    <string name="ffDual">Double reçu</string>
     <string name="ffCFI">Instruction</string>
     <string name="ffSIC">Copilote</string>
     <string name="ffPIC">Commandant de Bord</string>
