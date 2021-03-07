@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package com.myflightbook.android;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,14 +35,15 @@ import com.myflightbook.android.WebServices.MFBSoap;
 
 import Model.MFBConstants;
 import Model.MFBUtil;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.ListFragment;
 
 public class ActTraining extends ListFragment implements OnItemClickListener {
 
-    private static final int GALLERY_PERMISSION = 85;
     private static final String endorseItem = "endorse";
+    private ActivityResultLauncher<String[]> mPermissionLauncher;
 
     static class TrainingItem {
         final int idTitle;
@@ -100,6 +100,28 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(false);
+
+        mPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    if (result == null)
+                        return;
+                    boolean fAllGranted = true;
+                    for (String sz : result.keySet()) {
+                        Boolean b = result.get(sz);
+                        fAllGranted = fAllGranted && (b != null && b);
+                    }
+
+                    // perform the actual click.
+                    int position = lastPositionClicked;
+                    lastPositionClicked = -1;   // clear this out now.
+                    if (!fAllGranted || position < 0 || position > m_rgTrainingItems.length)
+                        return;
+
+                    String szDest = m_rgTrainingItems[position].szURLDest;
+                    ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams("d=" + szDest, getContext()));
+                });
+
         return inflater.inflate(R.layout.training, container, false);
     }
 
@@ -115,52 +137,22 @@ public class ActTraining extends ListFragment implements OnItemClickListener {
         getListView().setOnItemClickListener(this);
     }
 
-    private static int lastPositionClicked = -1;
+    private int lastPositionClicked = -1;
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean fAllGranted = true;
-        for (int i : grantResults)
-            if (i != PackageManager.PERMISSION_GRANTED) {
-                fAllGranted = false;
-                break;
-            }
-
-        if (requestCode == GALLERY_PERMISSION) {
-            if (fAllGranted)
-                clickItem(lastPositionClicked);
-        }
-    }
-
-    private  void clickItem(int position)
-    {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // TODO: IsOnline doesn't work from main thread.
         if (!AuthToken.FIsValid() || !MFBSoap.IsOnline(getContext())) {
             MFBUtil.Alert(this, getString(R.string.txtError), getString(R.string.errTrainingNotAvailable));
             return;
         }
 
-        if (position < 0 || position > m_rgTrainingItems.length)
-            return;
+        lastPositionClicked = position;
 
         boolean fNeedsWritePerm = (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q); // no need to request WRITE_EXTERNAL_STORAGE in 29 and later.
 
-        if (m_rgTrainingItems[position].szURLDest.compareToIgnoreCase(endorseItem) == 0 &&
-                ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(fNeedsWritePerm ? new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERMISSION);
-            return;
-        }
-
-        lastPositionClicked = -1;   // clear this out now.
-        String szDest = m_rgTrainingItems[position].szURLDest;
-        String szURL;
-        ActWebView.ViewURL(getActivity(), MFBConstants.AuthRedirWithParams("d=" + szDest, getContext()));
-    }
-
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        lastPositionClicked = position;
-        clickItem(position);
+        // check for permissions and handle click there.
+        mPermissionLauncher.launch(fNeedsWritePerm ?
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
     }
 }

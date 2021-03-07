@@ -45,6 +45,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
@@ -53,6 +54,8 @@ import Model.MFBConstants;
 import Model.MFBUtil;
 import Model.PackAndGo;
 import Model.Totals;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
@@ -61,6 +64,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class ActTotals extends ListFragment implements MFBMain.Invalidatable, OnItemClickListener {
     private static boolean fNeedsRefresh = true;
     private TotalsRowItem[] mTotalsRows = null;
+    private ActivityResultLauncher<Intent> mQueryLauncher = null;
 
     public static void SetNeedsRefresh(boolean f) {
         fNeedsRefresh = f;
@@ -155,6 +159,14 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
         MFBMain.registerNotifyDataChange(this);
         MFBMain.registerNotifyResetAll(this);
 
+        mQueryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        currentQuery = (FlightQuery) Objects.requireNonNull(result.getData()).getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
+                    }
+                });
+
         Intent i = requireActivity().getIntent();
         if (i != null) {
             Object o = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
@@ -168,14 +180,6 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
                 srl.setRefreshing(false);
                 Refresh(true);
             });
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ActFlightQuery.QUERY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                currentQuery = (FlightQuery) data.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
-            }
         }
     }
 
@@ -341,7 +345,7 @@ public class ActTotals extends ListFragment implements MFBMain.Invalidatable, On
             if (MFBSoap.IsOnline(getContext())) {
                 Intent i = new Intent(getActivity(), FlightQueryActivity.class);
                 i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
-                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+                mQueryLauncher.launch(i);
             } else
                 MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
         } else

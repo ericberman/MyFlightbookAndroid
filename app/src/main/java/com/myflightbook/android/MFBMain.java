@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -404,6 +404,13 @@ public class MFBMain extends AppCompatActivity {
             tab.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_LABELED);
         }).attach();
 
+        AuthToken auth = new AuthToken();
+        if (!auth.HasValidCache() || mLastTabIndex < 0 || mLastTabIndex >= MFBTab.values().length)
+            mViewPager.setCurrentItem(MFBTab.Options.ordinal());
+        else
+            mViewPager.setCurrentItem(mLastTabIndex);
+
+
         // Periodically (every 7 days) vacuum (compact) the database.
         long t = new Date().getTime();
         if ((t - mLastVacuum) > 1000 * 3600 * 24 * 7) {
@@ -606,11 +613,6 @@ public class MFBMain extends AppCompatActivity {
         // b) if we're not already signed in or need a refresh, refresh as necessary
         // c) else, just go to the options tab to sign in from there.
         AuthToken auth = new AuthToken();
-        if (!auth.HasValidCache() || mLastTabIndex < 0 || mLastTabIndex >= MFBTab.values().length)
-            mViewPager.setCurrentItem(MFBTab.Options.ordinal());
-        else
-            mViewPager.setCurrentItem(mLastTabIndex);
-
         new RefreshTask(getApplicationContext(), this).execute((auth));
 
         // This is a hack, but we get a lot of crashes about too much time between startForegroundService being

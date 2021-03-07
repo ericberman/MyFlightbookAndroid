@@ -164,7 +164,7 @@
     <string name="lblGPSDisclaimer">Si vous disposez d\'un GPS, MyFlightbook peut utiliser votre position pour détecter les événements de vol tels que les décollages et les atterrissages, et enregistrer votre trajectoire de vol pour la sauvegarder avec votre vol. Il ne le fait que lorsque l\'application est active, ou en arrière-plan pendant qu\'un vol est "en cours" (a un moteur défini ou un démarrage de vol, mais aucun arrêt moteur défini). Aucune donnée n\'est enregistrée sauf si vous enregistrez votre trace, et cela n\'est disponible que pour vous, sauf si vous partagez explicitement vos données de vol. Notez qu\'Android n\'est pas un GPS aéronautique certifié, vous ne devez donc pas vous y fier en vol.</string>
     <string name="lblAutoHobbs">Saisie automatique du Hobbs d\'arrivée</string>
     <string name="lblAutoTime">Saisie automatique du Temps Total</string>
-    <string name="lblCopyright">© 2012&#8211;2018 MyFlightbook LLC</string>
+    <string name="lblCopyright">© 2012&#8211;2021 MyFlightbook LLC</string>
     <string name="lblCodeCredit">Une partie du code utilise en partie la librairie KSoap2 library disponible sur http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Un grand merci!</string>
     <string name="lblContactMe">Contactez nous </string>
     <string name="lblCleanup">Nettoyage</string>

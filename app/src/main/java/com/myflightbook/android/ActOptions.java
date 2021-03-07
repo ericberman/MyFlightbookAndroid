@@ -21,7 +21,6 @@ package com.myflightbook.android;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -67,9 +66,10 @@ import Model.MFBUtil;
 import Model.PackAndGo;
 import Model.Totals;
 import Model.VisitedAirport;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
 
@@ -78,6 +78,9 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
     public static AltitudeUnits altitudeUnits = AltitudeUnits.Feet;
     public static SpeedUnits speedUnits = SpeedUnits.Knots;
+    private ActivityResultLauncher<String> mPermissionLauncher;
+    private boolean fPendingAutodetect;
+    private boolean fPendingRecord;
 
     private static class PackData extends AsyncTask<Void, Integer, String> {
         private ProgressDialog m_pd = null;
@@ -161,6 +164,17 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
+
+        mPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                result -> {
+                    if (!result)
+                        fPendingRecord = fPendingAutodetect = false;
+
+                    ((CheckBox) findViewById(R.id.ckAutodetect)).setChecked(MFBLocation.fPrefAutoDetect = fPendingAutodetect);
+                    ((CheckBox) findViewById(R.id.ckRecord)).setChecked(MFBLocation.fPrefRecordFlight = fPendingRecord);
+                });
+
         return inflater.inflate(R.layout.options, container, false);
     }
 
@@ -482,38 +496,6 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
         ActWebView.ViewURL(getActivity(), szURL);
     }
 
-    private final int PERMISSION_REQUEST_AUTODETECT = 50382;
-    private final int PERMISSION_REQUEST_RECORD = 58325;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_AUTODETECT:
-                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    CheckBox c = (CheckBox) findViewById(R.id.ckAutodetect);
-                    c.setChecked(MFBLocation.fPrefAutoDetect = true);
-                }
-                return;
-            case PERMISSION_REQUEST_RECORD:
-                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    CheckBox c = (CheckBox) findViewById(R.id.ckRecord);
-                    c.setChecked(MFBLocation.fPrefRecordFlight = true);
-                }
-                return;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private Boolean checkGPSPermissions(int req) {
-        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            return true;
-
-        // Should we show an explanation?
-        requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, req);
-        return false;
-    }
-
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnSignIn) {
@@ -527,22 +509,11 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
             MFBMain.invalidateAll();
             updateStatus();
         } else if (id == R.id.btnCreateNewAccount) {
-            Intent i = new Intent(v.getContext(), ActNewUser.class);
-            startActivityForResult(i, 0);
-        } else if (id == R.id.ckAutodetect) {
-            CheckBox ck = (CheckBox) v;
-            boolean newState = ck.isChecked();
-            if (!newState || checkGPSPermissions(PERMISSION_REQUEST_AUTODETECT))
-                MFBLocation.fPrefAutoDetect = newState;
-            else
-                ck.setChecked(MFBLocation.fPrefAutoDetect = false);
-        } else if (id == R.id.ckRecord) {
-            CheckBox ck = (CheckBox) v;
-            boolean newState = ck.isChecked();
-            if (!newState || checkGPSPermissions(PERMISSION_REQUEST_RECORD))
-                MFBLocation.fPrefRecordFlight = newState;
-            else
-                ck.setChecked(MFBLocation.fPrefRecordFlight = false);
+            startActivity(new Intent(v.getContext(), ActNewUser.class));
+        } else if (id == R.id.ckAutodetect || id == R.id.ckRecord) {
+            fPendingAutodetect = (id == R.id.ckAutodetect) ? ((CheckBox) v).isChecked() : ((CheckBox) findViewById(R.id.ckAutodetect)).isChecked();
+            fPendingRecord = (id == R.id.ckRecord) ? ((CheckBox) v).isChecked() :  ((CheckBox) findViewById(R.id.ckRecord)).isChecked();
+            mPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
         } else if (id == R.id.ckRecordHighRes)
             MFBLocation.fPrefRecordFlightHighRes = ((CheckBox) v).isChecked();
         else if (id == R.id.ckHeliports)

@@ -164,7 +164,7 @@
     <string name="lblGPSDisclaimer">If you have GPS, MyFlightbook can use your location to detect flight events like take-offs and landings, and record your flight track to save with your flight.  It does this only while the app is active, or in the background while a flight is "in progress" (has a defined engine or flight start, but no defined engine stop).  No data is saved unless you record your track, and that is only available to you unless you explicitly share your flight data. Note that Android is not a certified aviation-GPS, so you should not rely on it in flight.</string>
     <string name="lblAutoHobbs">Auto-fill ending Hobbs</string>
     <string name="lblAutoTime">Auto-fill total time</string>
-    <string name="lblCopyright">© 2012&#8211;2018 MyFlightbook LLC</string>
+    <string name="lblCopyright">© 2012&#8211;2021 MyFlightbook LLC</string>
     <string name="lblCodeCredit">Portions of this code use the KSoap2 library at http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Thanks folks!</string>
     <string name="lblContactMe">Contact Us</string>
     <string name="lblCleanup">Clean Up</string>
