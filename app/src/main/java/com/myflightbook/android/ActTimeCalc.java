@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ public class ActTimeCalc extends AppCompatActivity implements View.OnClickListen
 
     public static final String INITIAL_TIME = "com.myflightbook.android.initialTime";
     public static final String COMPUTED_TIME = "com.myflightbook.android.computedTime";
-    public static final int TIME_CALC_REQUEST_CODE = 8723;
 
     private final ArrayList<Double> m_values = new ArrayList<>();
     private double initialTime = 0.0;

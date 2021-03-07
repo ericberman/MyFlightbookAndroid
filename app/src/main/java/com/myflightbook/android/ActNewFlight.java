@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -66,6 +67,7 @@ import com.myflightbook.android.WebServices.RecentFlightsSvc;
 import com.myflightbook.android.WebServices.UTCDate;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -95,9 +97,10 @@ import Model.MFBUtil;
 import Model.PendingFlight;
 import Model.PropertyTemplate;
 import Model.SunriseSunsetTimes;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ShareCompat;
-import androidx.core.content.ContextCompat;
 
 public class ActNewFlight extends ActMFBForm implements android.view.View.OnClickListener, MFBFlightListener.ListenerFragmentDelegate,
         DlgDatePicker.DateTimeUpdate, PropertyEdit.PropertyListener, ActMFBForm.GallerySource, CrossFillDelegate, MFBMain.Invalidatable {
@@ -111,8 +114,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     public final static String PROPSFORFLIGHTEXISTINGID = "com.myflightbook.android.FlightPropsIDExisting";
     public final static String PROPSFORFLIGHTCROSSFILLVALUE = "com.myflightbook.android.FlightPropsXFill";
     public final static String TACHFORCROSSFILLVALUE = "com.myflightbook.android.TachStartXFill";
-    private static final int EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE = 48329;
-    private static final int CHOOSE_TEMPLATE_ACTIVITY_REQUEST_CODE = 29370;
 
     // current state of pause/play and accumulated night
     public static Boolean fPaused = false;
@@ -136,6 +137,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
     private Handler m_HandlerUpdateTimer = null;
     private Runnable m_UpdateElapsedTimeTask = null;
+
+    private ActivityResultLauncher<Intent> mTimeCalcLauncher = null;
+    private ActivityResultLauncher<Intent> mApproachHelperLauncher = null;
+    private ActivityResultLauncher<Intent> mMapRouteLauncher = null;
+    private ActivityResultLauncher<Intent> mTemplateLauncher = null;
+    private ActivityResultLauncher<Intent> mPropertiesLauncher = null;
+    private ActivityResultLauncher<String> mAppendAdhocLauncher = null;
+    private ActivityResultLauncher<String> mAppendNearestLauncher = null;
 
     private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
@@ -422,9 +431,93 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             MFBMain.SetInProgressFlightActivity(getContext(), null);
     }
 
+    @SuppressWarnings("unchecked")
+    private void setUpActivityLaunchers() {
+        mApproachHelperLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        String approachDesc = Objects.requireNonNull(result.getData()).getStringExtra(ActAddApproach.APPROACHDESCRIPTIONRESULT);
+                        if (Objects.requireNonNull(approachDesc).length() > 0) {
+                            m_le.AddApproachDescription(approachDesc);
+
+                            int cApproachesToAdd = Objects.requireNonNull(result.getData()).getIntExtra(ActAddApproach.APPROACHADDTOTOTALSRESULT, 0);
+                            if (cApproachesToAdd > 0) {
+                                m_le.cApproaches += cApproachesToAdd;
+                                SetIntForField(R.id.txtApproaches, m_le.cApproaches);
+                            }
+                            ToView();
+                        }
+                    }
+                });
+        mTimeCalcLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        SetDoubleForField(R.id.txtTotal, m_le.decTotal = Objects.requireNonNull(result.getData()).getDoubleExtra(ActTimeCalc.COMPUTED_TIME, m_le.decTotal));
+                    }
+                });
+        mMapRouteLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        m_le.szRoute = Objects.requireNonNull(result.getData()).getStringExtra(ActFlightMap.ROUTEFORFLIGHT);
+                        SetStringForField(R.id.txtRoute, m_le.szRoute);
+                        findViewById(R.id.txtRoute).requestFocus();
+                    }
+                });
+        mTemplateLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Bundle b = Objects.requireNonNull(result.getData()).getExtras();
+                        try {
+                            Serializable o = Objects.requireNonNull(b).getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES);
+                            m_activeTemplates = (HashSet<PropertyTemplate>) o;
+                            updateTemplatesForAircraft(true);
+                            ToView();
+                        } catch (ClassCastException ex) {
+                            Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getMessage()));
+                        }                    }
+                });
+        mPropertiesLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    setUpPropertiesForFlight();
+                    if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime)
+                        AutoTotals();
+                });
+        mAppendAdhocLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                result -> {
+                    if (result) {
+                        MFBLocation loc = MFBLocation.GetMainLocation();
+                        assert loc != null;
+                        if (loc.CurrentLoc() == null)
+                            return;
+                        String szAdHoc = new LatLong(loc.CurrentLoc()).toAdHocLocString();
+                        TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
+                        m_le.szRoute = Airport.AppendCodeToRoute(txtRoute.getText().toString(), szAdHoc);
+                        txtRoute.setText(m_le.szRoute);
+                    }
+                });
+        mAppendNearestLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                result -> {
+                    if (result) {
+                        TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
+                        m_le.szRoute = Airport.AppendNearestToRoute(txtRoute.getText().toString(), MFBLocation.GetMainLocation().CurrentLoc());
+                        txtRoute.setText(m_le.szRoute);
+                    }
+                });
+    }
+
     @Override
     public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        setUpActivityLaunchers();
+
         AddListener(R.id.btnFlightSet);
         AddListener(R.id.btnFlightStartSet);
         AddListener(R.id.btnEngineStartSet);
@@ -458,7 +551,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         findViewById(R.id.txtTotal).setOnLongClickListener(v -> {
             Intent i = new Intent(requireActivity(), ActTimeCalc.class);
             i.putExtra(ActTimeCalc.INITIAL_TIME, DoubleFromField(R.id.txtTotal));
-            startActivityForResult(i, ActTimeCalc.TIME_CALC_REQUEST_CODE);
+            mTimeCalcLauncher.launch(i);
             return true;
         });
 
@@ -861,7 +954,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 Bundle b = new Bundle();
                 b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, m_activeTemplates);
                 i.putExtras(b);
-                startActivityForResult(i, CHOOSE_TEMPLATE_ACTIVITY_REQUEST_CODE);
+                mTemplateLauncher.launch(i);
             } else if (menuId == R.id.menuRepeatFlight || menuId == R.id.menuReverseFlight) {
                 assert m_le != null;
                 LogbookEntry leNew = (menuId == R.id.menuRepeatFlight) ? m_le.Clone() : m_le.CloneAndReverse();
@@ -941,15 +1034,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private Boolean checkGPSPermissions() {
-        if (ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            return true;
-
-        // Should we show an explanation?
-        requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_NEAREST);
-        return false;
-    }
-
     //region append to route
     // NOTE: I had been doing this with an AsyncTask, but it
     // wasn't thread safe with the database.  DB is pretty fast,
@@ -957,26 +1041,13 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private void AppendNearest() {
         assert MFBLocation.GetMainLocation() != null;
 
-        if (checkGPSPermissions()) {
-            TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
-            m_le.szRoute = Airport.AppendNearestToRoute(txtRoute.getText().toString(), MFBLocation.GetMainLocation().CurrentLoc());
-            txtRoute.setText(m_le.szRoute);
-        }
+        mAppendNearestLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
     private void AppendAdHoc() {
-        MFBLocation loc = MFBLocation.GetMainLocation();
-        assert loc != null;
+        assert MFBLocation.GetMainLocation() != null;
 
-        if (!checkGPSPermissions())
-            return;
-
-        if (loc.CurrentLoc() == null)
-            return;
-        String szAdHoc = new LatLong(loc.CurrentLoc()).toAdHocLocString();
-        TextView txtRoute = (TextView) findViewById(R.id.txtRoute);
-        m_le.szRoute = Airport.AppendCodeToRoute(txtRoute.getText().toString(), szAdHoc);
-        txtRoute.setText(m_le.szRoute);
+        mAppendAdhocLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
     }
     //endregion
 
@@ -1034,7 +1105,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         else if (id == R.id.btnAddApproach) {
             Intent i = new Intent(requireActivity(), ActAddApproach.class);
             i.putExtra(ActAddApproach.AIRPORTSFORAPPROACHES, m_le.szRoute);
-            startActivityForResult(i, ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE);
+            mApproachHelperLauncher.launch(i);
         } else if (id == R.id.btnViewOnMap) {
             Intent i = new Intent(requireActivity(), ActFlightMap.class);
             i.putExtra(ActFlightMap.ROUTEFORFLIGHT, m_le.szRoute);
@@ -1042,7 +1113,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             i.putExtra(ActFlightMap.PENDINGFLIGHTID, m_le.IsAwaitingUpload() ? m_le.idLocalDB : 0);
             i.putExtra(ActFlightMap.NEWFLIGHTID, m_le.IsNewFlight() ? LogbookEntry.ID_NEW_FLIGHT : 0);
             i.putExtra(ActFlightMap.ALIASES, "");
-            startActivityForResult(i, ActFlightMap.REQUEST_ROUTE);
+            mMapRouteLauncher.launch(i);
         } else if (id == R.id.btnPausePlay)
             toggleFlightPause();
                 else if (id == R.id.txtViewInTheCockpit) {
@@ -1071,7 +1142,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ToView();
     }
 
-    @SuppressWarnings("unchecked")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
@@ -1082,41 +1152,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case SELECT_IMAGE_ACTIVITY_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK)
                     AddGalleryImage(data);
-            case EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE:
-                setUpPropertiesForFlight();
-                if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime)
-                    AutoTotals();
-                break;
-            case ActTimeCalc.TIME_CALC_REQUEST_CODE:
-                SetDoubleForField(R.id.txtTotal, m_le.decTotal = data.getDoubleExtra(ActTimeCalc.COMPUTED_TIME, m_le.decTotal));
-                break;
-            case ActFlightMap.REQUEST_ROUTE:
-                m_le.szRoute = data.getStringExtra(ActFlightMap.ROUTEFORFLIGHT);
-                SetStringForField(R.id.txtRoute, m_le.szRoute);
-                break;
-            case CHOOSE_TEMPLATE_ACTIVITY_REQUEST_CODE:
-                Bundle b = data.getExtras();
-                try {
-                    m_activeTemplates = (HashSet<PropertyTemplate>) Objects.requireNonNull(b).getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES);
-                    updateTemplatesForAircraft(true);
-                    ToView();
-                } catch (ClassCastException ex) {
-                    Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getMessage()));
-                }
-                break;
-            case ActAddApproach.APPROACH_DESCRIPTION_REQUEST_CODE:
-                String approachDesc = data.getStringExtra(ActAddApproach.APPROACHDESCRIPTIONRESULT);
-                if (Objects.requireNonNull(approachDesc).length() > 0) {
-                    m_le.AddApproachDescription(approachDesc);
-
-                    int cApproachesToAdd = data.getIntExtra(ActAddApproach.APPROACHADDTOTOTALSRESULT, 0);
-                    if (cApproachesToAdd > 0) {
-                        m_le.cApproaches += cApproachesToAdd;
-                        SetIntForField(R.id.txtApproaches, m_le.cApproaches);
-                    }
-                    ToView();
-                }
-                break;
             default:
                 break;
         }
@@ -1128,7 +1163,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         i.putExtra(PROPSFORFLIGHTEXISTINGID, m_le.idFlight);
         i.putExtra(PROPSFORFLIGHTCROSSFILLVALUE, m_le.decTotal);
         i.putExtra(TACHFORCROSSFILLVALUE, Aircraft.getHighWaterTachForAircraft(m_le.idAircraft));
-        startActivityForResult(i, EDIT_PROPERTIES_ACTIVITY_REQUEST_CODE);
+        mPropertiesLauncher.launch(i);
     }
 
     private void onHobbsChanged(View v) {

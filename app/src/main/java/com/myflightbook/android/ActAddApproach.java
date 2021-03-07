@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ public class ActAddApproach extends AppCompatActivity {
     public static final String AIRPORTSFORAPPROACHES = "com.myflightbook.android.AirportsForApproaches";
     public static final String APPROACHDESCRIPTIONRESULT = "com.myflightbook.android.ApproachDescriptionResult";
     public static final String APPROACHADDTOTOTALSRESULT = "com.myflightbook.android.ApproachAddToTotalsResult";
-    public static final int APPROACH_DESCRIPTION_REQUEST_CODE = 50382;
 
     private final ApproachDescription approachDescription = new ApproachDescription();
 

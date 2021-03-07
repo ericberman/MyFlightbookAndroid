@@ -68,6 +68,8 @@ import Model.MFBImageInfo.ImageCacheCompleted;
 import Model.MFBUtil;
 import Model.PackAndGo;
 import Model.PendingFlight;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -85,6 +87,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
     private boolean fCouldBeMore = true;
 
     public static final String VIEWEXISTINGFLIGHT = "com.myflightbook.android.ViewFlight";
+    private ActivityResultLauncher<Intent> mQueryLauncher = null;
 
     private static Boolean m_fIsRefreshing = false;
 
@@ -474,18 +477,17 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
 
         fCouldBeMore = true;
 
+        mQueryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        currentQuery = (FlightQuery) Objects.requireNonNull(result.getData()).getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
+                    }
+                });
+
         SwipeRefreshLayout srl = requireView().findViewById(R.id.swiperefresh);
         if (srl != null) {
             srl.setOnRefreshListener(() -> refreshRecentFlights(true));
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ActFlightQuery.QUERY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                currentQuery = (FlightQuery) data.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT);
-            }
         }
     }
 
@@ -588,7 +590,7 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
             if (MFBSoap.IsOnline(getContext())) {
                 Intent i = new Intent(getActivity(), FlightQueryActivity.class);
                 i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery);
-                startActivityForResult(i, ActFlightQuery.QUERY_REQUEST_CODE);
+                mQueryLauncher.launch(i);
             } else
                 MFBUtil.Alert(getContext(), getString(R.string.txtError), getString(R.string.errNoInternet));
         } else
