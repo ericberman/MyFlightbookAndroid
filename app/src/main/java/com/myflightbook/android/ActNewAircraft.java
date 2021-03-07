@@ -64,6 +64,7 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBUtil;
 import Model.MakesandModels;
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -389,18 +390,17 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         }
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case SELECT_IMAGE_ACTIVITY_REQUEST_CODE:
-                    AddGalleryImage(data);
-                    break;
-                case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
-                    AddCameraImage(m_TempFilePath, false);
-                    break;
-            }
-        }
+    //region Image support
+    @Override
+    protected void chooseImageCompleted(ActivityResult result) {
+        AddGalleryImage(Objects.requireNonNull(result.getData()));
     }
+
+    @Override
+    protected void takePictureCompleted(ActivityResult result) {
+        AddCameraImage(m_TempFilePath, false);
+    }
+    //endregion
 
     private void setCurrentMakeModel(MakesandModels mm) {
         if (mm != null) {

@@ -32,7 +32,6 @@ public class MFBConstants {
     public static final Boolean fIsDebug = false;   // Set to true to use one of the debug servers specified below
     public static final Boolean fFakeGPS = false;   // Set to true to simulate GPS when hitting "Engine Start"
     private static final Boolean fDebugLocal = false;    // If debug, this specifies a local (IP-based or LocalHost based) debug server, thus suppressing https
-    public static final Boolean fFakePix = false;
 
     private static final String szIPDebug = "developer.myflightbook.com";
     private static final String szIPDebugRoam = "developer.myflightbook.com";

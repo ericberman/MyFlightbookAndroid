@@ -12,11 +12,6 @@
         android:titleCondensed="@string/menuAddFlightLaterShort"
         app:showAsAction="never" />
     <item
-        android:id="@+id/btnSavePending"
-        android:title="@string/menuSavePending"
-        android:titleCondensed="@string/menuSavePendingShort"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/menuTakePicture"
         android:icon="@drawable/ic_action_camera"
         android:title="@string/menuTakePicture"
@@ -38,6 +33,11 @@
         android:id="@+id/menuChooseTemplate"
         android:title="@string/menuChooseTemplate"
         android:titleCondensed="@string/menuChooseTemplateShort" />
+    <item
+        android:id="@+id/btnSavePending"
+        android:title="@string/menuSavePending"
+        android:titleCondensed="@string/menuSavePendingShort"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuResetFlight"
         android:title="@string/menuResetFlight"

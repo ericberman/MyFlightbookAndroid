@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -97,6 +96,7 @@ import Model.MFBUtil;
 import Model.PendingFlight;
 import Model.PropertyTemplate;
 import Model.SunriseSunsetTimes;
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -1019,21 +1019,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         return true;
     }
 
-    private final int PERMISSION_REQUEST_NEAREST = 10683;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_NEAREST) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                AppendNearest();
-            }
-            return;
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     //region append to route
     // NOTE: I had been doing this with an AsyncTask, but it
     // wasn't thread safe with the database.  DB is pretty fast,
@@ -1142,20 +1127,22 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         ToView();
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
-            case CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK)
-                    AddCameraImage(m_TempFilePath, requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
-                break;
-            case SELECT_IMAGE_ACTIVITY_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK)
-                    AddGalleryImage(data);
-            default:
-                break;
-        }
+    //region Image support
+    @Override
+    protected void chooseImageCompleted(ActivityResult result) {
+        AddGalleryImage(Objects.requireNonNull(result.getData()));
     }
+
+    @Override
+    protected void takePictureCompleted(ActivityResult result) {
+        AddCameraImage(m_TempFilePath, false);
+    }
+
+    @Override
+    protected void takeVideoCompleted(ActivityResult result) {
+        AddCameraImage(m_TempFilePath, true);
+    }
+    //endregion
 
     private void ViewPropsForFlight() {
         Intent i = new Intent(requireActivity(), ActViewProperties.class);

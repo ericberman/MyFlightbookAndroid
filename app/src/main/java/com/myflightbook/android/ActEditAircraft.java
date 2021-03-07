@@ -41,6 +41,7 @@ import com.myflightbook.android.WebServices.UTCDate;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.Aircraft.PilotRole;
@@ -49,6 +50,7 @@ import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBUtil;
+import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 
 public class ActEditAircraft extends ActMFBForm implements android.view.View.OnClickListener,
@@ -378,12 +380,17 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
         toView();
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK)
-            AddCameraImage(m_TempFilePath, false);
-        else if (requestCode == SELECT_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK)
-            AddGalleryImage(data);
+    //region Image support
+    @Override
+    protected void chooseImageCompleted(ActivityResult result) {
+        AddGalleryImage(Objects.requireNonNull(result.getData()));
     }
+
+    @Override
+    protected void takePictureCompleted(ActivityResult result) {
+        AddCameraImage(m_TempFilePath, false);
+    }
+    //endregion
 
     public void updateDate(int id, Date dt) {
         fromView();

@@ -27,7 +27,6 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -65,6 +64,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import Model.DecimalEdit;
@@ -73,7 +73,9 @@ import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBLocation;
 import Model.MFBUtil;
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -98,13 +100,15 @@ public class ActMFBForm extends Fragment {
     }
 
     private static final String keyTempFileInProgress = "uriFileInProgress";
-    static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1483;
-    static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 1968;
-    static final int SELECT_IMAGE_ACTIVITY_REQUEST_CODE = 1849;
     private static final int CAMERA_PERMISSION_IMAGE = 83;
     private static final int CAMERA_PERMISSION_VIDEO = 84;
     private static final int GALLERY_PERMISSION = 85;
     private static final String TEMP_IMG_FILE_NAME = "takenpicture";
+
+    protected ActivityResultLauncher<String[]> mChooseImageLauncher = null;
+    protected ActivityResultLauncher<String[]> mTakePictureLauncher = null;
+    protected ActivityResultLauncher<String[]> mTakeVideoLauncher = null;
+
     String m_TempFilePath = "";
 
     private static class AddCameraTask extends AsyncTask<String, String, Boolean> implements MFBSoap.MFBSoapProgressUpdate {
@@ -115,12 +119,12 @@ public class ActMFBForm extends Fragment {
         final Boolean m_fVideo;
         final AsyncWeakContext<ActMFBForm> m_ctxt;
 
-        AddCameraTask(int ActivityRequestCode, Boolean fVideo, ActMFBForm frm) {
+        AddCameraTask(Boolean fVideo, Boolean addToGallery, Boolean geoTag, ActMFBForm frm) {
             super();
             m_ctxt = new AsyncWeakContext<>(frm.getContext(), frm);
             m_fVideo = fVideo;
-            fAddToGallery = fDeleteFileWhenDone = (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE || ActivityRequestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
-            fGeoTag = (ActivityRequestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+            fAddToGallery = fDeleteFileWhenDone = addToGallery;
+            fGeoTag = geoTag;
         }
 
         @Override
@@ -163,7 +167,7 @@ public class ActMFBForm extends Fragment {
     }
 
     void AddCameraImage(final String szFilename, Boolean fVideo) {
-        AddCameraTask act = new AddCameraTask(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE, fVideo, this);
+        AddCameraTask act = new AddCameraTask(fVideo, true, true, this);
         act.execute(szFilename);
     }
 
@@ -193,7 +197,7 @@ public class ActMFBForm extends Fragment {
             Boolean fIsVideo = szMimeType.toLowerCase(Locale.getDefault()).startsWith("video");
             cursor.close();
 
-            AddCameraTask act = new AddCameraTask(SELECT_IMAGE_ACTIVITY_REQUEST_CODE, fIsVideo, this);
+            AddCameraTask act = new AddCameraTask(fIsVideo, false, false, this);
 
             if (szFilename == null || szFilename.length() == 0) { // try reading it into a temp file
                 InputStream in = null;
@@ -243,6 +247,17 @@ public class ActMFBForm extends Fragment {
         }
     }
 
+    private boolean checkAllTrue(Map<String, Boolean> map) {
+        if (map == null)
+            return false;
+        boolean fAllGranted = true;
+        for (String sz : map.keySet()) {
+            Boolean b = map.get(sz);
+            fAllGranted = fAllGranted && (b != null && b);
+        }
+        return fAllGranted;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
@@ -251,6 +266,95 @@ public class ActMFBForm extends Fragment {
         // need to restore this here because OnResume may come after the onActivityResult call
         SharedPreferences mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
         m_TempFilePath = mPrefs.getString(keyTempFileInProgress, "");
+
+        // Set up launchers for camera and gallery
+        ActivityResultLauncher<Intent> chooseImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result != null && result.getResultCode() == Activity.RESULT_OK)
+                        chooseImageCompleted(result);
+                });
+        mChooseImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    if (checkAllTrue(result)) {
+                        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                        i.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/* video/*");
+                        chooseImageLauncher.launch(i);
+                    }
+                });
+
+        ActivityResultLauncher<Intent> takePictureLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result != null && result.getResultCode() == Activity.RESULT_OK)
+                        takePictureCompleted(result);
+                });
+        mTakePictureLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    if (checkAllTrue(result)) {
+                        File fTemp;
+                        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        try {
+                            fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir);
+                            fTemp.deleteOnExit();
+                            m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
+
+                            SharedPreferences prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
+                            SharedPreferences.Editor ed = prefs.edit();
+                            ed.putString(keyTempFileInProgress, m_TempFilePath);
+                            ed.apply();
+
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            Uri uriImage = FileProvider.getUriForFile(this.requireContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
+                            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+                            takePictureLauncher.launch(intent);
+                        } catch (IOException e) {
+                            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                            MFBUtil.Alert(requireActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
+                        }
+                    }
+                }
+        );
+
+        ActivityResultLauncher<Intent> takeVideoLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result != null && result.getResultCode() == Activity.RESULT_OK)
+                        takeVideoCompleted(result);
+                });
+        mTakeVideoLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    if (checkAllTrue(result)) {
+                        File fTemp;
+                        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+                        try {
+                            fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", storageDir);
+                            fTemp.deleteOnExit();
+                            m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
+
+                            SharedPreferences prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
+                            SharedPreferences.Editor ed = prefs.edit();
+                            ed.putString(keyTempFileInProgress, m_TempFilePath);
+                            ed.apply();
+
+                            Uri uriImage = FileProvider.getUriForFile(this.requireContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
+
+                            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
+                            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+                            takeVideoLauncher.launch(intent);
+                        } catch (IOException e) {
+                            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
+                            MFBUtil.Alert(requireActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
+                        }
+                    }
+                }
+        );
     }
 
     //region binding data to forms
@@ -426,8 +530,7 @@ public class ActMFBForm extends Fragment {
     }
 
     //region Image/video permissions
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean fCheckImagePermissions(int permission) {
+    private String[] getRequiredPermissions(int permission) {
         boolean fNeedWritePerm;
 
         fNeedWritePerm = (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q); // no need to request WRITE_EXTERNAL_STORAGE in 29 and later.
@@ -435,155 +538,42 @@ public class ActMFBForm extends Fragment {
         switch (permission) {
             case CAMERA_PERMISSION_IMAGE:
             case CAMERA_PERMISSION_VIDEO:
-                if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                        (!fNeedWritePerm || ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
-                    return true;
-                else
-                    requestPermissions(fNeedWritePerm ? new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
-                            new String[] {Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}
-                    , permission);
-                break;
+                return fNeedWritePerm ?
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
+                        new String[] {Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
             case GALLERY_PERMISSION:
-                if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                        (!fNeedWritePerm || ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
-                    return true;
-                else
-                    requestPermissions(fNeedWritePerm ? new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, permission);
-                break;
-        }
-        return false;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean fAllGranted = true;
-        for (int i : grantResults)
-            if (i != PackageManager.PERMISSION_GRANTED) {
-                fAllGranted = false;
-                break;
-            }
-
-        switch (requestCode) {
-            case CAMERA_PERMISSION_IMAGE:
-                if (fAllGranted)
-                    TakePicture();
-                break;
-            case CAMERA_PERMISSION_VIDEO:
-                if (fAllGranted)
-                    TakeVideo();
-                break;
-            case GALLERY_PERMISSION:
-                if (fAllGranted)
-                    ChoosePicture();
-                break;
+                return fNeedWritePerm ?
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE} :
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+            default:
+                return null;    //should never happen.
         }
     }
     //endregion
 
     //region image/video selection
     void ChoosePicture() {
-        if (!fCheckImagePermissions(GALLERY_PERMISSION))
-            return;
-        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-        i.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/* video/*");
-        startActivityForResult(Intent.createChooser(i, ""), SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
+        mChooseImageLauncher.launch(getRequiredPermissions(GALLERY_PERMISSION));
     }
 
     void TakePicture() {
-        File fTemp;
-        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        if (MFBConstants.fFakePix) {
-            String[] rgSamples = {"sampleimg.jpg", "sampleimg2.jpg", "sampleimg3.jpg"};
-            for (String szAsset : rgSamples) {
-                FileOutputStream fos = null;
-                try {
-                    InputStream is = requireActivity().getAssets().open(szAsset);
-
-                    fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir);
-                    fTemp.deleteOnExit();
-                    m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
-
-                    fos = new FileOutputStream(fTemp);
-
-                    byte[] rgBuffer = new byte[1024];
-
-                    int length;
-                    try {
-                        while ((length = is.read(rgBuffer)) > 0) {
-                            fos.write(rgBuffer, 0, length);
-                        }
-                    } catch (IOException e) {
-                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-                    }
-
-                    AddCameraImage(m_TempFilePath, false);
-
-                } catch (IOException e) {
-                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-                } finally {
-                    if (fos != null)
-                        try {
-                            fos.close();
-                        } catch (IOException e) {
-                            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-                        }
-                }
-            }
-            return;
-        }
-        try {
-            if (!fCheckImagePermissions(CAMERA_PERMISSION_IMAGE))
-                return;
-
-            fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir);
-            fTemp.deleteOnExit();
-            m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
-
-            SharedPreferences mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
-            SharedPreferences.Editor ed = mPrefs.edit();
-            ed.putString(keyTempFileInProgress, m_TempFilePath);
-            ed.apply();
-
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri uriImage = FileProvider.getUriForFile(this.requireContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
-            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        } catch (IOException e) {
-            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-            MFBUtil.Alert(requireActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
-        }
+        mTakePictureLauncher.launch(getRequiredPermissions(CAMERA_PERMISSION_IMAGE));
     }
 
     void TakeVideo() {
-        File fTemp;
-        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        mTakeVideoLauncher.launch(getRequiredPermissions(CAMERA_PERMISSION_VIDEO));
+    }
 
-        try {
-            if (!fCheckImagePermissions(CAMERA_PERMISSION_VIDEO))
-                return;
-            fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", storageDir);
-            fTemp.deleteOnExit();
-            m_TempFilePath = fTemp.getAbsolutePath(); // need to save this for when the picture comes back
+    protected void chooseImageCompleted(ActivityResult result) {
+        // Override in calling subclass
+    }
 
-            SharedPreferences mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE);
-            SharedPreferences.Editor ed = mPrefs.edit();
-            ed.putString(keyTempFileInProgress, m_TempFilePath);
-            ed.apply();
+    protected void takePictureCompleted(ActivityResult result) {
+        // Override in calling subclass
+    }
 
-            Uri uriImage = FileProvider.getUriForFile(this.requireContext(), BuildConfig.APPLICATION_ID + ".provider", fTemp);
-
-            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
-            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-            startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
-        } catch (IOException e) {
-            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
-            MFBUtil.Alert(requireActivity(), getString(R.string.txtError), getString(R.string.errNoCamera));
-        }
+    protected void takeVideoCompleted(ActivityResult result) {
+        // Override in calling subclass
     }
     //endregion
 
