@@ -299,7 +299,6 @@
     <string name="errCannotAddAircraft">Impossible d\'ajouter des avions</string>
     <string name="errMustBeSignedInToCreateAircraft">Vous devez être connecté pour créer un avion</string>
     <string name="errMustBeSignedInToViewRecentFlights">Vous devez être connecté pour voir les vols récents</string>
-    <string name="errCannotFindFlight">Vol sélectionné n\'a pas été trouvé.</string>
     <string name="errNoAircraftFoundShort">Aucun aéronef.</string>
     <string name="errMustCreateAircraft">Aucun aéronef n\'a été trouvé pour votre compte. Vous devez créer un certain avant que vous puissiez ajouter des vols.</string>
     <string name="txtCleanupComplete">Nettoyer complète; aucun problème constaté.</string>

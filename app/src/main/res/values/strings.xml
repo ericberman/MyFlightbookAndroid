@@ -299,7 +299,6 @@
     <string name="errCannotAddAircraft">Cannot add aircraft</string>
     <string name="errMustBeSignedInToCreateAircraft">You must be signed in to create an aircraft</string>
     <string name="errMustBeSignedInToViewRecentFlights">You must be signed in to view recent flights</string>
-    <string name="errCannotFindFlight">Selected flight was not found.</string>
     <string name="errNoAircraftFoundShort">No aircraft found.</string>
     <string name="errMustCreateAircraft">No aircraft were found for your account.  You must create some before you can add flights</string>
     <string name="txtCleanupComplete">Clean up complete; no issues found.</string>
