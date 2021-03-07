@@ -51,6 +51,8 @@ import Model.LazyThumbnailLoader.ThumbnailedItem;
 import Model.MFBConstants;
 import Model.MFBImageInfo;
 import Model.MFBUtil;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.text.HtmlCompat;
@@ -60,6 +62,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class ActAircraft extends ListFragment implements OnItemClickListener, MFBMain.Invalidatable {
     private AircraftRowItem[] m_aircraftRows = null;
     private Boolean m_fHasHeaders = false;
+    private ActivityResultLauncher<Intent> mNewAircraftLauncher = null;
 
     private enum RowType {DATA_ITEM, HEADER_ITEM}
 
@@ -238,6 +241,14 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
             srl.setRefreshing(false);
             refreshAircraft();
         });
+
+        mNewAircraftLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        invalidate();
+                    }
+                });
     }
 
     public void onDestroy() {
@@ -274,18 +285,11 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         Intent i = new Intent(getActivity(), EditAircraftActivity.class);
         Aircraft ac = m_aircraftRows[position].aircraftItem;
         i.putExtra(ActEditAircraft.AIRCRAFTID, ac.AircraftID);
-        startActivity(i);
+        mNewAircraftLauncher.launch(i);
     }
 
     private void AddAircraft() {
-        Intent i = new Intent(getActivity(), NewAircraftActivity.class);
-        startActivityForResult(i, ActNewAircraft.BEGIN_NEW_AIRCRAFT_REQUEST_CODE);
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK && resultCode != Activity.RESULT_CANCELED) {
-            invalidate();
-        }
+        mNewAircraftLauncher.launch(new Intent(getActivity(), NewAircraftActivity.class));
     }
 
     @Override

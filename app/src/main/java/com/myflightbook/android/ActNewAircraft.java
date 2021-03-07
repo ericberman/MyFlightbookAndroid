@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import Model.Aircraft;
 import Model.CountryCode;
@@ -63,6 +64,8 @@ import Model.MFBImageInfo;
 import Model.MFBImageInfo.PictureDestination;
 import Model.MFBUtil;
 import Model.MakesandModels;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -71,12 +74,10 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
     public static MakesandModels[] AvailableMakesAndModels = null;
     private Aircraft m_ac = new Aircraft();
     private String szTailLast = "";
-    private static final int SELECT_MAKE_ACTIVITY_REQUEST_CODE = 41845;
-    public static final int BEGIN_NEW_AIRCRAFT_REQUEST_CODE = 49283;
     public final static String MODELFORAIRCRAFT = "com.myflightbook.android.aircraftModelID";
-    private static final int RESULT_CODE_AIRCRAFT_CREATED = 194873;
     private AutoCompleteAdapter autoCompleteAdapter;
     private boolean fNoTrigger = false; // true to suppress autosuggestions
+    private ActivityResultLauncher<Intent> mSelectMakeLauncher = null;
 
     static class AutoCompleteAdapter extends ArrayAdapter<Aircraft> {
         private final List<Aircraft> mMatchingAircraft;
@@ -279,6 +280,16 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
             return;
         }
 
+        mSelectMakeLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        int selectedMakeIndex = Objects.requireNonNull(result.getData()).getIntExtra(MODELFORAIRCRAFT, 0);
+                        if (AvailableMakesAndModels != null && AvailableMakesAndModels.length > selectedMakeIndex)
+                            setCurrentMakeModel(AvailableMakesAndModels[selectedMakeIndex]);
+                    }
+                });
+
         // Give the aircraft a tailnumber based on locale
         m_ac.TailNumber = CountryCode.BestGuessForCurrentLocale().Prefix;
 
@@ -373,7 +384,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         Intent i = new Intent();
         Activity a = getActivity();
         if (a != null) {
-            a.setResult(RESULT_CODE_AIRCRAFT_CREATED, i);
+            a.setResult(Activity.RESULT_OK, i);
             a.finish();
         }
     }
@@ -387,15 +398,8 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
                 case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
                     AddCameraImage(m_TempFilePath, false);
                     break;
-                case SELECT_MAKE_ACTIVITY_REQUEST_CODE:
-                    int selectedMakeIndex = data.getIntExtra(MODELFORAIRCRAFT, 0);
-                    if (AvailableMakesAndModels != null && AvailableMakesAndModels.length > selectedMakeIndex)
-                        setCurrentMakeModel(AvailableMakesAndModels[selectedMakeIndex]);
-                    break;
             }
         }
-        if (requestCode == BEGIN_NEW_AIRCRAFT_REQUEST_CODE)
-            newAircraft();
     }
 
     private void setCurrentMakeModel(MakesandModels mm) {
@@ -446,7 +450,7 @@ public class ActNewAircraft extends ActMFBForm implements android.view.View.OnCl
         if (id == R.id.btnMakeModel) {
             Intent i = new Intent(getActivity(), ActSelectMake.class);
             i.putExtra(MODELFORAIRCRAFT, m_ac.ModelID);
-            startActivityForResult(i, SELECT_MAKE_ACTIVITY_REQUEST_CODE);
+            mSelectMakeLauncher.launch(i);
         } else if (id == R.id.ckAnonymous)
             toggleAnonymous((CheckBox) v);
     }

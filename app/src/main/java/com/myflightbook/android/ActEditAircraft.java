@@ -54,8 +54,6 @@ import androidx.annotation.NonNull;
 public class ActEditAircraft extends ActMFBForm implements android.view.View.OnClickListener,
         DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource {
     public final static String AIRCRAFTID = "com.myflightbook.android.aircraftID";
-    private static final int RESULT_CODE_AIRCRAFT_DELETED = 19573;
-    private static final int RESULT_CODE_AIRCRAFT_CHANGED = 19574;
 
     private Aircraft m_ac = null;
 
@@ -102,7 +100,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
                 m_acs.FlushCache();
                 MFBMain.invalidateCachedTotals();    // could have updated maintenance, leading currency to be invalid.
                 Intent i = new Intent();
-                aea.getActivity().setResult(RESULT_CODE_AIRCRAFT_CHANGED, i);
+                aea.getActivity().setResult(Activity.RESULT_OK, i);
                 aea.finish();
             } else {
                 MFBUtil.Alert(aea, aea.getString(R.string.txtError), m_acs.getLastError());
@@ -155,7 +153,7 @@ public class ActEditAircraft extends ActMFBForm implements android.view.View.OnC
 
             if (acs.getLastError().length() == 0) {
                 Intent i = new Intent();
-                aea.getActivity().setResult(RESULT_CODE_AIRCRAFT_DELETED, i);
+                aea.getActivity().setResult(Activity.RESULT_OK, i);
                 aea.finish();
             } else
                 MFBUtil.Alert(aea, c.getString(R.string.txtError), acs.getLastError());
