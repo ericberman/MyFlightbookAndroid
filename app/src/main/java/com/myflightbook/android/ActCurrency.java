@@ -184,7 +184,7 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                         case Aircraft: {
                             Intent i = new Intent(getActivity(), EditAircraftActivity.class);
                             i.putExtra(ActEditAircraft.AIRCRAFTID, csi.AssociatedResourceID);
-                            startActivityForResult(i, ActEditAircraft.BEGIN_EDIT_AIRCRAFT_REQUEST_CODE);
+                            startActivity(i);
                         }
                             break;
                         case Medical:

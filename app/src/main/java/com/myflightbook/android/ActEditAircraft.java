@@ -54,7 +54,6 @@ import androidx.annotation.NonNull;
 public class ActEditAircraft extends ActMFBForm implements android.view.View.OnClickListener,
         DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource {
     public final static String AIRCRAFTID = "com.myflightbook.android.aircraftID";
-    public static final int BEGIN_EDIT_AIRCRAFT_REQUEST_CODE = 49521;
     private static final int RESULT_CODE_AIRCRAFT_DELETED = 19573;
     private static final int RESULT_CODE_AIRCRAFT_CHANGED = 19574;
 

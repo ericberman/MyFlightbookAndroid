@@ -274,7 +274,7 @@ public class ActAircraft extends ListFragment implements OnItemClickListener, MF
         Intent i = new Intent(getActivity(), EditAircraftActivity.class);
         Aircraft ac = m_aircraftRows[position].aircraftItem;
         i.putExtra(ActEditAircraft.AIRCRAFTID, ac.AircraftID);
-        startActivityForResult(i, ActEditAircraft.BEGIN_EDIT_AIRCRAFT_REQUEST_CODE);
+        startActivity(i);
     }
 
     private void AddAircraft() {

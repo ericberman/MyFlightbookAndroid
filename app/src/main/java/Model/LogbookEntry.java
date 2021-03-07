@@ -888,7 +888,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         hobbsEnd = Double.parseDouble(so.getProperty("HobbsEnd").toString());
         szModelDisplay = ReadNullableString(so, "ModelDisplay");
         szTailNumDisplay = ReadNullableString(so, "TailNumDisplay");
-        szCatClassDisplay = ReadNullableString(so, "CatClassDisplay").toString();
+        szCatClassDisplay = ReadNullableString(so, "CatClassDisplay");
 
         sendLink = so.getPropertySafelyAsString("SendFlightLink");
         shareLink = so.getPropertySafelyAsString("SocialMediaLink");
