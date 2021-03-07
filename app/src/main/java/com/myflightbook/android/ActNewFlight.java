@@ -130,8 +130,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     // Expand state of "in the cockpit"
     static private final String m_KeyShowInCockpit = "inTheCockpit";
 
-    public static final long lastNewFlightID = LogbookEntry.ID_NEW_FLIGHT;
-
     private TextView txtQuality, txtStatus, txtSpeed, txtAltitude, txtSunrise, txtSunset, txtLatitude, txtLongitude;
     private ImageView imgRecording;
 
@@ -619,7 +617,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         // set for no focus.
         findViewById(R.id.btnFlightSet).requestFocus();
-
         if (fIsNewFlight) {
             // re-use the existing in-progress flight
             m_le = MFBMain.getNewFlightListener().getInProgressFlight(requireActivity());

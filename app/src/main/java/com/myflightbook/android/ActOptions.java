@@ -427,11 +427,12 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
 
         // first make sure we're only working on one new flight at a time.
         LogbookEntry[] rgLeNew = LogbookEntry.getNewFlights();
-        if (ActNewFlight.lastNewFlightID > 0) {
+        LogbookEntry leInProgress = MFBMain.getNewFlightListener().getInProgressFlight(requireActivity());
+        if (leInProgress != null && leInProgress.idLocalDB > 0) {
             for (LogbookEntry le : rgLeNew)
-                if (le.idLocalDB != ActNewFlight.lastNewFlightID) {
-                    Log.e(MFBConstants.LOG_TAG, String.format("DELETING FOUND ORPHANED FLIGHT: %d", le.idLocalDB));
-                    le.idFlight = LogbookEntry.ID_UNSUBMITTED_FLIGHT;
+                if (le.idLocalDB != leInProgress.idLocalDB) {
+                    Log.e(MFBConstants.LOG_TAG, String.format("FOUND ORPHANED FLIGHT: %d", le.idLocalDB));
+                    le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED;    // put it into queued flights for review.
                     le.ToDB();
                     RecentFlightsSvc.ClearCachedFlights();
                     fOrphansFound = true;
