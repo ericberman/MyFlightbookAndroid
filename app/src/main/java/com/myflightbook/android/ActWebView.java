@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package com.myflightbook.android;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,6 +38,8 @@ import android.widget.Toast;
 import java.io.File;
 
 import Model.MFBConstants;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -46,8 +49,7 @@ public class ActWebView extends AppCompatActivity {
     private String szTempFile = "";
     private ValueCallback<Uri> mUploadMessage;
     private ValueCallback<Uri[]> uploadMessage;
-    private static final int REQUEST_SELECT_FILE = 100;
-    private final static int FILECHOOSER_RESULTCODE = 1;
+    private ActivityResultLauncher<Intent> mFileChooser = null;
 
     // Code to enable file upload adapted from https://stackoverflow.com/questions/11724129/android-webview-file-upload.
 
@@ -64,6 +66,17 @@ public class ActWebView extends AppCompatActivity {
         String szURL = this.getIntent().getStringExtra(MFBConstants.intentViewURL);
         szTempFile = this.getIntent().getStringExtra(MFBConstants.intentViewTempFile);
 
+        mFileChooser = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        if (uploadMessage == null)
+                            return;
+                        uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(result.getResultCode(), result.getData()));
+                        uploadMessage = null;
+                    }
+                });
+
         WebView wv = findViewById(R.id.wvMain);
         wv.setWebChromeClient(new WebChromeClient() {
             // For 3.0+ Devices (Start)
@@ -74,7 +87,7 @@ public class ActWebView extends AppCompatActivity {
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
                 i.setType("image/*|application/pdf");
-                startActivityForResult(Intent.createChooser(i, "File Browser"), FILECHOOSER_RESULTCODE);
+                mFileChooser.launch(i);
             }
 
 
@@ -92,7 +105,7 @@ public class ActWebView extends AppCompatActivity {
                 Intent intent = fileChooserParams.createIntent();
                 try
                 {
-                    startActivityForResult(intent, REQUEST_SELECT_FILE);
+                    mFileChooser.launch(intent);
                 } catch (ActivityNotFoundException e)
                 {
                     uploadMessage = null;
@@ -109,7 +122,7 @@ public class ActWebView extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*|application/pdf");
-                startActivityForResult(Intent.createChooser(intent, "File Browser"), FILECHOOSER_RESULTCODE);
+                mFileChooser.launch(Intent.createChooser(intent, "File Browser"));
             }
 
             protected void openFileChooser(ValueCallback<Uri> uploadMsg)
@@ -118,7 +131,7 @@ public class ActWebView extends AppCompatActivity {
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
                 i.setType("image/*|application/pdf");
-                startActivityForResult(Intent.createChooser(i, "File Chooser"), FILECHOOSER_RESULTCODE);
+                mFileChooser.launch(Intent.createChooser(i, "File Chooser"));
             }
         });
 
@@ -178,18 +191,5 @@ public class ActWebView extends AppCompatActivity {
         Intent i = new Intent(a, ActWebView.class);
         i.putExtra(MFBConstants.intentViewURL, szURL);
         a.startActivity(i);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent)
-    {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == REQUEST_SELECT_FILE)
-        {
-            if (uploadMessage == null)
-                return;
-            uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
-            uploadMessage = null;
-        }
     }
 }
