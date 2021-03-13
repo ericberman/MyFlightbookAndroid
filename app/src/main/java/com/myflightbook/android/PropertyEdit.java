@@ -276,8 +276,8 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
             case cfpString: {
                 m_txtStringVal.setVisibility(VISIBLE);
                 m_txtStringVal.setHint("");
-                m_txtStringVal.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                        | InputType.TYPE_CLASS_TEXT | ((m_fp.CustomPropertyType().cptFlag & 0x04000000) == 0 ? InputType.TYPE_TEXT_FLAG_CAP_SENTENCES : InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS));
+                int capFlag = (m_fp.CustomPropertyType().cptFlag & 0x04000000) != 0 ? InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS : ((m_fp.CustomPropertyType().cptFlag & 0x10000000) != 0 ? InputType.TYPE_TEXT_FLAG_CAP_WORDS : InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                m_txtStringVal.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | capFlag);
                 m_txtStringVal.setKeyListener(TextKeyListener.getInstance());
                 m_txtStringVal.setText(m_fp.toString());
                 String[] rgPrevVals = m_fp.CustomPropertyType().PreviousValues;
