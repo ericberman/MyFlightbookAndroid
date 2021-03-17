@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
 
     interface PropertyListener {
         void updateProperty(int id, FlightProperty fp);
+        void dateOfFlightShouldReset(Date dt);
     }
 
     private FlightProperty m_fp;
@@ -217,7 +218,10 @@ public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTime
 
         m_tvDate.setOnClickListener(view -> {
             if (m_fp.dateValue == null ||UTCDate.IsNullDate(m_fp.dateValue)) {
-                updateDate(m_id, new Date());
+                Date dt = new Date();
+                updateDate(m_id, dt);
+                if (m_pl != null)
+                    m_pl.dateOfFlightShouldReset(dt);
             }
             else {
                 DlgDatePicker ddp = new DlgDatePicker(getContext(),

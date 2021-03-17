@@ -727,7 +727,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             d.show();
         }
 
-        if (m_rgac != null) {
+        if (m_rgac == null) {
             Aircraft[] rgac = (new AircraftSvc()).getCachedAircraft();
             if (rgac != null)
                 m_rgac = rgac;
@@ -1972,6 +1972,16 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_le == null)
             return;
 
+        // Handle block Out having been specified by viewprops
+        boolean fHadBlockOut = false;
+        if (m_le.rgCustomProperties != null) {
+            for (FlightProperty fp : m_le.rgCustomProperties)
+                if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut) {
+                    fHadBlockOut = true;
+                    break;
+                }
+        }
+
         m_le.SyncProperties();
 
         if (m_le.rgCustomProperties == null)
@@ -1988,6 +1998,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         FlightProperty[] rgProps = FlightProperty.CrossProduct(m_le.rgCustomProperties, rgcptAll);
 
+        boolean fHasBlockOutAdded = false;
         for (FlightProperty fp : rgProps) {
             // should never happen, but does - not sure why
             if (fp == null)
@@ -1996,8 +2007,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             if (fp.CustomPropertyType() == null)
                 fp.RefreshPropType();
 
-            Boolean fIsPinned = CustomPropertyType.isPinnedProperty(pinnedProps, fp.idPropType);
+            if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut)
+                fHasBlockOutAdded = true;
 
+            Boolean fIsPinned = CustomPropertyType.isPinnedProperty(pinnedProps, fp.idPropType);
 
             if (!fIsPinned && !templateProps.contains(fp.idPropType) && fp.IsDefaultValue())
                 continue;
@@ -2017,6 +2030,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             tl.addView(tr, new TableLayout.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
         }
+
+        if (!fHadBlockOut && fHasBlockOutAdded)
+            resetDateOfFlight();
     }
 
     //region in-line property editing
@@ -2088,6 +2104,9 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.BlockTime &&
                 (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn))
             AutoTotals();
+    }
+    public void dateOfFlightShouldReset(Date dt) {
+        resetDateOfFlight();
     }
     //endregion
 

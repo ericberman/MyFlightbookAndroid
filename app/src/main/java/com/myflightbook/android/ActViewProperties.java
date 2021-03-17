@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ import com.myflightbook.android.WebServices.FlightPropertiesSvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -468,6 +469,9 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
     public void updateProperty(int id, FlightProperty fp) {
         if (m_idExistingId > 0 && fp.IsDefaultValue())
             DeleteDefaultedProperty(fp);
+    }
+
+    public void dateOfFlightShouldReset(Date dt) {
     }
 
     //region DecimalEdit cross-fill
