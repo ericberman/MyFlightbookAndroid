@@ -143,6 +143,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     private ActivityResultLauncher<Intent> mPropertiesLauncher = null;
     private ActivityResultLauncher<String> mAppendAdhocLauncher = null;
     private ActivityResultLauncher<String> mAppendNearestLauncher = null;
+    private ActivityResultLauncher<Intent> mAddAircraftLauncher = null;
 
     private static class DeleteTask extends AsyncTask<Void, String, MFBSoap> implements MFBSoap.MFBSoapProgressUpdate {
         private ProgressDialog m_pd = null;
@@ -508,6 +509,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                         txtRoute.setText(m_le.szRoute);
                     }
                 });
+        mAddAircraftLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Aircraft[] rgac = (new AircraftSvc()).getCachedAircraft();
+                    if (rgac != null)
+                        m_rgac = rgac;
+                    refreshAircraft(m_rgac, false);
+                });
     }
 
     @Override
@@ -523,6 +532,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         AddListener(R.id.btnEngineEndSet);
         AddListener(R.id.btnProps);
         AddListener(R.id.btnAppendNearest);
+        AddListener(R.id.btnAddAircraft);
 
         findViewById(R.id.btnAppendNearest).setOnLongClickListener((v) -> {
             AppendAdHoc();
@@ -1084,6 +1094,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             ViewPropsForFlight();
         else if (id == R.id.btnAppendNearest)
             AppendNearest();
+        else if (id == R.id.btnAddAircraft)
+            mAddAircraftLauncher.launch(new Intent(getActivity(), NewAircraftActivity.class));
         else if (id == R.id.btnAddApproach) {
             Intent i = new Intent(requireActivity(), ActAddApproach.class);
             i.putExtra(ActAddApproach.AIRPORTSFORAPPROACHES, m_le.szRoute);

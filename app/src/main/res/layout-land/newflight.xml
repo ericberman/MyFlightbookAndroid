@@ -16,28 +16,45 @@
             android:text="@string/lblCatOverall" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <TextView
-                android:id="@+id/btnFlightSet"
                 style="@style/DateButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/btnFlightSet"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".3"
                 android:clickable="true"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:nextFocusDown="@+id/spnAircraft" />
 
-            <Spinner
-                android:id="@+id/spnAircraft"
-                android:layout_width="0dip"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight=".7"
                 android:layout_height="wrap_content"
-                android:layout_weight=".2"
-                android:nextFocusDown="@+id/txtComments"
-                android:paddingBottom="2sp"
-                android:paddingTop="2sp" />
+                android:gravity="right"
+                android:orientation="horizontal">
+                <Spinner
+                    android:id="@+id/spnAircraft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:nextFocusDown="@+id/txtComments"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp" />
+                <ImageButton
+                    android:id="@+id/btnAddAircraft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/menuAddAircraft"
+                    android:padding="2dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_action_new"
+                    android:text="" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
