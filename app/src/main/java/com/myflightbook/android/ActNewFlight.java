@@ -513,9 +513,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     Aircraft[] rgac = (new AircraftSvc()).getCachedAircraft();
-                    if (rgac != null)
+                    if (rgac != null) {
                         m_rgac = rgac;
-                    refreshAircraft(m_rgac, false);
+                        refreshAircraft(m_rgac, false);
+                    }
                 });
     }
 
@@ -739,9 +740,10 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
 
         if (m_rgac == null) {
             Aircraft[] rgac = (new AircraftSvc()).getCachedAircraft();
-            if (rgac != null)
+            if (rgac != null) {
                 m_rgac = rgac;
-            refreshAircraft(m_rgac, false);
+                refreshAircraft(m_rgac, false);
+            }
         }
 
         // fix up the link to the user's profile.
@@ -1513,7 +1515,14 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         Aircraft[] rgSelectibleAircraft = SelectibleAircraft();
         if (rgSelectibleAircraft != null && rgSelectibleAircraft.length > 0) {
             Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
-            return ((Aircraft) sp.getSelectedItem()).AircraftID;
+            Aircraft ac = (Aircraft) sp.getSelectedItem();
+            if (ac == null) {
+                // Should never be null!
+                int i = sp.getSelectedItemPosition();
+                return rgSelectibleAircraft[i >= 0 && i < rgSelectibleAircraft.length ? i : 0].AircraftID;
+            }
+            else
+                return ac.AircraftID;
         }
         return -1;
     }
