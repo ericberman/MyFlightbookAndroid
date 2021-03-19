@@ -2028,7 +2028,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             if (fp.CustomPropertyType() == null)
                 fp.RefreshPropType();
 
-            if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut)
+            if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut && !fp.IsDefaultValue())
                 fHasBlockOutAdded = true;
 
             Boolean fIsPinned = CustomPropertyType.isPinnedProperty(pinnedProps, fp.idPropType);
