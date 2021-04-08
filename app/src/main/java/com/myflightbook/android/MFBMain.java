@@ -410,7 +410,6 @@ public class MFBMain extends AppCompatActivity {
         else
             mViewPager.setCurrentItem(mLastTabIndex);
 
-
         // Periodically (every 7 days) vacuum (compact) the database.
         long t = new Date().getTime();
         if ((t - mLastVacuum) > 1000 * 3600 * 24 * 7) {
@@ -430,42 +429,54 @@ public class MFBMain extends AppCompatActivity {
             SaveState();
         }
 
-        OpenRequestedTelemetry();
-
-        // handle shortcuts
-        Intent i = getIntent();
-        String szAction = i.getAction();
-        if (szAction != null) {
-            switch (szAction) {
-                case ACTION_VIEW_CURRENCY:
-                    mLastTabIndex = MFBTab.Currency.ordinal();
-                    break;
-                case ACTION_VIEW_TOTALS:
-                    mLastTabIndex = MFBTab.Totals.ordinal();
-                    break;
-                case ACTION_VIEW_CURRENT:
-                    mLastTabIndex = MFBTab.NewFlight.ordinal();
-                    break;
-                case ACTION_START_ENGINE:
-                case ACTION_STOP_ENGINE:
-                case ACTION_PAUSE_FLIGHT:
-                case ACTION_RESUME_FLIGHT:
-                    mLastTabIndex = MFBTab.NewFlight.ordinal();
-                    MFBMain.pendingAction = szAction;
-                    break;
-                default:
-                    MFBMain.pendingAction = szAction;
-                    break;
-            }
-        }
+        onNewIntent(getIntent());
 
         // Set up the GPS service, but don't start it until OnResume
         if (MFBLocation.GetMainLocation() == null)
             MFBLocation.setMainLocation(new MFBLocation(this, false));
     }
 
-    private void OpenRequestedTelemetry() {
-        Intent i = getIntent();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        OpenRequestedTelemetry(intent);
+
+        // handle shortcuts
+        String szAction = intent.getAction();
+        if (szAction != null) {
+            switch (szAction) {
+                case ACTION_VIEW_CURRENCY:
+                    mLastTabIndex = MFBTab.Currency.ordinal();
+                    mViewPager.setCurrentItem(mLastTabIndex);
+                    break;
+                case ACTION_VIEW_TOTALS:
+                    mLastTabIndex = MFBTab.Totals.ordinal();
+                    mViewPager.setCurrentItem(mLastTabIndex);
+                    break;
+                case ACTION_VIEW_CURRENT:
+                    mLastTabIndex = MFBTab.NewFlight.ordinal();
+                    mViewPager.setCurrentItem(mLastTabIndex);
+                    break;
+                case ACTION_START_ENGINE:
+                case ACTION_STOP_ENGINE:
+                case ACTION_PAUSE_FLIGHT:
+                case ACTION_RESUME_FLIGHT:
+                    mLastTabIndex = MFBTab.NewFlight.ordinal();
+                    mViewPager.setCurrentItem(mLastTabIndex);
+                    if (MFBMain.getNewFlightListener().getDelegate() != null)
+                        performActionForListener(szAction);
+                    else
+                        MFBMain.pendingAction = szAction;
+                    break;
+                default:
+                    MFBMain.pendingAction = szAction;
+                    break;
+            }
+        }
+    }
+
+    private void OpenRequestedTelemetry(Intent i) {
         if (i != null) {
             Uri uri = i.getData();
 
@@ -491,7 +502,7 @@ public class MFBMain extends AppCompatActivity {
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_READ) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                OpenRequestedTelemetry();
+                OpenRequestedTelemetry(getIntent());
             }
             return;
         }
@@ -762,6 +773,25 @@ public class MFBMain extends AppCompatActivity {
         return MFBMain.m_FlightEventListener;
     }
 
+    protected static void performActionForListener(String action) {
+        MFBFlightListener.ListenerFragmentDelegate d = MFBMain.getNewFlightListener().getDelegate();
+        if (d == null)
+            return;
+
+        switch (action) {
+            case ACTION_PAUSE_FLIGHT:
+            case ACTION_RESUME_FLIGHT:
+                d.togglePausePlay();
+                break;
+            case ACTION_START_ENGINE:
+                d.startEngine();
+                break;
+            case ACTION_STOP_ENGINE:
+                d.stopEngine();
+                break;
+        }
+    }
+
     public static void SetInProgressFlightActivity(Context c, MFBFlightListener.ListenerFragmentDelegate d) {
         MFBFlightListener fl = MFBMain.getNewFlightListener().setDelegate(d);
         if (MFBLocation.GetMainLocation() == null)
@@ -770,18 +800,7 @@ public class MFBMain extends AppCompatActivity {
             MFBLocation.GetMainLocation().SetListener(fl);
 
         if (d != null && pendingAction != null) {
-            switch (pendingAction) {
-                case ACTION_PAUSE_FLIGHT:
-                case ACTION_RESUME_FLIGHT:
-                    d.togglePausePlay();
-                    break;
-                case ACTION_START_ENGINE:
-                    d.startEngine();
-                    break;
-                case ACTION_STOP_ENGINE:
-                    d.stopEngine();
-                    break;
-            }
+            performActionForListener(pendingAction);
             pendingAction = null;
         }
     }
