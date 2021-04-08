@@ -46,6 +46,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -246,8 +247,10 @@ public class MFBMain extends AppCompatActivity {
                 MFBUtil.Alert(c, c.getString(R.string.txtError), c.getString(R.string.telemetryCantIdentify));
             else if (le.szError != null && le.szError.length() > 0)
                 MFBUtil.Alert(c, c.getString(R.string.txtError), le.szError);
-            else
+            else {
+                RecentFlightsSvc.ClearCachedFlights();
                 MFBUtil.Alert(c, c.getString(R.string.txtSuccess), c.getString(R.string.telemetryImportSuccessful));
+            }
 
             if (m == null)
                 return;
@@ -257,7 +260,6 @@ public class MFBMain extends AppCompatActivity {
             if (i != null)
                 i.setData(null);
 
-            MFBMain.invalidateAll();
             m.mViewPager.setCurrentItem(MFBTab.Recent.ordinal());
         }
     }
