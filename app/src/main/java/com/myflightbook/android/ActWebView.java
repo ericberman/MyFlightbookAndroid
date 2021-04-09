@@ -148,6 +148,7 @@ public class ActWebView extends AppCompatActivity {
                 return false;
             }
         });
+        assert szURL != null;
         wv.loadUrl(szURL);
         wv.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
             if (mimetype.compareToIgnoreCase("text/calendar") == 0 || mimetype.compareToIgnoreCase("application/pdf") == 0) {

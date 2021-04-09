@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ import com.myflightbook.android.MFBMain;
 import com.myflightbook.android.R;
 import com.myflightbook.android.mfblocationservice;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -272,7 +273,7 @@ public class MFBLocation implements LocationListener {
         }
     }
 
-    public void onLocationChanged(Location newLoc) {
+    public void onLocationChanged(@NonNull Location newLoc) {
         LocSample loc = new LocSample(newLoc);
 
         double SpeedKts = loc.Speed;
@@ -378,11 +379,11 @@ public class MFBLocation implements LocationListener {
         return (fPrefRecordFlight && IsRecording);
     }
 
-    public void onProviderDisabled(String provider) {
+    public void onProviderDisabled(@NonNull String provider) {
         m_fIsEnabled = false;
     }
 
-    public void onProviderEnabled(String provider) {
+    public void onProviderEnabled(@NonNull String provider) {
         m_fIsEnabled = true;
     }
 
