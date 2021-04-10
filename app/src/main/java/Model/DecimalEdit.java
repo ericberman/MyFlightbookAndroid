@@ -180,9 +180,9 @@ public class DecimalEdit extends androidx.appcompat.widget.AppCompatEditText imp
     }
 
     public static String DoubleToHHMM(double d) {
-        d = Math.round(d * 60.0)/60.0;
-        int h = (int) Math.floor(d);
-        int m = (int) Math.floor((d - h) * 60);
+        int totalMinutes = (int) Math.floor(Math.round(d * 100.0) * .01 * 60.0);
+        int h = totalMinutes / 60;
+        int m = totalMinutes % 60;
         return String.format(Locale.US, "%d:%02d", h, m);
     }
 
