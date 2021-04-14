@@ -48,6 +48,7 @@ import com.myflightbook.android.WebServices.AuthToken;
 import com.myflightbook.android.WebServices.MFBSoap;
 import com.myflightbook.android.WebServices.RecentFlightsSvc;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -202,6 +203,7 @@ public class MFBMain extends AppCompatActivity {
     private static class ImportTelemetryTask extends AsyncTask<Uri, Void, LogbookEntry> {
         private ProgressDialog m_pd = null;
         private final AsyncWeakContext<MFBMain> m_ctxt;
+        private String exceptionError = null;
 
         ImportTelemetryTask(Context c, MFBMain m) {
             super();
@@ -213,10 +215,14 @@ public class MFBMain extends AppCompatActivity {
             LogbookEntry leResult = null;
             if (urls != null && urls.length > 0) {
 
-                Telemetry t = Telemetry.TelemetryFromURL(urls[0], this.m_ctxt.getContext());
-
-                if (t != null)
-                    leResult = GPSSim.ImportTelemetry(m_ctxt.getCallingActivity(), t, urls[0]);
+                try {
+                    Telemetry t = Telemetry.TelemetryFromURL(urls[0], this.m_ctxt.getContext());
+                    if (t != null)
+                        leResult = GPSSim.ImportTelemetry(m_ctxt.getCallingActivity(), t, urls[0]);
+                }
+                catch (IOException ex) {
+                    exceptionError = ex.getMessage();
+                }
             }
             return leResult;
         }
@@ -244,7 +250,7 @@ public class MFBMain extends AppCompatActivity {
                 return;
 
             if (le == null)
-                MFBUtil.Alert(c, c.getString(R.string.txtError), c.getString(R.string.telemetryCantIdentify));
+                MFBUtil.Alert(c, c.getString(R.string.txtError), exceptionError == null ? c.getString(R.string.telemetryCantIdentify) : exceptionError);
             else if (le.szError != null && le.szError.length() > 0)
                 MFBUtil.Alert(c, c.getString(R.string.txtError), le.szError);
             else {

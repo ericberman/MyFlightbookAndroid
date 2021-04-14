@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -111,35 +111,29 @@ public abstract class Telemetry {
         return new Date();
     }
 
-    private static ImportedFileType TypeFromUri(Uri data, Context c) {
+    private static ImportedFileType TypeFromUri(Uri data, Context c) throws IOException {
 
         ImportedFileType result = ImportedFileType.Unknown;
 
-        try (InputStream in = c.getContentResolver().openInputStream(data)) {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
-                String s;
-                while ((s = br.readLine()) != null) {
-                    s = s.toUpperCase(Locale.ENGLISH);
-                    if (s.contains("GPX")) {
-                        result = ImportedFileType.GPX;
-                        break;
-                    }
-                    else if (s.contains("KML")) {
-                        result = ImportedFileType.KML;
-                        break;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        InputStream in = c.getContentResolver().openInputStream(data);
+        BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)));
+        String s;
+        while ((s = br.readLine()) != null) {
+            s = s.toUpperCase(Locale.ENGLISH);
+            if (s.contains("GPX")) {
+                result = ImportedFileType.GPX;
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            else if (s.contains("KML")) {
+                result = ImportedFileType.KML;
+                break;
+            }
         }
 
         return result;
     }
 
-    public static Telemetry TelemetryFromURL(Uri uri, Context c) {
+    public static Telemetry TelemetryFromURL(Uri uri, Context c) throws IOException {
         if (uri == null)
             return null;
 
