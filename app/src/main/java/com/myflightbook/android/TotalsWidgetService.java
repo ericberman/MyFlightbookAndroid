@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019 MyFlightbook, LLC
+    Copyright (C) 2019-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -98,6 +98,10 @@ class TotalsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         Totals ti = mTotalsItmes.get(position);
 
         EditMode em = DecimalEdit.DefaultHHMM ? EditMode.HHMM : EditMode.DECIMAL;
+
+        rv.setTextColor(R.id.txtTotDescription, mContext.getColor(R.color.textColorPrimary));
+        rv.setTextColor(R.id.txtTotSubDescription, mContext.getColor(R.color.textColorPrimary));
+        rv.setTextColor(R.id.txtTotValue, mContext.getColor(R.color.textColorPrimary));
 
         rv.setTextViewText(R.id.txtTotDescription, ti.Description);
         rv.setTextViewText(R.id.txtTotSubDescription, ti.SubDescription);

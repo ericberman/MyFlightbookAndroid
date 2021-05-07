@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019 MyFlightbook, LLC
+    Copyright (C) 2019-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,6 +95,9 @@ class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
 
         CurrencyStatusItem csi = mCurrencyItems.get(position);
 
+        rv.setTextColor(R.id.txtCsiDiscrepancy, mContext.getColor(R.color.textColorPrimary));
+        rv.setTextColor(R.id.txtCsiAttribute, mContext.getColor(R.color.textColorPrimary));
+
         rv.setTextViewText(R.id.txtCsiDiscrepancy, csi.Discrepancy);
         rv.setTextViewText(R.id.txtCsiAttribute, csi.Attribute);
         SpannableString value = new SpannableString(csi.Value);
@@ -105,10 +108,10 @@ class CurrencyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
             rv.setTextColor(R.id.txtCsiValue, Color.argb(255, 0, 128, 255));
         } else if (csi.Status.compareTo("NoDate") == 0) {
             value.setSpan(new StyleSpan(Typeface.BOLD), 0, csi.Value.length(), 0);
-            rv.setTextColor(R.id.txtCsiValue, Color.BLACK);
+            rv.setTextColor(R.id.txtCsiValue, mContext.getColor(R.color.textColorPrimary));
         }
         else
-            rv.setTextColor(R.id.txtCsiValue, Color.argb(255, 0, 128, 0));
+            rv.setTextColor(R.id.txtCsiValue, mContext.getColor(R.color.currencyGreen));
 
         rv.setTextViewText(R.id.txtCsiValue, value);
 

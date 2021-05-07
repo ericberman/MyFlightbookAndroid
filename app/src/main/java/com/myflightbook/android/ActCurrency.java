@@ -166,10 +166,11 @@ public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
                     tvValue.setTextColor(Color.argb(255, 0, 128, 255));
                     tvValue.setTypeface(tvValue.getTypeface(), Typeface.BOLD);
                 } else if (csi.Status.compareTo("NoDate") == 0) {
+                    tvValue.setTextColor(requireContext().getColor(R.color.textColorPrimary));
                     tvValue.setTypeface(tvValue.getTypeface(), Typeface.BOLD);
                 }
                 else
-                    tvValue.setTextColor(Color.argb(255, 0, 128, 0));
+                    tvValue.setTextColor(requireContext().getColor(R.color.currencyGreen));
 
                 tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
