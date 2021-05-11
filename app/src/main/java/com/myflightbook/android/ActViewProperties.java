@@ -253,7 +253,7 @@ public class ActViewProperties extends FixedExpandableListActivity implements Pr
             FlightProperty fpExisting = pe.getFlightProperty();
             if (fpExisting == null || fpExisting.idPropType != fp.idPropType)
                 pe.InitForProperty(fp, fp.idPropType, ActViewProperties.this, fp.idPropType == CustomPropertyType.idPropTypeTachStart ?
-                        (DecimalEdit.CrossFillDelegate) sender -> {
+                        sender -> {
                             if (ActViewProperties.this.m_xfillTachStart > 0)
                                 sender.setDoubleValue(ActViewProperties.this.m_xfillTachStart);
                         }

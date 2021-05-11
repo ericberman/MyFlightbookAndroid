@@ -2039,7 +2039,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             tr.setId(View.generateViewId());
 
             PropertyEdit pe = tr.findViewById(R.id.propEdit);
-            pe.InitForProperty(fp, tr.getId(), this, (fp.CustomPropertyType().idPropType == CustomPropertyType.idPropTypeTachStart) ? (CrossFillDelegate) sender -> {
+            pe.InitForProperty(fp, tr.getId(), this, (fp.CustomPropertyType().idPropType == CustomPropertyType.idPropTypeTachStart) ? sender -> {
                 Double d = Aircraft.getHighWaterTachForAircraft(selectedAircraftID());
                 if (d > 0)
                     sender.setDoubleValue(d);
