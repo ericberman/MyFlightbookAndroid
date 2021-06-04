@@ -56,7 +56,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         pidAvionicsTechnologyUpgrade, pidIsGlass, pidGlassUpgradeDate,
         pidLastVOR, pidLastAltimeter, pidLastTransponder, pidLastELT, pidLastStatic, pidLastAnnual, pidRegistrationDue,
         pidLast100, pidLastOil, pidLastEngine, pidMaintNotes, pidPublicNotes, pidPrivateNotes, pidDefaultImage, pidDefaultTemplates,
-        pidHideFromSelection, pidPilotRole, pidCopyPICName
+        pidHideFromSelection, pidPilotRole, pidCopyPICName, pidRevision
     }
 
     public String TailNumber = "";
@@ -70,6 +70,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     public MFBImageInfo[] AircraftImages = new MFBImageInfo[0];
     public String DefaultImage = "";
     public final HashSet<Integer> DefaultTemplates = new HashSet<>();
+    public int Revision = 0;
 
     // Maintenance fields
     public Date LastVOR;
@@ -216,6 +217,7 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         so.addProperty("PrivateNotes", PrivateNotes);
 
         so.addProperty("DefaultImage", DefaultImage);
+        so.addProperty("Revision", Revision);
     }
 
     public void FromProperties(SoapObject so) {
@@ -227,6 +229,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
         ModelDescription = so.getProperty("ModelDescription").toString();
         ICAO = so.getProperty("ICAO").toString();
         Version = Integer.parseInt(so.getProperty("Version").toString());
+        String szRevision = so.getPrimitivePropertySafelyAsString("Revision");
+        Revision = szRevision.length() == 0 ? 0 : Integer.parseInt(szRevision);
 
         LastVOR = ReadNullableDate(so, "LastVOR");
         LastAltimeter = ReadNullableDate(so, "LastAltimeter");
@@ -287,6 +291,8 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 return ModelID;
             case pidVersion:
                 return Version;
+            case pidRevision:
+                return Revision;
             case pidICAO:
                 return ICAO;
             case pidInstanctTypeID:
@@ -356,6 +362,9 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
                 break;
             case pidVersion:
                 Version = Integer.parseInt(sz);
+                break;
+            case pidRevision:
+                Revision = Integer.parseInt(sz);
                 break;
             case pidInstanctTypeID:
                 InstanceTypeID = Integer.parseInt(sz);
@@ -448,6 +457,10 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
             case pidVersion:
                 pi.type = PropertyInfo.INTEGER_CLASS;
                 pi.name = "Version";
+                break;
+            case pidRevision:
+                pi.type = PropertyInfo.INTEGER_CLASS;
+                pi.name = "Revision";
                 break;
             case pidICAO:
                 pi.type = PropertyInfo.STRING_CLASS;
@@ -580,11 +593,11 @@ public class Aircraft extends SoapableObject implements KvmSerializable, Seriali
     }
 
     public static Double getHighWaterHobbsForAircraft(Integer idAircraft) {
-        return hashHighWaterHobbs.containsKey(idAircraft) ? hashHighWaterHobbs.get(idAircraft) : 0.0;
+        return hashHighWaterHobbs.getOrDefault(idAircraft, 0.0);
     }
 
     public static Double getHighWaterTachForAircraft(Integer idAircraft) {
-        return hashHighWaterTach.containsKey(idAircraft) ? hashHighWaterTach.get(idAircraft) : 0.0;
+        return hashHighWaterTach.getOrDefault(idAircraft, 0.0);
     }
 
     // region Inspections

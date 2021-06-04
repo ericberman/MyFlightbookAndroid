@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ public class AircraftSvc extends MFBSoap {
     private static final String COL_MODELID = "ModelID";
     private static final String COL_INSTANCEID = "InstanceTypeID";
     private static final String COL_VERSION = "Version";
+    private static final String COL_REVISION = "Revision";
     private static final String COL_ICAO = "ICAO";
     private static final String COL_MODELNAME = "ModelCommonName";
     private static final String COL_MODELDESCRIPTION = "ModelDescription";
@@ -109,6 +110,7 @@ public class AircraftSvc extends MFBSoap {
                 int cAircraftID = c.getColumnIndex(COL_AIRCRAFTID);
                 int cTailNum = c.getColumnIndex(COL_TAILNUM);
                 int cVersion = c.getColumnIndex(COL_VERSION);
+                int cRevision = c.getColumnIndex(COL_REVISION);
                 int cICAO = c.getColumnIndex(COL_ICAO);
                 int cModelId = c.getColumnIndex(COL_MODELID);
                 int cInstanceId = c.getColumnIndex(COL_INSTANCEID);
@@ -147,6 +149,7 @@ public class AircraftSvc extends MFBSoap {
                         ac.AircraftID = c.getInt(cAircraftID);
                         ac.InstanceTypeID = c.getInt(cInstanceId);
                         ac.Version = c.getInt(cVersion);
+                        ac.Revision = c.getInt(cRevision);
                         ac.ICAO = c.getString(cICAO);
                         ac.ModelCommonName = c.getString(cModelName);
                         ac.ModelDescription = c.getString(cModelDesc);
@@ -220,6 +223,7 @@ public class AircraftSvc extends MFBSoap {
                     cv.put(COL_AIRCRAFTID, ac.AircraftID);
                     cv.put(COL_INSTANCEID, ac.InstanceTypeID);
                     cv.put(COL_VERSION, ac.Version);
+                    cv.put(COL_REVISION, ac.Revision);
                     cv.put(COL_ICAO, ac.ICAO);
                     cv.put(COL_MODELID, ac.ModelID);
                     cv.put(COL_MODELDESCRIPTION, ac.ModelDescription);
