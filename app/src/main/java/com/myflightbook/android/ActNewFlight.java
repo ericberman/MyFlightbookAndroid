@@ -996,7 +996,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             return;
         }
 
-        ShareCompat.IntentBuilder.from(requireActivity())
+        new ShareCompat.IntentBuilder(requireActivity())
                 .setType("message/rfc822")
                 .setSubject(getString(R.string.sendFlightSubject))
                 .setText(String.format(Locale.getDefault(), getString(R.string.sendFlightBody), m_le.sendLink))

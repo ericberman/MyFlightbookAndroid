@@ -323,7 +323,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             Marker m = map.addMarker(new MarkerOptions()
                     .position(ll.getLatLng()).anchor(0.5f, 0.5f)
                     .icon(BitmapDescriptorFactory.fromResource(ap.IsPort() ? R.drawable.airport : R.drawable.tower)).title(szTitle).snippet(szSnippet));
-            if (ap.IsPort())
+            if (ap.IsPort() && m != null)
                 m_hmAirports.put(m.getId(), ap);
         }
 
@@ -363,7 +363,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap m_gMap = null;
 
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         if (m_gMap == null) {
             m_gMap = googleMap;
 
