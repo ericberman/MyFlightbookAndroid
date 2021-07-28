@@ -133,8 +133,14 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
         } else if (id == R.id.btnDateNow) {
             setDate(new Date());
             NotifyDelegate();
-        } else if (id == R.id.btnOK)
+        } else if (id == R.id.btnOK) {
+            // Issue #233 - typing and then hitting OK without committing what you typed loses typed changes.
+            TimePicker tp = findViewById(R.id.timePicker);
+            DatePicker dp = findViewById(R.id.datePicker);
+            tp.clearFocus();
+            dp.clearFocus();
             dismiss();
+        }
     }
 
     private GregorianCalendar getCalendar() {
