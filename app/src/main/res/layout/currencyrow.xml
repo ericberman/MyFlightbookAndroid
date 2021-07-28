@@ -22,12 +22,20 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text=""
+            android:paddingStart="3pt"
+            android:paddingEnd="3pt"
+            android:layout_marginEnd="3pt"
+            android:layout_marginStart="3pt"
             android:textSize="6pt" />
 
         <TextView
             android:id="@+id/txtCsiDiscrepancy"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="3pt"
+            android:paddingEnd="3pt"
+            android:layout_marginEnd="3pt"
+            android:layout_marginStart="3pt"
             android:text=""
             android:textSize="6pt" />
     </LinearLayout>
