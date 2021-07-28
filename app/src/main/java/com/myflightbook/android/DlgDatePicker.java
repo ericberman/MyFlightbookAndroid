@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
         setContentView(R.layout.datepicker);
         setMode(dpm);
         setDate(dt);
+        setCanceledOnTouchOutside(false);
     }
 
     DlgDatePicker(Context c, datePickMode dpm, Date dt) {
@@ -139,6 +140,7 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
             DatePicker dp = findViewById(R.id.datePicker);
             tp.clearFocus();
             dp.clearFocus();
+            NotifyDelegate();
             dismiss();
         }
     }
@@ -155,20 +157,15 @@ class DlgDatePicker extends Dialog implements android.view.View.OnClickListener,
 
     public void onDateChanged(DatePicker vw, int year, int monthOfYear, int dayOfMonth) {
         GregorianCalendar c = getCalendar();
-        c.set(year, monthOfYear, dayOfMonth, tpTime.getHour(), tpTime.getMinute());
+        c.set(year, monthOfYear, dayOfMonth, tpTime.getHour(), tpTime.getMinute(), 0);
 
         this.m_Date = c.getTime();
-
-        NotifyDelegate();
     }
 
     public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
         GregorianCalendar c = getCalendar();
 
-        c.set(dpDate.getYear(), dpDate.getMonth(), dpDate.getDayOfMonth(), hourOfDay, minute);
+        c.set(dpDate.getYear(), dpDate.getMonth(), dpDate.getDayOfMonth(), hourOfDay, minute, 0);
         this.m_Date = c.getTime();
-
-        if (m_Mode == datePickMode.UTCDATETIME)
-            NotifyDelegate();
     }
 }
