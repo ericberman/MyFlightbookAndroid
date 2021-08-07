@@ -162,6 +162,7 @@
     <string name="lblWarning1">USE IN FLIGHT COULD VIOLATE REGULATIONS AND BE A DISTRACTION.  YOU ARE RESPONSIBLE FOR ANY CONSEQUENCES OF DOING SO!  SEE 14 CFR 91.21 and 47 CFR 22.925 IN PARTICULAR</string>
     <string name="lblWarning2">Use of this during flight could be a distraction and could violate regulations, including 14 CFR 91.21 and 47 CFR 22.925.\nYou are responsible for the consequences of any use of this software.</string>
     <string name="lblGPSDisclaimer">If you have GPS, MyFlightbook can use your location to detect flight events like take-offs and landings, and record your flight track to save with your flight.  It does this only while the app is active, or in the background while a flight is "in progress" (has a defined engine or flight start, but no defined engine stop).  No data is saved unless you record your track, and that is only available to you unless you explicitly share your flight data. Note that Android is not a certified aviation-GPS, so you should not rely on it in flight.</string>
+    <string name="lblGPSRationale">To allow for detection of takeoffs and landings, or to reliably record your flight path, you must allow MyFlightbook to have access to your location in the background.  (It only will do so when a flight is in progress).  You can do this in the Settings app.</string>
     <string name="lblAutoHobbs">Auto-fill ending Hobbs</string>
     <string name="lblAutoTime">Auto-fill total time</string>
     <string name="lblCopyright">© 2012&#8211;2021 MyFlightbook LLC</string>

@@ -18,10 +18,13 @@
  */
 package com.myflightbook.android;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -170,6 +173,13 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                 result -> {
                     if (!result)
                         fPendingRecord = fPendingAutodetect = false;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+                            result &&
+                            (fPendingRecord || fPendingAutodetect) &&
+                            requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+                        MFBUtil.Alert(requireContext(), requireContext().getPackageManager().getBackgroundPermissionOptionLabel().toString(), getString(R.string.lblGPSRationale));
 
                     ((CheckBox) findViewById(R.id.ckAutodetect)).setChecked(MFBLocation.fPrefAutoDetect = fPendingAutodetect);
                     ((CheckBox) findViewById(R.id.ckRecord)).setChecked(MFBLocation.fPrefRecordFlight = fPendingRecord);
