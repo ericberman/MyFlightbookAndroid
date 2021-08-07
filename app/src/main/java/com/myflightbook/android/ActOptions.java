@@ -72,7 +72,9 @@ import Model.VisitedAirport;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
 
@@ -177,9 +179,16 @@ public class ActOptions extends ActMFBForm implements android.view.View.OnClickL
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
                             result &&
                             (fPendingRecord || fPendingAutodetect) &&
-                            requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
-                        MFBUtil.Alert(requireContext(), requireContext().getPackageManager().getBackgroundPermissionOptionLabel().toString(), getString(R.string.lblGPSRationale));
+                            requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                                new AlertDialog.Builder(requireContext(), R.style.MFBDialog)
+                                        .setTitle(requireContext().getPackageManager().getBackgroundPermissionOptionLabel())
+                                        .setMessage(R.string.lblGPSRationale)
+                                        .setPositiveButton(R.string.lblOK, (d, w) -> ActivityCompat.requestPermissions(requireActivity(), new String[] { Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 0))
+                                        .setNegativeButton(R.string.lblCancel, (d, w) -> d.dismiss())
+                                        .create()
+                                        .show();
+                    }
 
                     ((CheckBox) findViewById(R.id.ckAutodetect)).setChecked(MFBLocation.fPrefAutoDetect = fPendingAutodetect);
                     ((CheckBox) findViewById(R.id.ckRecord)).setChecked(MFBLocation.fPrefRecordFlight = fPendingRecord);
