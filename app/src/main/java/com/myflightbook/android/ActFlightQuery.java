@@ -53,7 +53,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -418,14 +417,8 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 List<Aircraft> lst = new ArrayList<>(Arrays.asList(CurrentQuery.AircraftList));
                 if (fAdded)
                     lst.add((Aircraft) o);
-                else {
-                    Iterator<Aircraft> iterator = lst.iterator();
-                    while (iterator.hasNext()) {
-                        Aircraft ac = iterator.next();
-                        if (ac.AircraftID == ((Aircraft) o).AircraftID)
-                            iterator.remove();
-                    }
-                }
+                else
+                    lst.removeIf(ac -> ac.AircraftID == ((Aircraft) o).AircraftID);
                 CurrentQuery.AircraftList = lst.toArray(new Aircraft[0]);
             }
 
@@ -449,14 +442,8 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 List<MakeModel> lst = new ArrayList<>(Arrays.asList(CurrentQuery.MakeList));
                 if (fAdded)
                     lst.add((MakeModel) o);
-                else {
-                    Iterator<MakeModel> iterator = lst.iterator();
-                    while (iterator.hasNext()) {
-                        MakeModel m = iterator.next();
-                        if (m.MakeModelId == ((MakeModel) o).MakeModelId)
-                            iterator.remove();
-                    }
-                }
+                else
+                    lst.removeIf(m -> m.MakeModelId == ((MakeModel) o).MakeModelId);
                 CurrentQuery.MakeList = lst.toArray(new MakeModel[0]);
             }
 
@@ -475,14 +462,8 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 List<CategoryClass> lst = new ArrayList<>(Arrays.asList(CurrentQuery.CatClassList));
                 if (fAdded)
                     lst.add((CategoryClass) o);
-                else {
-                    Iterator<CategoryClass> iterator = lst.iterator();
-                    while (iterator.hasNext()) {
-                        CategoryClass cc = iterator.next();
-                        if (cc.IdCatClass == ((CategoryClass) o).IdCatClass)
-                            iterator.remove();
-                    }
-                }
+                else
+                    lst.removeIf(cc -> cc.IdCatClass == ((CategoryClass) o).IdCatClass);
                 CurrentQuery.CatClassList = lst.toArray(new CategoryClass[0]);
             }
 
@@ -501,14 +482,8 @@ public class ActFlightQuery extends ActMFBForm implements android.view.View.OnCl
                 List<CustomPropertyType> lst = new ArrayList<>(Arrays.asList(CurrentQuery.PropertyTypes));
                 if (fAdded)
                     lst.add((CustomPropertyType) o);
-                else {
-                    Iterator<CustomPropertyType> iterator = lst.iterator();
-                    while (iterator.hasNext()) {
-                        CustomPropertyType cpt = iterator.next();
-                        if (cpt.idPropType == ((CustomPropertyType) o).idPropType)
-                            iterator.remove();
-                    }
-                }
+                else
+                    lst.removeIf(cpt -> cpt.idPropType == ((CustomPropertyType) o).idPropType);
                 CurrentQuery.PropertyTypes = lst.toArray(new CustomPropertyType[0]);
             }
 

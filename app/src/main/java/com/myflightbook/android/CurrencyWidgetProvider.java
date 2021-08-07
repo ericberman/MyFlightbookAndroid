@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2020 MyFlightbook, LLC
+    Copyright (C) 2019-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ public class CurrencyWidgetProvider extends AppWidgetProvider {
             // Trigger listview item click
             Intent startActivityIntent = new Intent(context, CurrencyWidgetProvider.class).setAction(MFBMain.ACTION_VIEW_CURRENCY);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent startActivityPendingIntent = PendingIntent.getBroadcast(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent startActivityPendingIntent = PendingIntent.getBroadcast(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);
 
             // The empty view is displayed when the collection has no items.

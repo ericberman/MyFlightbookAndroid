@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2019 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -96,15 +96,15 @@ public class SunriseSunsetTimes {
         return new Date(dt.getTime() + millis);
     }
 
-    private Date AddHours(Date dt, int hours) {
+    private Date AddHours(Date dt, long hours) {
         return AddMillis(dt, hours * 3600 * 1000);
     }
 
-    private Date AddMinutes(Date dt, int minutes) {
+    private Date AddMinutes(Date dt, long minutes) {
         return AddMillis(dt, minutes * 60 * 1000);
     }
 
-    private Date AddDays(Date dt, int days) {
+    private Date AddDays(Date dt, long days) {
         return AddHours(dt, days * 24);
     }
 

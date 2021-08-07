@@ -392,7 +392,6 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
 
     public Object getProperty(int i) {
         FlightProp fp = FlightProp.values()[i];
-        Object o = null;
         switch (fp) {
             case pidAircraft:
                 return this.idAircraft;
@@ -480,9 +479,8 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
             case pidPendingID:
                 return this.pendingID;
             default:
-                break;
+                return null;
         }
-        return o;
     }
 
     public void setProperty(int i, Object value) {

@@ -43,6 +43,7 @@
         <activity
             android:name=".MFBMain"
             android:launchMode="singleTop"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -159,7 +160,7 @@
         <activity android:name=".ActWebView" />
         <activity android:name=".ActLocalVideo" />
 
-        <activity android:name=".SplashActivity" android:theme="@style/SplashTheme">
+        <activity android:name=".SplashActivity" android:theme="@style/SplashTheme" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -187,14 +188,14 @@
         <service android:name=".CurrencyWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service android:name=".TotalsWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <receiver android:name="CurrencyWidgetProvider" >
+        <receiver android:name="CurrencyWidgetProvider" android:exported="false" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/currency_appwidget_info" />
         </receiver>
-        <receiver android:name="TotalsWidgetProvider" >
+        <receiver android:name="TotalsWidgetProvider" android:exported="false" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

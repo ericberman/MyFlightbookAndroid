@@ -56,7 +56,7 @@ public class TotalsWidgetProvider extends AppWidgetProvider {
             // Trigger listview item click
             Intent startActivityIntent = new Intent(context, TotalsWidgetProvider.class).setAction(MFBMain.ACTION_VIEW_TOTALS);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent startActivityPendingIntent = PendingIntent.getBroadcast(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent startActivityPendingIntent = PendingIntent.getBroadcast(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);
 
             // The empty view is displayed when the collection has no items.
