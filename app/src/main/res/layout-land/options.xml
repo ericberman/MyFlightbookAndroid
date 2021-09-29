@@ -90,113 +90,107 @@
             android:id="@+id/ckAutodetect"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/lblOptAutoDetect" />
 
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <TableLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_marginStart="20sp"
+            android:layout_marginEnd="5sp"
+            android:layoutDirection="ltr"
             android:padding="5sp"
-            android:orientation="horizontal">
+            android:stretchColumns="1" >
 
-            <CheckBox
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblOptTOSpeed" />
+
+                <Spinner
+                    android:id="@+id/spnTOSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblOptNightDefinition" />
+
+                <Spinner
+                    android:id="@+id/spnNightDef"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp">
+                </Spinner>
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="200dp"
+                    android:text="@string/lblOptNightLandingsDefinition" />
+
+                <Spinner
+                    android:id="@+id/spnNightLandingDef"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp">
+                </Spinner>
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="200dp"
+                    android:text="@string/lblNightMode" />
+                <Spinner
+                    android:id="@+id/spnNightMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2sp"
+                    android:paddingTop="2sp">
+                </Spinner>
+            </TableRow>
+            <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/strEmpty"
-                android:visibility="invisible" />
-
-            <TableLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:stretchColumns="1" >
-
-                <TableRow
+                android:layoutDirection="locale">
+                <CheckBox
+                    android:id="@+id/ckHeliports"
+                    android:layout_span="2"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lblOptTOSpeed" />
-
-                    <Spinner
-                        android:id="@+id/spnTOSpeed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="2sp"
-                        android:paddingTop="2sp" />
-                </TableRow>
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lblOptNightDefinition" />
-
-                    <Spinner
-                        android:id="@+id/spnNightDef"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="2sp"
-                        android:paddingTop="2sp">
-                    </Spinner>
-                </TableRow>
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxWidth="200dp"
-                        android:text="@string/lblOptNightLandingsDefinition" />
-
-                    <Spinner
-                        android:id="@+id/spnNightLandingDef"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="2sp"
-                        android:paddingTop="2sp">
-                    </Spinner>
-                </TableRow>
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxWidth="200dp"
-                        android:text="@string/lblNightMode" />
-                    <Spinner
-                        android:id="@+id/spnNightMode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="2sp"
-                        android:paddingTop="2sp">
-                    </Spinner>
-                </TableRow>
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <CheckBox
-                        android:id="@+id/ckHeliports"
-                        android:layout_span="2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lblOptIncludeHeliports" />
-                </TableRow>
-            </TableLayout>
-        </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblOptIncludeHeliports" />
+            </TableRow>
+        </TableLayout>
 
         <CheckBox
             android:id="@+id/ckRecord"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/lblOptRecord" />
 
         <CheckBox
             android:id="@+id/ckRecordHighRes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/lblOptRecordHiRes" />
 
         <TextView
@@ -204,6 +198,7 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:layout_marginStart="30dp"
+            android:padding="5dp"
             android:text="@string/lblOptRecordHiResDesc" />
 
         <TextView
@@ -214,23 +209,28 @@
             android:id="@+id/ckUseHHMM"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/lblOptUseHHMM" />
 
         <CheckBox
             android:id="@+id/ckUseLocalTime"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/lblOptUseLocalTime" />
 
         <CheckBox
             android:id="@+id/ckRoundNearestTenth"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="@string/lblOptRoundNearestTenth" />
 
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:layoutDirection="ltr"
             android:padding="5sp"
             android:stretchColumns="1" >
 
@@ -276,6 +276,8 @@
         <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:layoutDirection="ltr"
             android:padding="5sp"
             android:stretchColumns="1" >
 
@@ -315,28 +317,41 @@
         <TextView
             style="@style/DividerBar"
             android:text="@string/lblImageOptions" />
-        <CheckBox
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ckShowFlightImages"
-            android:text="@string/lblShowFlightImages" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TableLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
+            android:layout_margin="5sp"
+            android:layoutDirection="ltr"
+            android:padding="5sp"
+            android:stretchColumns="1" >
+            <TableRow
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5sp"
-                android:id="@+id/lblShowFlightTimes"
-                android:text="@string/lblShowFlightTimes" />
-            <Spinner
-                android:id="@+id/spnFlightDetail"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ckShowFlightImages"
+                    android:layout_span="2"
+                    android:padding="5dp"
+                    android:text="@string/lblShowFlightImages" />
+            </TableRow>
+            <TableRow
                 android:layout_width="wrap_content"
-                android:padding="5sp"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5sp"
+                    android:id="@+id/lblShowFlightTimes"
+                    android:text="@string/lblShowFlightTimes" />
+                <Spinner
+                    android:id="@+id/spnFlightDetail"
+                    android:layout_width="wrap_content"
+                    android:padding="5sp"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+        </TableLayout>
 
         <TextView
             style="@style/DividerBar"
