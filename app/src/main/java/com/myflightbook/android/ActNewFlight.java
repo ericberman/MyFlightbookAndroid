@@ -638,7 +638,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         } else {
             // view an existing flight
             m_le = leToView;
-            if (m_le.IsExistingFlight()) {
+            if (m_le.IsExistingFlight() || m_le instanceof PendingFlight) {
                 m_le.ToDB();    // ensure that this is in the database - above call could have pulled from cache
                 FlightProperty.RewritePropertiesForFlight(m_le.idLocalDB, m_le.rgCustomProperties);
             }
