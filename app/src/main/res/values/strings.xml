@@ -17,7 +17,7 @@
     <string name="UserName">Please type your email address:</string>
     <string name="Password">Please type your password</string>
     <string name="signin">Sign in</string>
-    <string name="TFATitle">Enter Authetication Code</string>
+    <string name="TFATitle">Enter Authentication Code</string>
     <string name="TFAWatermark">######</string>
     <string name="TFAPrompt">Please enter the 6-digit code from your authenticator app</string>
 
@@ -100,7 +100,6 @@
     <string name="lblCatProperties">Flight Properties</string>
     <string name="lblCatSharing">Sharing</string>
     <string name="lblMyFlightbook">Share flight on MyFlightbook</string>
-    <string name="lblSetUpFacebook">Enable Twitter and Facebook support.</string>
     <string name="lblSignature">Signature</string>
     <string name="lblSignatureTemplate1">Signed on %1$s by %2$s</string>
     <string name="lblSignatureTemplate2">(CFI# %1$s, Expiration %2$s)</string>
@@ -154,7 +153,7 @@
     <string name="lblSupportDescript">MyFlightbook is and will remain free.  But if you find it valuable, we are happy to accept your support.</string>
     <string name="btnSupport">Support MyFlightbook</string>
     <string name="lblAdditionalOptions">Additional Options</string>
-    <string name="lblAdditionalOptionsText">Additional functionality and settings for your account is on MyFlightbook.com</string>
+    <string name="lblAdditionalOptionsText">Additional functionality and settings for your account are on MyFlightbook.com</string>
     <string name="lblGoToMyFlightbookOptions">Go to MyFlightbook.com</string>
     <string name="lblOptionsOther">About MyFlightbook</string>
     <string name="lblFollowFacebook">Facebook</string>
@@ -193,7 +192,7 @@
     <string name="lblRegistration">Registration:</string>
     <string name="lbl100Hour">100Hour:</string>
     <string name="lblOilChange">Oil Change:</string>
-    <string name="lblNewEngine">New Engine</string>
+    <string name="lblNewEngine">New Engine:</string>
     <string name="lblMaintNotes">Notes:</string>
     <string name="lblMaintNotesHint">E.g., location/type/error of VOR check</string>
     <string name="lblAircraftPrefsHeader">Autofill for new flights in this aircraft</string>
@@ -309,7 +308,7 @@
     <string name="errNeedQandA">Please provide a secret question and answer in case you forget your password.</string>
     <string name="errRealAircraftCantUseSIM">SIM Prefix is reserved for simulators/FTDs/ATDs.</string>
     <string name="errSimsMustStartWithSIM">Simulators/FTDs/ATDs must begin with the prefix \'SIM\'</string>
-    <string name="errInvalidCountryPrefix">Aircraft does not begin with a valid country prefix.</string>
+    <string name="errInvalidCountryPrefix">Aircraft registration does not begin with a valid country prefix.</string>
     <string name="errNoGoogleMaps">This feature requires Google Play services, which are not installed.</string>
     <string name="errCantShare">There is nothing in this flight that can be shared.</string>
     <string name="errCantSend">This flight cannot be sent.</string>
@@ -399,7 +398,7 @@
     <string name="menuChooseTemplateShort">Templates</string>
 
     <!-- Abbreviations -->
-    <string name="abbrevNauticalMiles">nm</string>
+    <string name="abbrevNauticalMiles">NM</string>
 
     <!-- Search -->
     <string name="conjunctionMatches">Flight has</string>

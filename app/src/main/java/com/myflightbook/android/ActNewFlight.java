@@ -745,9 +745,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         if (m_rgac != null)
             refreshAircraft(m_rgac, false);
 
-        // fix up the link to the user's profile.
-        AddListener(R.id.txtSocialNetworkHint);
-
         // Not sure why le can sometimes be empty here...
         if (m_le == null)
             m_le = MFBMain.getNewFlightListener().getInProgressFlight(requireActivity());
@@ -1130,9 +1127,6 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         } else if (id == R.id.txtPinnedPropertiesHeader) {
             View target = findViewById(R.id.sectPinnedProperties);
             setExpandedState((TextView) v, target, target.getVisibility() != View.VISIBLE);
-        } else if (id == R.id.txtSocialNetworkHint) {
-            String szURLProfile = MFBConstants.AuthRedirWithParams("d=profile&pane=social", getContext());
-            ActWebView.ViewURL(requireActivity(), szURLProfile);
         }
         ToView();
     }

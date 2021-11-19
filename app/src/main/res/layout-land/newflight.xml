@@ -856,18 +856,6 @@
             android:orientation="vertical"
             android:padding="5dp">
 
-            <TextView
-                android:id="@+id/txtSocialNetworkHint"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:padding="5dip"
-                android:visibility="gone"
-                android:layout_marginBottom="5dip"
-                android:text="@string/lblSetUpFacebook"
-                android:textAlignment="center"
-                android:focusable="true" />
-
             <CheckBox
                 android:id="@+id/ckMyFlightbook"
                 android:layout_width="fill_parent"
