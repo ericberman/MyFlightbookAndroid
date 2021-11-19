@@ -572,4 +572,11 @@
     <string name="noTotals">Pas de totaux à afficher</string>
 
     <!-- Pack and Go -->
+    <string name="packAndGo">Télécharger les données localement</string>
+    <string name="packAndGoDesc">Vous pouvez télécharger un instantané des vols, des validités et des totaux à utiliser hors ligne</string>
+    <string name="packAndGoStatusOK">Dernier téléchargement : %s</string>
+    <string name="packAndGoStatusNone">(Jamais téléchargé)</string>
+    <string name="packAndGoInProgress">Téléchargement des données du carnet de vol…</string>
+    <string name="packAndGoUsingCached">Affichage des données téléchargées du %s</string>
+    <string name="packAndGoOffline">Pas de connexion au serveur</string>
 </resources>
