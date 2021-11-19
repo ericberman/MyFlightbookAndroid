@@ -57,8 +57,10 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import Model.Aircraft;
+import Model.CustomPropertyType;
 import Model.DecimalEdit;
 import Model.DecimalEdit.EditMode;
+import Model.FlightProperty;
 import Model.FlightQuery;
 import Model.LazyThumbnailLoader;
 import Model.LogbookEntry;
@@ -119,7 +121,9 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 return "";
 
             Boolean fLocal = DlgDatePicker.fUseLocalTime;
-            return String.format(Locale.getDefault(), "<b>%s: </b> %s - %s ", getString(idLabel), UTCDate.formatDate(fLocal, dtStart, this.getContext()), UTCDate.formatDate(fLocal, dtEnd, this.getContext()));
+            double elapsedHours = (dtEnd.getTime() - dtStart.getTime()) / (1000.0 * 3600.0);
+            String szElapsed = elapsedHours > 0 ? String.format(Locale.getDefault(), " (%s)", DecimalEdit.DefaultHHMM ? DecimalEdit.DoubleToHHMM(elapsedHours) : String.format(Locale.getDefault(), "%.1f", elapsedHours)) : "";
+            return String.format(Locale.getDefault(), "<b>%s: </b> %s - %s%s ", getString(idLabel), UTCDate.formatDate(fLocal, dtStart, this.getContext()), UTCDate.formatDate(fLocal, dtEnd, this.getContext()), szElapsed);
         }
 
         @Override
@@ -227,6 +231,10 @@ public class ActRecentsWS extends ListFragment implements OnItemSelectedListener
                 if (flightDetail == FlightDetail.High) {
                     sb.append(formattedTimeForLabel(R.string.autoEngine, le.dtEngineStart, le.dtEngineEnd));
                     sb.append(formattedTimeForLabel(R.string.autoFlight, le.dtFlightStart, le.dtFlightEnd));
+                    FlightProperty blockOut = le.PropertyWithID(CustomPropertyType.idPropTypeBlockOut);
+                    FlightProperty blockIn = le.PropertyWithID(CustomPropertyType.idPropTypeBlockIn);
+                    if (blockOut != null && blockIn != null)
+                        sb.append(formattedTimeForLabel(R.string.autoBlock, blockOut.dateValue, blockIn.dateValue));
                 }
             }
             txtFlightTimes.setVisibility(sb.length() == 0 ? View.GONE : View.VISIBLE);

@@ -369,6 +369,17 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         }
     }
 
+    public FlightProperty PropertyWithID(int id) {
+        if (rgCustomProperties == null)
+            return null;
+
+        for (FlightProperty fp : rgCustomProperties) {
+            if (fp.idPropType == id)
+                return fp;
+        }
+        return null;
+    }
+
     public void AddApproachDescription(String szApproachDesc) {
         // expand the list of all properties, even ones that aren't currently set
         FlightProperty[] rgfpAll = FlightProperty.CrossProduct(FlightProperty.FromDB(this.idLocalDB), CustomPropertyTypesSvc.getCachedPropertyTypes());
