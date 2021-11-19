@@ -393,7 +393,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
-                        android:text="@string/lblNoSpeed"
+                        android:text="@string/strEmpty"
                         android:textStyle="bold" />
 
                     <TextView
@@ -434,7 +434,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
-                        android:text="@string/lblNoAltitude"
+                        android:text="@string/strEmpty"
                         android:textStyle="bold" />
 
                     <TextView

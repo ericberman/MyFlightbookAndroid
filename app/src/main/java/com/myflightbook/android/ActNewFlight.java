@@ -1708,7 +1708,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         Resources res = getResources();
 
         if (s < 1)
-            return res.getString(R.string.lblNoSpeed);
+            return res.getString(R.string.strEmpty);
 
         switch (ActOptions.speedUnits) {
             case Knots:
@@ -1718,7 +1718,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case MilesPerHour:
                 return String.format(Locale.getDefault(), res.getString(R.string.lblSpeedFormatMph), s * MFBConstants.MPS_TO_MPH);
         }
-        return res.getString(R.string.lblNoSpeed);
+        return res.getString(R.string.strEmpty);
     }
 
     private String displayAlt(double a) {
@@ -1730,7 +1730,8 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
             case Meters:
                 return String.format(Locale.getDefault(), res.getString(R.string.lblAltFormatMeters), (int) Math.round(a));
         }
-        return res.getString(R.string.lblNoAltitude);
+
+        return res.getString(R.string.strEmpty);
     }
 
     public void UpdateStatus(MFBLocation.GPSQuality quality, Boolean fAirborne, Location loc,

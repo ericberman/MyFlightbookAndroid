@@ -309,7 +309,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:gravity="center_horizontal|center_vertical"
-                        android:text="@string/lblNoSpeed"
+                        android:text="@string/strEmpty"
                         android:textStyle="bold" />
 
                     <TextView
@@ -378,7 +378,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:gravity="center_horizontal|center_vertical"
-                        android:text="@string/lblNoAltitude"
+                        android:text="@string/strEmpty"
                         android:textStyle="bold" />
 
                     <TextView
