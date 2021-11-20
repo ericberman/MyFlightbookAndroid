@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2018 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ public class MFBTakeoffSpeed {
     	DecimalFormat df = new DecimalFormat("#,###");
     	ArrayList<String> l = new ArrayList<>();
         for (int speed : rgTOSpeeds)
-        	l.add(String.format("%sKts", df.format(speed)));
+        	l.add(String.format("%skts", df.format(speed)));
         return l;
     }
 }

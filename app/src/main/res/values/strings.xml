@@ -36,7 +36,7 @@
     <string name="lblOptRoundNearestTenth">Use nearest tenth of an hour</string>
     <string name="lblOptUseHHMM">Enter times in HH:MM format</string>
     <string name="lblOptUseLocalTime">Use Local Time</string>
-    <string name="lblOptTOSpeed">Takeoff speed (Kts)</string>
+    <string name="lblOptTOSpeed">Takeoff speed (kts)</string>
     <string name="lblOptNightDefinition">Night flight starts</string>
     <string name="lblOptNightDefinitionSunset">Sunset</string>
     <string name="lblOptNightDefinitionSunsetPlus15">15 minutes after sunset</string>
@@ -433,7 +433,7 @@
     <string name="afTAA">Technically Advanced Airplane</string>
     <string name="afComplex">Complex</string>
     <string name="afRetract">Retractable Gear</string>
-    <string name="afCSProp">Constant Speed Prop</string>
+    <string name="afCSProp">Controllable Pitch Prop</string>
     <string name="afFlaps">Flaps</string>
     <string name="fqFlightFeatures">Flight Features</string>
     <string name="ffFSLanding">Full-stop Landings</string>
