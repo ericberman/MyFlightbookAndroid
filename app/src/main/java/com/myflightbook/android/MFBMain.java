@@ -318,8 +318,10 @@ public class MFBMain extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(MFBConstants.LOG_TAG, "onCreate: about to install splash screen");
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: start listening network");
         // Start listening to network change events
         MFBSoap.startListeningNetwork(getApplicationContext());
 
@@ -333,6 +335,7 @@ public class MFBMain extends AppCompatActivity {
         if (nightMode != Configuration.UI_MODE_NIGHT_NO)
             new WebView(this);
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: set night pref");
         MFBMain.NightModePref = mPrefs.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref);
 
@@ -348,18 +351,22 @@ public class MFBMain extends AppCompatActivity {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e));
         }
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: about to initialize database");
         initDB(true);
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: restore state");
         RestoreState();
 
         // set up for web services
         AuthToken.APPTOKEN = getString(R.string.WebServiceKey);
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: set custom handler and send error reports");
         CustomExceptionHandler ceh = new CustomExceptionHandler(getCacheDir().getAbsolutePath(), String.format(MFBConstants.urlCrashReport, MFBConstants.szIP));
         Thread.setDefaultUncaughtExceptionHandler(ceh);
 
         ceh.sendPendingReports();
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: set up tabs");
         mViewPager = findViewById(R.id.pager);
         mViewPager.setOffscreenPageLimit(MFBTab.values().length);
         mViewPager.setAdapter(new MFBTabAdapter(this));
@@ -420,6 +427,7 @@ public class MFBMain extends AppCompatActivity {
         else
             mViewPager.setCurrentItem(mLastTabIndex);
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: vacuum database");
         // Periodically (every 7 days) vacuum (compact) the database.
         long t = new Date().getTime();
         if ((t - mLastVacuum) > 1000 * 3600 * 24 * 7) {
@@ -433,17 +441,21 @@ public class MFBMain extends AppCompatActivity {
             }
         }
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: show warning");
         if (!m_fSeenWarning) {
             MFBUtil.Alert(this, this.getString(R.string.errWarningTitle), this.getString(R.string.lblWarning2));
             m_fSeenWarning = true;
             SaveState();
         }
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: handle any new intent");
         onNewIntent(getIntent());
 
+        Log.v(MFBConstants.LOG_TAG, "onCreate: set up GPS");
         // Set up the GPS service, but don't start it until OnResume
         if (MFBLocation.GetMainLocation() == null)
             MFBLocation.setMainLocation(new MFBLocation(this, false));
+        Log.v(MFBConstants.LOG_TAG, "onCreate: finished");
     }
 
     @Override
@@ -627,6 +639,7 @@ public class MFBMain extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        Log.v(MFBConstants.LOG_TAG, "onResume: refresh authorization token, if needed");
         fIsPaused = false;
 
         // check to see if we need to refresh auth.
@@ -636,12 +649,15 @@ public class MFBMain extends AppCompatActivity {
         AuthToken auth = new AuthToken();
         new RefreshTask(getApplicationContext(), this).execute((auth));
 
+        Log.v(MFBConstants.LOG_TAG, "onResume: start listening to GPS");
         // This is a hack, but we get a lot of crashes about too much time between startForegroundService being
         // called and startForeground being called.
         // Problem is, other tabs' OnResume may not have been called yet, so let's delay this by a few
         // seconds so that all the other startup tasks are done before we call startForegroundService.
         // Note that ActNewFlight will initialize the GPS as needed, so this call will be a no-op at that point.
         new Handler(Looper.getMainLooper()).postDelayed(this::resumeGPS, 3000);
+
+        Log.v(MFBConstants.LOG_TAG, "onResume: finished");
     }
 
     @Override

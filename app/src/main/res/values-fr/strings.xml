@@ -12,10 +12,10 @@
     <string name="tabTotals">Totaux</string>
     <string name="tabVisited">Visités</string>
     <string name="tabTraining">Formation</string>
-    <string name="tabProfile">Profile</string>
+    <string name="tabProfile">Profil</string>
 
     <string name="UserName">Entrez votre adresse mail :</string>
-    <string name="Password">Entrez votre mot de passe</string>
+    <string name="Password">Entrez votre mot de passe :</string>
     <string name="signin">Se connecter</string>
     <string name="TFATitle">Entrez le code d\'authentification</string>
     <string name="TFAWatermark">######</string>
@@ -24,7 +24,7 @@
     <string name="signInPrompt">Vous devez avoir un compte sur MyFlightbook.com pour utiliser MyFlightbook sur Android.</string>
     <string name="statusNotSignedIn">Vous n\'êtes pas identifié. Merci de vous identifier ou de créer un compte.</string>
     <string name="statusSignedIn">Vous êtes connecté en tant que : %s.</string>
-    <string name="szSignIn">Identifiez-vous…</string>
+    <string name="szSignIn">Se connecter…</string>
     <string name="szSignOut">Déconnexion</string>
     <string name="lblForgotPassword">Mot de passe oublié ? Réinitialisez-le sur MyFlightbook.com</string>
     <string name="createuser">Créez un compte…</string>
@@ -36,13 +36,13 @@
     <string name="lblOptRoundNearestTenth">Utiliser le dixième d\'heure le plus proche</string>
     <string name="lblOptUseHHMM">Entrer les durées au format HH:MM</string>
     <string name="lblOptUseLocalTime">Utiliser l\'heure locale</string>
-    <string name="lblOptTOSpeed">Vitesse de décollage (Kts)</string>
+    <string name="lblOptTOSpeed">Vitesse de décollage (kts)</string>
     <string name="lblOptNightDefinition">Début du vol de nuit</string>
-    <string name="lblOptNightDefinitionSunset">Coucher du soleil</string>
+    <string name="lblOptNightDefinitionSunset">Au coucher du soleil</string>
     <string name="lblOptNightDefinitionSunsetPlus15">15 minutes après le coucher du soleil</string>
     <string name="lblOptNightDefinitionSunsetPlus30">30 minutes après le coucher du soleil</string>
     <string name="lblOptNightDefinitionSunsetPlus60">1 heure après le coucher du soleil</string>
-    <string name="lblOptNightDefinitionCivilTwilight">Fin du crépuscule civil</string>
+    <string name="lblOptNightDefinitionCivilTwilight">À la fin du crépuscule civil</string>
     <string name="lblOptNightLandingsDefinition">Atterrissage considéré comme de nuit</string>
     <string name="lblOptNightLandingsNight">Pendant le vol de nuit</string>
     <string name="lblOptNightLandingsSunsetPlus1hour">1 heure après le coucher du soleil</string>
@@ -56,10 +56,10 @@
     <string name="lblOptUnitsKPH">Kilomètres/hour (km/h)</string>
     <string name="lblImageOptions">Options d\'affichage des vols</string>
     <string name="lblShowFlightImages">Afficher les images pour les vols</string>
-    <string name="lblShowFlightTimes">Détails du vol</string>
+    <string name="lblShowFlightTimes">Niveau de détail</string>
     <string name="lblFlightDetailLow">Bas</string>
     <string name="lblFlightDetailMed">Moyen</string>
-    <string name="lblFlightDetailHigh">Haut</string>
+    <string name="lblFlightDetailHigh">Élevé</string>
     <string name="lblNightMode">Mode Nuit</string>
     <string name="lblNightModeOff">Désactivé</string>
     <string name="lblNightModeOn">Activé</string>
@@ -84,7 +84,7 @@
     <string name="lblGround">Simulateur</string>
     <string name="lblCFI">Instructeur</string>
     <string name="lblSIC">Copilote (SIC)</string>
-    <string name="lblPIC">Commandant de bord (PIC)</string>
+    <string name="lblPIC">CdB (PIC)</string>
     <string name="lblTotal">Temps Total</string>
     <string name="lblHobbsStart">Horamètre départ</string>
     <string name="lblEngineStart">Mise en route moteur</string>
@@ -95,7 +95,7 @@
     <string name="lblProperties">Éditer les propriétés</string>
     <string name="lblCatApproachesAndLandings">Atterrissages et Approches</string>
     <string name="lblCatTimes">Temps de vol</string>
-    <string name="lblCatOverall">Information générale sur le vol</string>
+    <string name="lblCatOverall">Informations générales sur le vol</string>
     <string name="lblCatCockpit">Dans le cockpit</string>
     <string name="lblCatProperties">Propriétés du vol</string>
     <string name="lblCatSharing">Partager</string>
@@ -150,7 +150,7 @@
     <string name="lblOptionsTime">Format de l\'heure</string>
     <string name="lblOptionsContact">Gardez le contact</string>
     <string name="lblFAQ">FAQ</string>
-    <string name="lblSupportDescript">MyFlightbook est et restera gratuit. Mais si vous la trouvez utile, nous sommes heureux d\'accepter votre soutien.</string>
+    <string name="lblSupportDescript">MyFlightbook est et restera gratuit. Mais si vous la trouvez utile, nous sommes heureux d\'accepter des dons.</string>
     <string name="btnSupport">Soutenir MyFlightbook</string>
     <string name="lblAdditionalOptions">Options supplémentaires</string>
     <string name="lblAdditionalOptionsText">Des fonctionnalités et paramètres supplémentaires sont disponibles sur MyFlightbook.com</string>
@@ -172,7 +172,7 @@
     <string name="lblFrequentlyUsedAircraft">Aéronefs fréquemment utilisés</string>
     <string name="lblArchivedAircraft">Autres aéronefs</string>
 
-    <string name="lblNewAircraftPromopt">Saisir ci-dessous les informations de votre aéronef.</string>
+    <string name="lblNewAircraftPromopt">Saisir ci-dessous les caractéristiques de votre aéronef.</string>
     <string name="lblTail">Immatriculation</string>
     <string name="lblAircraftType">Type</string>
     <string name="lblMakeModel">Fabricant et modèle</string>
@@ -200,7 +200,7 @@
     <string name="lblRoleNone">Ne pas remplir automatiquement</string>
     <string name="lblRolePIC">Remplir la case PIC avec le temps total, si elle est vide</string>
     <string name="lblRoleSIC">Remplir la case SIC avec le temps total, si elle est vide</string>
-    <string name="lblRoleCFI">Remplir la case Instruction avec le temps total, si elle est vide</string>
+    <string name="lblRoleCFI">Remplir la case instruction avec le temps total, si elle est vide</string>
     <string name="lblNotesHeader">Notes sur cet aéronef</string>
     <string name="lblPublicNotes">Notes publiques :</string>
     <string name="lblPrivateNotes">Notes privées :</string>
@@ -237,7 +237,7 @@
 
     <!-- Progress indicators -->
     <string name="prgTotals">Récupération des totaux…</string>
-    <string name="prgCurrency">Récupération des validités…</string>
+    <string name="prgCurrency">Récupération des expériences récentes…</string>
     <string name="prgAircraft">Récupération des aéronefs…</string>
     <string name="prgSigningIn">S\'identifier…</string>
     <string name="prgCreatingAccount">Créer un compte…</string>
@@ -320,7 +320,7 @@
     <string name="txtFileNameNew">Nouveau vol</string>
     <string name="txtFileNamePending">Vol en attente</string>
 
-    <string name="lblPreviouslyUsed">Utilisées récemment</string>
+    <string name="lblPreviouslyUsed">Déjà utilisées</string>
 
     <!-- Aircraft Instance Types -->
     <string name="aircraftInstanceTypeReal">Aéronef Réel</string>
@@ -482,7 +482,7 @@
     <!-- Currency Disclaimer -->
     <string name="CurrencyDisclaimer">Notes importantes</string>
 
-    <!--  Visited Airports -->
+    <!-- Visited Airports -->
     <string name="AllAirports">Tous les aéroports</string>
     <string name="vaSingleVisit">1 visite le %s</string>
     <string name="vaMultiVisit" tools:ignore="PluralsCandidate">%1$d visites entre le %2$s et le %3$s</string>
@@ -491,7 +491,7 @@
         <item quantity="other">(%1$d aéroports trouvés)</item>
     </plurals>
 
-    <!--  Training -->
+    <!-- Training -->
     <string name="lblEndorsements">Attestations</string>
     <string name="lblStudents">Vos étudiants</string>
     <string name="lblInstructors">Vos instructeurs</string>
@@ -503,7 +503,7 @@
     <string name="lblReqSigs">Demander des signatures</string>
     <string name="errTrainingNotAvailable">Vous devez être connecté et avoir accès à Internet pour afficher les éléments de formation.</string>
 
-    <!--  Category Class -->
+    <!-- Category Class -->
     <string name="ccHeader">Catégorie / Classe</string>
     <string name="ccASEL">Avion, SEP</string>
     <string name="ccAMEL">Avion, MEP</string>
@@ -566,12 +566,12 @@
     <string name="shortcutCurrentFlight">Vol actuel</string>
 
     <!-- Widgets -->
-    <string name="noCurrency">Aucune validité à afficher</string>
+    <string name="noCurrency">Aucune expérience récente à afficher</string>
     <string name="noTotals">Pas de totaux à afficher</string>
 
     <!-- Pack and Go -->
     <string name="packAndGo">Télécharger les données localement</string>
-    <string name="packAndGoDesc">Vous pouvez télécharger un instantané des vols, des validités et des totaux à utiliser hors ligne</string>
+    <string name="packAndGoDesc">Vous pouvez télécharger un instantané des vols, des expériences récentes et des totaux à utiliser hors ligne</string>
     <string name="packAndGoStatusOK">Dernier téléchargement : %s</string>
     <string name="packAndGoStatusNone">(Jamais téléchargé)</string>
     <string name="packAndGoInProgress">Téléchargement des données du carnet de vol…</string>
