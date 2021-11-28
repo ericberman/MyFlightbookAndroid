@@ -1026,41 +1026,41 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         try {
-            idFlight = c.getInt(c.getColumnIndex("idFlight"));
-            szUser = c.getString(c.getColumnIndex("szUser"));
-            dtFlight = df.parse(c.getString(c.getColumnIndex("dtFlight")));
-            idCatClassOverride = c.getInt(c.getColumnIndex("idCatClassOverride"));
-            idAircraft = c.getInt(c.getColumnIndex("idAircraft"));
-            cApproaches = c.getInt(c.getColumnIndex("cApproaches"));
-            cApproachPrecision = c.getInt(c.getColumnIndex("cApproachPrecision"));
-            cApproachNonPrecision = c.getInt(c.getColumnIndex("cApproachNonPrecision"));
-            cLandings = c.getInt(c.getColumnIndex("cLandings"));
-            cNightLandings = c.getInt(c.getColumnIndex("cNightLandings"));
-            cFullStopLandings = c.getInt(c.getColumnIndex("cFullStopLandings"));
-            decXC = c.getDouble(c.getColumnIndex("decXC"));
-            decIMC = c.getDouble(c.getColumnIndex("decIMC"));
-            decSimulatedIFR = c.getDouble(c.getColumnIndex("decSimulatedIFR"));
-            decGrndSim = c.getDouble(c.getColumnIndex("decGrndSim"));
-            decDual = c.getDouble(c.getColumnIndex("decDual"));
-            decNight = c.getDouble(c.getColumnIndex("decNight"));
-            decPIC = c.getDouble(c.getColumnIndex("decPIC"));
-            decCFI = c.getDouble(c.getColumnIndex("decCFI"));
-            decSIC = c.getDouble(c.getColumnIndex("decSIC"));
-            decTotal = c.getDouble(c.getColumnIndex("decTotal"));
-            fHold = Boolean.parseBoolean(c.getString(c.getColumnIndex("fHold")));
-            szComments = c.getString(c.getColumnIndex("szComments"));
-            szRoute = c.getString(c.getColumnIndex("szRoute"));
-            fPublic = Boolean.parseBoolean(c.getString(c.getColumnIndex("fPublic")));
-            dtFlightStart = df.parse(c.getString(c.getColumnIndex("dtFlightStart")));
-            dtFlightEnd = df.parse(c.getString(c.getColumnIndex("dtFlightEnd")));
-            dtEngineStart = df.parse(c.getString(c.getColumnIndex("dtEngineStart")));
-            dtEngineEnd = df.parse(c.getString(c.getColumnIndex("dtEngineEnd")));
-            hobbsStart = c.getDouble(c.getColumnIndex("hobbsStart"));
-            hobbsEnd = c.getDouble(c.getColumnIndex("hobbsEnd"));
-            szFlightData = c.getString(c.getColumnIndex("szFlightData"));
-            szError = c.getString(c.getColumnIndex("szError"));
-            pendingID = c.getString(c.getColumnIndex("PendingID"));
-            fForcePending = Boolean.parseBoolean(c.getString(c.getColumnIndex("forcePending")));
+            idFlight = c.getInt(c.getColumnIndexOrThrow("idFlight"));
+            szUser = c.getString(c.getColumnIndexOrThrow("szUser"));
+            dtFlight = df.parse(c.getString(c.getColumnIndexOrThrow("dtFlight")));
+            idCatClassOverride = c.getInt(c.getColumnIndexOrThrow("idCatClassOverride"));
+            idAircraft = c.getInt(c.getColumnIndexOrThrow("idAircraft"));
+            cApproaches = c.getInt(c.getColumnIndexOrThrow("cApproaches"));
+            cApproachPrecision = c.getInt(c.getColumnIndexOrThrow("cApproachPrecision"));
+            cApproachNonPrecision = c.getInt(c.getColumnIndexOrThrow("cApproachNonPrecision"));
+            cLandings = c.getInt(c.getColumnIndexOrThrow("cLandings"));
+            cNightLandings = c.getInt(c.getColumnIndexOrThrow("cNightLandings"));
+            cFullStopLandings = c.getInt(c.getColumnIndexOrThrow("cFullStopLandings"));
+            decXC = c.getDouble(c.getColumnIndexOrThrow("decXC"));
+            decIMC = c.getDouble(c.getColumnIndexOrThrow("decIMC"));
+            decSimulatedIFR = c.getDouble(c.getColumnIndexOrThrow("decSimulatedIFR"));
+            decGrndSim = c.getDouble(c.getColumnIndexOrThrow("decGrndSim"));
+            decDual = c.getDouble(c.getColumnIndexOrThrow("decDual"));
+            decNight = c.getDouble(c.getColumnIndexOrThrow("decNight"));
+            decPIC = c.getDouble(c.getColumnIndexOrThrow("decPIC"));
+            decCFI = c.getDouble(c.getColumnIndexOrThrow("decCFI"));
+            decSIC = c.getDouble(c.getColumnIndexOrThrow("decSIC"));
+            decTotal = c.getDouble(c.getColumnIndexOrThrow("decTotal"));
+            fHold = Boolean.parseBoolean(c.getString(c.getColumnIndexOrThrow("fHold")));
+            szComments = c.getString(c.getColumnIndexOrThrow("szComments"));
+            szRoute = c.getString(c.getColumnIndexOrThrow("szRoute"));
+            fPublic = Boolean.parseBoolean(c.getString(c.getColumnIndexOrThrow("fPublic")));
+            dtFlightStart = df.parse(c.getString(c.getColumnIndexOrThrow("dtFlightStart")));
+            dtFlightEnd = df.parse(c.getString(c.getColumnIndexOrThrow("dtFlightEnd")));
+            dtEngineStart = df.parse(c.getString(c.getColumnIndexOrThrow("dtEngineStart")));
+            dtEngineEnd = df.parse(c.getString(c.getColumnIndexOrThrow("dtEngineEnd")));
+            hobbsStart = c.getDouble(c.getColumnIndexOrThrow("hobbsStart"));
+            hobbsEnd = c.getDouble(c.getColumnIndexOrThrow("hobbsEnd"));
+            szFlightData = c.getString(c.getColumnIndexOrThrow("szFlightData"));
+            szError = c.getString(c.getColumnIndexOrThrow("szError"));
+            pendingID = c.getString(c.getColumnIndexOrThrow("PendingID"));
+            fForcePending = Boolean.parseBoolean(c.getString(c.getColumnIndexOrThrow("forcePending")));
         } catch (Exception e) {
             Log.e(MFBConstants.LOG_TAG, "FromCursor failed: " + e.getLocalizedMessage());
             this.idLocalDB = -1;
@@ -1096,11 +1096,11 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 int i = 0;
                 while (c.moveToNext()) {
                     // Check for a pending flight
-                    String szPending = c.getString(c.getColumnIndex("PendingID"));
+                    String szPending = c.getString(c.getColumnIndexOrThrow("PendingID"));
                     LogbookEntry le = (szPending != null && szPending.length() > 0) ? new PendingFlight() : new LogbookEntry();
                     rgleLocal[i++] = le;
                     le.FromCursor(c);
-                    le.idLocalDB = c.getLong(c.getColumnIndex("_id"));
+                    le.idLocalDB = c.getLong(c.getColumnIndexOrThrow("_id"));
                     le.rgFlightImages = MFBImageInfo.getLocalImagesForId(le.idLocalDB, PictureDestination.FlightImage);
                 }
             } else

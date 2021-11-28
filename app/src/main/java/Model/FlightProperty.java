@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -342,19 +342,19 @@ public class FlightProperty extends SoapableObject implements KvmSerializable, S
     private void FromCursor(Cursor c) {
         SimpleDateFormat df = new SimpleDateFormat(MFBConstants.TIMESTAMP, Locale.US);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        _id = c.getInt(c.getColumnIndex("_id"));
-        idProp = c.getInt(c.getColumnIndex("idProp"));
-        idFlight = c.getInt(c.getColumnIndex("idFlight"));
-        idPropType = c.getInt(c.getColumnIndex("idPropType"));
-        intValue = c.getInt(c.getColumnIndex("IntValue"));
+        _id = c.getInt(c.getColumnIndexOrThrow("_id"));
+        idProp = c.getInt(c.getColumnIndexOrThrow("idProp"));
+        idFlight = c.getInt(c.getColumnIndexOrThrow("idFlight"));
+        idPropType = c.getInt(c.getColumnIndexOrThrow("idPropType"));
+        intValue = c.getInt(c.getColumnIndexOrThrow("IntValue"));
         boolValue = (intValue != 0);
-        decValue = c.getDouble(c.getColumnIndex("DecValue"));
+        decValue = c.getDouble(c.getColumnIndexOrThrow("DecValue"));
         try {
-            dateValue = df.parse(c.getString(c.getColumnIndex("DateValue")));
+            dateValue = df.parse(c.getString(c.getColumnIndexOrThrow("DateValue")));
         } catch (ParseException e) {
             dateValue = null;
         }
-        stringValue = c.getString(c.getColumnIndex("StringValue"));
+        stringValue = c.getString(c.getColumnIndexOrThrow("StringValue"));
     }
 
     private void ToContentValues(ContentValues cv) {

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ public class CountryCode {
     private String LocaleCode;
 
     private CountryCode(Cursor c) {
-        Prefix = c.getString(c.getColumnIndex("Prefix"));
-        LocaleCode = c.getString(c.getColumnIndex("Locale"));
+        Prefix = c.getString(c.getColumnIndexOrThrow("Prefix"));
+        LocaleCode = c.getString(c.getColumnIndexOrThrow("Locale"));
 
         if (Prefix == null)
             Prefix = "";

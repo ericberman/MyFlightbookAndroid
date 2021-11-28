@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -291,7 +291,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 rgMfbii = new MFBImageInfo[c.getCount()];
                 int i = 0;
                 while (c.moveToNext()) {
-                    MFBImageInfo mfbii = new MFBImageInfo(pd, c.getLong(c.getColumnIndex("_id")));
+                    MFBImageInfo mfbii = new MFBImageInfo(pd, c.getLong(c.getColumnIndexOrThrow("_id")));
                     mfbii.fromCursor(c, true, false); // initialize it with the thumbnail.
                     rgMfbii[i++] = mfbii;
                 }
@@ -313,7 +313,7 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
                 rgMfbii = new MFBImageInfo[c.getCount()];
                 int i = 0;
                 while (c.moveToNext()) {
-                    MFBImageInfo mfbii = new MFBImageInfo(PictureDestination.AircraftImage, c.getLong(c.getColumnIndex("_id")));
+                    MFBImageInfo mfbii = new MFBImageInfo(PictureDestination.AircraftImage, c.getLong(c.getColumnIndexOrThrow("_id")));
                     mfbii.fromCursor(c, false, false); // no thumbnail
                     rgMfbii[i++] = mfbii;
                 }
@@ -423,9 +423,9 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
     }
 
     private void fromCursor(Cursor c, Boolean fGetThumb, Boolean fGetFullImage) {
-        Comment = c.getString(c.getColumnIndex("szComment"));
+        Comment = c.getString(c.getColumnIndexOrThrow("szComment"));
         if (fGetThumb)
-            m_imgThumb = c.getBlob(c.getColumnIndex("thmbData"));
+            m_imgThumb = c.getBlob(c.getColumnIndexOrThrow("thmbData"));
         if (fGetFullImage) {
             m_imgData = null;
             try (FileInputStream fis = new FileInputStream(getAbsoluteImageFile())) {
@@ -444,19 +444,19 @@ public class MFBImageInfo extends SoapableObject implements KvmSerializable, Ser
             }
         }
         if (m_pd == PictureDestination.FlightImage)
-            m_idTarget = c.getLong(c.getColumnIndex("idFlight"));
+            m_idTarget = c.getLong(c.getColumnIndexOrThrow("idFlight"));
         else
-            m_idTarget = c.getLong(c.getColumnIndex("idAircraft"));
+            m_idTarget = c.getLong(c.getColumnIndexOrThrow("idAircraft"));
 
-        Width = c.getInt(c.getColumnIndex("Width"));
-        Height = c.getInt(c.getColumnIndex("Height"));
-        WidthThumbnail = c.getInt(c.getColumnIndex("WidthThumbnail"));
-        HeightThumbnail = c.getInt(c.getColumnIndex("HeightThumbnail"));
-        VirtualPath = c.getString(c.getColumnIndex("VirtualPath"));
-        ThumbnailFile = c.getString(c.getColumnIndex("ThumbnailFile"));
-        URLThumbnail = c.getString(c.getColumnIndex("URLThumbnail"));
-        URLFullImage = c.getString(c.getColumnIndex("URLFullImage"));
-        ImageType = ImageFileType.values()[c.getInt(c.getColumnIndex("ImageType"))];
+        Width = c.getInt(c.getColumnIndexOrThrow("Width"));
+        Height = c.getInt(c.getColumnIndexOrThrow("Height"));
+        WidthThumbnail = c.getInt(c.getColumnIndexOrThrow("WidthThumbnail"));
+        HeightThumbnail = c.getInt(c.getColumnIndexOrThrow("HeightThumbnail"));
+        VirtualPath = c.getString(c.getColumnIndexOrThrow("VirtualPath"));
+        ThumbnailFile = c.getString(c.getColumnIndexOrThrow("ThumbnailFile"));
+        URLThumbnail = c.getString(c.getColumnIndexOrThrow("URLThumbnail"));
+        URLFullImage = c.getString(c.getColumnIndexOrThrow("URLFullImage"));
+        ImageType = ImageFileType.values()[c.getInt(c.getColumnIndexOrThrow("ImageType"))];
     }
 
     private void fromDB(Boolean fGetThumb, Boolean fGetFullImage) {

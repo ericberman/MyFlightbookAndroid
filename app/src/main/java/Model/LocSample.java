@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -129,18 +129,18 @@ public class LocSample extends LatLong {
     }
 
     private void FromCursor(Cursor c) {
-        id = c.getLong(c.getColumnIndex("_id"));
-        Latitude = c.getDouble(c.getColumnIndex("Lat"));
-        Longitude = c.getDouble(c.getColumnIndex("Lon"));
-        Alt = c.getInt(c.getColumnIndex("Alt"));
-        Speed = c.getDouble(c.getColumnIndex("Speed"));
-        HError = c.getDouble(c.getColumnIndex("Error"));
+        id = c.getLong(c.getColumnIndexOrThrow("_id"));
+        Latitude = c.getDouble(c.getColumnIndexOrThrow("Lat"));
+        Longitude = c.getDouble(c.getColumnIndexOrThrow("Lon"));
+        Alt = c.getInt(c.getColumnIndexOrThrow("Alt"));
+        Speed = c.getDouble(c.getColumnIndexOrThrow("Speed"));
+        HError = c.getDouble(c.getColumnIndexOrThrow("Error"));
         try {
-            TimeStamp = getUTCFormatter().parse(c.getString(c.getColumnIndex("TimeStamp")));
+            TimeStamp = getUTCFormatter().parse(c.getString(c.getColumnIndexOrThrow("TimeStamp")));
         } catch (ParseException ignored) {
         }
-        TZOffset = c.getInt(c.getColumnIndex("TZOffset"));
-        Comment = c.getString(c.getColumnIndex("Comment"));
+        TZOffset = c.getInt(c.getColumnIndexOrThrow("TZOffset"));
+        Comment = c.getString(c.getColumnIndexOrThrow("Comment"));
     }
 
     void ToContentValues(ContentValues cv) {

@@ -282,14 +282,14 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
 
             if (c != null) {
                 rgap = new Airport[c.getCount()];
-                int colAirportId = c.getColumnIndex("AirportID");
-                int colFacilityName = c.getColumnIndex("FacilityName");
-                int colLat = c.getColumnIndex("Latitude");
-                int colLon = c.getColumnIndex("Longitude");
-                int colType = c.getColumnIndex("Type");
-                int colPref = c.getColumnIndex("Preferred");
-                int colCountry = c.getColumnIndex("Country");
-                int colAdmin1 = c.getColumnIndex("Admin1");
+                int colAirportId = c.getColumnIndexOrThrow("AirportID");
+                int colFacilityName = c.getColumnIndexOrThrow("FacilityName");
+                int colLat = c.getColumnIndexOrThrow("Latitude");
+                int colLon = c.getColumnIndexOrThrow("Longitude");
+                int colType = c.getColumnIndexOrThrow("Type");
+                int colPref = c.getColumnIndexOrThrow("Preferred");
+                int colCountry = c.getColumnIndexOrThrow("Country");
+                int colAdmin1 = c.getColumnIndexOrThrow("Admin1");
                 while (c.moveToNext()) {
                     Airport ap = new Airport();
                     ap.AirportID = c.getString(colAirportId);

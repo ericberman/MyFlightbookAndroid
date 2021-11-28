@@ -107,39 +107,39 @@ public class AircraftSvc extends MFBSoap {
                 rgAc = new Aircraft[c.getCount()];
                 int i = 0;
 
-                int cAircraftID = c.getColumnIndex(COL_AIRCRAFTID);
-                int cTailNum = c.getColumnIndex(COL_TAILNUM);
-                int cVersion = c.getColumnIndex(COL_VERSION);
-                int cRevision = c.getColumnIndex(COL_REVISION);
-                int cICAO = c.getColumnIndex(COL_ICAO);
-                int cModelId = c.getColumnIndex(COL_MODELID);
-                int cInstanceId = c.getColumnIndex(COL_INSTANCEID);
-                int cModelName = c.getColumnIndex(COL_MODELNAME);
-                int cModelDesc = c.getColumnIndex(COL_MODELDESCRIPTION);
+                int cAircraftID = c.getColumnIndexOrThrow(COL_AIRCRAFTID);
+                int cTailNum = c.getColumnIndexOrThrow(COL_TAILNUM);
+                int cVersion = c.getColumnIndexOrThrow(COL_VERSION);
+                int cRevision = c.getColumnIndexOrThrow(COL_REVISION);
+                int cICAO = c.getColumnIndexOrThrow(COL_ICAO);
+                int cModelId = c.getColumnIndexOrThrow(COL_MODELID);
+                int cInstanceId = c.getColumnIndexOrThrow(COL_INSTANCEID);
+                int cModelName = c.getColumnIndexOrThrow(COL_MODELNAME);
+                int cModelDesc = c.getColumnIndexOrThrow(COL_MODELDESCRIPTION);
 
-                int cLastVOR = c.getColumnIndex(COL_LASTVOR);
-                int cLastAltimeter = c.getColumnIndex(COL_LASTALTIMETER);
-                int cLastTransponder = c.getColumnIndex(COL_LASTTRANSPONDER);
-                int cLastELT = c.getColumnIndex(COL_LASTELT);
-                int cLastStatic = c.getColumnIndex(COL_LASTSTATIC);
-                int cLastAnnual = c.getColumnIndex(COL_LASTANNUAL);
-                int cRegistrationDue = c.getColumnIndex(COL_REGISTRATIONDUE);
-                int cLast100 = c.getColumnIndex(COL_LAST100);
-                int cLastOil = c.getColumnIndex(COL_LASTOIL);
-                int cLastEngine = c.getColumnIndex(COL_LASTENGINE);
+                int cLastVOR = c.getColumnIndexOrThrow(COL_LASTVOR);
+                int cLastAltimeter = c.getColumnIndexOrThrow(COL_LASTALTIMETER);
+                int cLastTransponder = c.getColumnIndexOrThrow(COL_LASTTRANSPONDER);
+                int cLastELT = c.getColumnIndexOrThrow(COL_LASTELT);
+                int cLastStatic = c.getColumnIndexOrThrow(COL_LASTSTATIC);
+                int cLastAnnual = c.getColumnIndexOrThrow(COL_LASTANNUAL);
+                int cRegistrationDue = c.getColumnIndexOrThrow(COL_REGISTRATIONDUE);
+                int cLast100 = c.getColumnIndexOrThrow(COL_LAST100);
+                int cLastOil = c.getColumnIndexOrThrow(COL_LASTOIL);
+                int cLastEngine = c.getColumnIndexOrThrow(COL_LASTENGINE);
 
-                int cHideSelection = c.getColumnIndex(COL_HIDEFROMSELECTION);
-                int cCopyPICName = c.getColumnIndex(COL_COPYPICName);
-                int cRoleForPilot = c.getColumnIndex(COL_ROLEFORPILOT);
+                int cHideSelection = c.getColumnIndexOrThrow(COL_HIDEFROMSELECTION);
+                int cCopyPICName = c.getColumnIndexOrThrow(COL_COPYPICName);
+                int cRoleForPilot = c.getColumnIndexOrThrow(COL_ROLEFORPILOT);
 
-                int cPublicNotes = c.getColumnIndex(COL_PUBLICNOTES);
-                int cPrivateNotes = c.getColumnIndex(COL_PRIVATENOTES);
-                int cDefaultImage = c.getColumnIndex(COL_DEFAULTIMAGE);
-                int cDefaultTemplateIDs = c.getColumnIndex(COL_DEFAULTTEMPLATEIDS);
+                int cPublicNotes = c.getColumnIndexOrThrow(COL_PUBLICNOTES);
+                int cPrivateNotes = c.getColumnIndexOrThrow(COL_PRIVATENOTES);
+                int cDefaultImage = c.getColumnIndexOrThrow(COL_DEFAULTIMAGE);
+                int cDefaultTemplateIDs = c.getColumnIndexOrThrow(COL_DEFAULTTEMPLATEIDS);
 
-                int cIsGlass = c.getColumnIndex(COL_ISGLASS);
-                int cGlassUpgradeDate = c.getColumnIndex(COL_GLASSUPGRADEDATE);
-                int cAvionicsUpgradeType = c.getColumnIndex(COL_AVIONICSUPGRADETYPE);
+                int cIsGlass = c.getColumnIndexOrThrow(COL_ISGLASS);
+                int cGlassUpgradeDate = c.getColumnIndexOrThrow(COL_GLASSUPGRADEDATE);
+                int cAvionicsUpgradeType = c.getColumnIndexOrThrow(COL_AVIONICSUPGRADETYPE);
 
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
 

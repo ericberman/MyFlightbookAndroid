@@ -192,8 +192,8 @@ public class ActMFBForm extends Fragment {
         if (cursor != null) {
             cursor.moveToFirst();
 
-            String szFilename = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
-            String szMimeType = cursor.getString(cursor.getColumnIndex(filePathColumn[1]));
+            String szFilename = cursor.getString(cursor.getColumnIndexOrThrow(filePathColumn[0]));
+            String szMimeType = cursor.getString(cursor.getColumnIndexOrThrow(filePathColumn[1]));
             Boolean fIsVideo = szMimeType.toLowerCase(Locale.getDefault()).startsWith("video");
             cursor.close();
 

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -108,19 +108,19 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     }
 
     public void FromCursor(Cursor c) {
-        idPropType = c.getInt(c.getColumnIndex(COL_IDPROPTYPE));
-        szTitle = c.getString(c.getColumnIndex(COL_TITLE));
-        szSortKey = c.getString(c.getColumnIndex(COL_SORTKEY));
+        idPropType = c.getInt(c.getColumnIndexOrThrow(COL_IDPROPTYPE));
+        szTitle = c.getString(c.getColumnIndexOrThrow(COL_TITLE));
+        szSortKey = c.getString(c.getColumnIndexOrThrow(COL_SORTKEY));
         if (szSortKey == null || szSortKey.length() == 0)
             szSortKey = szTitle;
-        szFormatString = c.getString(c.getColumnIndex(COL_FORMATSTRING));
-        szDescription = (c.getString(c.getColumnIndex(COL_DESCRIPTION)));
+        szFormatString = c.getString(c.getColumnIndexOrThrow(COL_FORMATSTRING));
+        szDescription = (c.getString(c.getColumnIndexOrThrow(COL_DESCRIPTION)));
         if (szDescription == null)
             szDescription = "";
-        cptType = CFPPropertyType.values()[c.getInt(c.getColumnIndex(COL_TYPE))];
-        cptFlag = c.getInt(c.getColumnIndex(COL_FLAGS));
-        IsFavorite = (c.getInt(c.getColumnIndex(COL_ISFAVORITE)) != 0);
-        String szPreviousValues = (c.getString(c.getColumnIndex(COL_PreviousValues)));
+        cptType = CFPPropertyType.values()[c.getInt(c.getColumnIndexOrThrow(COL_TYPE))];
+        cptFlag = c.getInt(c.getColumnIndexOrThrow(COL_FLAGS));
+        IsFavorite = (c.getInt(c.getColumnIndexOrThrow(COL_ISFAVORITE)) != 0);
+        String szPreviousValues = (c.getString(c.getColumnIndexOrThrow(COL_PreviousValues)));
         PreviousValues = (szPreviousValues == null) ? new String[0] : szPreviousValues.split("\t");
     }
 

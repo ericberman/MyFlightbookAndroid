@@ -187,7 +187,7 @@ public class RecentFlightsSvc extends MFBSoap {
                 int i = 0;
                 rgLocalIDs = new int[c.getCount()];
                 while (c.moveToNext())
-                    rgLocalIDs[i++] = c.getInt(c.getColumnIndex("_id"));
+                    rgLocalIDs[i++] = c.getInt(c.getColumnIndexOrThrow("_id"));
             }
         } catch (Exception ex) {
             Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.getLocalizedMessage()));
