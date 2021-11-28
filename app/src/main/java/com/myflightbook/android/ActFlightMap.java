@@ -307,7 +307,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         for (Airport ap : m_rgapRoute) {
             LatLong ll = ap.getLatLong();
             String szNM = getString(R.string.abbrevNauticalMiles);
-            String szTitle = String.format(Locale.getDefault(), "%s %s", ap.AirportID, (ap.Distance > 0) ? String.format(Locale.getDefault(), " (%.1f%s)", ap.Distance, szNM) : "");
+            String szTitle = String.format(Locale.getDefault(), "%s %s", ap.AirportID, ap.FacilityName);
             StringBuilder sb = new StringBuilder();
 
             if (ap.Country != null && ap.Country.length() > 0 && !ap.Country.startsWith("--")) {
@@ -319,7 +319,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             String szLocale = sb.toString();
-            String szSnippet = String.format("%s %s", ap.FacilityName, szLocale.length() == 0 ? "" : String.format(Locale.getDefault(), "(%s)", szLocale)).trim();
+            String szSnippet = String.format("%s %s", szLocale, (ap.Distance > 0) ? String.format(Locale.getDefault(), " (%.1f%s)", ap.Distance, szNM) : "").trim();
             llb.include(ll.getLatLng());
 
             Marker m = map.addMarker(new MarkerOptions()
