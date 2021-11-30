@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2021 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -133,19 +133,21 @@ final class Solar {
     /// <param name="JD">The Julian Date</param>
     /// <returns>Angle of the sun, in degrees</returns>
     static double calcSolarAngle(double lat, double lon, double JD, double minutes) {
-        double t = calcTimeJulianCent(JD);
-        double decl = degToRad(calcSunDeclination(t));
+        double julianCentury = calcTimeJulianCent(JD + minutes / 1440.0);
+
+        double sunDeclinationRad = degToRad(calcSunDeclination(julianCentury));
         double latRad = degToRad(lat);
-        double altitudeAngle;
 
-        double solarMinutesAfterMidnight = minutes + (4 * lon);
-        double hourAngle = (solarMinutesAfterMidnight - 12 * 60) / 4 * -1;
+        double eqOfTime = calcEquationOfTime(julianCentury);
 
-        altitudeAngle = Math.asin(
-                (Math.cos(latRad) * Math.cos(decl) * Math.cos(degToRad(hourAngle)) +
-                        (Math.sin(latRad) * Math.sin(decl))));
-
-        return radToDeg(altitudeAngle);
+        double trueSolarTimeMin =  (minutes + eqOfTime + 4 *lon) % 1440;
+        double hourAngleDeg = trueSolarTimeMin / 4 < 0 ? trueSolarTimeMin / 4 + 180 : trueSolarTimeMin / 4 - 180;
+        double zenith = radToDeg(Math.acos(Math.sin(latRad) * Math.sin(sunDeclinationRad) + Math.cos(latRad) * Math.cos(sunDeclinationRad) * Math.cos(degToRad(hourAngleDeg))));
+        double solarElevation = 90 - zenith;
+        double atmRefractionDeg = solarElevation > 85 ? 0 :
+                (solarElevation > 5 ? 58.1 / Math.tan(degToRad(solarElevation)) - 0.07 / Math.pow(Math.tan(degToRad(solarElevation)), 3) + 0.000086 / Math.pow(Math.tan(degToRad(solarElevation)), 5) :
+                solarElevation > -0.575 ? 1735 + solarElevation * (-518.2 + solarElevation * (103.4 + solarElevation * (-12.79 + solarElevation * 0.711))) : -20.772 / Math.tan(degToRad(solarElevation))) / 3600;
+        return solarElevation + atmRefractionDeg;
     }
 
 
