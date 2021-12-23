@@ -442,7 +442,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MapsInitializer.initialize(getApplicationContext(), MapsInitializer.Renderer.LATEST, this);
+        MapsInitializer.initialize(getApplicationContext(), MapsInitializer.Renderer.LEGACY, this);
         setContentView(R.layout.flightmap);
         m_gMap = getMap();
         EditText t = findViewById(R.id.txtMapRoute);
