@@ -141,7 +141,6 @@ public class MFBMain extends AppCompatActivity {
     static private final String m_KeysUseHHMM = "UseHHMM";
     static private final String m_KeysUseLocal = "UseLocalTime";
 
-    static private final String m_KeysHasSeenWarning = "seenWarning";
     static private final String m_KeysLastTab = "lastTab3";
 
     static private final String m_KeysShowFlightImages = "showFlightImages";
@@ -164,7 +163,6 @@ public class MFBMain extends AppCompatActivity {
     static private final String m_TimeOfLastVacuum = "LastVacuum";
 
     private SharedPreferences mPrefs;
-    private Boolean m_fSeenWarning = false;
     private long mLastVacuum = 0; // ms of last vacuum
 
     private ViewPager2 mViewPager = null;
@@ -439,13 +437,6 @@ public class MFBMain extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, "VACUUM failed: " + e.getLocalizedMessage());
             }
-        }
-
-        Log.v(MFBConstants.LOG_TAG, "onCreate: show warning");
-        if (!m_fSeenWarning) {
-            MFBUtil.Alert(this, this.getString(R.string.errWarningTitle), this.getString(R.string.lblWarning2));
-            m_fSeenWarning = true;
-            SaveState();
         }
 
         Log.v(MFBConstants.LOG_TAG, "onCreate: handle any new intent");
@@ -728,7 +719,6 @@ public class MFBMain extends AppCompatActivity {
             ActOptions.speedUnits = ActOptions.SpeedUnits.values()[mPrefs.getInt(m_KeysSpeedUnits, 0)];
             ActOptions.altitudeUnits = ActOptions.AltitudeUnits.values()[mPrefs.getInt(m_KeysAltUnits, 0)];
 
-            m_fSeenWarning = mPrefs.getBoolean(m_KeysHasSeenWarning, false);
             mLastTabIndex = mPrefs.getInt(m_KeysLastTab, 0);
             mLastVacuum = mPrefs.getLong(m_TimeOfLastVacuum, new Date().getTime());
             MFBTakeoffSpeed.setTakeOffSpeedIndex(mPrefs.getInt(m_KeysTOSpeed, MFBTakeoffSpeed.DefaultTakeOffIndex));
@@ -765,8 +755,6 @@ public class MFBMain extends AppCompatActivity {
         ed.putBoolean(m_KeysUseLocal, DlgDatePicker.fUseLocalTime);
 
         ed.putInt(m_KeysNightMode, MFBMain.NightModePref);
-
-        ed.putBoolean(m_KeysHasSeenWarning, m_fSeenWarning);
 
         ed.putBoolean(m_KeysShowFlightImages, ActRecentsWS.fShowFlightImages);
         ed.putInt(m_KeysShowFlightTimes, ActRecentsWS.flightDetail.ordinal());

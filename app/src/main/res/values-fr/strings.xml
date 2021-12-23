@@ -285,7 +285,6 @@
     <string name="txtError">Errreur</string>
     <string name="errMainDBFailure">Impossible de créer/copier base de données principale - l\'application ne pourra pas fonctionner !</string>
     <string name="errAirportDBFailure">Impossible de créer/copier la base de données d\'aéroports - aéroport le plus proche et la fonctionnalité de mappage ne pourra pas fonctionner !</string>
-    <string name="errWarningTitle">Avertissement</string>
     <string name="errNoGPSTitle">Pas de GPS</string>
     <string name="errCantUseGPS">Impossible de démarrer le service GPS :</string>
     <string name="errNoInternetNoSave">Ne peut enregistrer le vol - Pas d\'accès internet.</string>
