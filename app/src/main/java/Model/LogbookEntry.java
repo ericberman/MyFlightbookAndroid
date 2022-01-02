@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,13 +36,18 @@ import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Model.MFBImageInfo.PictureDestination;
 import androidx.core.text.HtmlCompat;
@@ -352,6 +357,23 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
             fp.idFlight = this.idFlight;
     }
 
+    void addOrSetPropertyValue(int idPropType, double decValue) {
+        // expand the list of all properties, even ones that aren't currently set
+        FlightProperty[] rgfpAll = FlightProperty.CrossProduct(FlightProperty.FromDB(this.idLocalDB), CustomPropertyTypesSvc.getCachedPropertyTypes());
+
+        // find the nighttime takeoff property
+        for (FlightProperty fp : rgfpAll) {
+            if (fp.idPropType == idPropType) {
+                // set it, distill the properties, and save 'em to the db.
+                fp.decValue = decValue;
+                FlightProperty[] rgfpUpdated = FlightProperty.DistillList(rgfpAll);
+                FlightProperty.RewritePropertiesForFlight(this.idLocalDB, rgfpUpdated);
+                SyncProperties();
+                return;
+            }
+        }
+    }
+
     void AddNightTakeoff() {
         // expand the list of all properties, even ones that aren't currently set
         FlightProperty[] rgfpAll = FlightProperty.CrossProduct(FlightProperty.FromDB(this.idLocalDB), CustomPropertyTypesSvc.getCachedPropertyTypes());
@@ -378,6 +400,16 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
                 return fp;
         }
         return null;
+    }
+
+    public void RemovePropertyWithID(int idPropType) {
+        FlightProperty fp = PropertyWithID(idPropType);
+        if (fp != null) {
+            fp.intValue = 0;
+            FlightProperty[] rgProps = FlightProperty.CrossProduct(rgCustomProperties, CustomPropertyTypesSvc.getCachedPropertyTypes());
+            FlightProperty[] rgfpUpdated = FlightProperty.DistillList(rgProps);
+            FlightProperty.RewritePropertiesForFlight(idLocalDB, rgfpUpdated);
+        }
     }
 
     public void AddApproachDescription(String szApproachDesc) {
@@ -1159,4 +1191,172 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         return null;
     }
 
+    // Autofill utilities
+    public double autoFillHobbs(long totalTimePaused) {
+
+        long dtHobbs = 0;
+        long dtFlight = 0;
+        long dtEngine = 0;
+
+        // compute the flight time, in ms, if known
+        if (isKnownFlightTime())
+            dtFlight = dtFlightEnd.getTime() - dtFlightStart.getTime();
+
+        // and engine time, if known.
+        if (isKnownEngineTime())
+            dtEngine = dtEngineEnd.getTime() - dtEngineStart.getTime();
+
+        if (hobbsStart > 0) {
+            switch (MFBLocation.fPrefAutoFillHobbs) {
+                case EngineTime:
+                    dtHobbs = dtEngine;
+                    break;
+                case FlightTime:
+                    dtHobbs = dtFlight;
+                    break;
+                default:
+                    break;
+            }
+
+            dtHobbs -= totalTimePaused;
+
+            if (dtHobbs > 0) {
+                hobbsEnd = hobbsStart + (dtHobbs / MFBConstants.MS_PER_HOUR);
+                if (MFBLocation.fPrefRoundNearestTenth)
+                    hobbsEnd = Math.round(hobbsEnd * 10.0) / 10.0;
+
+            }
+        }
+        return dtHobbs;
+    }
+
+    public double autoFillTotal(Aircraft ac, long totalTimePaused) {
+        double dtTotal = 0;
+        // do autotime
+        switch (MFBLocation.fPrefAutoFillTime) {
+            case EngineTime:
+                if (isKnownEngineTime())
+                    dtTotal = (dtEngineEnd.getTime() - dtEngineStart.getTime() - totalTimePaused) / MFBConstants.MS_PER_HOUR;
+                break;
+            case FlightTime:
+                if (isKnownFlightTime())
+                    dtTotal = (dtFlightEnd.getTime() - dtFlightStart.getTime() - totalTimePaused) / MFBConstants.MS_PER_HOUR;
+                break;
+            case HobbsTime:
+                // NOTE: we do NOT subtract totalTimePaused here because hobbs should already have subtracted pause time,
+                // whether from being entered by user (hobbs on airplane pauses on ground or with engine stopped)
+                // or from this being called by autohobbs (which has already subtracted it)
+                if (hobbsStart > 0 && hobbsEnd > hobbsStart)
+                    dtTotal = hobbsEnd - hobbsStart; // hobbs is already in hours
+                break;
+            case BlockTime: {
+                long blockOut = 0;
+                long blockIn = 0;
+                if (rgCustomProperties != null) {
+                    for (FlightProperty fp : rgCustomProperties) {
+                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockIn)
+                            blockIn = MFBUtil.removeSeconds(fp.dateValue).getTime();
+                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut)
+                            blockOut = MFBUtil.removeSeconds(fp.dateValue).getTime();
+                    }
+                    if (blockIn > 0 && blockOut > 0)
+                        dtTotal = (blockIn - blockOut - totalTimePaused) / MFBConstants.MS_PER_HOUR;
+                }
+            }
+            break;
+            case FlightStartToEngineEnd:
+                if (isKnownFlightStart() && isKnownEngineEnd())
+                    dtTotal = (dtEngineEnd.getTime() - dtFlightStart.getTime() - totalTimePaused) / MFBConstants.MS_PER_HOUR;
+                break;
+            default:
+                break;
+        }
+
+        if (dtTotal > 0) {
+            boolean fIsReal = true;
+
+            if (MFBLocation.fPrefRoundNearestTenth)
+                dtTotal = Math.round(dtTotal * 10.0) / 10.0;
+
+            // update totals and XC if this is a real aircraft, else ground sim
+            if (ac != null && ac.InstanceTypeID == 1) {
+                decTotal = dtTotal;
+                decXC = (Airport.MaxDistanceForRoute(szRoute) > MFBConstants.NM_FOR_CROSS_COUNTRY) ? dtTotal : 0.0;
+            } else
+                decGrndSim = dtTotal;
+
+        }
+        return dtTotal;
+    }
+
+    private void autoFillCostOfFlight() {
+        // Fill in cost of flight.
+        Aircraft ac = Aircraft.getAircraftById(idAircraft, (new AircraftSvc()).getCachedAircraft());
+
+        if (ac == null)
+            return;
+
+        Pattern p = Pattern.compile("#PPH:(\\d+(?:[.,]\\d+)?)#", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(ac.PrivateNotes.toUpperCase(Locale.getDefault()));
+        if (!m.find() || m.group().length() == 0)
+            return;
+
+        double rate = 0;
+        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+        try {
+            rate = Objects.requireNonNull(nf.parse(Objects.requireNonNull(m.group(1)))).doubleValue();
+        }
+        catch (ParseException e) {
+            return;
+        }
+
+        if (rate == 0)
+            return;
+
+        FlightProperty fpTachStart = PropertyWithID(CustomPropertyType.idPropTypeTachStart);
+        FlightProperty fpTachEnd = PropertyWithID(CustomPropertyType.idPropTypeTachEnd);
+        double tachStart = fpTachStart != null ? fpTachStart.decValue : 0;
+        double tachEnd = fpTachEnd != null ? fpTachEnd.decValue : 0;
+
+        double time = (hobbsEnd > hobbsStart && hobbsStart > 0) ?
+                hobbsEnd - hobbsStart :
+                (tachEnd > tachStart && tachStart > 0) ? tachEnd - tachStart : decTotal;
+
+        double cost = rate * time;
+        if (cost > 0)
+            addOrSetPropertyValue(CustomPropertyType.idPropTypeFlightCost, cost);
+    }
+
+    private void autoFillInstruction() {
+        // Check for ground instruction given or received
+        double dual = decDual;
+        double cfi = decCFI;
+        if ((dual > 0 && cfi == 0) || (cfi > 0 && dual == 0)) {
+            FlightProperty fpLessonStart = PropertyWithID(CustomPropertyType.idPropTypeLessonStart);
+            FlightProperty fpLessonEnd = PropertyWithID(CustomPropertyType.idPropTypeLessonEnd); 
+
+            if (fpLessonEnd == null || fpLessonStart == null ||fpLessonEnd.dateValue.compareTo(fpLessonStart.dateValue) <= 0)
+            return;
+
+            double tsLesson = fpLessonEnd.dateValue.getTime() - fpLessonStart.dateValue.getTime();
+
+            // pull out flight or engine time, whichever is greater
+            double tsFlight = isKnownFlightEnd() && isKnownFlightStart() && dtFlightEnd.compareTo(dtFlightStart) > 0 ? dtFlightEnd.getTime() - dtFlightStart.getTime() : 0;
+            double tsEngine = isKnownEngineEnd() && isKnownEngineStart() && dtEngineEnd.compareTo(dtEngineStart) > 0 ? dtEngineEnd.getTime() - dtEngineStart.getTime() : 0;
+
+            double tsNonGround = Math.max(Math.max(tsFlight, tsEngine), 0);
+
+            double groundHours = (tsLesson - tsNonGround) / MFBConstants.MS_PER_HOUR;
+
+            int idPropTarget = dual > 0 ? CustomPropertyType.idPropTypeGroundInstructionReceived : CustomPropertyType.idPropTypeGroundInstructionGiven;
+
+            if (groundHours > 0)
+                addOrSetPropertyValue(idPropTarget, groundHours);
+        }
+    }
+
+    public void autoFillFinish() {
+        autoFillCostOfFlight();
+        autoFillInstruction();
+    }
 }

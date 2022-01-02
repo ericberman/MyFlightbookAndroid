@@ -164,7 +164,7 @@
     <string name="lblGPSRationale">La détection automatique et l\'enregistrement nécessitent un accès en arrière-plan à votre position lorsqu\'un vol pourrait être en cours. Activer dans l\'application Paramètres?</string>
     <string name="lblAutoHobbs">Saisie automatique de la valeur de l\'horamètre à l\'arrivée</string>
     <string name="lblAutoTime">Saisie automatique du Temps Total</string>
-    <string name="lblCopyright">© 2012&#8211;2021 MyFlightbook LLC</string>
+    <string name="lblCopyright">© 2012&#8211;2022 MyFlightbook LLC</string>
     <string name="lblCodeCredit">Une partie du code utilise la bibliothèque KSoap2 disponible à http://code.google.com/p/ksoap2-android/, publiée sous licence MIT à http://www.opensource.org/licenses/mit-license.php. Un grand merci !</string>
     <string name="lblContactMe">Contactez-nous</string>
     <string name="lblCleanup">Nettoyage</string>
@@ -393,6 +393,7 @@
     <string name="menuDeleteAircraftShort">Supprimer</string>
     <string name="menuChooseTemplate">Modèles pour ce vol</string>
     <string name="menuChooseTemplateShort">Modèles</string>
+    <string name="menuAutoFill">Remplissage automatique</string>
 
     <!-- Abbreviations -->
     <string name="abbrevNauticalMiles">NM</string>

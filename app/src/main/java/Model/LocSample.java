@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -170,6 +170,17 @@ public class LocSample extends LatLong {
         HError = l.getAccuracy();
         TimeStamp.setTime(l.getTime());
         TZOffset = 0;
+    }
+
+    LocSample(Location l, int altitude, double speed, Date dt) {
+        super();
+        Latitude = l.getLatitude();
+        Longitude = l.getLongitude();
+        Alt = altitude;
+        Speed = speed;
+        TimeStamp = dt;
+        TZOffset = 0;
+        HError = MFBConstants.MIN_ACCURACY / 2;
     }
 
     LocSample(double latitude, double longitude, int altitude, double speed, double error, String szDate) {

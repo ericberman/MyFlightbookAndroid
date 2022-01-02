@@ -16,4 +16,8 @@
         android:icon="@drawable/ic_action_discard"
         android:title="@string/menuDeleteFlight"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/btnAutoFill"
+        android:title="@string/menuAutoFill"
+        app:showAsAction="ifRoom" />
 </menu>

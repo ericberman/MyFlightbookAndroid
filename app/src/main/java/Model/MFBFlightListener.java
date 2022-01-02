@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,8 +57,10 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
     public MFBFlightListener() {
     }
 
-    private void appendNearest(Location loc) {
+    private boolean appendNearest(Location loc) {
+        String szPrevRoute = m_leNewFlight.szRoute;
         m_leNewFlight.szRoute = Airport.AppendNearestToRoute(m_leNewFlight.szRoute, loc);
+        return szPrevRoute.compareTo(m_leNewFlight.szRoute) != 0;
     }
 
     public void TakeoffDetected(Location l, Boolean fIsNight) {
@@ -86,9 +88,9 @@ public class MFBFlightListener implements MFBLocation.FlightEvents {
             if (m_delegate != null)
                 m_delegate.FromView();
             m_leNewFlight.dtFlightStart = new Date(l.getTime());
-            appendNearest(l);
             fNeedsViewRefresh = true;
         }
+        fNeedsViewRefresh = appendNearest(l) || fNeedsViewRefresh;  // definitely do appendNearest
 
         if (fNeedsViewRefresh && m_delegate != null)
             m_delegate.RefreshDetectedFields();

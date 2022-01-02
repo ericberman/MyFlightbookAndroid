@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,6 +54,12 @@ public class CustomPropertyType extends SoapableObject implements Comparable<Cus
     public static final int idPropTypeBlockOut = 187;
     public static final int idPropTypeBlockIn = 186;
     static final int idPropTypeApproachDesc = 267;
+    public static final int idPropTypeFlightCost = 415;
+    public static final int idPropTypeLessonStart = 668;
+    public static final int idPropTypeLessonEnd = 669;
+    public static final int idPropTypeGroundInstructionGiven = 198;
+    public static final int idPropTypeGroundInstructionReceived = 158;
+
 
     // DB Column names
     private static final String COL_IDPROPTYPE = "idPropType";

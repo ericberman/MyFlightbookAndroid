@@ -164,7 +164,7 @@
     <string name="lblGPSRationale">Autodetection and recording require background access to your location while a flight could be in progress.  Turn on in the Settings app?</string>
     <string name="lblAutoHobbs">Auto-fill ending Hobbs</string>
     <string name="lblAutoTime">Auto-fill total time</string>
-    <string name="lblCopyright">© 2012&#8211;2021 MyFlightbook LLC</string>
+    <string name="lblCopyright">© 2012&#8211;2022 MyFlightbook LLC</string>
     <string name="lblCodeCredit">Portions of this code use the KSoap2 library at http://code.google.com/p/ksoap2-android/, licensed under the MIT license at http://www.opensource.org/licenses/mit-license.php.  Thanks folks!</string>
     <string name="lblContactMe">Contact Us</string>
     <string name="lblCleanup">Clean Up</string>
@@ -393,6 +393,7 @@
     <string name="menuDeleteAircraftShort">Delete</string>
     <string name="menuChooseTemplate">Templates for flight</string>
     <string name="menuChooseTemplateShort">Templates</string>
+    <string name="menuAutoFill">Autofill</string>
 
     <!-- Abbreviations -->
     <string name="abbrevNauticalMiles">NM</string>
