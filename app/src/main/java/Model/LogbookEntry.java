@@ -1301,7 +1301,7 @@ public class LogbookEntry extends SoapableObject implements KvmSerializable, Ser
         if (!m.find() || m.group().length() == 0)
             return;
 
-        double rate = 0;
+        double rate;
         NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
         try {
             rate = Objects.requireNonNull(nf.parse(Objects.requireNonNull(m.group(1)))).doubleValue();
