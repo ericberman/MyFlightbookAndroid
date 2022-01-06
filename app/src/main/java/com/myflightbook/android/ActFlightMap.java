@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,9 +49,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -89,7 +87,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallback, OnMapsSdkInitializedCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCheckedChangeListener, OnMapLongClickListener {
+public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCheckedChangeListener, OnMapLongClickListener {
 
     private LatLngBounds m_llb = null;
     private LogbookEntry m_le = null;
@@ -442,7 +440,6 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MapsInitializer.initialize(getApplicationContext(), MapsInitializer.Renderer.LEGACY, this);
         setContentView(R.layout.flightmap);
         m_gMap = getMap();
         EditText t = findViewById(R.id.txtMapRoute);
@@ -487,17 +484,6 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         {
             t.setVisibility(View.GONE);
             b.setVisibility(View.GONE);
-        }
-    }
-
-    public void onMapsSdkInitialized(@NonNull MapsInitializer.Renderer renderer) {
-        switch (renderer) {
-            case LATEST:
-                Log.d(MFBConstants.LOG_TAG, "The latest version of the renderer is used.");
-                break;
-            case LEGACY:
-                Log.d(MFBConstants.LOG_TAG, "The legacy version of the renderer is used.");
-                break;
         }
     }
 
