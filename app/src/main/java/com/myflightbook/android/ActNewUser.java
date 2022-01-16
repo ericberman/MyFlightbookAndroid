@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.CreateUserSvc;
-import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.webservices.CreateUserSvc;
+import com.myflightbook.android.webservices.MFBSoap;
 
 import java.util.Locale;
 
-import Model.MFBConstants;
-import Model.MFBUtil;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import model.MFBConstants;
+import model.MFBUtil;
 
 public class ActNewUser extends AppCompatActivity implements
         android.view.View.OnClickListener {

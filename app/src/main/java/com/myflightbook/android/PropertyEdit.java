@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,14 +38,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.myflightbook.android.WebServices.UTCDate;
+import com.myflightbook.android.webservices.UTCDate;
 
 import java.util.Date;
 
-import Model.CustomPropertyType;
-import Model.DecimalEdit;
-import Model.FlightProperty;
 import androidx.annotation.Nullable;
+import model.CustomPropertyType;
+import model.DecimalEdit;
+import model.FlightProperty;
 
 public class PropertyEdit extends LinearLayout implements DlgDatePicker.DateTimeUpdate {
 

@@ -58,9 +58,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -71,21 +71,21 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-import Model.Airport;
-import Model.FlightQuery;
-import Model.GPX;
-import Model.LatLong;
-import Model.LocSample;
-import Model.LogbookEntry;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBLocation;
-import Model.MFBUtil;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import model.Airport;
+import model.FlightQuery;
+import model.GPX;
+import model.LatLong;
+import model.LocSample;
+import model.LogbookEntry;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBLocation;
+import model.MFBUtil;
 
 public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCheckedChangeListener, OnMapLongClickListener {
 

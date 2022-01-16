@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,10 +51,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.ImagesSvc;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.UTCDate;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.ImagesSvc;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.UTCDate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,12 +67,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import Model.DecimalEdit;
-import Model.DecimalEdit.EditMode;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBLocation;
-import Model.MFBUtil;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -80,6 +74,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import model.DecimalEdit;
+import model.DecimalEdit.EditMode;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBLocation;
+import model.MFBUtil;
 
 public class ActMFBForm extends Fragment {
     interface GallerySource {

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,13 +41,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CommitFlightSvc;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.PendingFlightSvc;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
-import com.myflightbook.android.WebServices.UTCDate;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CommitFlightSvc;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.PendingFlightSvc;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.UTCDate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,20 +56,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import Model.Aircraft;
-import Model.CustomPropertyType;
-import Model.DecimalEdit;
-import Model.DecimalEdit.EditMode;
-import Model.FlightProperty;
-import Model.FlightQuery;
-import Model.LazyThumbnailLoader;
-import Model.LogbookEntry;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBImageInfo.ImageCacheCompleted;
-import Model.MFBUtil;
-import Model.PackAndGo;
-import Model.PendingFlight;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -78,6 +64,20 @@ import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import model.Aircraft;
+import model.CustomPropertyType;
+import model.DecimalEdit;
+import model.DecimalEdit.EditMode;
+import model.FlightProperty;
+import model.FlightQuery;
+import model.LazyThumbnailLoader;
+import model.LogbookEntry;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBImageInfo.ImageCacheCompleted;
+import model.MFBUtil;
+import model.PackAndGo;
+import model.PendingFlight;
 
 public class ActRecentsWS extends ListFragment implements OnItemSelectedListener, ImageCacheCompleted, MFBMain.Invalidatable {
 

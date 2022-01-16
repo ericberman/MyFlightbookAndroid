@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,20 +37,20 @@ import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CurrencySvc;
-import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CurrencySvc;
+import com.myflightbook.android.webservices.MFBSoap;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import Model.CurrencyStatusItem;
-import Model.MFBConstants;
-import Model.MFBUtil;
-import Model.PackAndGo;
 import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import model.CurrencyStatusItem;
+import model.MFBConstants;
+import model.MFBUtil;
+import model.PackAndGo;
 
 public class ActCurrency extends ActMFBForm implements MFBMain.Invalidatable {
     private static boolean fNeedsRefresh = true;

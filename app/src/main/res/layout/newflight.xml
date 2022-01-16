@@ -148,7 +148,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblLandings" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtLandings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -171,7 +171,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblFSDayLandings" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtDayLandings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -195,7 +195,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblFSNightLandings" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtFSNightLandings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -225,7 +225,7 @@
                     android:width="100dip"
                     android:text="@string/lblApproaches" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtApproaches"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -468,7 +468,7 @@
                         android:width="100dip"
                         android:text="@string/lblHobbsStart" />
 
-                    <Model.DecimalEdit
+                    <model.DecimalEdit
                         android:id="@+id/txtHobbsStart"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -572,7 +572,7 @@
                         android:width="100dip"
                         android:text="@string/lblHobbsEnd" />
 
-                    <Model.DecimalEdit
+                    <model.DecimalEdit
                         android:id="@+id/txtHobbsEnd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -611,7 +611,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblNight" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtNight"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -634,7 +634,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblSimIMC" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtSimIMC"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -656,7 +656,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblIMC" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtIMC"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -686,7 +686,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblXC" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtXC"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -709,7 +709,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblDual" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtDual"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -731,7 +731,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblGround" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtGround"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -761,7 +761,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblCFI" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtCFI"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -785,7 +785,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblSIC" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtSIC"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -808,7 +808,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/lblPIC" />
 
-                <Model.DecimalEdit
+                <model.DecimalEdit
                     android:id="@+id/txtPIC"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -834,7 +834,7 @@
                 android:gravity="center_horizontal"
                 android:text="@string/lblTotal" />
 
-            <Model.DecimalEdit
+            <model.DecimalEdit
                 android:id="@+id/txtTotal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

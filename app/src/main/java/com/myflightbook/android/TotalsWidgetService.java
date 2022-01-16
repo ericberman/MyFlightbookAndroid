@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2021 MyFlightbook, LLC
+    Copyright (C) 2019-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.TotalsSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.TotalsSvc;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -38,11 +38,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import Model.DecimalEdit;
-import Model.DecimalEdit.EditMode;
-import Model.FlightQuery;
-import Model.MFBUtil;
-import Model.Totals;
+import model.DecimalEdit;
+import model.DecimalEdit.EditMode;
+import model.FlightQuery;
+import model.MFBUtil;
+import model.Totals;
 
 
 public class TotalsWidgetService extends RemoteViewsService {

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,27 +44,15 @@ import android.webkit.WebView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import Model.Airport;
-import Model.CustomExceptionHandler;
-import Model.DataBaseHelper;
-import Model.DecimalEdit;
-import Model.GPSSim;
-import Model.LogbookEntry;
-import Model.MFBConstants;
-import Model.MFBFlightListener;
-import Model.MFBLocation;
-import Model.MFBTakeoffSpeed;
-import Model.MFBUtil;
-import Model.Telemetry;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -75,6 +63,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+import model.Airport;
+import model.CustomExceptionHandler;
+import model.DataBaseHelper;
+import model.DecimalEdit;
+import model.GPSSim;
+import model.LogbookEntry;
+import model.MFBConstants;
+import model.MFBFlightListener;
+import model.MFBLocation;
+import model.MFBTakeoffSpeed;
+import model.MFBUtil;
+import model.Telemetry;
 
 public class MFBMain extends AppCompatActivity {
 

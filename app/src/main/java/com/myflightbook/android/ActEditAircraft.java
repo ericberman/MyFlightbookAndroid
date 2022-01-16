@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,24 +34,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.UTCDate;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.UTCDate;
 
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-import Model.Aircraft;
-import Model.Aircraft.PilotRole;
-import Model.FlightQuery;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBImageInfo.PictureDestination;
-import Model.MFBUtil;
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
+import model.Aircraft;
+import model.Aircraft.PilotRole;
+import model.FlightQuery;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBImageInfo.PictureDestination;
+import model.MFBUtil;
 
 public class ActEditAircraft extends ActMFBForm implements android.view.View.OnClickListener,
         DlgDatePicker.DateTimeUpdate, ActMFBForm.GallerySource {

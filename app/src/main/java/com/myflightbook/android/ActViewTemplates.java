@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,21 +34,21 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 
-import Model.MFBConstants;
-import Model.MFBUtil;
-import Model.PropertyTemplate;
-import Model.TemplateGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import model.MFBConstants;
+import model.MFBUtil;
+import model.PropertyTemplate;
+import model.TemplateGroup;
 
 public class ActViewTemplates extends ListFragment implements OnItemClickListener {
     private enum RowType {DATA_ITEM, HEADER_ITEM}
