@@ -226,7 +226,7 @@ public class Airport extends SoapableObject implements KvmSerializable, Serializ
                 sb.append(", '").append(Airport.USPrefixConvenienceAlias(s)).append("'");
         }
 
-        String szQ = String.format("AirportID IN (%s)", sb.toString());
+        String szQ = String.format("AirportID IN (%s)", sb);
 
         lstResults.addAll(Arrays.asList(Airport.AirportsForQuery(szQ, loc)));
         return lstResults.toArray(new Airport[0]);

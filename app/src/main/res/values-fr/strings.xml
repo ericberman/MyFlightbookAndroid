@@ -489,6 +489,7 @@
     <plurals name="uniqueAirportsCount">
         <item quantity="one">(%1$d aéroport trouvé)</item>
         <item quantity="other">(%1$d aéroports trouvés)</item>
+        <item quantity="many">(%1$d aéroports trouvés)</item>
     </plurals>
 
     <!-- Training -->

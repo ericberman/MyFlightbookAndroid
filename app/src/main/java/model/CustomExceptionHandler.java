@@ -76,7 +76,7 @@ public class CustomExceptionHandler implements UncaughtExceptionHandler {
 
         String szVersion = String.format(Locale.getDefault(), "Version %s (%d)\r\n\r\n", MFBMain.versionName, MFBMain.versionCode);
 
-        final String stacktrace = szVersion + szUsername + "       \r\n\r\n" + result.toString() + e.getMessage() + e.getLocalizedMessage();
+        final String stacktrace = szVersion + szUsername + "       \r\n\r\n" + result + e.getMessage() + e.getLocalizedMessage();
         printWriter.close();
 
         Calendar c = new GregorianCalendar();

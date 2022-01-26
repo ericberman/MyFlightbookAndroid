@@ -532,13 +532,13 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.txtShareGPX)));
         }
         catch (FileNotFoundException e) {
-            Log.e("Exception", "openFileOutput failed" + e.toString());
+            Log.e("Exception", "openFileOutput failed" + e);
         }
         catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+            Log.e("Exception", "File write failed: " + e);
         }
         catch (SecurityException e) {
-            Log.e("Exception", "Security exception writing file: " + e.toString());
+            Log.e("Exception", "Security exception writing file: " + e);
         }
     }
 
@@ -587,7 +587,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapLongClick(LatLng point) {
         EditText t = findViewById(R.id.txtMapRoute);
         String szAdHoc = new LatLong(point.latitude, point.longitude).toAdHocLocString();
-        t.setText((t.getText() + " " + szAdHoc).trim());
+        t.setText(String.format(Locale.getDefault(), "%s %s", t.getText(), szAdHoc).trim());
     }
 
     public void onCheckedChanged(CompoundButton v, boolean isChecked) {
