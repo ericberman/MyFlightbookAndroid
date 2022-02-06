@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,9 +37,9 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
-import com.myflightbook.android.WebServices.FlightPropertiesSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc;
+import com.myflightbook.android.webservices.FlightPropertiesSvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,13 +47,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import Model.CustomPropertyType;
-import Model.DBCache;
-import Model.DecimalEdit;
-import Model.FlightProperty;
-import Model.MFBConstants;
-import Model.MFBUtil;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import model.CustomPropertyType;
+import model.DBCache;
+import model.DecimalEdit;
+import model.FlightProperty;
+import model.MFBConstants;
+import model.MFBUtil;
 
 public class ActViewProperties extends FixedExpandableListActivity implements PropertyEdit.PropertyListener, DecimalEdit.CrossFillDelegate {
 

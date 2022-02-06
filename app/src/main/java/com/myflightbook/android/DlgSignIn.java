@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
-import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc;
+import com.myflightbook.android.webservices.MFBSoap;
 
-import Model.Aircraft;
-import Model.AuthResult;
-import Model.CustomPropertyType;
-import Model.MFBConstants;
-import Model.MFBUtil;
+import model.Aircraft;
+import model.AuthResult;
+import model.CustomPropertyType;
+import model.MFBConstants;
+import model.MFBUtil;
 
 class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
 
@@ -152,6 +152,7 @@ class DlgSignIn extends Dialog implements android.view.View.OnClickListener {
             if (m_Result.authStatus == AuthResult.AuthStatus.TwoFactorCodeRequired) {
                 d.findViewById(R.id.layout2FA).setVisibility(View.VISIBLE);
                 d.findViewById(R.id.layoutCredentials).setVisibility(View.GONE);
+                d.findViewById(R.id.txtWarning).setVisibility(View.GONE);
             } else {
                 if (m_Result.authStatus == AuthResult.AuthStatus.Success) {
                     MFBMain.invalidateAll();

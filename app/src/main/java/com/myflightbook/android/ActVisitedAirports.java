@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ import android.widget.EditText;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.VisitedAirportSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.VisitedAirportSvc;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -47,11 +47,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-import Model.MFBUtil;
-import Model.PackAndGo;
-import Model.VisitedAirport;
 import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import model.MFBUtil;
+import model.PackAndGo;
+import model.VisitedAirport;
 
 public class ActVisitedAirports extends ExpandableListFragment implements MFBMain.Invalidatable {
 

@@ -27,7 +27,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/ahNumApproaches" />
 
-            <Model.DecimalEdit
+            <model.DecimalEdit
                 android:id="@+id/txtApproachCount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

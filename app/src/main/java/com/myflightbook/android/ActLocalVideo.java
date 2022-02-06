@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ import android.widget.VideoView;
 
 import java.io.File;
 
-import Model.MFBConstants;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import model.MFBConstants;
 
 public class ActLocalVideo extends AppCompatActivity {
     private String szTempFile = "";

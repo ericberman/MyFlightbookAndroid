@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,9 +36,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.TotalsSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.TotalsSvc;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -47,19 +47,19 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-import Model.DecimalEdit;
-import Model.DecimalEdit.EditMode;
-import Model.FlightQuery;
-import Model.MFBConstants;
-import Model.MFBUtil;
-import Model.PackAndGo;
-import Model.Totals;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import model.DecimalEdit;
+import model.DecimalEdit.EditMode;
+import model.FlightQuery;
+import model.MFBConstants;
+import model.MFBUtil;
+import model.PackAndGo;
+import model.Totals;
 
 public class ActTotals extends ListFragment implements MFBMain.Invalidatable, OnItemClickListener {
     private static boolean fNeedsRefresh = true;

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ import android.widget.Spinner;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import Model.Airport;
-import Model.ApproachDescription;
-import Model.DecimalEdit;
 import androidx.appcompat.app.AppCompatActivity;
+import model.Airport;
+import model.ApproachDescription;
+import model.DecimalEdit;
 
 public class ActAddApproach extends AppCompatActivity {
 

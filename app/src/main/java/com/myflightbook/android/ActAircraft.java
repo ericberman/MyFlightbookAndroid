@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,19 +38,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-import Model.Aircraft;
-import Model.LazyThumbnailLoader;
-import Model.LazyThumbnailLoader.ThumbnailedItem;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBUtil;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -58,6 +52,12 @@ import androidx.annotation.Nullable;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.ListFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import model.Aircraft;
+import model.LazyThumbnailLoader;
+import model.LazyThumbnailLoader.ThumbnailedItem;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBUtil;
 
 public class ActAircraft extends ListFragment implements OnItemClickListener, MFBMain.Invalidatable {
     private AircraftRowItem[] m_aircraftRows = null;

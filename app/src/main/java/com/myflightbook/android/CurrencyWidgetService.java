@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2021 MyFlightbook, LLC
+    Copyright (C) 2019-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,15 +33,15 @@ import android.text.style.StyleSpan;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CurrencySvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CurrencySvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import Model.CurrencyStatusItem;
-import Model.MFBUtil;
+import model.CurrencyStatusItem;
+import model.MFBUtil;
 
 public class CurrencyWidgetService extends RemoteViewsService {
     @Override

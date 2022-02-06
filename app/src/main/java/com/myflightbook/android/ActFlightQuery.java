@@ -41,12 +41,12 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CannedQuerySvc;
-import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CannedQuerySvc;
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,18 +57,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import Model.Aircraft;
-import Model.Airport;
-import Model.CannedQuery;
-import Model.CategoryClass;
-import Model.CustomPropertyType;
-import Model.DBCache;
-import Model.FlightQuery;
-import Model.FlightQuery.DateRanges;
-import Model.MFBConstants;
-import Model.MFBUtil;
-import Model.MakeModel;
 import androidx.annotation.NonNull;
+import model.Aircraft;
+import model.Airport;
+import model.CannedQuery;
+import model.CategoryClass;
+import model.CustomPropertyType;
+import model.DBCache;
+import model.FlightQuery;
+import model.FlightQuery.DateRanges;
+import model.MFBConstants;
+import model.MFBUtil;
+import model.MakeModel;
 
 public class ActFlightQuery extends ActMFBForm implements android.view.View.OnClickListener, DlgDatePicker.DateTimeUpdate {
     private FlightQuery CurrentQuery = null;

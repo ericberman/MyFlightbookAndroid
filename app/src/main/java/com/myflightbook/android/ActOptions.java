@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,41 +40,41 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CurrencySvc;
-import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
-import com.myflightbook.android.WebServices.TotalsSvc;
-import com.myflightbook.android.WebServices.VisitedAirportSvc;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CurrencySvc;
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.TotalsSvc;
+import com.myflightbook.android.webservices.VisitedAirportSvc;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import Model.Aircraft;
-import Model.Airport;
-import Model.CurrencyStatusItem;
-import Model.CustomPropertyType;
-import Model.DecimalEdit;
-import Model.FlightQuery;
-import Model.LogbookEntry;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBImageInfo.PictureDestination;
-import Model.MFBLocation;
-import Model.MFBTakeoffSpeed;
-import Model.MFBUtil;
-import Model.PackAndGo;
-import Model.Totals;
-import Model.VisitedAirport;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
+import model.Aircraft;
+import model.Airport;
+import model.CurrencyStatusItem;
+import model.CustomPropertyType;
+import model.DecimalEdit;
+import model.FlightQuery;
+import model.LogbookEntry;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBImageInfo.PictureDestination;
+import model.MFBLocation;
+import model.MFBTakeoffSpeed;
+import model.MFBUtil;
+import model.PackAndGo;
+import model.Totals;
+import model.VisitedAirport;
 
 public class ActOptions extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener {
 

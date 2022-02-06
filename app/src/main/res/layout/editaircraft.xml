@@ -357,7 +357,7 @@
                         android:width="100dip"
                         android:text="@string/lbl100Hour" />
 
-                    <Model.DecimalEdit
+                    <model.DecimalEdit
                         android:id="@+id/txt100hr"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -376,7 +376,7 @@
                         android:width="100dip"
                         android:text="@string/lblOilChange" />
 
-                    <Model.DecimalEdit
+                    <model.DecimalEdit
                         android:id="@+id/txtOilChange"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -395,7 +395,7 @@
                         android:width="100dip"
                         android:text="@string/lblNewEngine" />
 
-                    <Model.DecimalEdit
+                    <model.DecimalEdit
                         android:id="@+id/txtNewEngine"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"

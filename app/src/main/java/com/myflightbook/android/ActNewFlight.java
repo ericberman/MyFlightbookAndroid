@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,16 +54,16 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.CommitFlightSvc;
-import com.myflightbook.android.WebServices.CustomPropertyTypesSvc;
-import com.myflightbook.android.WebServices.DeleteFlightSvc;
-import com.myflightbook.android.WebServices.FlightPropertiesSvc;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.PendingFlightSvc;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
-import com.myflightbook.android.WebServices.UTCDate;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.CommitFlightSvc;
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc;
+import com.myflightbook.android.webservices.DeleteFlightSvc;
+import com.myflightbook.android.webservices.FlightPropertiesSvc;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.PendingFlightSvc;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.UTCDate;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -78,29 +78,29 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import Model.Aircraft;
-import Model.Airport;
-import Model.CustomPropertyType;
-import Model.DecimalEdit;
-import Model.DecimalEdit.CrossFillDelegate;
-import Model.FlightProperty;
-import Model.GPSSim;
-import Model.LatLong;
-import Model.LogbookEntry;
-import Model.MFBConstants;
-import Model.MFBFlightListener;
-import Model.MFBImageInfo;
-import Model.MFBImageInfo.PictureDestination;
-import Model.MFBLocation;
-import Model.MFBUtil;
-import Model.PendingFlight;
-import Model.PropertyTemplate;
-import Model.SunriseSunsetTimes;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ShareCompat;
+import model.Aircraft;
+import model.Airport;
+import model.CustomPropertyType;
+import model.DecimalEdit;
+import model.DecimalEdit.CrossFillDelegate;
+import model.FlightProperty;
+import model.GPSSim;
+import model.LatLong;
+import model.LogbookEntry;
+import model.MFBConstants;
+import model.MFBFlightListener;
+import model.MFBImageInfo;
+import model.MFBImageInfo.PictureDestination;
+import model.MFBLocation;
+import model.MFBUtil;
+import model.PendingFlight;
+import model.PropertyTemplate;
+import model.SunriseSunsetTimes;
 
 public class ActNewFlight extends ActMFBForm implements android.view.View.OnClickListener, MFBFlightListener.ListenerFragmentDelegate,
         DlgDatePicker.DateTimeUpdate, PropertyEdit.PropertyListener, ActMFBForm.GallerySource, CrossFillDelegate, MFBMain.Invalidatable {
@@ -910,7 +910,7 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
         // Handle item selection
         int menuId = item.getItemId();
         if (menuId == R.id.menuUploadLater)
-                SubmitFlight(true);
+            SubmitFlight(true);
         else if (menuId == R.id.menuResetFlight) {
             if (m_le.idLocalDB > 0)
                 m_le.DeleteUnsubmittedFlightFromLocalDB();
@@ -981,6 +981,12 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
                 sendFlight();
             else if (menuId == R.id.menuShareFlight)
                 shareFlight();
+            else if (menuId == R.id.btnAutoFill) {
+                assert m_le != null;
+                FromView();
+                GPSSim.AutoFill(getContext(), m_le);
+                ToView();
+            }
             else
                 return super.onOptionsItemSelected(item);
 
@@ -1521,111 +1527,20 @@ public class ActNewFlight extends ActMFBForm implements android.view.View.OnClic
     }
 
     private void AutoTotals() {
-        double dtTotal = 0;
-
         FromView();
-
-        // do autotime
-        switch (MFBLocation.fPrefAutoFillTime) {
-            case EngineTime:
-                if (m_le.isKnownEngineTime())
-                    dtTotal = (m_le.dtEngineEnd.getTime() - m_le.dtEngineStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
-                break;
-            case FlightTime:
-                if (m_le.isKnownFlightTime())
-                    dtTotal = (m_le.dtFlightEnd.getTime() - m_le.dtFlightStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
-                break;
-            case HobbsTime:
-                // NOTE: we do NOT subtract totalTimePaused here because hobbs should already have subtracted pause time,
-                // whether from being entered by user (hobbs on airplane pauses on ground or with engine stopped)
-                // or from this being called by autohobbs (which has already subtracted it)
-                if (m_le.hobbsStart > 0 && m_le.hobbsEnd > m_le.hobbsStart)
-                    dtTotal = m_le.hobbsEnd - m_le.hobbsStart; // hobbs is already in hours
-                break;
-            case BlockTime: {
-                long blockOut = 0;
-                long blockIn = 0;
-                if (m_le.rgCustomProperties != null) {
-                    for (FlightProperty fp : m_le.rgCustomProperties) {
-                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockIn)
-                            blockIn = MFBUtil.removeSeconds(fp.dateValue).getTime();
-                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut)
-                            blockOut = MFBUtil.removeSeconds(fp.dateValue).getTime();
-                    }
-                    if (blockIn > 0 && blockOut > 0)
-                        dtTotal = (blockIn - blockOut - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
-                }
-            }
-                break;
-            case FlightStartToEngineEnd:
-                if (m_le.isKnownFlightStart() && m_le.isKnownEngineEnd())
-                    dtTotal = (m_le.dtEngineEnd.getTime() - m_le.dtFlightStart.getTime() - totalTimePaused()) / MFBConstants.MS_PER_HOUR;
-                break;
-            default:
-                break;
-        }
-
-        if (dtTotal > 0) {
-            boolean fIsReal = true;
-            Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
-
-            if (MFBLocation.fPrefRoundNearestTenth)
-                dtTotal = Math.round(dtTotal * 10.0) / 10.0;
-
-            if (m_le.idAircraft > 0 && sp.getSelectedItem() != null)
-                fIsReal = (((Aircraft) sp.getSelectedItem()).InstanceTypeID == 1);
-
-            // update totals and XC if this is a real aircraft, else ground sim
-            if (fIsReal) {
-                m_le.decTotal = dtTotal;
-                m_le.decXC = (Airport.MaxDistanceForRoute(m_le.szRoute) > MFBConstants.NM_FOR_CROSS_COUNTRY) ? dtTotal : 0.0;
-            } else
-                m_le.decGrndSim = dtTotal;
-
+        Spinner sp = (Spinner) findViewById(R.id.spnAircraft);
+        if (m_le.autoFillTotal(m_le.idAircraft > 0 && sp.getSelectedItem() != null ? (Aircraft) sp.getSelectedItem() : null, totalTimePaused()) > 0)
             ToView();
-        }
     }
 
     private void AutoHobbs() {
-        long dtHobbs = 0;
-        long dtFlight = 0;
-        long dtEngine = 0;
-
         FromView();
+        if (m_le.autoFillHobbs(totalTimePaused()) > 0) {
+            ToView(); // sync the view to the change we just made - especially since autototals can read it.
 
-        // compute the flight time, in ms, if known
-        if (m_le.isKnownFlightTime())
-            dtFlight = m_le.dtFlightEnd.getTime() - m_le.dtFlightStart.getTime();
-
-        // and engine time, if known.
-        if (m_le.isKnownEngineTime())
-            dtEngine = m_le.dtEngineEnd.getTime() - m_le.dtEngineStart.getTime();
-
-        if (m_le.hobbsStart > 0) {
-            switch (MFBLocation.fPrefAutoFillHobbs) {
-                case EngineTime:
-                    dtHobbs = dtEngine;
-                    break;
-                case FlightTime:
-                    dtHobbs = dtFlight;
-                    break;
-                default:
-                    break;
-            }
-
-            dtHobbs -= totalTimePaused();
-
-            if (dtHobbs > 0) {
-                m_le.hobbsEnd = m_le.hobbsStart + (dtHobbs / MFBConstants.MS_PER_HOUR);
-                if (MFBLocation.fPrefRoundNearestTenth)
-                    m_le.hobbsEnd = Math.round(m_le.hobbsEnd * 10.0) / 10.0;
-
-                ToView(); // sync the view to the change we just made - especially since autototals can read it.
-
-                // if total is linked to hobbs, need to do autotime too
-                if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.HobbsTime)
-                    AutoTotals();
-            }
+            // if total is linked to hobbs, need to do autotime too
+            if (MFBLocation.fPrefAutoFillTime == MFBLocation.AutoFillOptions.HobbsTime)
+                AutoTotals();
         }
     }
 

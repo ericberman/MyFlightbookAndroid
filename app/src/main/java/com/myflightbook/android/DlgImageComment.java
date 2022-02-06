@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2020 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,10 +26,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.ImagesSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.ImagesSvc;
 
-import Model.MFBImageInfo;
+import model.MFBImageInfo;
 
 class DlgImageComment extends Dialog implements android.view.View.OnClickListener {
 

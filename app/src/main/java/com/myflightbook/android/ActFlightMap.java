@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,9 +49,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -60,9 +58,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,23 +71,23 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-import Model.Airport;
-import Model.FlightQuery;
-import Model.GPX;
-import Model.LatLong;
-import Model.LocSample;
-import Model.LogbookEntry;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBLocation;
-import Model.MFBUtil;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import model.Airport;
+import model.FlightQuery;
+import model.GPX;
+import model.LatLong;
+import model.LocSample;
+import model.LogbookEntry;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBLocation;
+import model.MFBUtil;
 
-public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallback, OnMapsSdkInitializedCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCheckedChangeListener, OnMapLongClickListener {
+public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallback, OnClickListener, OnMarkerClickListener, OnGlobalLayoutListener, OnCheckedChangeListener, OnMapLongClickListener {
 
     private LatLngBounds m_llb = null;
     private LogbookEntry m_le = null;
@@ -442,7 +440,6 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MapsInitializer.initialize(getApplicationContext(), MapsInitializer.Renderer.LATEST, this);
         setContentView(R.layout.flightmap);
         m_gMap = getMap();
         EditText t = findViewById(R.id.txtMapRoute);
@@ -487,17 +484,6 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
         {
             t.setVisibility(View.GONE);
             b.setVisibility(View.GONE);
-        }
-    }
-
-    public void onMapsSdkInitialized(@NonNull MapsInitializer.Renderer renderer) {
-        switch (renderer) {
-            case LATEST:
-                Log.d(MFBConstants.LOG_TAG, "The latest version of the renderer is used.");
-                break;
-            case LEGACY:
-                Log.d(MFBConstants.LOG_TAG, "The legacy version of the renderer is used.");
-                break;
         }
     }
 
@@ -546,13 +532,13 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.txtShareGPX)));
         }
         catch (FileNotFoundException e) {
-            Log.e("Exception", "openFileOutput failed" + e.toString());
+            Log.e("Exception", "openFileOutput failed" + e);
         }
         catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+            Log.e("Exception", "File write failed: " + e);
         }
         catch (SecurityException e) {
-            Log.e("Exception", "Security exception writing file: " + e.toString());
+            Log.e("Exception", "Security exception writing file: " + e);
         }
     }
 
@@ -601,7 +587,7 @@ public class ActFlightMap extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapLongClick(LatLng point) {
         EditText t = findViewById(R.id.txtMapRoute);
         String szAdHoc = new LatLong(point.latitude, point.longitude).toAdHocLocString();
-        t.setText((t.getText() + " " + szAdHoc).trim());
+        t.setText(String.format(Locale.getDefault(), "%s %s", t.getText(), szAdHoc).trim());
     }
 
     public void onCheckedChanged(CompoundButton v, boolean isChecked) {

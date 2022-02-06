@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,10 +46,10 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.myflightbook.android.WebServices.AircraftSvc;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.MakesandModelsSvc;
+import com.myflightbook.android.webservices.AircraftSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.MakesandModelsSvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,18 +57,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import Model.Aircraft;
-import Model.CountryCode;
-import Model.MFBConstants;
-import Model.MFBImageInfo;
-import Model.MFBImageInfo.PictureDestination;
-import Model.MFBUtil;
-import Model.MakesandModels;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import model.Aircraft;
+import model.CountryCode;
+import model.MFBConstants;
+import model.MFBImageInfo;
+import model.MFBImageInfo.PictureDestination;
+import model.MFBUtil;
+import model.MakesandModels;
 
 public class ActNewAircraft extends ActMFBForm implements android.view.View.OnClickListener, OnItemSelectedListener, ActMFBForm.GallerySource {
 

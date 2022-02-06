@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <Model.DecimalEdit
+            <model.DecimalEdit
                 android:id="@+id/decSegmentStart"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 android:padding="10dp"
                 mfb:EditMode="HHMM" />
 
-            <Model.DecimalEdit
+            <model.DecimalEdit
                 android:id="@+id/decSegmentEnd"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"

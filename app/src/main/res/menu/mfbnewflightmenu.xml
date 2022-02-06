@@ -42,4 +42,8 @@
         android:id="@+id/menuResetFlight"
         android:title="@string/menuResetFlight"
         android:titleCondensed="@string/menuResetFlightShort" />
+    <item
+        android:id="@+id/btnAutoFill"
+        android:title="@string/menuAutoFill"
+        app:showAsAction="ifRoom" />
 </menu>

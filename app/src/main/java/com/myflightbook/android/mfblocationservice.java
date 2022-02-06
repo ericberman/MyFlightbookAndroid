@@ -2,7 +2,7 @@ package com.myflightbook.android;
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2018-2021 MyFlightbook, LLC
+    Copyright (C) 2018-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,11 +43,11 @@ import com.google.android.gms.location.LocationServices;
 import java.util.List;
 import java.util.Objects;
 
-import Model.MFBConstants;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import model.MFBConstants;
 
 // Background location service, modeled on the code sample at http://devdeeds.com/android-location-tracking-in-background-service/; thanks!!
 public class mfblocationservice  extends Service implements LocationListener {

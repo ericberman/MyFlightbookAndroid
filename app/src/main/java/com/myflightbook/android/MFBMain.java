@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,27 +44,15 @@ import android.webkit.WebView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.myflightbook.android.WebServices.AuthToken;
-import com.myflightbook.android.WebServices.MFBSoap;
-import com.myflightbook.android.WebServices.RecentFlightsSvc;
+import com.myflightbook.android.webservices.AuthToken;
+import com.myflightbook.android.webservices.MFBSoap;
+import com.myflightbook.android.webservices.RecentFlightsSvc;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import Model.Airport;
-import Model.CustomExceptionHandler;
-import Model.DataBaseHelper;
-import Model.DecimalEdit;
-import Model.GPSSim;
-import Model.LogbookEntry;
-import Model.MFBConstants;
-import Model.MFBFlightListener;
-import Model.MFBLocation;
-import Model.MFBTakeoffSpeed;
-import Model.MFBUtil;
-import Model.Telemetry;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -75,6 +63,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+import model.Airport;
+import model.CustomExceptionHandler;
+import model.DataBaseHelper;
+import model.DecimalEdit;
+import model.GPSSim;
+import model.LogbookEntry;
+import model.MFBConstants;
+import model.MFBFlightListener;
+import model.MFBLocation;
+import model.MFBTakeoffSpeed;
+import model.MFBUtil;
+import model.Telemetry;
 
 public class MFBMain extends AppCompatActivity {
 
@@ -141,7 +141,6 @@ public class MFBMain extends AppCompatActivity {
     static private final String m_KeysUseHHMM = "UseHHMM";
     static private final String m_KeysUseLocal = "UseLocalTime";
 
-    static private final String m_KeysHasSeenWarning = "seenWarning";
     static private final String m_KeysLastTab = "lastTab3";
 
     static private final String m_KeysShowFlightImages = "showFlightImages";
@@ -164,7 +163,6 @@ public class MFBMain extends AppCompatActivity {
     static private final String m_TimeOfLastVacuum = "LastVacuum";
 
     private SharedPreferences mPrefs;
-    private Boolean m_fSeenWarning = false;
     private long mLastVacuum = 0; // ms of last vacuum
 
     private ViewPager2 mViewPager = null;
@@ -439,13 +437,6 @@ public class MFBMain extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(MFBConstants.LOG_TAG, "VACUUM failed: " + e.getLocalizedMessage());
             }
-        }
-
-        Log.v(MFBConstants.LOG_TAG, "onCreate: show warning");
-        if (!m_fSeenWarning) {
-            MFBUtil.Alert(this, this.getString(R.string.errWarningTitle), this.getString(R.string.lblWarning2));
-            m_fSeenWarning = true;
-            SaveState();
         }
 
         Log.v(MFBConstants.LOG_TAG, "onCreate: handle any new intent");
@@ -728,7 +719,6 @@ public class MFBMain extends AppCompatActivity {
             ActOptions.speedUnits = ActOptions.SpeedUnits.values()[mPrefs.getInt(m_KeysSpeedUnits, 0)];
             ActOptions.altitudeUnits = ActOptions.AltitudeUnits.values()[mPrefs.getInt(m_KeysAltUnits, 0)];
 
-            m_fSeenWarning = mPrefs.getBoolean(m_KeysHasSeenWarning, false);
             mLastTabIndex = mPrefs.getInt(m_KeysLastTab, 0);
             mLastVacuum = mPrefs.getLong(m_TimeOfLastVacuum, new Date().getTime());
             MFBTakeoffSpeed.setTakeOffSpeedIndex(mPrefs.getInt(m_KeysTOSpeed, MFBTakeoffSpeed.DefaultTakeOffIndex));
@@ -765,8 +755,6 @@ public class MFBMain extends AppCompatActivity {
         ed.putBoolean(m_KeysUseLocal, DlgDatePicker.fUseLocalTime);
 
         ed.putInt(m_KeysNightMode, MFBMain.NightModePref);
-
-        ed.putBoolean(m_KeysHasSeenWarning, m_fSeenWarning);
 
         ed.putBoolean(m_KeysShowFlightImages, ActRecentsWS.fShowFlightImages);
         ed.putInt(m_KeysShowFlightTimes, ActRecentsWS.flightDetail.ordinal());
