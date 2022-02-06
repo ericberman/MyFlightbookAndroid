@@ -159,6 +159,8 @@ public class ActViewTemplates extends ListFragment implements OnItemClickListene
 
             CheckBox ckIsActive = v.findViewById(R.id.ckActiveTemplate);
             ckIsActive.setChecked(ActViewTemplates.this.m_activeTemplates.contains(m_templateRows[position].pt));
+            final View vwCk = v;
+            ckIsActive.setOnClickListener(view -> ActViewTemplates.this.onItemClick(null, vwCk, position, 0));
 
             return v;
         }
