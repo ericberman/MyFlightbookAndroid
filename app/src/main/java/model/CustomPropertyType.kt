@@ -26,13 +26,13 @@ import org.ksoap2.serialization.KvmSerializable
 import org.ksoap2.serialization.PropertyInfo
 import org.ksoap2.serialization.SoapObject
 import java.io.Serializable
-import java.lang.Exception
 import java.util.*
 
+@Suppress("EnumEntryName")
 class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Serializable,
     KvmSerializable {
     enum class CFPPropertyType {
-        CFPInteger, CFPDecimal, CFPBoolean, CFPDate, CFPDateTime, CFPString, CFPCurrency
+        cfpInteger, cfpDecimal, cfpBoolean, cfpDate, cfpDateTime, cfpString, cfpCurrency
     }
 
     private enum class CPTPropID {
@@ -49,7 +49,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
     @JvmField
     var szFormatString = ""
     @JvmField
-    var cptType = CFPPropertyType.CFPInteger
+    var cptType = CFPPropertyType.cfpInteger
 
     @JvmField
     var cptFlag = 0
@@ -122,7 +122,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         if (szSortKey.isEmpty()) szSortKey = szTitle
         szFormatString = so.getProperty("FormatString").toString()
         szDescription = so.getPropertySafelyAsString("Description")
-        cptType = CustomPropertyType.cptFromServerString(so.getProperty("Type").toString())
+        cptType = CFPPropertyType.valueOf(so.getProperty("Type").toString())
         cptFlag = so.getProperty("Flags").toString().toInt()
         isFavorite = java.lang.Boolean.parseBoolean(so.getProperty("IsFavorite").toString())
         val prevVals = so.getProperty("PreviousValues") as SoapObject
@@ -243,20 +243,6 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
                 if (cpt.idPropType == id) return cpt
             }
             return null
-        }
-        
-        @JvmStatic
-        fun cptFromServerString(sz: String) : CFPPropertyType {
-            return when (sz) {
-                "cfpInteger" -> CFPPropertyType.CFPInteger
-                "cfpDecimal" -> CFPPropertyType.CFPDecimal
-                "cfpBoolean" -> CFPPropertyType.CFPBoolean
-                "cfpDate" -> CFPPropertyType.CFPDate
-                "cfpDateTime" -> CFPPropertyType.CFPDateTime
-                "cfpString" -> CFPPropertyType.CFPString
-                "cfpCurrency" -> CFPPropertyType.CFPCurrency
-                else -> throw Exception("Unknown property type: " + sz)
-            }
         }
 
         //region Pinned properties

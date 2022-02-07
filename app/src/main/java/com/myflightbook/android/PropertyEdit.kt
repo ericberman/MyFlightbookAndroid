@@ -179,9 +179,9 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
         txtNumericField?.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
                 when (fp.getType()) {
-                    CFPPropertyType.CFPCurrency, CFPPropertyType.CFPDecimal -> flightProperty!!.decValue =
+                    CFPPropertyType.cfpCurrency, CFPPropertyType.cfpDecimal -> flightProperty!!.decValue =
                         txtNumericField.doubleValue
-                    CFPPropertyType.CFPInteger -> flightProperty!!.intValue =
+                    CFPPropertyType.cfpInteger -> flightProperty!!.intValue =
                         txtNumericField.intValue
                     else -> {}
                 }
@@ -215,7 +215,7 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
             } else {
                 val ddp = DlgDatePicker(
                     context,
-                    if (fp.getType() === CFPPropertyType.CFPDate) DlgDatePicker.DatePickMode.LOCALDATEONLY else DlgDatePicker.DatePickMode.UTCDATETIME,
+                    if (fp.getType() === CFPPropertyType.cfpDate) DlgDatePicker.DatePickMode.LOCALDATEONLY else DlgDatePicker.DatePickMode.UTCDATETIME,
                     (if (fp.dateValue == null) Date() else fp.dateValue)!!
                 )
                 ddp.mDelegate = this@PropertyEdit
@@ -245,30 +245,30 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
         updateLabelTypefaceForProperty()
         val cptType = flightProperty!!.getType()!!
         val fIsBasicDecimal =
-            cptType === CFPPropertyType.CFPDecimal && flightProperty!!.getCustomPropertyType()!!.cptFlag and 0x00200000 != 0
+            cptType === CFPPropertyType.cfpDecimal && flightProperty!!.getCustomPropertyType()!!.cptFlag and 0x00200000 != 0
         mTvlabel!!.visibility = VISIBLE
         mTxtstringval!!.visibility = GONE
         mTxtnumericfield!!.visibility = GONE
         mCk!!.visibility = GONE
         mTvdate!!.visibility = GONE
         when (cptType) {
-            CFPPropertyType.CFPInteger -> {
+            CFPPropertyType.cfpInteger -> {
                 mTxtnumericfield!!.visibility = VISIBLE
                 mTxtnumericfield!!.setMode(DecimalEdit.EditMode.INTEGER)
                 mTxtnumericfield!!.intValue = flightProperty!!.intValue
             }
-            CFPPropertyType.CFPDecimal -> {
+            CFPPropertyType.cfpDecimal -> {
                 mTxtnumericfield!!.visibility = VISIBLE
                 mTxtnumericfield!!.setMode(if (DecimalEdit.DefaultHHMM && !fIsBasicDecimal) DecimalEdit.EditMode.HHMM else DecimalEdit.EditMode.DECIMAL)
                 mTxtnumericfield!!.doubleValue = flightProperty!!.decValue
                 if (mCfd != null) mTxtnumericfield!!.setDelegate(mCfd)
             }
-            CFPPropertyType.CFPCurrency -> {
+            CFPPropertyType.cfpCurrency -> {
                 mTxtnumericfield!!.visibility = VISIBLE
                 mTxtnumericfield!!.setMode(DecimalEdit.EditMode.DECIMAL)
                 mTxtnumericfield!!.doubleValue = flightProperty!!.decValue
             }
-            CFPPropertyType.CFPString -> {
+            CFPPropertyType.cfpString -> {
                 mTxtstringval!!.visibility = VISIBLE
                 mTxtstringval!!.hint = ""
                 val capFlag =
@@ -287,15 +287,15 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
                 }
                 mTxtstringval!!.threshold = 1
             }
-            CFPPropertyType.CFPBoolean -> {
+            CFPPropertyType.cfpBoolean -> {
                 mCk!!.visibility = VISIBLE
                 mTvlabel!!.visibility = GONE
             }
-            CFPPropertyType.CFPDate -> {
+            CFPPropertyType.cfpDate -> {
                 mTvdate!!.visibility = VISIBLE
                 setPropDate(flightProperty!!.dateValue, false)
             }
-            CFPPropertyType.CFPDateTime -> {
+            CFPPropertyType.cfpDateTime -> {
                 mTvdate!!.visibility = VISIBLE
                 setPropDate(flightProperty!!.dateValue, true)
             }
@@ -318,11 +318,11 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
     val property: FlightProperty?
         get() {
             when (flightProperty?.getType()) {
-                CFPPropertyType.CFPInteger -> flightProperty!!.intValue = mTxtnumericfield!!.intValue
-                CFPPropertyType.CFPDecimal, CFPPropertyType.CFPCurrency -> flightProperty!!.decValue =
+                CFPPropertyType.cfpInteger -> flightProperty!!.intValue = mTxtnumericfield!!.intValue
+                CFPPropertyType.cfpDecimal, CFPPropertyType.cfpCurrency -> flightProperty!!.decValue =
                     mTxtnumericfield!!.doubleValue
-                CFPPropertyType.CFPString -> flightProperty!!.stringValue = mTxtstringval!!.text.toString()
-                CFPPropertyType.CFPBoolean -> flightProperty!!.boolValue = mCk!!.isChecked
+                CFPPropertyType.cfpString -> flightProperty!!.stringValue = mTxtstringval!!.text.toString()
+                CFPPropertyType.cfpBoolean -> flightProperty!!.boolValue = mCk!!.isChecked
                 else -> {}
             }
             if (mPl != null)

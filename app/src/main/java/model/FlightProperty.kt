@@ -37,7 +37,6 @@ import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class FlightProperty : SoapableObject, KvmSerializable, Serializable {
     private enum class FPProp {
@@ -64,13 +63,13 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
     private var mCpt: CustomPropertyType? = null // not persisted, just cached.
     fun isDefaultValue(): Boolean {
         when (mCpt?.cptType) {
-            CFPPropertyType.CFPInteger -> return intValue == 0
-            CFPPropertyType.CFPCurrency, CFPPropertyType.CFPDecimal -> return decValue == 0.0
-            CFPPropertyType.CFPBoolean -> return !boolValue
-            CFPPropertyType.CFPDate, CFPPropertyType.CFPDateTime -> return dateValue == null || isNullDate(
+            CFPPropertyType.cfpInteger -> return intValue == 0
+            CFPPropertyType.cfpCurrency, CFPPropertyType.cfpDecimal -> return decValue == 0.0
+            CFPPropertyType.cfpBoolean -> return !boolValue
+            CFPPropertyType.cfpDate, CFPPropertyType.cfpDateTime -> return dateValue == null || isNullDate(
                 dateValue
             )
-            CFPPropertyType.CFPString -> return stringValue.isEmpty()
+            CFPPropertyType.cfpString -> return stringValue.isEmpty()
         }
         return true
     }
@@ -83,27 +82,27 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
         if (mCpt == null) return String.format(Locale.getDefault(), "(PropType %d)", idPropType)
         if (isDefaultValue()) return ""
         when (mCpt?.cptType) {
-            CFPPropertyType.CFPInteger -> return String.format(Locale.getDefault(), "%d", intValue)
-            CFPPropertyType.CFPCurrency -> return String.format(
+            CFPPropertyType.cfpInteger -> return String.format(Locale.getDefault(), "%d", intValue)
+            CFPPropertyType.cfpCurrency -> return String.format(
                 Locale.getDefault(),
                 "%.1f",
                 decValue
             )
-            CFPPropertyType.CFPDecimal -> return if (DecimalEdit.DefaultHHMM) doubleToHHMM(decValue) else String.format(
+            CFPPropertyType.cfpDecimal -> return if (DecimalEdit.DefaultHHMM) doubleToHHMM(decValue) else String.format(
                 Locale.getDefault(),
                 "%.1f",
                 decValue
             )
-            CFPPropertyType.CFPBoolean -> return if (boolValue) "Yes" else ""
-            CFPPropertyType.CFPDate -> return if (dateValue != null) {
+            CFPPropertyType.cfpBoolean -> return if (boolValue) "Yes" else ""
+            CFPPropertyType.cfpDate -> return if (dateValue != null) {
                 SimpleDateFormat.getDateInstance().format(dateValue!!)
             } else ""
-            CFPPropertyType.CFPDateTime -> return if (dateValue != null) formatDate(
+            CFPPropertyType.cfpDateTime -> return if (dateValue != null) formatDate(
                 fLocal,
                 dateValue!!,
                 c
             ) else ""
-            CFPPropertyType.CFPString -> return stringValue
+            CFPPropertyType.cfpString -> return stringValue
         }
         return ""
     }
@@ -252,7 +251,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
         cv.put("idFlight", idFlight)
         cv.put("idPropType", idPropType)
         val cpt = mCpt
-        if (cpt != null && cpt.cptType === CFPPropertyType.CFPBoolean ||
+        if (cpt != null && cpt.cptType === CFPPropertyType.cfpBoolean ||
             boolValue && intValue == 0
         ) cv.put("IntValue", 1) else cv.put("IntValue", intValue)
         cv.put("DecValue", decValue)
