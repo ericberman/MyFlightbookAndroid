@@ -38,7 +38,6 @@ import com.myflightbook.android.webservices.MakesandModelsSvc
 import model.MFBConstants
 import model.MFBUtil.alert
 import model.MFBUtil.showProgress
-import kotlin.collections.HashMap
 import java.util.*
 
 class ActSelectMake : FixedExpandableListActivity() {
@@ -127,7 +126,7 @@ class ActSelectMake : FixedExpandableListActivity() {
         var expandedGroupIndex = -1
         val szRestrict =
             (findViewById<View>(R.id.txtSearchProp) as EditText).text.toString().uppercase(Locale.getDefault())
-        val rgRestrictStrings = szRestrict.split("\\W").toTypedArray()
+        val rgRestrictStrings = szRestrict.split("\\W".toRegex()).toTypedArray()
 
         val rgmm = ActNewAircraft.AvailableMakesAndModels
 

@@ -315,7 +315,7 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
             (findViewById<View>(R.id.txtSearchProp) as EditText).text.toString().uppercase(
                 Locale.getDefault()
             )
-        val rgTerms = szRestrict.split("\\s+").toTypedArray()
+        val rgTerms = szRestrict.split("\\s+".toRegex()).toTypedArray()
 
         // slice and dice into headers/first names
         for (fp in mRgfpall!!) {
