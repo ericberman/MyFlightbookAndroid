@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,7 +49,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
     // for serialization

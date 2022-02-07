@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2021 MyFlightbook, LLC
+    Copyright (C) 2017-2022 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,42 +18,24 @@
  */
 package com.myflightbook.android
 
-import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
-import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.searchableProperties
-import android.os.Bundle
-import model.Airport
-import android.content.Intent
 import android.app.Activity
 import android.app.AlertDialog
-import model.Aircraft
-import android.os.AsyncTask
-import com.myflightbook.android.webservices.MFBSoap
 import android.app.ProgressDialog
 import android.content.Context
-import com.myflightbook.android.webservices.AircraftSvc
-import com.myflightbook.android.webservices.AuthToken
-import model.MFBUtil
-import model.MFBConstants
-import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
-import model.FlightQuery
 import android.content.DialogInterface
-import model.MakeModel
-import com.myflightbook.android.webservices.CannedQuerySvc
-import model.CannedQuery
-import com.myflightbook.android.webservices.CustomPropertyTypesSvc
-import model.DBCache
-import model.FlightQuery.DateRanges
-import model.CategoryClass
-import model.CustomPropertyType
+import android.content.Intent
+import android.os.AsyncTask
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.widget.*
-import model.FlightQuery.GroupConjunction
-import model.FlightQuery.EngineTypeRestriction
-import model.FlightQuery.AircraftInstanceRestriction
-import model.FlightQuery.FlightDistance
-import java.lang.Exception
+import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
+import com.myflightbook.android.webservices.*
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.searchableProperties
+import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
+import model.*
+import model.FlightQuery.*
 import java.util.*
 
 class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
