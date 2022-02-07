@@ -220,9 +220,12 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
                 fp,
                 fp.idPropType,
                 this@ActViewProperties,
-                if (fp.idPropType == CustomPropertyType.idPropTypeTachStart) ({ sender: DecimalEdit ->
-                    if (mXfilltachstart > 0) sender.doubleValue = mXfilltachstart
-                } as CrossFillDelegate) else this@ActViewProperties)
+                if (fp.idPropType == CustomPropertyType.idPropTypeTachStart) (
+                        object: CrossFillDelegate {
+                            override fun crossFillRequested(sender: DecimalEdit?) {
+                                if (mXfilltachstart > 0 && sender != null) sender.doubleValue = mXfilltachstart
+                            }
+                        }) else this@ActViewProperties)
             return convertView
         }
 

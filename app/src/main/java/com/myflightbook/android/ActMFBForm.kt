@@ -19,35 +19,16 @@
 package com.myflightbook.android
 
 import android.Manifest
-import com.myflightbook.android.webservices.UTCDate.isNullDate
-import com.myflightbook.android.webservices.UTCDate.formatDate
-import android.os.Bundle
-import model.MFBConstants
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
-import androidx.core.content.FileProvider
-import model.MFBImageInfo
-import model.MFBImageInfo.PictureDestination
-import androidx.activity.result.ActivityResultLauncher
-import android.os.AsyncTask
-import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
-import model.MFBLocation
-import android.provider.MediaStore
-import android.os.Environment
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
-import model.MFBUtil
-import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
-import com.myflightbook.android.DlgDatePicker.DatePickMode
-import model.DecimalEdit
-import model.DecimalEdit.EditMode
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.drawable.Drawable
-import com.myflightbook.android.webservices.ImagesSvc
-import com.myflightbook.android.webservices.AuthToken
+import android.os.AsyncTask
 import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.MenuItem
@@ -56,11 +37,24 @@ import android.view.animation.Animation
 import android.view.animation.Transformation
 import android.widget.*
 import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.myflightbook.android.DlgDatePicker.DatePickMode
+import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
+import com.myflightbook.android.webservices.AuthToken
+import com.myflightbook.android.webservices.ImagesSvc
+import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
+import com.myflightbook.android.webservices.UTCDate.formatDate
+import com.myflightbook.android.webservices.UTCDate.isNullDate
+import model.*
+import model.DecimalEdit.EditMode
+import model.MFBImageInfo.PictureDestination
 import java.io.*
-import java.lang.Exception
-import java.lang.NullPointerException
 import java.util.*
 
 /*
@@ -465,13 +459,14 @@ import java.util.*
                 val dlgComment = DlgImageComment(
                     requireActivity(),
                     mfbii,
-                    ({
-                        setUpImageGallery(
-                            src.getGalleryID(),
-                            src.getImages(),
-                            src.getGalleryHeader()
-                        )
-                    }) as DlgImageComment.AnnotationUpdate
+                    object : DlgImageComment.AnnotationUpdate {
+                        override fun updateAnnotation(mfbii: MFBImageInfo?) {
+                            setUpImageGallery(
+                                src.getGalleryID(),
+                                src.getImages(),
+                                src.getGalleryHeader())
+                        }
+                    }
                 )
                 dlgComment.show()
             }
