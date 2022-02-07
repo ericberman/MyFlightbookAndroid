@@ -1,0 +1,264 @@
+/*
+	MyFlightbook for Android - provides native access to MyFlightbook
+	pilot's logbook
+    Copyright (C) 2017-2022 MyFlightbook, LLC
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.myflightbook.android
+
+import com.myflightbook.android.webservices.AuthToken.Companion.isValid
+import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
+import android.os.Bundle
+import android.content.Intent
+import com.myflightbook.android.MFBMain.Invalidatable
+import android.os.AsyncTask
+import com.myflightbook.android.webservices.MFBSoap
+import android.app.ProgressDialog
+import android.content.Context
+import com.myflightbook.android.webservices.AuthToken
+import model.MFBUtil
+import model.MFBConstants
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.myflightbook.android.webservices.CurrencySvc
+import model.CurrencyStatusItem
+import model.PackAndGo
+import android.graphics.Typeface
+import model.CurrencyStatusItem.CurrencyGroups
+import android.graphics.Color
+import android.util.Log
+import android.view.*
+import android.widget.*
+import java.lang.Exception
+import java.lang.NullPointerException
+import java.text.DateFormat
+import java.util.*
+
+class ActCurrency : ActMFBForm(), Invalidatable {
+    private class RefreshCurrency(c: Context, ac: ActCurrency) :
+        AsyncTask<Void?, Void?, MFBSoap>() {
+        private var mPd: ProgressDialog? = null
+        var mResult: Array<CurrencyStatusItem> = arrayOf()
+        val mCtxt: AsyncWeakContext<ActCurrency> = AsyncWeakContext(c, ac)
+        override fun doInBackground(vararg params: Void?): MFBSoap {
+            val cs = CurrencySvc()
+            mResult = cs.getCurrencyForUser(AuthToken.m_szAuthToken, mCtxt.context)
+            return cs
+        }
+
+        override fun onPreExecute() {
+            mPd =
+                MFBUtil.showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgCurrency))
+        }
+
+        override fun onPostExecute(svc: MFBSoap) {
+            try {
+                if (mPd != null) mPd!!.dismiss()
+            } catch (e: Exception) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+            }
+            val ac = mCtxt.callingActivity
+            if (ac == null || !ac.isAdded || ac.isDetached || ac.activity == null) return
+            mRgcsi = mResult
+            if (svc.lastError.isNotEmpty()) {
+                MFBUtil.alert(ac, ac.getString(R.string.txtError), svc.lastError)
+            } else {
+                setNeedsRefresh(false)
+                val p = PackAndGo(mCtxt.context!!)
+                p.updateCurrency(mRgcsi)
+                ac.bindTable()
+            }
+        }
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        setHasOptionsMenu(true)
+        return inflater.inflate(R.layout.currency, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val tvDisclaimer = findViewById(R.id.lnkCurrencyDisclaimer) as TextView
+        tvDisclaimer.setOnClickListener {
+            ActWebView.viewURL(
+                requireActivity(), String.format(
+                    Locale.US,
+                    "https://%s/logbook/public/CurrencyDisclaimer.aspx?naked=1&%s",
+                    MFBConstants.szIP,
+                    MFBConstants.nightParam(
+                        context
+                    )
+                )
+            )
+        }
+        MFBMain.registerNotifyDataChange(this)
+        MFBMain.registerNotifyResetAll(this)
+        val srl = findViewById(R.id.swiperefresh) as SwipeRefreshLayout
+        srl.setOnRefreshListener {
+            srl.isRefreshing = false
+            refresh(true)
+        }
+    }
+
+    private fun redirectTo(szDest: String) {
+        ActWebView.viewURL(requireActivity(), MFBConstants.authRedirWithParams("d=$szDest", context))
+    }
+
+    private fun bindTable() {
+        val tl = findViewById(R.id.tblCurrency) as TableLayout
+        tl.removeAllViews()
+        val l = requireActivity().layoutInflater
+        for (csi in mRgcsi) {
+            try {
+                // TableRow tr = new TableRow(this);
+                val tr = l.inflate(R.layout.currencyrow, tl, false) as TableRow
+                val tvAttribute = tr.findViewById<TextView>(R.id.txtCsiAttribute)
+                val tvValue = tr.findViewById<TextView>(R.id.txtCsiValue)
+                val tvDiscrepancy = tr.findViewById<TextView>(R.id.txtCsiDiscrepancy)
+                tvAttribute.text = csi!!.attribute
+                tvValue.text = csi.value
+                tvDiscrepancy.text = csi.discrepancy
+                if (csi.discrepancy.isEmpty()) tvDiscrepancy.visibility = View.GONE
+                when {
+                    csi.status.compareTo("NotCurrent") == 0 -> {
+                        tvValue.setTextColor(Color.RED)
+                        tvValue.setTypeface(tvValue.typeface, Typeface.BOLD)
+                    }
+                    csi.status.compareTo("GettingClose") == 0 -> {
+                        tvValue.setTextColor(Color.argb(255, 0, 128, 255))
+                        tvValue.setTypeface(tvValue.typeface, Typeface.BOLD)
+                    }
+                    csi.status.compareTo("NoDate") == 0 -> {
+                        tvValue.setTextColor(requireContext().getColor(R.color.textColorPrimary))
+                        tvValue.setTypeface(tvValue.typeface, Typeface.BOLD)
+                    }
+                    else -> tvValue.setTextColor(requireContext().getColor(R.color.currencyGreen))
+                }
+                tl.addView(
+                    tr,
+                    TableLayout.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                    )
+                )
+                tr.setOnClickListener {
+                    if (!isOnline(context)) return@setOnClickListener
+                    when (csi.currencyGroup) {
+                        CurrencyGroups.None -> {}
+                        CurrencyGroups.Aircraft -> {
+                            val i = Intent(activity, EditAircraftActivity::class.java)
+                            i.putExtra(
+                                ActEditAircraft.AIRCRAFTID,
+                                csi.associatedResourceID
+                            )
+                            startActivity(i)
+                        }
+                        CurrencyGroups.Medical -> redirectTo("MEDICAL")
+                        CurrencyGroups.Deadline -> redirectTo("DEADLINE")
+                        CurrencyGroups.AircraftDeadline -> redirectTo(
+                            String.format(
+                                Locale.US,
+                                "AIRCRAFTEDIT&id=%d",
+                                csi.associatedResourceID
+                            )
+                        )
+                        CurrencyGroups.Certificates -> redirectTo("CERTIFICATES")
+                        CurrencyGroups.FlightReview -> redirectTo("FLIGHTREVIEW")
+                        CurrencyGroups.FlightExperience -> if (csi.query != null) {
+                            val i = Intent(activity, RecentFlightsActivity::class.java)
+                            val b = Bundle()
+                            b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, csi.query)
+                            i.putExtras(b)
+                            startActivity(i)
+                        }
+                        CurrencyGroups.CustomCurrency -> if (csi.query == null) redirectTo("CUSTOMCURRENCY") else {
+                            val i = Intent(activity, RecentFlightsActivity::class.java)
+                            val b = Bundle()
+                            b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, csi.query)
+                            i.putExtras(b)
+                            startActivity(i)
+                        }
+                        else -> {}
+                    }
+                }
+            } catch (ex: NullPointerException) { // should never happen.
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex))
+            }
+        }
+    }
+
+    private fun refresh(fForce: Boolean) {
+        if (isValid() && (fForce || fNeedsRefresh)) {
+            if (isOnline(context)) {
+                val ts = RefreshCurrency(requireActivity(), this)
+                ts.execute()
+            } else {
+                val p = PackAndGo(requireContext())
+                val dt = p.lastCurrencyPackDate()
+                if (dt != null) {
+                    mRgcsi = p.cachedCurrency() ?: arrayOf()
+                    setNeedsRefresh(false)
+                    bindTable()
+                    MFBUtil.alert(
+                        context, getString(R.string.packAndGoOffline), String.format(
+                            Locale.getDefault(),
+                            getString(R.string.packAndGoUsingCached),
+                            DateFormat.getDateInstance().format(dt)
+                        )
+                    )
+                } else MFBUtil.alert(
+                    context,
+                    getString(R.string.txtError),
+                    getString(R.string.errNoInternet)
+                )
+            }
+        } else bindTable()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.currencymenu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        if (item.itemId == R.id.menuRefresh) {
+            refresh(true)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        refresh(fNeedsRefresh)
+        super.onResume()
+    }
+
+    override fun invalidate() {
+        setNeedsRefresh(true)
+    }
+
+    companion object {
+        private var fNeedsRefresh = true
+        fun setNeedsRefresh(f: Boolean) {
+            fNeedsRefresh = f
+        }
+
+        private var mRgcsi: Array<CurrencyStatusItem> = arrayOf()
+    }
+}
