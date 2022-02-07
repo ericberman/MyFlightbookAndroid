@@ -196,4 +196,19 @@ object MFBUtil {
         val s = serializeToString(obj)
         return if (s.isEmpty()) null else deserializeFromString(s)
     } // endregion
+
+    private val mHash = HashMap<String, Any>()
+
+    fun putCacheForKey(key : String, obj : Any) {
+        mHash[key] = obj
+    }
+
+    fun getForKey(key: String?) : Any? {
+        return if (key != null && mHash.containsKey(key)) mHash[key] else null;
+    }
+
+    fun removeForKey(key:String?) {
+        if (key != null && mHash.containsKey(key))
+            mHash.remove(key)
+    }
 }

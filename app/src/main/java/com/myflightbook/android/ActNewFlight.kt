@@ -76,7 +76,9 @@ import model.MFBLocation.Companion.getMainLocation
 import model.MFBLocation.Companion.hasGPS
 import model.MFBLocation.GPSQuality
 import model.MFBUtil.alert
+import model.MFBUtil.getForKey
 import model.MFBUtil.nowWith0Seconds
+import model.MFBUtil.removeForKey
 import model.MFBUtil.removeSeconds
 import model.MFBUtil.showProgress
 import model.PropertyTemplate.Companion.anonTemplate
@@ -535,7 +537,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         findViewById(R.id.txtHobbsStart)!!.onFocusChangeListener = s
         findViewById(R.id.txtHobbsEnd)!!.onFocusChangeListener = s
         val i = requireActivity().intent
-        val leToView = i.getSerializableExtra(ActRecentsWS.VIEWEXISTINGFLIGHT) as LogbookEntry?
+        val keyForLeToView = i.getStringExtra(ActRecentsWS.VIEWEXISTINGFLIGHT)
+        val leToView = if (keyForLeToView == null) null else getForKey(keyForLeToView) as LogbookEntry?
+        removeForKey(keyForLeToView)
         val fIsNewFlight = leToView == null
         if (!fIsNewFlight && mRgac == null) mRgac = AircraftSvc().cachedAircraft
         val sp = findViewById(R.id.spnAircraft) as Spinner?

@@ -61,6 +61,7 @@ import model.LogbookEntry.Companion.unsubmittedFlights
 import model.LogbookEntry.SigStatus
 import model.MFBImageInfo.ImageCacheCompleted
 import model.MFBUtil.alert
+import model.MFBUtil.putCacheForKey
 import model.MFBUtil.showProgress
 import java.util.*
 import java.util.regex.Pattern
@@ -558,8 +559,12 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
         listView.onItemClickListener =
             OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
                 if (position >= 0 || position < mRgle!!.size) {
+                    // Entry could be larger than can be passed directly in intent, so put it
+                    // into the MFBUtil cache and retrieve it on the other end
+                    val key = UUID.randomUUID().toString()
+                    putCacheForKey(key, mRgle!![position])
                     val i = Intent(activity, EditFlightActivity::class.java)
-                    i.putExtra(VIEWEXISTINGFLIGHT, mRgle!![position])
+                    i.putExtra(VIEWEXISTINGFLIGHT, key)
                     startActivity(i)
                 }
             }
