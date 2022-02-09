@@ -43,11 +43,10 @@ import model.VisitedAirport
 import model.VisitedAirport.Companion.toRoute
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
     private class RefreshVisitedAirports(
-        c: Context?,
+        c: Context,
         ava: ActVisitedAirports
     ) : AsyncTask<Void?, Void?, MFBSoap>() {
         private var mPd: ProgressDialog? = null
@@ -55,7 +54,7 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
         private val mCtxt: AsyncWeakContext<ActVisitedAirports> = AsyncWeakContext(c, ava)
         override fun doInBackground(vararg params: Void?): MFBSoap {
             val vas = VisitedAirportSvc()
-            mResult = vas.getVisitedAirportsForUser(AuthToken.m_szAuthToken, mCtxt.context)
+            mResult = vas.getVisitedAirportsForUser(AuthToken.m_szAuthToken, mCtxt.context!!)
             return vas
         }
 
@@ -126,7 +125,7 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
     }
 
     private fun refreshAirports() {
-        if (isOnline(context)) RefreshVisitedAirports(activity, this).execute() else {
+        if (isOnline(context)) RefreshVisitedAirports(requireActivity(), this).execute() else {
             val p = PackAndGo(requireContext())
             val dt = p.lastAirportsPackDate()
             if (dt != null) {

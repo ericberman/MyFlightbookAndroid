@@ -20,15 +20,10 @@ package com.myflightbook.android.webservices
 
 import android.content.Context
 import com.myflightbook.android.marshal.MarshalDate
-import org.ksoap2.serialization.SoapSerializationEnvelope
-import model.LatLong
-import model.Airport
 import com.myflightbook.android.marshal.MarshalDouble
-import model.VisitedAirport
+import model.*
 import org.ksoap2.serialization.SoapObject
-import model.MFBLocation
-import model.MFBConstants
-import java.lang.Exception
+import org.ksoap2.serialization.SoapSerializationEnvelope
 
 class VisitedAirportSvc : MFBSoap() {
     override fun addMappings(e: SoapSerializationEnvelope) {
@@ -40,7 +35,7 @@ class VisitedAirportSvc : MFBSoap() {
         md.register(e)
     }
 
-    fun getVisitedAirportsForUser(szAuthToken: String?, c: Context?): Array<VisitedAirport> {
+    fun getVisitedAirportsForUser(szAuthToken: String?, c: Context): Array<VisitedAirport> {
         val request = setMethod("VisitedAirports")
         request.addProperty("szAuthToken", szAuthToken)
         val rgva : ArrayList<VisitedAirport> = ArrayList()

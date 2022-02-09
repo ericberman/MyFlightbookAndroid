@@ -19,21 +19,11 @@
 package com.myflightbook.android.webservices
 
 import android.content.Context
-import org.ksoap2.serialization.SoapSerializationEnvelope
-import model.MFBImageInfo
-import model.LatLong
-import model.LogbookEntry
-import model.FlightProperty
-import model.Aircraft
-import model.MakeModel
-import model.CategoryClass
-import model.CustomPropertyType
-import model.FlightQuery
-import model.CannedQuery
-import com.myflightbook.android.marshal.MarshalDouble
-import org.ksoap2.serialization.SoapObject
 import com.myflightbook.android.marshal.MarshalDate
-import java.lang.Exception
+import com.myflightbook.android.marshal.MarshalDouble
+import model.*
+import org.ksoap2.serialization.SoapObject
+import org.ksoap2.serialization.SoapSerializationEnvelope
 
 class CannedQuerySvc : MFBSoap() {
     override fun addMappings(e: SoapSerializationEnvelope) {
@@ -63,7 +53,7 @@ class CannedQuerySvc : MFBSoap() {
         return rgcq.toTypedArray()
     }
 
-    fun getNamedQueriesForUser(szAuthToken: String?, c: Context?): Array<CannedQuery> {
+    fun getNamedQueriesForUser(szAuthToken: String?, c: Context): Array<CannedQuery> {
         val request = setMethod("GetNamedQueriesForUser")
         request.addProperty("szAuthToken", szAuthToken)
         val rgcq = ArrayList<CannedQuery>()

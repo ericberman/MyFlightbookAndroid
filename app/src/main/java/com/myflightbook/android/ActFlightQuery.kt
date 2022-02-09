@@ -46,14 +46,14 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
     private var fShowAllAircraft = false
     private var fCannedQueryClicked = false
 
-    private class GetCannedQueryTask(c: Context?, afq: ActFlightQuery) :
+    private class GetCannedQueryTask(c: Context, afq: ActFlightQuery) :
         AsyncTask<Void?, Void?, MFBSoap?>() {
         private val mAfq: AsyncWeakContext<ActFlightQuery> = AsyncWeakContext(c, afq)
         override fun doInBackground(vararg params: Void?): MFBSoap {
             val cqSVC = CannedQuerySvc()
             CannedQuery.cannedQueries = cqSVC.getNamedQueriesForUser(
                 AuthToken.m_szAuthToken,
-                mAfq.context
+                mAfq.context!!
             )
             return cqSVC
         }

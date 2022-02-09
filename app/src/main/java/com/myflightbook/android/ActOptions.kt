@@ -72,7 +72,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
     private var fPendingAutodetect = false
     private var fPendingRecord = false
 
-    private class PackData(c: Context?, opt: ActOptions) :
+    private class PackData(c: Context, opt: ActOptions) :
         AsyncTask<Void?, Int?, String>() {
         private var mPd: ProgressDialog? = null
         private val mCtxt: AsyncWeakContext<ActOptions> = AsyncWeakContext(c, opt)
@@ -548,7 +548,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
             )
         ) else if (id == R.id.btnFAQ) ActWebView.viewURL(
             requireActivity(), MFBConstants.urlFAQ
-        ) else if (id == R.id.btnPackAndGo) PackData(context, this).execute()
+        ) else if (id == R.id.btnPackAndGo) PackData(requireContext(), this).execute()
     }
 
     companion object {
