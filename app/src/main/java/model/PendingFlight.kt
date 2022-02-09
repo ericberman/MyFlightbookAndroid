@@ -25,7 +25,8 @@ class PendingFlight : LogbookEntry {
         mPendingID = ""
     }
 
-    constructor(o: SoapObject?) : super(o!!) {
+    constructor(so: SoapObject) : super(so) {
+        super.fromProperties(so)
         if (mPendingID.isNotEmpty()) idFlight = 0
     }
 

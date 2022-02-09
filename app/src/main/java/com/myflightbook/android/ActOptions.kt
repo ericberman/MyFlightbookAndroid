@@ -474,7 +474,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
 
         // First delete all of the ones that haven't been saved to the server
         val rgMfbiiAircraft = allAircraftImages
-        for (mfbii in rgMfbiiAircraft) if (!mfbii!!.isOnServer()) mfbii.deleteFromDB()
+        for (mfbii in rgMfbiiAircraft) if (!mfbii.isOnServer()) mfbii.deleteFromDB()
 
         // now delete any remaining aircraft images that might be in our files.
         deleteOrphansNotInList(PictureDestination.AircraftImage, ArrayList(), requireActivity())

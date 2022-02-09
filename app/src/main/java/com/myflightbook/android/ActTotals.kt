@@ -108,7 +108,7 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
             } else {
                 setNeedsRefresh(false)
                 at.mTotalsRows = at.groupedTotals(rgti)
-                if (!at.currentQuery!!.HasCriteria()) {
+                if (!at.currentQuery!!.hasCriteria()) {
                     val p = PackAndGo(mCtxt.context!!)
                     p.updateTotals(mResult)
                 }
@@ -237,7 +237,7 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
             ?: throw NullPointerException("getView returned null in BindTable in ActTotals")
         val tv = v.findViewById<TextView>(R.id.txtFlightQueryStatus)
         tv.text =
-            getString(if (currentQuery != null && currentQuery!!.HasCriteria()) R.string.fqStatusNotAllflights else R.string.fqStatusAllFlights)
+            getString(if (currentQuery != null && currentQuery!!.hasCriteria()) R.string.fqStatusNotAllflights else R.string.fqStatusAllFlights)
         if (mTotalsRows == null) mTotalsRows = arrayOfNulls(0)
         val ta = TotalsAdapter(activity, mTotalsRows)
         listAdapter = ta

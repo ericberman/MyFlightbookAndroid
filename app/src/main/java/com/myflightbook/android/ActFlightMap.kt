@@ -20,49 +20,37 @@ package com.myflightbook.android
 
 import android.Manifest
 import android.annotation.SuppressLint
-import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.getCachedFlightByID
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import model.Airport
-import android.content.Intent
 import android.app.AlertDialog
-import model.MFBImageInfo
-import android.os.AsyncTask
-import com.myflightbook.android.webservices.MFBSoap
 import android.content.Context
-import com.myflightbook.android.webservices.AuthToken
-import model.MFBUtil
-import model.MFBConstants
-import model.FlightQuery
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener
-import model.LogbookEntry
-import model.LatLong
-import com.myflightbook.android.webservices.RecentFlightsSvc
-import androidx.core.content.ContextCompat
 import android.content.DialogInterface
-import com.google.android.gms.maps.GoogleMap
-import model.MFBLocation
-import android.os.Environment
-import com.google.android.gms.maps.SupportMapFragment
-import androidx.core.app.ActivityCompat
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import com.google.android.gms.maps.CameraUpdateFactory
-import model.LocSample
-import model.GPX
-import androidx.core.content.FileProvider
+import android.os.AsyncTask
 import android.os.Build
+import android.os.Bundle
+import android.os.Environment
 import android.util.Log
-import android.view.*
+import android.view.View
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.myflightbook.android.webservices.AuthToken
+import com.myflightbook.android.webservices.MFBSoap
+import com.myflightbook.android.webservices.RecentFlightsSvc
+import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.getCachedFlightByID
+import model.*
 import java.io.*
-import java.lang.Exception
-import java.lang.IllegalStateException
-import java.lang.StringBuilder
 import java.util.*
 import kotlin.math.abs
 
@@ -104,11 +92,10 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
 
     override fun onMarkerClick(marker: Marker): Boolean {
         val ap = mHmairports[marker.id]
-        var mfbii = mHmimages[marker.id]
+        val mfbii = mHmimages[marker.id]
         if (ap != null) {
             val dialog = AlertDialog.Builder(this, R.style.MFBDialog)
             dialog.setTitle(marker.title)
-            val ap2 = ap
             dialog.setIcon(
                 ContextCompat.getDrawable(
                     this@ActFlightMap,
@@ -118,22 +105,22 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             dialog.setNeutralButton(R.string.lblCancel) { d: DialogInterface, _: Int -> d.dismiss() }
             if (ap.isPort()) dialog.setPositiveButton(R.string.menuFlightSearch) { dlg: DialogInterface, _: Int ->
                 val fq = FlightQuery()
-                fq.Init()
+                fq.init()
                 // get any airport aliases
-                val rgAlias = Airport.getNearbyAirports(ap2.location, 0.01, 0.01)
-                val szAirports = StringBuilder(ap2.airportID)
+                val rgAlias = Airport.getNearbyAirports(ap.location, 0.01, 0.01)
+                val szAirports = StringBuilder(ap.airportID)
                 if (mPassedaliases!!.isNotEmpty()) szAirports.append(
                     String.format(
                         ", %s",
                         mPassedaliases
                     )
                 )
-                for (ap3 in rgAlias) if (ap3.facilityType.compareTo(ap2.facilityType) == 0) szAirports.append(
+                for (ap3 in rgAlias) if (ap3.facilityType.compareTo(ap.facilityType) == 0) szAirports.append(
                     String.format(
                         Locale.getDefault(), " %s", ap3.airportID
                     )
                 )
-                fq.AirportList = Airport.splitCodes(szAirports.toString())
+                fq.airportList = Airport.splitCodes(szAirports.toString())
                 val i = Intent(this@ActFlightMap, RecentFlightsActivity::class.java)
                 val b = Bundle()
                 b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq)

@@ -49,7 +49,6 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem {
@@ -230,7 +229,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
 
     constructor(so: SoapObject) : super() {
         init()
-        fromProperties(so)
+        initFromProps(so)
     }
 
     // endregion
@@ -747,7 +746,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         // we don't need to write back existing image properties or send/share properties
     }
 
-    public override fun fromProperties(so: SoapObject) {
+    private fun initFromProps(so: SoapObject) {
         szError = ""
         try {
             idFlight = so.getProperty("FlightID").toString().toInt()
@@ -843,6 +842,10 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             rgImages.add(mfbii)
         }
         rgFlightImages = rgImages.toTypedArray()
+    }
+
+    public override fun fromProperties(so: SoapObject) {
+        initFromProps(so)
     }
 
     fun deleteUnsubmittedFlightFromLocalDB() {

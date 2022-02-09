@@ -18,30 +18,30 @@
  */
 package com.myflightbook.android
 
-import com.myflightbook.android.webservices.AuthToken.Companion.isValid
-import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
-import android.os.Bundle
-import android.content.Intent
-import com.myflightbook.android.MFBMain.Invalidatable
-import android.os.AsyncTask
-import com.myflightbook.android.webservices.MFBSoap
 import android.app.ProgressDialog
 import android.content.Context
-import com.myflightbook.android.webservices.AuthToken
-import model.MFBUtil
-import model.MFBConstants
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.myflightbook.android.webservices.CurrencySvc
-import model.CurrencyStatusItem
-import model.PackAndGo
-import android.graphics.Typeface
-import model.CurrencyStatusItem.CurrencyGroups
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
+import android.os.AsyncTask
+import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.*
-import java.lang.Exception
-import java.lang.NullPointerException
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.myflightbook.android.MFBMain.Invalidatable
+import com.myflightbook.android.webservices.AuthToken
+import com.myflightbook.android.webservices.AuthToken.Companion.isValid
+import com.myflightbook.android.webservices.CurrencySvc
+import com.myflightbook.android.webservices.MFBSoap
+import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
+import model.CurrencyStatusItem
+import model.CurrencyStatusItem.CurrencyGroups
+import model.MFBConstants
+import model.MFBUtil
+import model.PackAndGo
 import java.text.DateFormat
 import java.util.*
 
@@ -131,7 +131,7 @@ class ActCurrency : ActMFBForm(), Invalidatable {
                 val tvAttribute = tr.findViewById<TextView>(R.id.txtCsiAttribute)
                 val tvValue = tr.findViewById<TextView>(R.id.txtCsiValue)
                 val tvDiscrepancy = tr.findViewById<TextView>(R.id.txtCsiDiscrepancy)
-                tvAttribute.text = csi!!.attribute
+                tvAttribute.text = csi.attribute
                 tvValue.text = csi.value
                 tvDiscrepancy.text = csi.discrepancy
                 if (csi.discrepancy.isEmpty()) tvDiscrepancy.visibility = View.GONE

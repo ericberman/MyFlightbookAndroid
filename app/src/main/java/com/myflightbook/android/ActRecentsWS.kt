@@ -378,7 +378,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                 arws.mRgle = mergeFlightLists(
                     mergeFlightLists(
                         queuedAndUnsubmittedFlights,
-                        if (arws.currentQuery!!.HasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
+                        if (arws.currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
                     ), arws.mRgexistingflights.toTypedArray()
                 )
                 arws.populateList()
@@ -425,7 +425,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             arws.mRgle = mergeFlightLists(
                 mergeFlightLists(
                     rgleQueuedAndUnsubmitted,
-                    if (arws.currentQuery!!.HasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
+                    if (arws.currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
                 ), arws.mRgexistingflights.toTypedArray()
             )
             return true
@@ -451,7 +451,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             if (arws.view != null) {
                 val tv = arws.requireView().findViewById<TextView>(R.id.txtFlightQueryStatus)
                 tv.text =
-                    c.getString(if (arws.currentQuery != null && arws.currentQuery!!.HasCriteria()) R.string.fqStatusNotAllflights else R.string.fqStatusAllFlights)
+                    c.getString(if (arws.currentQuery != null && arws.currentQuery!!.hasCriteria()) R.string.fqStatusNotAllflights else R.string.fqStatusAllFlights)
             }
             if (!b && mRfsvc != null) {
                 alert(arws, c.getString(R.string.txtError), mRfsvc!!.lastError)

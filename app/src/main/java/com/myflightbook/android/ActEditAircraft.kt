@@ -18,33 +18,28 @@
  */
 package com.myflightbook.android
 
-import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
-import com.myflightbook.android.webservices.UTCDate.isNullDate
-import android.os.Bundle
-import android.content.Intent
 import android.app.Activity
-import model.Aircraft
-import model.MFBImageInfo
-import android.os.AsyncTask
-import com.myflightbook.android.webservices.MFBSoap
 import android.app.ProgressDialog
 import android.content.Context
-import com.myflightbook.android.webservices.AircraftSvc
-import com.myflightbook.android.webservices.AuthToken
-import model.MFBUtil
-import model.MFBConstants
-import android.widget.TextView
-import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
-import com.myflightbook.android.ActMFBForm.GallerySource
-import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
-import model.Aircraft.PilotRole
-import android.view.ContextMenu.ContextMenuInfo
-import model.FlightQuery
-import model.MFBImageInfo.PictureDestination
+import android.content.Intent
+import android.os.AsyncTask
+import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.ContextMenu.ContextMenuInfo
+import android.widget.TextView
 import androidx.activity.result.ActivityResult
-import java.lang.Exception
+import com.myflightbook.android.ActMFBForm.GallerySource
+import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
+import com.myflightbook.android.webservices.AircraftSvc
+import com.myflightbook.android.webservices.AuthToken
+import com.myflightbook.android.webservices.MFBSoap
+import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
+import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
+import com.myflightbook.android.webservices.UTCDate.isNullDate
+import model.*
+import model.Aircraft.PilotRole
+import model.MFBImageInfo.PictureDestination
 import java.util.*
 
 class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, GallerySource {
@@ -473,8 +468,8 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
         } else if (id == R.id.findFlights) {
             if (isOnline(context)) {
                 val fq = FlightQuery()
-                fq.Init()
-                fq.AircraftList = if (mAc == null) arrayOf() else arrayOf(mAc!!)
+                fq.init()
+                fq.aircraftList = if (mAc == null) arrayOf() else arrayOf(mAc!!)
                 val i = Intent(activity, RecentFlightsActivity::class.java)
                 val b = Bundle()
                 b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq)

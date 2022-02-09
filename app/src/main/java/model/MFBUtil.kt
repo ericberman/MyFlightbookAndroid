@@ -204,7 +204,7 @@ object MFBUtil {
     }
 
     fun getForKey(key: String?) : Any? {
-        return if (key != null && mHash.containsKey(key)) mHash[key] else null;
+        return if (key != null && mHash.containsKey(key)) mHash[key] else null
     }
 
     fun removeForKey(key:String?) {

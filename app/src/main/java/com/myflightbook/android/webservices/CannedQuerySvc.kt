@@ -57,7 +57,9 @@ class CannedQuerySvc : MFBSoap() {
         val request = setMethod("GetNamedQueriesForUser")
         request.addProperty("szAuthToken", szAuthToken)
         val rgcq = ArrayList<CannedQuery>()
-        val result = invoke(c) as SoapObject
+        val result = invoke(c) as SoapObject?
+        if (result == null)
+            return arrayOf()
         try {
             rgcq.addAll(getQueriesFromResult(result))
         } catch (e: Exception) {
@@ -75,9 +77,10 @@ class CannedQuerySvc : MFBSoap() {
         request.addProperty("szAuthToken", szAuthToken)
         request.addProperty("cq", cq)
         val rgcq = ArrayList<CannedQuery>()
-        val result = invoke(c) as SoapObject
+        val result = invoke(c) as SoapObject?
         try {
-            rgcq.addAll(getQueriesFromResult(result))
+            if (result != null)
+                rgcq.addAll(getQueriesFromResult(result))
         } catch (e: Exception) {
             lastError += e.message
         }
@@ -95,9 +98,10 @@ class CannedQuerySvc : MFBSoap() {
         request.addProperty("fq", fq)
         request.addProperty("szName", szName)
         val rgcq = ArrayList<CannedQuery>()
-        val result = invoke(c) as SoapObject
+        val result = invoke(c) as SoapObject?
         try {
-            rgcq.addAll(getQueriesFromResult(result))
+            if (result != null)
+                rgcq.addAll(getQueriesFromResult(result))
         } catch (e: Exception) {
             lastError += e.message
         }

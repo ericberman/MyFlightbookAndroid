@@ -19,8 +19,8 @@
 package model
 
 import org.ksoap2.serialization.KvmSerializable
-import org.ksoap2.serialization.SoapObject
 import org.ksoap2.serialization.PropertyInfo
+import org.ksoap2.serialization.SoapObject
 import java.util.*
 
 class AuthResult : SoapableObject, KvmSerializable {
@@ -37,9 +37,11 @@ class AuthResult : SoapableObject, KvmSerializable {
     }
 
     constructor()
-    constructor(so: SoapObject) {
-        authStatus = AuthStatus.valueOf(so.getProperty("Result").toString())
-        authToken = so.getPrimitivePropertySafelyAsString("AuthToken")
+    constructor(so: SoapObject?) {
+        if (so != null) {
+            authStatus = AuthStatus.valueOf(so.getProperty("Result").toString())
+            authToken = so.getPrimitivePropertySafelyAsString("AuthToken")
+        }
     }
 
     override fun toProperties(so: SoapObject) {

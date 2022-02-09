@@ -54,7 +54,6 @@ import model.MFBUtil.showProgress
 import model.MakesandModels
 import model.MakesandModels.Companion.getMakeModelByID
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelectedListener,
     GallerySource {
@@ -118,7 +117,7 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         val mCtxt: AsyncWeakContext<ActNewAircraft> = AsyncWeakContext(c, ana)
         override fun doInBackground(vararg params: Void?): MFBSoap {
             val `as` = AircraftSvc()
-            mResult = `as`.aircraftForPrefix(AuthToken.m_szAuthToken, mPrefix, mCtxt.context)
+            mResult = `as`.aircraftForPrefix(AuthToken.m_szAuthToken!!, mPrefix, mCtxt.context!!)
             return `as`
         }
 
@@ -145,7 +144,7 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         override fun doInBackground(vararg params: Aircraft?): MFBSoap {
             val acs = AircraftSvc()
             acs.mProgress = this
-            mResult = acs.addAircraft(AuthToken.m_szAuthToken, mAc!!, mCtxt.context!!)
+            mResult = acs.addAircraft(AuthToken.m_szAuthToken!!, mAc!!, mCtxt.context!!)
             return acs
         }
 

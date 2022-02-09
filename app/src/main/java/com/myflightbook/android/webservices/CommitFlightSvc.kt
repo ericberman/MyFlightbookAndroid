@@ -20,20 +20,13 @@ package com.myflightbook.android.webservices
 
 import android.content.Context
 import android.util.Log
-import org.ksoap2.serialization.SoapSerializationEnvelope
-import model.MFBImageInfo
-import model.LatLong
-import model.LogbookEntry
-import model.FlightProperty
-import com.myflightbook.android.marshal.MarshalDouble
-import org.ksoap2.serialization.SoapObject
-import model.MFBUtil
 import com.myflightbook.android.R
 import com.myflightbook.android.marshal.MarshalDate
-import model.MFBConstants
+import com.myflightbook.android.marshal.MarshalDouble
+import model.*
 import org.ksoap2.serialization.PropertyInfo
-import java.lang.Exception
-import java.lang.NullPointerException
+import org.ksoap2.serialization.SoapObject
+import org.ksoap2.serialization.SoapSerializationEnvelope
 
 class CommitFlightSvc : MFBSoap() {
     override fun addMappings(e: SoapSerializationEnvelope) {
@@ -76,7 +69,9 @@ class CommitFlightSvc : MFBSoap() {
         val rgmfbii = le.rgFlightImages
             ?: throw NullPointerException("le.rgFlightImages is null")
         le.rgFlightImages = arrayOf()
-        val result = invoke(c) as SoapObject
+        val result = invoke(c) as SoapObject?
+        if (result == null)
+            return false;
         try {
             val leReturn = LogbookEntry()
             leReturn.fromProperties(result)

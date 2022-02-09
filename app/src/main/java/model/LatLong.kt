@@ -19,12 +19,11 @@
 package model
 
 import android.location.Location
-import org.ksoap2.serialization.KvmSerializable
-import org.ksoap2.serialization.SoapObject
 import com.google.android.gms.maps.model.LatLng
+import org.ksoap2.serialization.KvmSerializable
 import org.ksoap2.serialization.PropertyInfo
+import org.ksoap2.serialization.SoapObject
 import java.io.Serializable
-import java.lang.Exception
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.abs
@@ -114,7 +113,7 @@ open class LatLong : SoapableObject, KvmSerializable, Serializable {
         so.addProperty("Longitude", String.format(Locale.US, "%.8f", longitude))
     }
 
-    public override fun fromProperties(so: SoapObject) {
+    public final override fun fromProperties(so: SoapObject) {
         latitude = so.getProperty("Latitude").toString().toDouble()
         longitude = so.getProperty("Longitude").toString().toDouble()
     }

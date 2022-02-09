@@ -160,7 +160,7 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
             for (ac in mRgac!!) if (!ac.hideFromSelection) lst.add(ac)
             if (lst.size == mRgac!!.size) fShowAllAircraft =
                 true else if (currentQuery != null) {
-                for (ac in currentQuery!!.AircraftList) if (ac.hideFromSelection) {
+                for (ac in currentQuery!!.aircraftList) if (ac.hideFromSelection) {
                     fShowAllAircraft = true
                     break
                 }
@@ -273,12 +273,12 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         setExpandedState(
             findViewById(R.id.txtFQDatesHeader) as TextView,
             findViewById(R.id.sectFQDates)!!,
-            curQ.DateRange != DateRanges.AllTime
+            curQ.dateRange != DateRanges.AllTime
         )
         setExpandedState(
             findViewById(R.id.txtFQAirportsHeader) as TextView,
             findViewById(R.id.tblFQAirports)!!,
-            curQ.AirportList.isNotEmpty() || curQ.Distance != FlightDistance.AllFlights
+            curQ.airportList.isNotEmpty() || curQ.distance != FlightDistance.AllFlights
         )
         setExpandedState(
             findViewById(R.id.txtFQACFeatures) as TextView,
@@ -293,22 +293,22 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         setExpandedState(
             findViewById(R.id.txtFQAircraftHeader) as TextView,
             findViewById(R.id.llfqAircraft)!!,
-            curQ.AircraftList.isNotEmpty()
+            curQ.aircraftList.isNotEmpty()
         )
         setExpandedState(
             findViewById(R.id.txtFQModelsHeader) as TextView,
             findViewById(R.id.sectFQModels)!!,
-            curQ.MakeList.isNotEmpty() || (curQ.ModelName != null &&  curQ.ModelName!!.isNotEmpty())
+            curQ.makeList.isNotEmpty() || (curQ.modelName != null &&  curQ.modelName!!.isNotEmpty())
         )
         setExpandedState(
             findViewById(R.id.txtFQCatClassHeader) as TextView,
             findViewById(R.id.tblFQCatClass)!!,
-            curQ.CatClassList.isNotEmpty()
+            curQ.catClassList.isNotEmpty()
         )
         setExpandedState(
             findViewById(R.id.txtFQPropsHeader) as TextView,
             findViewById(R.id.fqPropsBody)!!,
-            curQ.PropertyTypes.isNotEmpty()
+            curQ.propertyTypes.isNotEmpty()
         )
         setExpandedState(
             findViewById(R.id.txtFQNamedQueryHeader) as TextView,
@@ -331,7 +331,7 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         clearCachedFlights()
         val szQueryName = stringFromField(R.id.txtNameForQuery)
         val curQ = currentQuery!!
-        if (curQ.HasCriteria() && szQueryName.isNotEmpty()) AddCannedQueryTask(
+        if (curQ.hasCriteria() && szQueryName.isNotEmpty()) AddCannedQueryTask(
             requireActivity(),
             curQ,
             szQueryName
@@ -389,13 +389,13 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
             object : CheckedTableListener {
                 override fun itemStateChanged(o: Any?, fAdded: Boolean) {
                     val lst: MutableList<Aircraft> =
-                        ArrayList(listOf(*currentQuery!!.AircraftList))
+                        ArrayList(listOf(*currentQuery!!.aircraftList))
                     if (fAdded) lst.add(o as Aircraft) else lst.removeIf { ac: Aircraft? -> ac!!.aircraftID == (o as Aircraft?)!!.aircraftID }
-                    currentQuery!!.AircraftList = lst.toTypedArray()
+                    currentQuery!!.aircraftList = lst.toTypedArray()
                 }
 
                 override fun itemIsChecked(o: Any?): Boolean {
-                    for (ac in currentQuery!!.AircraftList) if (ac.aircraftID == (o as Aircraft?)!!.aircraftID) return true
+                    for (ac in currentQuery!!.aircraftList) if (ac.aircraftID == (o as Aircraft?)!!.aircraftID) return true
                     return false
                 }
             })
@@ -408,13 +408,13 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         setUpDynamicCheckList(R.id.tblFQModels, getActiveMakes() as Array<*>?, object : CheckedTableListener {
             override fun itemStateChanged(o: Any?, fAdded: Boolean) {
                 val lst: MutableList<MakeModel> =
-                    ArrayList(listOf(*currentQuery!!.MakeList))
+                    ArrayList(listOf(*currentQuery!!.makeList))
                 if (fAdded) lst.add(o as MakeModel) else lst.removeIf { m: MakeModel? -> m!!.makeModelId == (o as MakeModel?)!!.makeModelId }
-                currentQuery!!.MakeList = lst.toTypedArray()
+                currentQuery!!.makeList = lst.toTypedArray()
             }
 
             override fun itemIsChecked(o: Any?): Boolean {
-                for (m in currentQuery!!.MakeList) if (m.makeModelId == (o as MakeModel?)!!.makeModelId) return true
+                for (m in currentQuery!!.makeList) if (m.makeModelId == (o as MakeModel?)!!.makeModelId) return true
                 return false
             }
         })
@@ -424,26 +424,26 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
             object : CheckedTableListener {
                 override fun itemStateChanged(o: Any?, fAdded: Boolean) {
                     val lst: MutableList<CategoryClass> =
-                        ArrayList(listOf(*currentQuery!!.CatClassList))
+                        ArrayList(listOf(*currentQuery!!.catClassList))
                     if (fAdded) lst.add(o as CategoryClass) else lst.removeIf { cc: CategoryClass? -> cc!!.idCatClass == (o as CategoryClass?)!!.idCatClass }
-                    currentQuery!!.CatClassList = lst.toTypedArray()
+                    currentQuery!!.catClassList = lst.toTypedArray()
                 }
 
                 override fun itemIsChecked(o: Any?): Boolean {
-                    for (cc in currentQuery!!.CatClassList) if (cc.idCatClass == (o as CategoryClass?)!!.idCatClass) return true
+                    for (cc in currentQuery!!.catClassList) if (cc.idCatClass == (o as CategoryClass?)!!.idCatClass) return true
                     return false
                 }
             })
         setUpDynamicCheckList(R.id.tblFQProps, searchableProperties, object : CheckedTableListener {
             override fun itemStateChanged(o: Any?, fAdded: Boolean) {
                 val lst: MutableList<CustomPropertyType> =
-                    ArrayList(listOf(*currentQuery!!.PropertyTypes))
+                    ArrayList(listOf(*currentQuery!!.propertyTypes))
                 if (fAdded) lst.add(o as CustomPropertyType) else lst.removeIf { cpt: CustomPropertyType? -> cpt!!.idPropType == (o as CustomPropertyType?)!!.idPropType }
-                currentQuery!!.PropertyTypes = lst.toTypedArray()
+                currentQuery!!.propertyTypes = lst.toTypedArray()
             }
 
             override fun itemIsChecked(o: Any?): Boolean {
-                for (cpt in currentQuery!!.PropertyTypes) if (cpt.idPropType == (o as CustomPropertyType?)!!.idPropType) return true
+                for (cpt in currentQuery!!.propertyTypes) if (cpt.idPropType == (o as CustomPropertyType?)!!.idPropType) return true
                 return false
             }
         })
@@ -459,7 +459,7 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         for (o in rgItems) {
             val tr = l.inflate(R.layout.namedquerytableitem, tl, false) as TableRow
             val tv = tr.findViewById<TextView>(R.id.lblSavedQuery)
-            tv.text = o.QueryName
+            tv.text = o.queryName
             tv.setOnClickListener {
                 currentQuery = o
                 fCannedQueryClicked = true
@@ -499,26 +499,26 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
     }
 
     private fun reset() {
-        currentQuery!!.Init()
+        currentQuery!!.init()
         setUpChecklists()
         toForm()
         setExpandCollapseState()
     }
 
     private fun toForm() {
-        setStringForField(R.id.fqGeneralText, currentQuery!!.GeneralText)
-        setStringForField(R.id.fqModelName, currentQuery!!.ModelName)
-        setStringForField(R.id.fqAirports, TextUtils.join(" ", currentQuery!!.AirportList))
+        setStringForField(R.id.fqGeneralText, currentQuery!!.generalText)
+        setStringForField(R.id.fqModelName, currentQuery!!.modelName)
+        setStringForField(R.id.fqAirports, TextUtils.join(" ", currentQuery!!.airportList))
         setLocalDateForField(
             R.id.btnfqDateStart,
-            MFBUtil.localDateFromUTCDate(currentQuery!!.DateMin)
+            MFBUtil.localDateFromUTCDate(currentQuery!!.dateMin)
         )
         setLocalDateForField(
             R.id.btnfqDateEnd,
-            MFBUtil.localDateFromUTCDate(currentQuery!!.DateMax)
+            MFBUtil.localDateFromUTCDate(currentQuery!!.dateMax)
         )
-        when (currentQuery!!.DateRange) {
-            DateRanges.none -> {}
+        when (currentQuery!!.dateRange) {
+            DateRanges.None -> {}
             DateRanges.AllTime -> setRadioButton(R.id.rbAlltime)
             DateRanges.YTD -> setRadioButton(R.id.rbYTD)
             DateRanges.Trailing12Months -> setRadioButton(R.id.rbTrailing12)
@@ -530,47 +530,47 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
             DateRanges.Trailing90 -> setRadioButton(R.id.rbTrailing90)
             DateRanges.Custom -> setRadioButton(R.id.rbCustom)
         }
-        when (currentQuery!!.FlightCharacteristicsConjunction) {
+        when (currentQuery!!.flightCharacteristicsConjunction) {
             GroupConjunction.All -> setRadioButton(R.id.rbConjunctionAllFeature)
             GroupConjunction.Any -> setRadioButton(R.id.rbConjunctionAnyFeature)
             GroupConjunction.None -> setRadioButton(R.id.rbConjunctionNoFeature)
         }
-        when (currentQuery!!.PropertiesConjunction) {
+        when (currentQuery!!.propertiesConjunction) {
             GroupConjunction.All -> setRadioButton(R.id.rbConjunctionAllProps)
             GroupConjunction.Any -> setRadioButton(R.id.rbConjunctionAnyProps)
             GroupConjunction.None -> setRadioButton(R.id.rbConjunctionNoFeature)
         }
-        setCheckState(R.id.ckIsPublic, currentQuery!!.IsPublic)
-        setCheckState(R.id.ckIsSigned, currentQuery!!.IsSigned)
-        setCheckState(R.id.ckHasApproaches, currentQuery!!.HasApproaches)
-        setCheckState(R.id.ckHasCFI, currentQuery!!.HasCFI)
-        setCheckState(R.id.ckHasDual, currentQuery!!.HasDual)
-        setCheckState(R.id.ckHasFSLandings, currentQuery!!.HasFullStopLandings)
-        setCheckState(R.id.ckHasFSNightLandings, currentQuery!!.HasNightLandings)
-        setCheckState(R.id.ckHasHolds, currentQuery!!.HasHolds)
-        setCheckState(R.id.ckHasIMC, currentQuery!!.HasIMC)
-        setCheckState(R.id.ckHasNight, currentQuery!!.HasNight)
-        setCheckState(R.id.ckHasPIC, currentQuery!!.HasPIC)
-        setCheckState(R.id.ckHasTotal, currentQuery!!.HasTotalTime)
-        setCheckState(R.id.ckHasSIC, currentQuery!!.HasSIC)
-        setCheckState(R.id.ckHasSimIMC, currentQuery!!.HasSimIMCTime)
-        setCheckState(R.id.ckHasTelemetry, currentQuery!!.HasTelemetry)
-        setCheckState(R.id.ckHasImages, currentQuery!!.HasImages)
-        setCheckState(R.id.ckHasXC, currentQuery!!.HasXC)
-        setCheckState(R.id.ckHasGroundSim, currentQuery!!.HasGroundSim)
-        setCheckState(R.id.ckHasAnyLandings, currentQuery!!.HasLandings)
-        setCheckState(R.id.ckHasAnyInstrument, currentQuery!!.HasAnyInstrument)
-        setCheckState(R.id.ckHasFlaps, currentQuery!!.HasFlaps)
-        setCheckState(R.id.ckIsComplex, currentQuery!!.IsComplex)
-        setCheckState(R.id.ckIsConstantProp, currentQuery!!.IsConstantSpeedProp)
-        setCheckState(R.id.ckisGlass, currentQuery!!.IsGlass)
-        setCheckState(R.id.ckisTAA, currentQuery!!.IsTAA)
-        setCheckState(R.id.ckIsHighPerf, currentQuery!!.IsHighPerformance)
-        setCheckState(R.id.ckIsRetract, currentQuery!!.IsRetract)
-        setCheckState(R.id.ckIsTailwheel, currentQuery!!.IsTailwheel)
-        setCheckState(R.id.ckIsMotorGlider, currentQuery!!.IsMotorglider)
-        setCheckState(R.id.ckIsMultiEngineHeli, currentQuery!!.IsMultiEngineHeli)
-        when (currentQuery!!.EngineType) {
+        setCheckState(R.id.ckIsPublic, currentQuery!!.isPublic)
+        setCheckState(R.id.ckIsSigned, currentQuery!!.isSigned)
+        setCheckState(R.id.ckHasApproaches, currentQuery!!.hasApproaches)
+        setCheckState(R.id.ckHasCFI, currentQuery!!.hasCFI)
+        setCheckState(R.id.ckHasDual, currentQuery!!.hasDual)
+        setCheckState(R.id.ckHasFSLandings, currentQuery!!.hasFullStopLandings)
+        setCheckState(R.id.ckHasFSNightLandings, currentQuery!!.hasNightLandings)
+        setCheckState(R.id.ckHasHolds, currentQuery!!.hasHolds)
+        setCheckState(R.id.ckHasIMC, currentQuery!!.hasIMC)
+        setCheckState(R.id.ckHasNight, currentQuery!!.hasNight)
+        setCheckState(R.id.ckHasPIC, currentQuery!!.hasPIC)
+        setCheckState(R.id.ckHasTotal, currentQuery!!.hasTotalTime)
+        setCheckState(R.id.ckHasSIC, currentQuery!!.hasSIC)
+        setCheckState(R.id.ckHasSimIMC, currentQuery!!.hasSimIMCTime)
+        setCheckState(R.id.ckHasTelemetry, currentQuery!!.hasTelemetry)
+        setCheckState(R.id.ckHasImages, currentQuery!!.hasImages)
+        setCheckState(R.id.ckHasXC, currentQuery!!.hasXC)
+        setCheckState(R.id.ckHasGroundSim, currentQuery!!.hasGroundSim)
+        setCheckState(R.id.ckHasAnyLandings, currentQuery!!.hasLandings)
+        setCheckState(R.id.ckHasAnyInstrument, currentQuery!!.hasAnyInstrument)
+        setCheckState(R.id.ckHasFlaps, currentQuery!!.hasFlaps)
+        setCheckState(R.id.ckIsComplex, currentQuery!!.isComplex)
+        setCheckState(R.id.ckIsConstantProp, currentQuery!!.isConstantSpeedProp)
+        setCheckState(R.id.ckisGlass, currentQuery!!.isGlass)
+        setCheckState(R.id.ckisTAA, currentQuery!!.isTAA)
+        setCheckState(R.id.ckIsHighPerf, currentQuery!!.isHighPerformance)
+        setCheckState(R.id.ckIsRetract, currentQuery!!.isRetract)
+        setCheckState(R.id.ckIsTailwheel, currentQuery!!.isTailwheel)
+        setCheckState(R.id.ckIsMotorGlider, currentQuery!!.isMotorglider)
+        setCheckState(R.id.ckIsMultiEngineHeli, currentQuery!!.isMultiEngineHeli)
+        when (currentQuery!!.engineType) {
             EngineTypeRestriction.AllEngines -> setRadioButton(R.id.rbAllEngines)
             EngineTypeRestriction.Piston -> setRadioButton(R.id.rbEnginePiston)
             EngineTypeRestriction.Jet -> setRadioButton(R.id.rbEngineJet)
@@ -578,12 +578,12 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
             EngineTypeRestriction.AnyTurbine -> setRadioButton(R.id.rbEngineTurbine)
             EngineTypeRestriction.Electric -> setRadioButton(R.id.rbEngineElectric)
         }
-        when (currentQuery!!.AircraftInstanceTypes) {
+        when (currentQuery!!.aircraftInstanceTypes) {
             AircraftInstanceRestriction.AllAircraft -> setRadioButton(R.id.rbInstanceAny)
             AircraftInstanceRestriction.RealOnly -> setRadioButton(R.id.rbInstanceReal)
             AircraftInstanceRestriction.TrainingOnly -> setRadioButton(R.id.rbInstanceTraining)
         }
-        when (currentQuery!!.Distance) {
+        when (currentQuery!!.distance) {
             FlightDistance.AllFlights -> setRadioButton(R.id.rbDistanceAny)
             FlightDistance.LocalOnly -> setRadioButton(R.id.rbDistanceLocal)
             FlightDistance.NonLocalOnly -> setRadioButton(R.id.rbDistanceNonlocal)
@@ -591,46 +591,46 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
     }
 
     private fun readFlightCharacteristics() {
-        currentQuery!!.IsPublic = checkState(R.id.ckIsPublic)
-        currentQuery!!.IsSigned = checkState(R.id.ckIsSigned)
-        currentQuery!!.HasApproaches = checkState(R.id.ckHasApproaches)
-        currentQuery!!.HasCFI = checkState(R.id.ckHasCFI)
-        currentQuery!!.HasDual = checkState(R.id.ckHasDual)
-        currentQuery!!.HasFullStopLandings = checkState(R.id.ckHasFSLandings)
-        currentQuery!!.HasNightLandings = checkState(R.id.ckHasFSNightLandings)
-        currentQuery!!.HasHolds = checkState(R.id.ckHasHolds)
-        currentQuery!!.HasIMC = checkState(R.id.ckHasIMC)
-        currentQuery!!.HasNight = checkState(R.id.ckHasNight)
-        currentQuery!!.HasPIC = checkState(R.id.ckHasPIC)
-        currentQuery!!.HasTotalTime = checkState(R.id.ckHasTotal)
-        currentQuery!!.HasSIC = checkState(R.id.ckHasSIC)
-        currentQuery!!.HasSimIMCTime = checkState(R.id.ckHasSimIMC)
-        currentQuery!!.HasTelemetry = checkState(R.id.ckHasTelemetry)
-        currentQuery!!.HasImages = checkState(R.id.ckHasImages)
-        currentQuery!!.HasXC = checkState(R.id.ckHasXC)
-        currentQuery!!.HasAnyInstrument = checkState(R.id.ckHasAnyInstrument)
-        currentQuery!!.HasLandings = checkState(R.id.ckHasAnyLandings)
-        currentQuery!!.HasGroundSim = checkState(R.id.ckHasGroundSim)
+        currentQuery!!.isPublic = checkState(R.id.ckIsPublic)
+        currentQuery!!.isSigned = checkState(R.id.ckIsSigned)
+        currentQuery!!.hasApproaches = checkState(R.id.ckHasApproaches)
+        currentQuery!!.hasCFI = checkState(R.id.ckHasCFI)
+        currentQuery!!.hasDual = checkState(R.id.ckHasDual)
+        currentQuery!!.hasFullStopLandings = checkState(R.id.ckHasFSLandings)
+        currentQuery!!.hasNightLandings = checkState(R.id.ckHasFSNightLandings)
+        currentQuery!!.hasHolds = checkState(R.id.ckHasHolds)
+        currentQuery!!.hasIMC = checkState(R.id.ckHasIMC)
+        currentQuery!!.hasNight = checkState(R.id.ckHasNight)
+        currentQuery!!.hasPIC = checkState(R.id.ckHasPIC)
+        currentQuery!!.hasTotalTime = checkState(R.id.ckHasTotal)
+        currentQuery!!.hasSIC = checkState(R.id.ckHasSIC)
+        currentQuery!!.hasSimIMCTime = checkState(R.id.ckHasSimIMC)
+        currentQuery!!.hasTelemetry = checkState(R.id.ckHasTelemetry)
+        currentQuery!!.hasImages = checkState(R.id.ckHasImages)
+        currentQuery!!.hasXC = checkState(R.id.ckHasXC)
+        currentQuery!!.hasAnyInstrument = checkState(R.id.ckHasAnyInstrument)
+        currentQuery!!.hasLandings = checkState(R.id.ckHasAnyLandings)
+        currentQuery!!.hasGroundSim = checkState(R.id.ckHasGroundSim)
     }
 
     private fun fromForm() {
-        currentQuery!!.GeneralText = stringFromField(R.id.fqGeneralText)
-        currentQuery!!.ModelName = stringFromField(R.id.fqModelName)
+        currentQuery!!.generalText = stringFromField(R.id.fqGeneralText)
+        currentQuery!!.modelName = stringFromField(R.id.fqModelName)
         val szAirports =
             stringFromField(R.id.fqAirports).trim { it <= ' ' }.uppercase(Locale.getDefault())
-        currentQuery!!.AirportList =
+        currentQuery!!.airportList =
             if (szAirports.isNotEmpty()) Airport.splitCodesSearch(szAirports) else arrayOf()
         readFlightCharacteristics()
-        currentQuery!!.HasFlaps = checkState(R.id.ckHasFlaps)
-        currentQuery!!.IsComplex = checkState(R.id.ckIsComplex)
-        currentQuery!!.IsConstantSpeedProp = checkState(R.id.ckIsConstantProp)
-        currentQuery!!.IsGlass = checkState(R.id.ckisGlass)
-        currentQuery!!.IsTAA = checkState(R.id.ckisTAA)
-        currentQuery!!.IsHighPerformance = checkState(R.id.ckIsHighPerf)
-        currentQuery!!.IsRetract = checkState(R.id.ckIsRetract)
-        currentQuery!!.IsTailwheel = checkState(R.id.ckIsTailwheel)
-        currentQuery!!.IsMotorglider = checkState(R.id.ckIsMotorGlider)
-        currentQuery!!.IsMultiEngineHeli = checkState(R.id.ckIsMultiEngineHeli)
+        currentQuery!!.hasFlaps = checkState(R.id.ckHasFlaps)
+        currentQuery!!.isComplex = checkState(R.id.ckIsComplex)
+        currentQuery!!.isConstantSpeedProp = checkState(R.id.ckIsConstantProp)
+        currentQuery!!.isGlass = checkState(R.id.ckisGlass)
+        currentQuery!!.isTAA = checkState(R.id.ckisTAA)
+        currentQuery!!.isHighPerformance = checkState(R.id.ckIsHighPerf)
+        currentQuery!!.isRetract = checkState(R.id.ckIsRetract)
+        currentQuery!!.isTailwheel = checkState(R.id.ckIsTailwheel)
+        currentQuery!!.isMotorglider = checkState(R.id.ckIsMotorGlider)
+        currentQuery!!.isMultiEngineHeli = checkState(R.id.ckIsMultiEngineHeli)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -648,12 +648,12 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
 
     override fun updateDate(id: Int, dt: Date?) {
         if (id == R.id.btnfqDateStart) {
-            currentQuery!!.DateMin = if (dt == null) null else MFBUtil.getUTCDateFromLocalDate(dt)
-            currentQuery!!.DateRange = DateRanges.Custom
+            currentQuery!!.dateMin = if (dt == null) null else MFBUtil.getUTCDateFromLocalDate(dt)
+            currentQuery!!.dateRange = DateRanges.Custom
             (findViewById(R.id.rbCustom) as RadioButton).isChecked = true
         } else if (id == R.id.btnfqDateEnd) {
-            currentQuery!!.DateMax = if (dt == null) null else MFBUtil.getUTCDateFromLocalDate(dt)
-            currentQuery!!.DateRange = DateRanges.Custom
+            currentQuery!!.dateMax = if (dt == null) null else MFBUtil.getUTCDateFromLocalDate(dt)
+            currentQuery!!.dateRange = DateRanges.Custom
             (findViewById(R.id.rbCustom) as RadioButton).isChecked = true
         }
         toForm()
@@ -669,7 +669,7 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
     override fun onClick(v: View) {
         val id = v.id
         if (id == R.id.btnfqDateEnd || id == R.id.btnfqDateStart) {
-            val dt = if (id == R.id.btnfqDateStart) currentQuery!!.DateMin else currentQuery!!.DateMax
+            val dt = if (id == R.id.btnfqDateStart) currentQuery!!.dateMin else currentQuery!!.dateMax
             val dlg = DlgDatePicker(
                 requireActivity(),
                 DlgDatePicker.DatePickMode.LOCALDATEONLY,
@@ -683,67 +683,67 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
 
         // All of the remaining items below are radio buttons
         when (id) {
-            R.id.rbAlltime -> currentQuery!!.SetDateRange(DateRanges.AllTime)
-            R.id.rbCustom -> currentQuery!!.SetDateRange(
+            R.id.rbAlltime -> currentQuery!!.setQueryDateRange(DateRanges.AllTime)
+            R.id.rbCustom -> currentQuery!!.setQueryDateRange(
                 DateRanges.Custom
             )
-            R.id.rbPreviousMonth -> currentQuery!!.SetDateRange(DateRanges.PrevMonth)
-            R.id.rbPreviousYear -> currentQuery!!.SetDateRange(
+            R.id.rbPreviousMonth -> currentQuery!!.setQueryDateRange(DateRanges.PrevMonth)
+            R.id.rbPreviousYear -> currentQuery!!.setQueryDateRange(
                 DateRanges.PrevYear
             )
-            R.id.rbThisMonth -> currentQuery!!.SetDateRange(DateRanges.ThisMonth)
-            R.id.rbTrailing12 -> currentQuery!!.SetDateRange(
+            R.id.rbThisMonth -> currentQuery!!.setQueryDateRange(DateRanges.ThisMonth)
+            R.id.rbTrailing12 -> currentQuery!!.setQueryDateRange(
                 DateRanges.Trailing12Months
             )
-            R.id.rbTrailing6 -> currentQuery!!.SetDateRange(DateRanges.Tailing6Months)
-            R.id.rbTrailing30 -> currentQuery!!.SetDateRange(
+            R.id.rbTrailing6 -> currentQuery!!.setQueryDateRange(DateRanges.Tailing6Months)
+            R.id.rbTrailing30 -> currentQuery!!.setQueryDateRange(
                 DateRanges.Trailing30
             )
-            R.id.rbTrailing90 -> currentQuery!!.SetDateRange(DateRanges.Trailing90)
-            R.id.rbYTD -> currentQuery!!.SetDateRange(
+            R.id.rbTrailing90 -> currentQuery!!.setQueryDateRange(DateRanges.Trailing90)
+            R.id.rbYTD -> currentQuery!!.setQueryDateRange(
                 DateRanges.YTD
             )
-            R.id.rbAllEngines -> currentQuery!!.EngineType =
+            R.id.rbAllEngines -> currentQuery!!.engineType =
                 EngineTypeRestriction.AllEngines
-            R.id.rbEngineJet -> currentQuery!!.EngineType =
+            R.id.rbEngineJet -> currentQuery!!.engineType =
                 EngineTypeRestriction.Jet
-            R.id.rbEnginePiston -> currentQuery!!.EngineType =
+            R.id.rbEnginePiston -> currentQuery!!.engineType =
                 EngineTypeRestriction.Piston
-            R.id.rbEngineTurbine -> currentQuery!!.EngineType =
+            R.id.rbEngineTurbine -> currentQuery!!.engineType =
                 EngineTypeRestriction.AnyTurbine
-            R.id.rbEngineTurboprop -> currentQuery!!.EngineType =
+            R.id.rbEngineTurboprop -> currentQuery!!.engineType =
                 EngineTypeRestriction.Turboprop
-            R.id.rbEngineElectric -> currentQuery!!.EngineType =
+            R.id.rbEngineElectric -> currentQuery!!.engineType =
                 EngineTypeRestriction.Electric
-            R.id.rbInstanceAny -> currentQuery!!.AircraftInstanceTypes =
+            R.id.rbInstanceAny -> currentQuery!!.aircraftInstanceTypes =
                 AircraftInstanceRestriction.AllAircraft
-            R.id.rbInstanceReal -> currentQuery!!.AircraftInstanceTypes =
+            R.id.rbInstanceReal -> currentQuery!!.aircraftInstanceTypes =
                 AircraftInstanceRestriction.RealOnly
-            R.id.rbInstanceTraining -> currentQuery!!.AircraftInstanceTypes =
+            R.id.rbInstanceTraining -> currentQuery!!.aircraftInstanceTypes =
                 AircraftInstanceRestriction.TrainingOnly
             R.id.rbConjunctionAllFeature -> {
-                currentQuery!!.FlightCharacteristicsConjunction = GroupConjunction.All
+                currentQuery!!.flightCharacteristicsConjunction = GroupConjunction.All
                 readFlightCharacteristics()
             }
             R.id.rbConjunctionAnyFeature -> {
-                currentQuery!!.FlightCharacteristicsConjunction = GroupConjunction.Any
+                currentQuery!!.flightCharacteristicsConjunction = GroupConjunction.Any
                 readFlightCharacteristics()
             }
             R.id.rbConjunctionNoFeature -> {
-                currentQuery!!.FlightCharacteristicsConjunction = GroupConjunction.None
+                currentQuery!!.flightCharacteristicsConjunction = GroupConjunction.None
                 readFlightCharacteristics()
             }
-            R.id.rbConjunctionAllProps -> currentQuery!!.PropertiesConjunction =
+            R.id.rbConjunctionAllProps -> currentQuery!!.propertiesConjunction =
                 GroupConjunction.All
-            R.id.rbConjunctionAnyProps -> currentQuery!!.PropertiesConjunction =
+            R.id.rbConjunctionAnyProps -> currentQuery!!.propertiesConjunction =
                 GroupConjunction.Any
-            R.id.rbConjunctionNoProps -> currentQuery!!.PropertiesConjunction =
+            R.id.rbConjunctionNoProps -> currentQuery!!.propertiesConjunction =
                 GroupConjunction.None
-            R.id.rbDistanceAny -> currentQuery!!.Distance =
+            R.id.rbDistanceAny -> currentQuery!!.distance =
                 FlightDistance.AllFlights
-            R.id.rbDistanceLocal -> currentQuery!!.Distance =
+            R.id.rbDistanceLocal -> currentQuery!!.distance =
                 FlightDistance.LocalOnly
-            R.id.rbDistanceNonlocal -> currentQuery!!.Distance =
+            R.id.rbDistanceNonlocal -> currentQuery!!.distance =
                 FlightDistance.NonLocalOnly
             R.id.txtFQACFeatures -> toggleHeader(
                 v,

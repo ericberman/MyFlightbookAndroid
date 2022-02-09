@@ -18,27 +18,21 @@
  */
 package com.myflightbook.android.webservices
 
-import org.ksoap2.serialization.SoapSerializationEnvelope
-import model.MFBImageInfo
-import model.LatLong
-import model.Aircraft
-import com.myflightbook.android.marshal.MarshalDouble
-import com.myflightbook.android.MFBMain
-import model.Aircraft.PilotRole
-import model.MFBConstants
-import model.DBCache
 import android.content.ContentValues
 import android.content.Context
 import android.text.TextUtils
 import android.util.Log
-import model.MFBImageInfo.PictureDestination
 import com.myflightbook.android.ActRecentsWS
-import org.ksoap2.serialization.SoapObject
-import model.DBCache.DBCacheStatus
+import com.myflightbook.android.MFBMain
 import com.myflightbook.android.R
 import com.myflightbook.android.marshal.MarshalDate
-import java.lang.Error
-import java.lang.Exception
+import com.myflightbook.android.marshal.MarshalDouble
+import model.*
+import model.Aircraft.PilotRole
+import model.DBCache.DBCacheStatus
+import model.MFBImageInfo.PictureDestination
+import org.ksoap2.serialization.SoapObject
+import org.ksoap2.serialization.SoapSerializationEnvelope
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -268,20 +262,22 @@ class AircraftSvc : MFBSoap() {
         {
             val request = setMethod("AircraftForUser")
             request.addProperty("szAuthUserToken", szAuthToken)
-            val result = invoke(c) as SoapObject
-            readResults(result, dbcs == DBCacheStatus.VALID_BUT_RETRY)
+            val result = invoke(c) as SoapObject?
+            if (result == null) cachedAircraft else readResults(result, dbcs == DBCacheStatus.VALID_BUT_RETRY)
         }
         return rgAc
     }
 
-    fun aircraftForPrefix(szAuthToken: String?, szPrefix: String?, c: Context?): Array<Aircraft?> {
+    fun aircraftForPrefix(szAuthToken: String, szPrefix: String, c: Context): Array<Aircraft> {
         val request = setMethod("AircraftMatchingPrefix")
         request.addProperty("szAuthToken", szAuthToken)
         request.addProperty("szPrefix", szPrefix)
-        val result = invoke(c) as SoapObject
-        val rgAc = arrayOfNulls<Aircraft>(result.propertyCount)
-        for (i in rgAc.indices) rgAc[i] = Aircraft(result.getProperty(i) as SoapObject)
-        return rgAc
+        val result = invoke(c) as SoapObject?
+        if (result == null)
+            return arrayOf()
+        val rgAc = ArrayList<Aircraft>()
+        for (i in 0 until result.propertyCount) rgAc.add(Aircraft(result.getProperty(i) as SoapObject))
+        return rgAc.toTypedArray()
     }
 
     private fun uploadImagesForAircraft(ac: Aircraft?, c: Context) {
@@ -313,14 +309,16 @@ class AircraftSvc : MFBSoap() {
         }
     }
 
-    fun addAircraft(szAuthToken: String?, ac: Aircraft, c: Context): Array<Aircraft> {
+    fun addAircraft(szAuthToken: String, ac: Aircraft, c: Context): Array<Aircraft> {
         val request = setMethod("AddAircraftForUser")
         request.addProperty("szAuthUserToken", szAuthToken)
         request.addProperty("szTail", ac.tailNumber)
         request.addProperty("idModel", ac.modelID)
         request.addProperty("idInstanceType", ac.instanceTypeID)
         var rgac: Array<Aircraft>
-        var result = invoke(c) as SoapObject
+        var result = invoke(c) as SoapObject?
+        if (result == null)
+            return arrayOf()
         rgac = readResults(result, true)
 
         // Find the aircraft that was the one we just uploaded and upload its images
@@ -337,8 +335,8 @@ class AircraftSvc : MFBSoap() {
                 uploadImagesForAircraft(acAdded, c)
 
                 // Now need to re-download the aircraft
-                result = invoke(c) as SoapObject
-                rgac = readResults(result, true)
+                result = invoke(c) as SoapObject?
+                rgac = if (result == null) arrayOf() else readResults(result, true)
                 break
             }
         }
@@ -359,7 +357,7 @@ class AircraftSvc : MFBSoap() {
         val request = setMethod("DeleteAircraftForUser")
         request.addProperty("szAuthUserToken", szAuthToken)
         request.addProperty("idAircraft", idAircraft)
-        invoke(c) as SoapObject
+        invoke(c) as SoapObject?
     }
 
     companion object {
