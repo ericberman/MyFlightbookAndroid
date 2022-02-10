@@ -26,7 +26,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -46,9 +45,11 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.myflightbook.android.webservices.AuthToken
-import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.RecentFlightsSvc
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.getCachedFlightByID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import model.*
 import java.io.*
 import java.util.*
@@ -56,7 +57,7 @@ import kotlin.math.abs
 
 class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     OnMarkerClickListener, OnGlobalLayoutListener, CompoundButton.OnCheckedChangeListener,
-    OnMapLongClickListener, MFBImageInfo.ImageCacheCompleted {
+    OnMapLongClickListener, MFBImageInfo.ImageCacheCompleted, CoroutineScope by MainScope() {
     private var mLlb: LatLngBounds? = null
     private var mLe: LogbookEntry? = null
     private var mRgaproute: Array<Airport>? = null
@@ -68,26 +69,9 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
     private val mHmimages = HashMap<String, MFBImageInfo>()
     private var mPassedaliases: String? = ""
 
-    private class SendGPXTask(c: Context?, afm: ActFlightMap, idFlight: Int) :
-        AsyncTask<Void?, Void?, MFBSoap>() {
-        var mResult: String? = ""
-        val mIdflight: Int = idFlight
-        private val mCtxt: AsyncWeakContext<ActFlightMap> = AsyncWeakContext(c, afm)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val rf = RecentFlightsSvc()
-            mResult =
-                rf.getFlightPathForFlightGPX(AuthToken.m_szAuthToken, mIdflight, mCtxt.context)
-            return rf
-        }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(svc: MFBSoap) {
-            val afm = mCtxt.callingActivity
-            if (mResult != null && mResult!!.isNotEmpty() && afm != null) {
-                afm.sendGPX(mResult)
-            }
-        }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
@@ -149,14 +133,31 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         return false
     }
 
-    private inner class FetchFlightPathTask(private val m_idFlight: Int) :
-        Runnable {
-        override fun run() {
+    private fun sendGpxAsync(idFlight : Int, ctxt : Context) {
+        Thread {
+            val rf = RecentFlightsSvc()
+            val resultGPX = rf.getFlightPathForFlightGPX(AuthToken.m_szAuthToken, idFlight, ctxt)
+            if (resultGPX.isNotEmpty()) {
+                runOnUiThread {
+                    mGpxpath = resultGPX
+                    sendGPX(mGpxpath)
+                }
+            }
+
+        }.start()
+    }
+
+    private fun fetchFlightPath(idFlight: Int, ctxt : Context)  {
+        Thread {
             val rfs = RecentFlightsSvc()
-            mRgflightroute =
-                rfs.getFlightPathForFlight(AuthToken.m_szAuthToken, m_idFlight, this@ActFlightMap)
-            if (mRgflightroute.isNotEmpty()) runOnUiThread { updateMapElements() }
-        }
+            val rgll = rfs.getFlightPathForFlight(AuthToken.m_szAuthToken, idFlight, ctxt)
+            if (rgll.isNotEmpty()) {
+                runOnUiThread {
+                    mRgflightroute = rgll
+                    updateMapElements()
+                }
+            }
+        }.start()
     }
 
     private fun addImageMarker(mfbii: MFBImageInfo, llb: LatLngBounds.Builder?) {
@@ -409,10 +410,8 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             }
         } else if (idExisting > 0) {
             mLe = getCachedFlightByID(idExisting, this)
-            if (mLe != null) {
-                val ffpt = FetchFlightPathTask(idExisting)
-                Thread(ffpt).start()
-            }
+            if (mLe != null)
+                fetchFlightPath(idExisting, this)
         } else if (idNew != 0L) {
             mLe = MFBMain.newFlightListener!!.getInProgressFlight(this)
             mRgflightroute = LocSample.flightPathFromDB() as Array<LatLong>
@@ -511,8 +510,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         if (id == R.id.btnUpdateMapRoute) updateMapElements() else if (id == R.id.btnExportGPX) {
             if (!checkDocPermissions()) return
             if (mGpxpath == null && mLe != null && !mLe!!.isAwaitingUpload() && !mLe!!.isNewFlight()) {
-                val st = SendGPXTask(this, this, mLe!!.idFlight)
-                st.execute()
+                sendGpxAsync(mLe!!.idFlight, this)
             } else sendGPX(mGpxpath)
         }
     }
