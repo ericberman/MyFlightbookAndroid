@@ -272,9 +272,7 @@ class AircraftSvc : MFBSoap() {
         val request = setMethod("AircraftMatchingPrefix")
         request.addProperty("szAuthToken", szAuthToken)
         request.addProperty("szPrefix", szPrefix)
-        val result = invoke(c) as SoapObject?
-        if (result == null)
-            return arrayOf()
+        val result = invoke(c) as SoapObject? ?: return arrayOf()
         val rgAc = ArrayList<Aircraft>()
         for (i in 0 until result.propertyCount) rgAc.add(Aircraft(result.getProperty(i) as SoapObject))
         return rgAc.toTypedArray()
@@ -316,10 +314,8 @@ class AircraftSvc : MFBSoap() {
         request.addProperty("idModel", ac.modelID)
         request.addProperty("idInstanceType", ac.instanceTypeID)
         var rgac: Array<Aircraft>
-        var result = invoke(c) as SoapObject?
-        if (result == null)
-            return arrayOf()
-        rgac = readResults(result, true)
+        var result: SoapObject? = invoke(c) as SoapObject? ?: return arrayOf()
+        rgac = readResults(result!!, true)
 
         // Find the aircraft that was the one we just uploaded and upload its images
         if (rgac.isNotEmpty() && ac.aircraftImages != null && ac.aircraftImages!!.isNotEmpty()) {

@@ -138,8 +138,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             dialog.setView(v)
             val i = v.findViewById<ImageView>(R.id.imgMFBIIImage)
             val t = v.findViewById<TextView>(R.id.txtMFBIIComment)
-            val mfbii2 = mfbii
-            i.setOnClickListener { mfbii2.viewFullImageInWebView(this@ActFlightMap) }
+            i.setOnClickListener { mfbii.viewFullImageInWebView(this@ActFlightMap) }
             mfbii.loadImageForImageView(true, i)
             t.text = mfbii.comment
             t.setTextColor(Color.WHITE)

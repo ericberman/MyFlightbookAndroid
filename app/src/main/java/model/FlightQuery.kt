@@ -65,7 +65,7 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
     var airportList: Array<String> = arrayOf()
     var makeList: Array<MakeModel> = arrayOf()
     var modelName: String? = null
-    var typeNames: Array<String> = arrayOf()
+    private var typeNames: Array<String> = arrayOf()
     var catClassList: Array<CategoryClass> = arrayOf()
     var propertyTypes: Array<CustomPropertyType> = arrayOf()
     var distance: FlightDistance? = null
@@ -219,19 +219,19 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
         isPublic = isSigned
     }
 
-    fun HasAircraftCriteria(): Boolean {
+    fun hasAircraftCriteria(): Boolean {
         return isComplex || isConstantSpeedProp || isGlass || isTAA || isHighPerformance || isRetract || isTailwheel || hasFlaps || isMultiEngineHeli || engineType != EngineTypeRestriction.AllEngines || aircraftInstanceTypes != AircraftInstanceRestriction.AllAircraft
     }
 
-    fun HasFlightCriteria(): Boolean {
+    fun hasFlightCriteria(): Boolean {
         return isPublic || hasApproaches || hasCFI || hasDual || hasFullStopLandings || hasLandings || hasHolds || hasIMC || hasAnyInstrument ||
                 hasNight || hasNightLandings || hasPIC || hasSIC || hasTotalTime || hasSimIMCTime || hasTelemetry || hasImages || hasXC || isSigned || hasGroundSim
     }
 
     fun hasCriteria(): Boolean {
         return generalText!!.isNotEmpty() || airportList.isNotEmpty() || dateRange != DateRanges.AllTime || aircraftList.isNotEmpty() || makeList.isNotEmpty() || modelName!!.isNotEmpty() || typeNames.isNotEmpty() || catClassList.isNotEmpty() || propertyTypes.isNotEmpty() ||
-                HasAircraftCriteria() ||
-                HasFlightCriteria()
+                hasAircraftCriteria() ||
+                hasFlightCriteria()
     }
 
     fun hasSearchProperty(cpt: CustomPropertyType): Boolean {

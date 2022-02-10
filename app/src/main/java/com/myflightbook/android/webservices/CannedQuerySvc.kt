@@ -57,9 +57,7 @@ class CannedQuerySvc : MFBSoap() {
         val request = setMethod("GetNamedQueriesForUser")
         request.addProperty("szAuthToken", szAuthToken)
         val rgcq = ArrayList<CannedQuery>()
-        val result = invoke(c) as SoapObject?
-        if (result == null)
-            return arrayOf()
+        val result = invoke(c) as SoapObject? ?: return arrayOf()
         try {
             rgcq.addAll(getQueriesFromResult(result))
         } catch (e: Exception) {

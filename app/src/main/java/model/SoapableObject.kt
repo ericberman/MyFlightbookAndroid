@@ -18,15 +18,11 @@
  */
 package model
 
-import org.ksoap2.serialization.SoapObject
 import org.kobjects.isodate.IsoDate
+import org.ksoap2.serialization.SoapObject
 import java.util.*
 
 abstract class SoapableObject {
-    constructor() : super()
-    constructor(so: SoapObject) : super() {
-        fromProperties(so)
-    }
 
     fun addNullableDate(so: SoapObject, propName: String?, dt: Date?): SoapObject {
         return if (dt == null) so.addProperty(propName, "") else so.addProperty(

@@ -32,8 +32,8 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.myflightbook.android.ActNewFlight
 import com.myflightbook.android.MFBMain
-import com.myflightbook.android.R
 import com.myflightbook.android.MFBlocationservice
+import com.myflightbook.android.R
 import model.LocSample.Companion.flightDataFromSamples
 import model.LocSample.Companion.flightPathFromDB
 
@@ -43,11 +43,11 @@ class MFBLocation : LocationListener {
     }
 
     interface FlightEvents {
-        fun TakeoffDetected(l: Location, fIsNight: Boolean)
-        fun LandingDetected(l: Location)
-        fun FSLandingDetected(fIsNight: Boolean)
-        fun AddNightTime(t: Double)
-        fun UpdateStatus(
+        fun takeoffDetected(l: Location, fIsNight: Boolean)
+        fun landingDetected(l: Location)
+        fun landingDetectedFS(fIsNight: Boolean)
+        fun addNightTime(t: Double)
+        fun updateStatus(
             quality: GPSQuality,
             fAirborne: Boolean,
             loc: Location?,
@@ -180,7 +180,7 @@ class MFBLocation : LocationListener {
     private fun informListenerOfStatus(newLoc: Location?) {
         if (mListener == null) return
         if (newLoc == null) {
-            mListener!!.UpdateStatus(GPSQuality.Unknown, IsFlying, null, IsRecording)
+            mListener!!.updateStatus(GPSQuality.Unknown, IsFlying, null, IsRecording)
             return
         }
         var q = GPSQuality.Unknown
@@ -189,7 +189,7 @@ class MFBLocation : LocationListener {
             q =
                 if (accuracy <= 0.0 || accuracy > MFBConstants.MIN_ACCURACY) GPSQuality.Poor else if (accuracy < MFBConstants.MIN_ACCURACY / 2.0) GPSQuality.Excellent else GPSQuality.Good
         }
-        mListener!!.UpdateStatus(q, IsFlying, newLoc, IsRecording)
+        mListener!!.updateStatus(q, IsFlying, newLoc, IsRecording)
     }
 
     // determines if the sample is night for purposes of logging
@@ -247,7 +247,7 @@ class MFBLocation : LocationListener {
             if (previousLoc != null && fPreviousLocWasNight && fIsNightForFlight && fPrefAutoDetect) {
                 val t = (newLoc.time - previousLoc!!.time) / 3600000.0
                 if (t < .5 && mListener != null) // limit of half an hour between samples for night time
-                    mListener!!.AddNightTime(t)
+                    mListener!!.addNightTime(t)
             }
             fPreviousLocWasNight = fIsNightForFlight
             previousLoc = newLoc
@@ -262,7 +262,7 @@ class MFBLocation : LocationListener {
                         HasPendingLanding = true
                         if (mListener != null) {
                             Log.w(MFBConstants.LOG_TAG, "Notifying listener...")
-                            mListener!!.LandingDetected(newLoc)
+                            mListener!!.landingDetected(newLoc)
                         }
                     }
                 } else {
@@ -271,14 +271,14 @@ class MFBLocation : LocationListener {
                         loc.comment = MFBMain.getResourceString(R.string.telemetryTakeOff)
                         HasPendingLanding = false // back in the air - can't be a FS landing
                         if (mListener != null) {
-                            mListener!!.TakeoffDetected(newLoc, fIsNightForLandings)
+                            mListener!!.takeoffDetected(newLoc, fIsNightForLandings)
                         }
                     }
                 }
 
                 // see if we've had a full-stop landing
                 if (speedKts < MFBConstants.FULL_STOP_SPEED && HasPendingLanding) {
-                    if (mListener != null) mListener!!.FSLandingDetected(fIsNightForLandings)
+                    if (mListener != null) mListener!!.landingDetectedFS(fIsNightForLandings)
                     Log.w(
                         MFBConstants.LOG_TAG,
                         "FS " + (if (fIsNightForLandings) "night " else "") + "landing detected"

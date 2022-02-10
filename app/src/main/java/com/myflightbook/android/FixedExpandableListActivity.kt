@@ -1,8 +1,9 @@
 package com.myflightbook.android
 
 import android.os.Bundle
-import android.view.*
+import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
+import android.view.View
 import android.view.View.OnCreateContextMenuListener
 import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
@@ -78,16 +79,16 @@ import androidx.core.content.ContextCompat
  * via [.setListAdapter] provides the [View]s
  * for each row. This adapter has separate methods for providing the group
  * [View]s and child [View]s. There are a couple provided
- * [ExpandableListAdapter]s that simplify use of adapters:
- * [SimpleCursorTreeAdapter] and [SimpleExpandableListAdapter].
+ * ExpandableListAdapter]s that simplify use of adapters:
+ * SimpleCursorTreeAdapter and SimpleExpandableListAdapter.
  *
  *
  * With these, you can specify the layout of individual rows for groups and
  * children in the list. These constructor takes a few parameters that specify
  * layout resources for groups and children. It also has additional parameters
  * that let you specify which data field to associate with which object in the
- * row layout resource. The [SimpleCursorTreeAdapter] fetches data from
- * [Cursor]s and the [SimpleExpandableListAdapter] fetches data
+ * row layout resource. The SimpleCursorTreeAdapter fetches data from
+ * Cursors and the SimpleExpandableListAdapter fetches data
  * from [List]s of [Map]s.
  *
  *

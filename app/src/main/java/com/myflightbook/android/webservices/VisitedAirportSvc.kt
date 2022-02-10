@@ -39,9 +39,7 @@ class VisitedAirportSvc : MFBSoap() {
         val request = setMethod("VisitedAirports")
         request.addProperty("szAuthToken", szAuthToken)
         val rgva : ArrayList<VisitedAirport> = ArrayList()
-        val result = invoke(c) as SoapObject?
-        if (result == null)
-            return arrayOf()
+        val result = invoke(c) as SoapObject? ?: return arrayOf()
         val l = MFBLocation.lastSeenLoc()
         try {
             for (i in 0 until result.propertyCount) {

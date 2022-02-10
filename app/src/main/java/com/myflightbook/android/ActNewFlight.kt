@@ -396,7 +396,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                         mle!!.cApproaches += cApproachesToAdd
                         setIntForField(R.id.txtApproaches, mle!!.cApproaches)
                     }
-                    ToView()
+                    toView()
                 }
             }
         }
@@ -428,7 +428,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     val o = b!!.getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES)
                     mActivetemplates = o as HashSet<PropertyTemplate?>?
                     updateTemplatesForAircraft(true)
-                    ToView()
+                    toView()
                 } catch (ex: ClassCastException) {
                     Log.e(MFBConstants.LOG_TAG, ex.message!!)
                 }
@@ -556,10 +556,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                         refreshAircraft(mRgac, true)
                         sp.performClick()
                     } else {
-                        FromView()
+                        fromView()
                         mle!!.idAircraft = ac.aircraftID
                         updateTemplatesForAircraft(false)
-                        ToView()
+                        toView()
                     }
                 }
             }
@@ -612,12 +612,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     override fun crossFillRequested(sender: DecimalEdit?) {
-        FromView()
+        fromView()
         if (sender!!.id == R.id.txtHobbsStart) {
             val d = getHighWaterHobbsForAircraft(mle!!.idAircraft)
             if (d > 0) sender.doubleValue = d
         } else if (mle!!.decTotal > 0) sender.doubleValue = mle!!.decTotal
-        FromView()
+        fromView()
     }
 
     private fun selectibleAircraft(): Array<Aircraft>? {
@@ -727,7 +727,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // subsequent resumes should NOT.
         updateTemplatesForAircraft(!needsDefaultTemplates)
         needsDefaultTemplates = false // reset this.
-        ToView()
+        toView()
 
         // do this last to start GPS service
         if (fIsNewFlight) MFBMain.setInProgressFlightActivity(context, this)
@@ -744,7 +744,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // should only happen when we are returning from viewing an existing/queued/pending flight, may have been submitted
         // either way, no need to save this
         if (mle == null) return
-        FromView()
+        fromView()
         saveCurrentFlight()
         Log.w(MFBConstants.LOG_TAG, String.format("Paused, landings are %d", mle!!.cLandings))
         saveState()
@@ -793,7 +793,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         saveCurrentFlight()
         if (view == null) return
         setUpGalleryForFlight()
-        ToView()
+        toView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -884,9 +884,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             return true
         } else if (menuId == R.id.menuSendFlight) sendFlight() else if (menuId == R.id.menuShareFlight) shareFlight() else if (menuId == R.id.btnAutoFill) {
             assert(mle != null)
-            FromView()
+            fromView()
             autoFill(requireContext(), mle)
-            ToView()
+            toView()
         } else return super.onOptionsItemSelected(item)
         return true
     }
@@ -964,7 +964,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     override fun onClick(v: View) {
-        FromView()
+        fromView()
         val id = v.id
         if (id == R.id.btnEngineStartSet) {
             if (!mle!!.isKnownEngineStart) {
@@ -1049,7 +1049,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             val target = findViewById(R.id.sectPinnedProperties)
             setExpandedState((v as TextView), target!!, target.visibility != View.VISIBLE)
         }
-        ToView()
+        toView()
     }
 
     //region Image support
@@ -1093,7 +1093,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     override fun updateDate(id: Int, dtIn: Date?) {
         var dt = dtIn
-        FromView()
+        fromView()
         var fEngineChanged = false
         var fFlightChanged = false
         dt = removeSeconds(dt!!)
@@ -1121,7 +1121,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 mle!!.dtFlight = dt
             }
         }
-        ToView()
+        toView()
         when (MFBLocation.fPrefAutoFillHobbs) {
             AutoFillOptions.EngineTime -> if (fEngineChanged) doAutoHobbs()
             AutoFillOptions.FlightTime -> if (fFlightChanged) doAutoHobbs()
@@ -1171,7 +1171,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     private fun submitFlight(forceQueued: Boolean) {
-        FromView()
+        fromView()
         val a: Activity = requireActivity()
         if (a.currentFocus != null) a.currentFocus!!.clearFocus() // force any in-progress edit to commit, particularly for properties.
         val fIsNew = mle!!.isNewFlight() // hold onto this because we can change the status.
@@ -1247,7 +1247,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
     }
 
-    override fun ToView() {
+    override fun toView() {
         if (view == null) return
         setStringForField(R.id.txtComments, mle!!.szComments)
         setStringForField(R.id.txtRoute, mle!!.szRoute)
@@ -1362,7 +1362,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         updatePausePlayButtonState()
     }
 
-    override fun FromView() {
+    override fun fromView() {
         if (view == null || mle == null) return
 
         // Integer fields
@@ -1411,19 +1411,19 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     private fun doAutoTotals() {
-        FromView()
+        fromView()
         val sp = findViewById(R.id.spnAircraft) as Spinner?
         if (mle!!.autoFillTotal(
                 if (mle!!.idAircraft > 0 && sp!!.selectedItem != null) sp.selectedItem as Aircraft else null,
                 totalTimePaused()
             ) > 0
-        ) ToView()
+        ) toView()
     }
 
     private fun doAutoHobbs() {
-        FromView()
+        fromView()
         if (mle!!.autoFillHobbs(totalTimePaused()) > 0) {
-            ToView() // sync the view to the change we just made - especially since autototals can read it.
+            toView() // sync the view to the change we just made - especially since autototals can read it.
 
             // if total is linked to hobbs, need to do autotime too
             if (MFBLocation.fPrefAutoFillTime === AutoFillOptions.HobbsTime) doAutoTotals()
@@ -1525,7 +1525,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
     }
 
-    override fun UpdateStatus(
+    override fun updateStatus(
         quality: GPSQuality, fAirborne: Boolean?, loc: Location?,
         fRecording: Boolean?
     ) {
@@ -1608,7 +1608,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (mle != null && !mle!!.isKnownEngineStart) {
             mle!!.dtEngineStart = nowWith0Seconds()
             engineStart()
-            ToView()
+            toView()
         }
     }
 
@@ -1616,7 +1616,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (mle != null && !mle!!.isKnownEngineEnd) {
             mle!!.dtEngineEnd = nowWith0Seconds()
             engineStop()
-            ToView()
+            toView()
         }
     }
 
@@ -1730,7 +1730,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     // Update the fields which could possibly have changed via auto-detect
-    override fun RefreshDetectedFields() {
+    override fun refreshDetectedFields() {
         setUTCDateForField(R.id.btnFlightStartSet, mle!!.dtFlightStart)
         setUTCDateForField(R.id.btnFlightEndSet, mle!!.dtFlightEnd)
         updateIfChanged(R.id.txtLandings, mle!!.cLandings)

@@ -34,10 +34,10 @@ class MFBFlightListener : FlightEvents {
         private set
 
     interface ListenerFragmentDelegate {
-        fun ToView()
-        fun FromView()
-        fun RefreshDetectedFields()
-        fun UpdateStatus(
+        fun toView()
+        fun fromView()
+        fun refreshDetectedFields()
+        fun updateStatus(
             quality: GPSQuality,
             fAirborne: Boolean?,
             loc: Location?,
@@ -58,7 +58,7 @@ class MFBFlightListener : FlightEvents {
         return szPrevRoute.compareTo(mLenewflight!!.szRoute) != 0
     }
 
-    override fun TakeoffDetected(l: Location, fIsNight: Boolean) {
+    override fun takeoffDetected(l: Location, fIsNight: Boolean) {
         if (mLenewflight == null) {
             Log.e(MFBConstants.LOG_TAG, "logbookentry is NULL in TakeoffDetected")
             return
@@ -75,12 +75,12 @@ class MFBFlightListener : FlightEvents {
         }
         if (delegate != null) delegate!!.unPauseFlight() // don't pause in flight
         if (!mLenewflight!!.isKnownFlightStart) {
-            if (delegate != null) delegate!!.FromView()
+            if (delegate != null) delegate!!.fromView()
             mLenewflight!!.dtFlightStart = Date(l.time)
             fNeedsViewRefresh = true
         }
         fNeedsViewRefresh = appendNearest(l) || fNeedsViewRefresh // definitely do appendNearest
-        if (fNeedsViewRefresh && delegate != null) delegate!!.RefreshDetectedFields()
+        if (fNeedsViewRefresh && delegate != null) delegate!!.refreshDetectedFields()
     }
 
     private fun saveInProgressFlight() {
@@ -92,12 +92,12 @@ class MFBFlightListener : FlightEvents {
         } else {
                 */
         if (delegate != null) {
-            delegate!!.RefreshDetectedFields()
+            delegate!!.refreshDetectedFields()
             delegate!!.saveCurrentFlight()
         }
     }
 
-    override fun LandingDetected(l: Location) {
+    override fun landingDetected(l: Location) {
         // 3 things to do:
         // a) update flight end
         if (mLenewflight == null) {
@@ -121,18 +121,18 @@ class MFBFlightListener : FlightEvents {
         saveInProgressFlight()
     }
 
-    override fun FSLandingDetected(fIsNight: Boolean) {
-        if (delegate != null) delegate!!.FromView()
+    override fun landingDetectedFS(fIsNight: Boolean) {
+        if (delegate != null) delegate!!.fromView()
         if (mLenewflight == null) {
             Log.e(MFBConstants.LOG_TAG, "logbookentry is NULL in FSLandingDetected")
             return
         }
         if (!mLenewflight!!.flightInProgress()) return
         if (fIsNight) ++mLenewflight!!.cNightLandings else ++mLenewflight!!.cFullStopLandings
-        if (delegate != null) delegate!!.RefreshDetectedFields()
+        if (delegate != null) delegate!!.refreshDetectedFields()
     }
 
-    override fun AddNightTime(t: Double) {
+    override fun addNightTime(t: Double) {
         if (mLenewflight == null) {
             Log.e(MFBConstants.LOG_TAG, "logbookentry is NULL in AddNightTime")
             return
@@ -143,16 +143,16 @@ class MFBFlightListener : FlightEvents {
         var night = t.let { ActNewFlight.accumulatedNight += it; ActNewFlight.accumulatedNight }
         if (MFBLocation.fPrefRoundNearestTenth) night = (night * 10.0).roundToInt() / 10.0
         mLenewflight!!.decNight = night
-        if (delegate != null) delegate!!.RefreshDetectedFields()
+        if (delegate != null) delegate!!.refreshDetectedFields()
     }
 
-    override fun UpdateStatus(
+    override fun updateStatus(
         quality: GPSQuality,
         fAirborne: Boolean,
         loc: Location?,
         fRecording: Boolean
     ) {
-        if (delegate != null) delegate!!.UpdateStatus(quality, fAirborne, loc, fRecording)
+        if (delegate != null) delegate!!.updateStatus(quality, fAirborne, loc, fRecording)
     }
 
     override fun shouldKeepListening(): Boolean {

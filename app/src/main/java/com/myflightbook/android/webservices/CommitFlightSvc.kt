@@ -69,9 +69,7 @@ class CommitFlightSvc : MFBSoap() {
         val rgmfbii = le.rgFlightImages
             ?: throw NullPointerException("le.rgFlightImages is null")
         le.rgFlightImages = arrayOf()
-        val result = invoke(c) as SoapObject?
-        if (result == null)
-            return false;
+        val result = invoke(c) as SoapObject? ?: return false
         try {
             val leReturn = LogbookEntry()
             leReturn.fromProperties(result)

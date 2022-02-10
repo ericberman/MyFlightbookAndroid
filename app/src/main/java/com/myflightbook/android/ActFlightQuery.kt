@@ -283,12 +283,12 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         setExpandedState(
             findViewById(R.id.txtFQACFeatures) as TextView,
             findViewById(R.id.sectFQAircraftFeatures)!!,
-            curQ.HasAircraftCriteria()
+            curQ.hasAircraftCriteria()
         )
         setExpandedState(
             findViewById(R.id.txtFQFlightFeatures) as TextView,
             findViewById(R.id.sectFQFlightFeatures)!!,
-            curQ.HasFlightCriteria()
+            curQ.hasFlightCriteria()
         )
         setExpandedState(
             findViewById(R.id.txtFQAircraftHeader) as TextView,
