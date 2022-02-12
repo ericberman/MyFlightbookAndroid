@@ -18,25 +18,23 @@
  */
 package com.myflightbook.android
 
-import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
 import com.myflightbook.android.webservices.CurrencySvc
-import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
+import kotlinx.coroutines.launch
 import model.CurrencyStatusItem
 import model.CurrencyStatusItem.CurrencyGroups
 import model.MFBConstants
@@ -46,43 +44,6 @@ import java.text.DateFormat
 import java.util.*
 
 class ActCurrency : ActMFBForm(), Invalidatable {
-    private class RefreshCurrency(c: Context, ac: ActCurrency) :
-        AsyncTask<Void?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        var mResult: Array<CurrencyStatusItem> = arrayOf()
-        val mCtxt: AsyncWeakContext<ActCurrency> = AsyncWeakContext(c, ac)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val cs = CurrencySvc()
-            mResult = cs.getCurrencyForUser(AuthToken.m_szAuthToken, mCtxt.context)
-            return cs
-        }
-
-        override fun onPreExecute() {
-            mPd =
-                MFBUtil.showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgCurrency))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val ac = mCtxt.callingActivity
-            if (ac == null || !ac.isAdded || ac.isDetached || ac.activity == null) return
-            mRgcsi = mResult
-            if (svc.lastError.isNotEmpty()) {
-                MFBUtil.alert(ac, ac.getString(R.string.txtError), svc.lastError)
-            } else {
-                setNeedsRefresh(false)
-                val p = PackAndGo(mCtxt.context!!)
-                p.updateCurrency(mRgcsi)
-                ac.bindTable()
-            }
-        }
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -194,7 +155,6 @@ class ActCurrency : ActMFBForm(), Invalidatable {
                             i.putExtras(b)
                             startActivity(i)
                         }
-                        else -> {}
                     }
                 }
             } catch (ex: NullPointerException) { // should never happen.
@@ -206,8 +166,26 @@ class ActCurrency : ActMFBForm(), Invalidatable {
     private fun refresh(fForce: Boolean) {
         if (isValid() && (fForce || fNeedsRefresh)) {
             if (isOnline(context)) {
-                val ts = RefreshCurrency(requireActivity(), this)
-                ts.execute()
+                lifecycleScope.launch {
+                doAsync<CurrencySvc, Array<CurrencyStatusItem>?>(
+                    requireContext(),
+                    CurrencySvc(),
+                    getString(R.string.prgCurrency),
+                    {
+                        s : CurrencySvc -> s.getCurrencyForUser(AuthToken.m_szAuthToken, requireContext())
+                    },
+                    {
+                        svc: CurrencySvc, result : Array<CurrencyStatusItem>? ->
+                            mRgcsi = result ?: arrayOf()
+                            if (svc.lastError.isEmpty()) {
+                                setNeedsRefresh(false)
+                                val p = PackAndGo(requireContext())
+                                p.updateCurrency(mRgcsi)
+                                bindTable()
+                            }
+                    }
+                )
+                }
             } else {
                 val p = PackAndGo(requireContext())
                 val dt = p.lastCurrencyPackDate()

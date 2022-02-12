@@ -21,6 +21,7 @@ package com.myflightbook.android
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -48,9 +49,11 @@ import com.myflightbook.android.DlgDatePicker.DatePickMode
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.ImagesSvc
+import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
 import com.myflightbook.android.webservices.UTCDate.formatDate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
+import kotlinx.coroutines.*
 import model.*
 import model.DecimalEdit.EditMode
 import model.MFBImageInfo.PictureDestination
@@ -59,7 +62,7 @@ import java.util.*
 
 /*
  * Helper class for dealing with forms.
- */ open class ActMFBForm : Fragment() {
+ */ open class ActMFBForm : Fragment(), CoroutineScope by MainScope() {
     interface GallerySource {
         fun getGalleryID(): Int
         fun getGalleryHeader(): View?
@@ -143,6 +146,11 @@ import java.util.*
 
     fun finish() {
         requireActivity().finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 
     fun addGalleryImage(i: Intent) {
@@ -615,5 +623,30 @@ import java.util.*
         private const val CAMERA_PERMISSION_VIDEO = 84
         private const val GALLERY_PERMISSION = 85
         private const val TEMP_IMG_FILE_NAME = "takenpicture"
+
+        //region async tasks
+        suspend fun <T, U> doAsync(
+            ctxt: Context,
+            service : T,
+            progressMsg : String?,
+            inBackground : (service : T) -> U?,
+            onComplete : (service: T, result : U?) ->Unit) {
+            val pd = if (progressMsg != null) MFBUtil.showProgress(ctxt, progressMsg) else null
+
+            val result = withContext(Dispatchers.IO) {
+                inBackground(service)
+            }
+
+            pd?.dismiss()
+            val soap = service as MFBSoap
+            if (soap.lastError.isNotEmpty())
+                MFBUtil.alert(
+                    ctxt,
+                    ctxt.getString(R.string.txtError),
+                    soap.lastError
+                )
+            onComplete(service, result)
+        }
+        //endregion
     }
 }

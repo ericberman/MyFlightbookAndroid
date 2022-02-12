@@ -19,12 +19,9 @@
 package com.myflightbook.android
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
@@ -34,18 +31,21 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.fragment.app.ListFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
-import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
 import com.myflightbook.android.webservices.TotalsSvc
-import model.*
+import kotlinx.coroutines.launch
+import model.DecimalEdit
 import model.DecimalEdit.Companion.stringForMode
 import model.DecimalEdit.EditMode
+import model.FlightQuery
 import model.MFBUtil.alert
-import model.MFBUtil.showProgress
+import model.PackAndGo
+import model.Totals
 import model.Totals.Companion.groupTotals
 import model.Totals.NumType
 import java.text.DateFormat
@@ -76,46 +76,28 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
         }
     }
 
-    private class RefreshTotals(c: Context?, at: ActTotals) :
-        AsyncTask<Void?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        var mResult: Array<Totals>? = null
-        private val mCtxt: AsyncWeakContext<ActTotals> = AsyncWeakContext(c, at)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val ts = TotalsSvc()
-            val c = mCtxt.context
-            val at = mCtxt.callingActivity
-            if (c != null && at != null) mResult =
-                ts.getTotalsForUser(AuthToken.m_szAuthToken, at.currentQuery, c)
-            return ts
-        }
-
-        override fun onPreExecute() {
-            mPd = showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgTotals))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val at = mCtxt.callingActivity
-            if (at == null || !at.isAdded || at.isDetached || at.activity == null) return
-            val rgti = groupTotals(mResult)
-            if (svc.lastError.isNotEmpty()) {
-                alert(at, at.getString(R.string.txtError), svc.lastError)
-            } else {
-                setNeedsRefresh(false)
-                at.mTotalsRows = at.groupedTotals(rgti)
-                if (!at.currentQuery!!.hasCriteria()) {
-                    val p = PackAndGo(mCtxt.context!!)
-                    p.updateTotals(mResult)
+    private suspend fun refreshTotals() {
+        val fq = currentQuery
+        ActMFBForm.doAsync<TotalsSvc, Array<Totals>?>(requireContext(),
+            TotalsSvc(),
+            getString(R.string.prgTotals),
+            {
+                s : TotalsSvc -> s.getTotalsForUser(AuthToken.m_szAuthToken, fq, requireContext())
+            },
+            {
+                svc: TotalsSvc, result : Array<Totals>? ->
+                val rgti = groupTotals(result)
+                if (svc.lastError.isEmpty()) {
+                    setNeedsRefresh(false)
+                    mTotalsRows = groupedTotals(rgti)
+                    if (fq == null || !fq.hasCriteria()) {
+                        val p = PackAndGo(requireContext())
+                        p.updateTotals(result)
+                    }
+                    bindTable()
                 }
-                at.bindTable()
             }
-        }
-
+        )
     }
 
     override fun onCreateView(
@@ -155,7 +137,7 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
         super.onDestroy()
     }
 
-    fun groupedTotals(rgti: ArrayList<ArrayList<Totals>>): Array<TotalsRowItem?> {
+    private fun groupedTotals(rgti: ArrayList<ArrayList<Totals>>): Array<TotalsRowItem?> {
         val arr = ArrayList<TotalsRowItem>()
         // set up the rows
         for (arTotals in rgti) {
@@ -247,8 +229,9 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
     private fun refresh(fForce: Boolean) {
         if (isValid() && (fForce || fNeedsRefresh || mTotalsRows == null)) {
             if (isOnline(context)) {
-                val st = RefreshTotals(activity, this)
-                st.execute()
+                lifecycleScope.launch {
+                    refreshTotals()
+                }
             } else {
                 val p = PackAndGo(requireContext())
                 val dt = p.lastTotalsPackDate()
