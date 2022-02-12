@@ -55,7 +55,7 @@ internal class TotalsRemoteViewsFactory(private val mContext: Context, intent: I
         val prefs = mContext.getSharedPreferences(prefTotals, Activity.MODE_PRIVATE)
         val szTotals = prefs.getString(prefTotalsLast, null)
         if (szTotals != null) {
-            val rgti = deserializeFromString<Array<Totals>>(szTotals)!!
+            val rgti = deserializeFromString<Array<Totals>>(szTotals) ?: arrayOf()
             mTotalsItmes = listOf(*rgti)
         }
     }
