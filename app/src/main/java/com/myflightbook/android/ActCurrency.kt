@@ -168,7 +168,7 @@ class ActCurrency : ActMFBForm(), Invalidatable {
             if (isOnline(context)) {
                 lifecycleScope.launch {
                 doAsync<CurrencySvc, Array<CurrencyStatusItem>?>(
-                    requireContext(),
+                    requireActivity(),
                     CurrencySvc(),
                     getString(R.string.prgCurrency),
                     {

@@ -78,7 +78,7 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
 
     private suspend fun refreshTotals() {
         val fq = currentQuery
-        ActMFBForm.doAsync<TotalsSvc, Array<Totals>?>(requireContext(),
+        ActMFBForm.doAsync<TotalsSvc, Array<Totals>?>(requireActivity(),
             TotalsSvc(),
             getString(R.string.prgTotals),
             {

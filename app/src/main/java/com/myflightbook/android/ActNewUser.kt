@@ -18,23 +18,20 @@
  */
 package com.myflightbook.android
 
-import android.app.ProgressDialog
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.webservices.CreateUserSvc
-import com.myflightbook.android.webservices.MFBSoap
+import kotlinx.coroutines.launch
 import model.MFBConstants
 import model.MFBConstants.nightParam
 import model.MFBUtil.alert
-import model.MFBUtil.showProgress
 import java.util.*
 
 class ActNewUser : AppCompatActivity(), View.OnClickListener {
@@ -48,46 +45,25 @@ class ActNewUser : AppCompatActivity(), View.OnClickListener {
     private var txtA: TextView? = null
     private var activityLauncher: ActivityResultLauncher<Intent>? = null
 
-    private class AddUserTask(c: Context?, anu: ActNewUser) :
-        AsyncTask<String?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        private var mResult: Any? = null
-        private val mCtxt: AsyncWeakContext<ActNewUser> = AsyncWeakContext(c, anu)
-        override fun doInBackground(vararg params: String?): MFBSoap {
-            val cus = CreateUserSvc()
-            mResult = cus.fCreateUser(
-                params[0],
-                params[1],
-                params[2],
-                params[3],
-                params[4],
-                params[5],
-                mCtxt.context
+    private fun addUser(szEmail : String, szPass : String, szFirst : String, szLast : String, szQ : String, szA : String) {
+        val act = this as Activity
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<CreateUserSvc, Boolean?>(act,
+                CreateUserSvc(),
+                getString(R.string.prgCreatingAccount),
+                {
+                    s -> s.fCreateUser(szEmail, szPass, szFirst, szLast, szQ, szA, act)
+                },
+                {
+                    _, result ->
+                    if (result != null && result) {
+                        val i = Intent()
+                        setResult(RESULT_OK, i)
+                        finish()
+                    }
+                }
             )
-            return cus
         }
-
-        override fun onPreExecute() {
-            val c = mCtxt.context!!
-            mPd = showProgress(c, c.getString(R.string.prgCreatingAccount))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val anu = mCtxt.callingActivity ?: return
-            if ((mResult as Boolean?)!!) {
-                val i = Intent()
-                anu.setResult(RESULT_OK, i)
-                anu.finish()
-            } else {
-                alert(anu, anu.getString(R.string.txtError), svc.lastError)
-            }
-        }
-
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,9 +131,7 @@ class ActNewUser : AppCompatActivity(), View.OnClickListener {
         val id = v.id
         if (id == R.id.btnCreateUser) {
             if (isValid()) {
-                val st = AddUserTask(this, this)
-                st.execute(
-                    txtEmail!!.text.toString(), txtPass!!.text.toString(), txtFirst!!.text.toString(),
+                addUser(txtEmail!!.text.toString(), txtPass!!.text.toString(), txtFirst!!.text.toString(),
                     txtLast!!.text.toString(),
                     txtQ!!.text.toString(), txtA!!.text.toString()
                 )

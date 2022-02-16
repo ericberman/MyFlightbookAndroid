@@ -18,33 +18,34 @@
  */
 package com.myflightbook.android
 
-import android.app.ProgressDialog
+import android.app.Activity
 import android.content.Context
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.SparseArray
 import android.view.*
 import android.widget.BaseExpandableListAdapter
 import android.widget.EditText
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.cachedPropertyTypes
 import com.myflightbook.android.webservices.FlightPropertiesSvc
-import model.*
+import kotlinx.coroutines.launch
+import model.CustomPropertyType
+import model.DBCache
+import model.DecimalEdit
 import model.DecimalEdit.CrossFillDelegate
+import model.FlightProperty
 import model.FlightProperty.Companion.crossProduct
 import model.FlightProperty.Companion.distillList
 import model.FlightProperty.Companion.fromDB
 import model.FlightProperty.Companion.refreshPropCache
 import model.FlightProperty.Companion.rewritePropertiesForFlight
-import model.MFBUtil.showProgress
 import java.util.*
-
 
 class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyListener,
     CrossFillDelegate {
@@ -57,83 +58,44 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
     private var mXfillvalue = 0.0
     private var mXfilltachstart = 0.0
 
-    private class RefreshCPTTask(c: Context?, avp: ActViewProperties) :
-        AsyncTask<Void?, Void?, Boolean>() {
-        private var mPd: ProgressDialog? = null
-        var fAllowCache = true
-        var mRgcpt: Array<CustomPropertyType> = arrayOf()
-        val mCtxt: AsyncWeakContext<ActViewProperties> = AsyncWeakContext(c, avp)
-        override fun doInBackground(vararg params: Void?): Boolean {
-            val cptSvc = CustomPropertyTypesSvc()
-            mRgcpt =
-                cptSvc.getCustomPropertyTypes(AuthToken.m_szAuthToken, fAllowCache, mCtxt.context!!)
-            return mRgcpt.isNotEmpty()
-        }
-
-        override fun onPreExecute() {
-            val c = mCtxt.context
-            if (c != null) mPd = showProgress(c, c.getString(R.string.prgCPT))
-        }
-
-        override fun onPostExecute(b: Boolean) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val avp = mCtxt.callingActivity ?: return
-            avp.mRgcpt = mRgcpt
-            if (b) {
-                // Refresh the CPT's for each item in the full array
-                if (avp.mRgfpall != null) {
-                    refreshPropCache()
-                    for (fp in avp.mRgfpall!!) fp.refreshPropType()
+    private fun refreshPropertyTypes(fAllowCache : Boolean = true) {
+        val act = this as Activity
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<CustomPropertyTypesSvc, Array<CustomPropertyType>?>(act,
+                CustomPropertyTypesSvc(),
+                getString(R.string.prgCPT),
+                { s -> s.getCustomPropertyTypes(AuthToken.m_szAuthToken, fAllowCache, act) },
+                { _, result ->
+                    if (result != null && result.isNotEmpty()) {
+                        mRgcpt = result
+                        // Refresh the CPT's for each item in the full array
+                        if (mRgfpall != null) {
+                            refreshPropCache()
+                            for (fp in mRgfpall!!) fp.refreshPropType()
+                        }
+                        populateList()
+                    }
                 }
-                avp.populateList()
-            }
-        }
 
+            )
+        }
     }
 
-    private class DeletePropertyTask(
-        c: Context?,
-        avp: ActViewProperties,
-        idExisting: Int
-    ) : AsyncTask<Void?, Void?, Boolean>() {
-        private var mPd: ProgressDialog? = null
-        var propId = 0
-        val mIdexistingid: Int = idExisting
-        val mCtxt: AsyncWeakContext<ActViewProperties> = AsyncWeakContext(c, avp)
-        override fun doInBackground(vararg params: Void?): Boolean {
-            val fpsvc = FlightPropertiesSvc()
-            fpsvc.deletePropertyForFlight(
-                AuthToken.m_szAuthToken,
-                mIdexistingid,
-                propId,
-                mCtxt.context
+    private fun deleteProperty(fp : FlightProperty, idExisting: Int) {
+        val act = this as Activity
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<FlightPropertiesSvc, Any?>(
+                act,
+                FlightPropertiesSvc(),
+                getString(R.string.prgDeleteProp),
+                { s-> s.deletePropertyForFlight(AuthToken.m_szAuthToken, idExisting, fp.idProp, act) },
+                { _, _ ->
+                    val alNew = ArrayList<FlightProperty>()
+                    for (fp2 in mrgfpIn) if (fp2.idProp != fp.idProp) alNew.add(fp)
+                    mrgfpIn = alNew.toTypedArray()
+                }
             )
-            return true
         }
-
-        override fun onPreExecute() {
-            val c = mCtxt.context
-            if (c != null) mPd = showProgress(c, c.getString(R.string.prgDeleteProp))
-        }
-
-        override fun onPostExecute(b: Boolean) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val avp = mCtxt.callingActivity ?: return
-
-            // Now recreate m_rgPropIn without the specfied property.
-            val alNew = ArrayList<FlightProperty>()
-            for (fp in avp.mrgfpIn) if (fp.idProp != propId) alNew.add(fp)
-            avp.mrgfpIn = alNew.toTypedArray()
-        }
-
     }
 
     private inner class ExpandablePropertyListAdapter(
@@ -271,10 +233,8 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
         if (cptSvc.getCacheStatus() === DBCache.DBCacheStatus.VALID) {
             mRgcpt = cachedPropertyTypes
             populateList()
-        } else {
-            val rt = RefreshCPTTask(this, this)
-            rt.execute()
-        }
+        } else
+            refreshPropertyTypes()
         val srl = findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         srl?.setOnRefreshListener {
             srl.isRefreshing = false
@@ -370,9 +330,7 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
 
     private fun refreshProps() {
         updateProps() // preserve current user edits
-        val rt = RefreshCPTTask(this, this)
-        rt.fAllowCache = false
-        rt.execute()
+        refreshPropertyTypes(false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -390,11 +348,8 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
     }
 
     private fun deleteDefaultedProperty(fp: FlightProperty) {
-        for (f in mrgfpIn) if (f.idPropType == fp.idPropType && f.idProp > 0) {
-            val dpt = DeletePropertyTask(this, this, mIdexistingid)
-            dpt.propId = f.idProp
-            dpt.execute()
-        }
+        for (f in mrgfpIn) if (f.idPropType == fp.idPropType && f.idProp > 0)
+            deleteProperty(fp, mIdexistingid)
     }
 
     //region Property update delegates

@@ -18,65 +18,50 @@
  */
 package com.myflightbook.android
 
-import android.app.ProgressDialog
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ExpandableListView
 import android.widget.SimpleExpandableListAdapter
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MakesandModelsSvc
-import model.MFBConstants
+import kotlinx.coroutines.launch
 import model.MFBUtil.alert
-import model.MFBUtil.showProgress
+import model.MakesandModels
 import java.util.*
 
 class ActSelectMake : FixedExpandableListActivity() {
     private var mModelID = 0
 
-    private class GetMakesTask(c: Context?, asm: ActSelectMake?) :
-        AsyncTask<Void?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        private val mCtxt: AsyncWeakContext<ActSelectMake> = AsyncWeakContext(c, asm)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val mms = MakesandModelsSvc()
-            val rgmm = mms.getMakesAndModels(mCtxt.context)
-            ActNewAircraft.AvailableMakesAndModels = rgmm
-            return mms
+    private fun getMakes() {
+        val act = this as Activity
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<MakesandModelsSvc, Array<MakesandModels>?>(
+                act,
+                MakesandModelsSvc(),
+                getString(R.string.prgMakes),
+                { s -> s.getMakesAndModels(act) },
+                { _, result ->
+                    if (result == null || result.isEmpty()) {
+                        alert(
+                            act,
+                            getString(R.string.txtError),
+                            getString(R.string.errCannotRetrieveMakes)
+                        )
+                    } else {
+                        ActNewAircraft.AvailableMakesAndModels = result
+                        populateList()
+                    }
+                }
+            )
         }
-
-        override fun onPreExecute() {
-            mPd = showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgMakes))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val asm = mCtxt.callingActivity
-            val c = mCtxt.context
-            if (asm == null || c == null) return
-            val rgmm = ActNewAircraft.AvailableMakesAndModels
-            if (rgmm == null || rgmm.isEmpty()) {
-                alert(
-                    c,
-                    c.getString(R.string.txtError),
-                    c.getString(R.string.errCannotRetrieveMakes)
-                )
-            } else asm.populateList()
-        }
-
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,7 +90,7 @@ class ActSelectMake : FixedExpandableListActivity() {
     }
 
     private fun refresh() {
-        GetMakesTask(this, this).execute()
+        getMakes()
     }
 
     public override fun onResume() {
