@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.myflightbook.android"
-    android:versionCode="139"
-    android:versionName="2022.01.06.1">
+    android:versionCode="140"
+    android:versionName="2022.02.07.1">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -193,7 +193,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name=".mfblocationservice" />
+        <service android:name=".MFBlocationservice" />
         <service android:name=".CurrencyWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service android:name=".TotalsWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
 
