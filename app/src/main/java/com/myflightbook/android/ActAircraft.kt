@@ -18,35 +18,34 @@
  */
 package com.myflightbook.android
 
-import com.myflightbook.android.webservices.AuthToken.Companion.isValid
-import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
-import android.os.Bundle
-import android.content.Intent
 import android.app.Activity
-import android.widget.AdapterView.OnItemClickListener
-import com.myflightbook.android.MFBMain.Invalidatable
-import androidx.activity.result.ActivityResultLauncher
-import model.LazyThumbnailLoader.ThumbnailedItem
-import model.Aircraft
-import model.MFBImageInfo
-import android.os.AsyncTask
-import com.myflightbook.android.webservices.MFBSoap
-import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.view.*
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.text.HtmlCompat
+import androidx.fragment.app.ListFragment
+import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.myflightbook.android.MFBMain.Invalidatable
 import com.myflightbook.android.webservices.AircraftSvc
 import com.myflightbook.android.webservices.AuthToken
-import model.MFBUtil
-import model.MFBConstants
-import androidx.core.text.HtmlCompat
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import com.myflightbook.android.webservices.AuthToken.Companion.isValid
+import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
+import kotlinx.coroutines.launch
+import model.Aircraft
 import model.LazyThumbnailLoader
-import android.util.Log
-import android.view.*
-import android.widget.*
-import androidx.activity.result.ActivityResult
-import androidx.fragment.app.ListFragment
-import java.lang.Exception
+import model.LazyThumbnailLoader.ThumbnailedItem
+import model.MFBImageInfo
+import model.MFBUtil
 import java.util.*
 
 class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
@@ -77,52 +76,40 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
         }
     }
 
-    private class RefreshAircraftTask(c: Context?, aa: ActAircraft) :
-        AsyncTask<Void?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        var mResult: Array<Aircraft>? = null
-        val mCtxt: AsyncWeakContext<ActAircraft> = AsyncWeakContext(c, aa)
+    private suspend fun refreshAircraftInBackground() {
+        ActMFBForm.doAsync<AircraftSvc, Array<Aircraft>?>(requireActivity(),
+            AircraftSvc(),
+            getString(R.string.prgAircraft),
+            {
+                    s : AircraftSvc -> s.getAircraftForUser(AuthToken.m_szAuthToken, requireContext())
+            },
+            {
+                svc: AircraftSvc, result : Array<Aircraft>? ->
 
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val aircraftSvc = AircraftSvc()
-            mResult = aircraftSvc.getAircraftForUser(AuthToken.m_szAuthToken, mCtxt.context)
-            return aircraftSvc
-        }
-
-        override fun onPreExecute() {
-            mPd =
-                MFBUtil.showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgAircraft))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+                val rgac = result ?: arrayOf()
+                if (rgac.isEmpty())
+                    MFBUtil.alert(
+                        requireContext(),
+                        getString(R.string.txtError),
+                        svc.lastError.ifEmpty { getString(R.string.errNoAircraftFound) }
+                    )
+                else {
+                    val lstFavorite = ArrayList<Aircraft>()
+                    val lstArchived = ArrayList<Aircraft>()
+                    for (ac in rgac) {
+                        if (ac.hideFromSelection) lstArchived.add(ac) else lstFavorite.add(ac)
+                    }
+                    mFhasheaders = lstArchived.size > 0 && lstFavorite.size > 0
+                    val arRows = ArrayList<AircraftRowItem>()
+                    if (mFhasheaders) arRows.add(AircraftRowItem(getString(R.string.lblFrequentlyUsedAircraft)))
+                    for (ac in lstFavorite) arRows.add(AircraftRowItem(ac))
+                    if (mFhasheaders) arRows.add(AircraftRowItem(getString(R.string.lblArchivedAircraft)))
+                    for (ac in lstArchived) arRows.add(AircraftRowItem(ac))
+                    mAircraftrows = arRows.toTypedArray()
+                    populateList()
+                }
             }
-            val aa = mCtxt.callingActivity
-            if (aa == null || !aa.isAdded || aa.isDetached || aa.activity == null) return
-            val rgac = mResult!!
-            if (rgac.isEmpty()) MFBUtil.alert(
-                aa,
-                aa.getString(R.string.txtError),
-                aa.getString(R.string.errNoAircraftFound)
-            )
-            val lstFavorite = ArrayList<Aircraft>()
-            val lstArchived = ArrayList<Aircraft>()
-            for (ac in rgac) {
-                if (ac.hideFromSelection) lstArchived.add(ac) else lstFavorite.add(ac)
-            }
-            aa.mFhasheaders = lstArchived.size > 0 && lstFavorite.size > 0
-            val arRows = ArrayList<AircraftRowItem>()
-            if (aa.mFhasheaders) arRows.add(AircraftRowItem(aa.getString(R.string.lblFrequentlyUsedAircraft)))
-            for (ac in lstFavorite) arRows.add(AircraftRowItem(ac))
-            if (aa.mFhasheaders) arRows.add(AircraftRowItem(aa.getString(R.string.lblArchivedAircraft)))
-            for (ac in lstArchived) arRows.add(AircraftRowItem(ac))
-            aa.mAircraftrows = arRows.toTypedArray()
-            aa.populateList()
-        }
-
+        )
     }
 
     private inner class AircraftAdapter(
@@ -225,8 +212,9 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
     override fun onResume() {
         super.onResume()
         if (isValid() && mAircraftrows == null) {
-            val st = RefreshAircraftTask(activity, this)
-            st.execute()
+            lifecycleScope.launch {
+                refreshAircraftInBackground()
+            }
         } else populateList()
     }
 
@@ -236,7 +224,12 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
         val aa = AircraftAdapter(a, mAircraftrows)
         listAdapter = aa
         listView.onItemClickListener = this
-        Thread(LazyThumbnailLoader(mAircraftrows as Array<ThumbnailedItem>, aa)).start()
+        val mrows = mAircraftrows
+        val rgthumbs = ArrayList<ThumbnailedItem>()
+        for (row in mrows!!) {
+            rgthumbs.add(row)
+        }
+        Thread(LazyThumbnailLoader(rgthumbs.toTypedArray(), aa)).start()
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
@@ -258,8 +251,9 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
     private fun refreshAircraft() {
         val ac = AircraftSvc()
         ac.flushCache()
-        val st = RefreshAircraftTask(activity, this)
-        st.execute()
+        lifecycleScope.launch {
+            refreshAircraftInBackground()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

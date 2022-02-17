@@ -19,11 +19,9 @@
 package com.myflightbook.android
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.TextUtils
 import android.text.format.DateFormat
@@ -40,16 +38,17 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.ListFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
 import com.myflightbook.android.webservices.*
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
-import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.hasCachedFlights
 import com.myflightbook.android.webservices.UTCDate.formatDate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
+import kotlinx.coroutines.launch
 import model.*
 import model.Aircraft.Companion.getAircraftById
 import model.DecimalEdit.Companion.doubleToHHMM
@@ -62,7 +61,6 @@ import model.LogbookEntry.SigStatus
 import model.MFBImageInfo.ImageCacheCompleted
 import model.MFBUtil.alert
 import model.MFBUtil.putCacheForKey
-import model.MFBUtil.showProgress
 import java.util.*
 import java.util.regex.Pattern
 
@@ -273,191 +271,156 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
         }
     }
 
-    private open class SubmitQueuedFlightsTask(
-        c: Context?,
-        arws: ActRecentsWS,
-        rgle: Array<LogbookEntry>?
-    ) : AsyncTask<Void?, String?, Boolean>(), MFBSoapProgressUpdate {
-        private var mPd: ProgressDialog? = null
-        private val mCtxt: AsyncWeakContext<ActRecentsWS> = AsyncWeakContext(c, arws)
-        private val mRgle: Array<LogbookEntry>? = rgle
-        var mFerrorsfound = false
+    private fun submitQueuedFlights(rgle: Array<LogbookEntry>?) {
+        if (rgle == null || rgle.isEmpty())
+            return
+
+        val act = requireActivity()
         var mFflightsposted = false
-        protected fun submitFlight(le: LogbookEntry?): Boolean {
-            /*
-                Scenarios:
-                 - fForcePending is false, Regular flight, new or existing: call CommitFlightWithOptions
-                 - fForcePending is false, Pending flight without a pending ID call CommitFlightWithOptions.  Shouldn't happen, but no big deal if it does
-                 - fForcePending is false, Pending flight with a Pending ID: call CommitPendingFlight to commit it
-                 - fForcePending is false, Pending flight without a pending ID: THROW EXCEPTION, how did this happen?
+        var mFerrorsfound = mFflightsposted
 
-                 - fForcePending is true, Regular flight that is not new/pending (sorry about ambiguous "pending"): THROW EXCEPTION; this is an error
-                 - fForcePending is true, Regular flight that is NEW: call CreatePendingFlight
-                 - fForcePending is true, PendingFlight without a PendingID: call CreatePendingFlight.  Shouldn't happen, but no big deal if it does
-                 - fForcePending is true, PendingFlight with a PendingID: call UpdatePendingFlight
-             */
-            val pf = if (le is PendingFlight) le else null
-            return if (le!!.fForcePending) {
-                check(!le.isExistingFlight()) { "Attempt to save an existing flight as a pending flight" }
-                if (pf == null || pf.getPendingID().isEmpty()) {
-                    val pfs = PendingFlightSvc()
-                    pfs.createPendingFlight(AuthToken.m_szAuthToken, le, mCtxt.context)
-                        .also { cachedPendingFlights = it }
-                    true
-                } else {
-                    // existing pending flight but still force pending - call updatependingflight
-                    val pfs = PendingFlightSvc()
-                    pfs.updatePendingFlight(AuthToken.m_szAuthToken, pf, mCtxt.context)
-                        .also { cachedPendingFlights = it }
-                    true
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<MFBSoap, Boolean?>(
+                act,
+                MFBSoap(),
+                "",  // actual status will be filled in below, but don't pass null because we want to show status
+                {
+                    s ->
+                    val cFlights = rgle.size
+                    var iFlight = 1
+                    val szFmtUploadProgress = requireContext().getString(R.string.prgSavingFlights)
+                    for (le in rgle) {
+                        val szStatus = String.format(szFmtUploadProgress, iFlight, cFlights)
+                        s.mProgress?.notifyProgress(iFlight * 100 / cFlights, szStatus)
+                        iFlight++
+                        le.syncProperties() // pull in the properties for the flight.
+                        if (submitFlight(le)) {
+                            mFflightsposted = true
+                            le.deleteUnsubmittedFlightFromLocalDB()
+                        } else {
+                            le.idFlight =
+                                LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED // don't auto-resubmit until the error is fixed.
+                            le.toDB() // save the error so that we will display it on refresh.
+                            mFerrorsfound = true
+                        }
+                    }
+                    mFflightsposted || mFerrorsfound
+                },
+                { _, _ ->
+
+                    if (mFflightsposted) {  // flight was added/updated, so invalidate stuff.
+                        MFBMain.invalidateCachedTotals()
+                        refreshRecentFlights(true)
+                    } else if (mFerrorsfound) {
+                        mRgle = mergeFlightLists(
+                            mergeFlightLists(
+                                queuedAndUnsubmittedFlights,
+                                if (currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
+                            ), mRgexistingflights.toTypedArray()
+                        )
+                        populateList()
+                    }
                 }
-            } else {
-                // Not force pending.
-                // If regular flight (new or existing), or pending without a pendingID
-                if (pf == null || pf.getPendingID().isEmpty()) {
-                    val cf = CommitFlightSvc()
-                    cf.fCommitFlightForUser(AuthToken.m_szAuthToken, le, mCtxt.context!!)
-                } else {
-                    // By definition, here pf is non-null and it has a pending ID so it is a valid pending flight and we are not forcing - call commitpendingflight
-                    val pfs = PendingFlightSvc()
-                    pfs.mProgress = this
-                    val rgpf =
-                        pfs.commitPendingFlight(AuthToken.m_szAuthToken, pf, mCtxt.context!!)
-                    cachedPendingFlights = rgpf
-                    pf.szError = pfs.lastError
-                    pf.szError.isEmpty() // we want to show any error
-                }
-            }
+            )
         }
-
-        override fun doInBackground(vararg params: Void?): Boolean {
-            if (mRgle == null || mRgle.isEmpty()) return false
-            mFflightsposted = false
-            mFerrorsfound = mFflightsposted
-            val cFlights = mRgle.size
-            var iFlight = 1
-            val c = mCtxt.context!!
-            val szFmtUploadProgress = c.getString(R.string.prgSavingFlights)
-            for (le in mRgle) {
-                val szStatus = String.format(szFmtUploadProgress, iFlight, cFlights)
-                if (mPd != null) notifyProgress(iFlight * 100 / cFlights, szStatus)
-                iFlight++
-                le.syncProperties() // pull in the properties for the flight.
-                if (submitFlight(le)) {
-                    mFflightsposted = true
-                    le.deleteUnsubmittedFlightFromLocalDB()
-                } else {
-                    le.idFlight =
-                        LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED // don't auto-resubmit until the error is fixed.
-                    le.toDB() // save the error so that we will display it on refresh.
-                    mFerrorsfound = true
-                }
-            }
-            return mFflightsposted || mFerrorsfound
-        }
-
-        override fun onPreExecute() {
-            val c = mCtxt.context!!
-            mPd = showProgress(c, c.getString(R.string.prgSavingFlight))
-        }
-
-        override fun onPostExecute(fResult: Boolean) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            if (!fResult) // nothing changed - nothing to do.
-                return
-            val arws = mCtxt.callingActivity
-            if (arws == null || !arws.isAdded || arws.isDetached || arws.activity == null) return
-            if (mFflightsposted) {  // flight was added/updated, so invalidate stuff.
-                MFBMain.invalidateCachedTotals()
-                arws.refreshRecentFlights(true)
-            } else if (mFerrorsfound) {
-                arws.mRgle = mergeFlightLists(
-                    mergeFlightLists(
-                        queuedAndUnsubmittedFlights,
-                        if (arws.currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
-                    ), arws.mRgexistingflights.toTypedArray()
-                )
-                arws.populateList()
-            }
-        }
-
-        override fun onProgressUpdate(vararg msg: String?) {
-            mPd!!.setMessage(msg[0])
-        }
-
-        override fun notifyProgress(percentageComplete: Int, szMsg: String?) {
-            publishProgress(szMsg)
-        }
-
     }
 
-    private class RefreshFlightsTask(c: Context?, arws: ActRecentsWS) :
-        AsyncTask<Void?, Void?, Boolean>() {
-        private var mRfsvc: RecentFlightsSvc? = null
-        var fClearCache = false
-        private val mCtxt: AsyncWeakContext<ActRecentsWS> = AsyncWeakContext(c, arws)
-        override fun doInBackground(vararg params: Void?): Boolean {
-            val c = mCtxt.context
-            val arws = mCtxt.callingActivity
-            if (c == null || arws == null) // can't do anything without a context
-                return false
-            mRfsvc = RecentFlightsSvc()
-            val rgleQueuedAndUnsubmitted = queuedAndUnsubmittedFlights
-            if (fClearCache) clearCachedFlights()
-            val cFlightsPageSize = 15
-            val rgle = mRfsvc!!.getRecentFlightsWithQueryAndOffset(
-                AuthToken.m_szAuthToken,
-                arws.currentQuery,
-                arws.mRgexistingflights.size,
-                cFlightsPageSize,
-                c
-            )
+    private fun submitFlight(le: LogbookEntry?): Boolean {
+        /*
+            Scenarios:
+             - fForcePending is false, Regular flight, new or existing: call CommitFlightWithOptions
+             - fForcePending is false, Pending flight without a pending ID call CommitFlightWithOptions.  Shouldn't happen, but no big deal if it does
+             - fForcePending is false, Pending flight with a Pending ID: call CommitPendingFlight to commit it
+             - fForcePending is false, Pending flight without a pending ID: THROW EXCEPTION, how did this happen?
 
-            // Refresh pending flights, if it's null
-            if (cachedPendingFlights == null || cachedPendingFlights!!.isEmpty())
-                cachedPendingFlights = PendingFlightSvc().getPendingFlightsForUser(AuthToken.m_szAuthToken, c)
-            arws.fCouldBeMore = rgle.size >= cFlightsPageSize
-            arws.mRgexistingflights.addAll(rgle)
-            arws.mRgle = mergeFlightLists(
-                mergeFlightLists(
-                    rgleQueuedAndUnsubmitted,
-                    if (arws.currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
-                ), arws.mRgexistingflights.toTypedArray()
-            )
-            return true
-        }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(b: Boolean) {
-            m_fIsRefreshing = false
-            val c = mCtxt.context
-            val arws = mCtxt.callingActivity
-            if (c == null || arws == null || !arws.isAdded || arws.isDetached || arws.activity == null) // can't do anything without a context
-                return
-            arws.populateList()
-
-            // Turn off the swipe refresh layout here because, unlike most other refreshable screens,
-            // this one doesn't show a progress indicator (because of continuous scroll)
-            // So if this was swipe-to-refresh, then we leave the indicator up until the operation is complete.
-            val v = arws.view
-            if (v != null) {
-                val srl: SwipeRefreshLayout = v.findViewById(R.id.swiperefresh)
-                srl.isRefreshing = false
+             - fForcePending is true, Regular flight that is not new/pending (sorry about ambiguous "pending"): THROW EXCEPTION; this is an error
+             - fForcePending is true, Regular flight that is NEW: call CreatePendingFlight
+             - fForcePending is true, PendingFlight without a PendingID: call CreatePendingFlight.  Shouldn't happen, but no big deal if it does
+             - fForcePending is true, PendingFlight with a PendingID: call UpdatePendingFlight
+         */
+        val pf = if (le is PendingFlight) le else null
+        return if (le!!.fForcePending) {
+            check(!le.isExistingFlight()) { "Attempt to save an existing flight as a pending flight" }
+            if (pf == null || pf.getPendingID().isEmpty()) {
+                val pfs = PendingFlightSvc()
+                pfs.createPendingFlight(AuthToken.m_szAuthToken, le, requireContext())
+                    .also { cachedPendingFlights = it }
+                true
+            } else {
+                // existing pending flight but still force pending - call updatependingflight
+                val pfs = PendingFlightSvc()
+                pfs.updatePendingFlight(AuthToken.m_szAuthToken, pf, requireContext())
+                    .also { cachedPendingFlights = it }
+                true
             }
-            if (arws.view != null) {
-                val tv = arws.requireView().findViewById<TextView>(R.id.txtFlightQueryStatus)
-                tv.text =
-                    c.getString(if (arws.currentQuery != null && arws.currentQuery!!.hasCriteria()) R.string.fqStatusNotAllflights else R.string.fqStatusAllFlights)
-            }
-            if (!b && mRfsvc != null) {
-                alert(arws, c.getString(R.string.txtError), mRfsvc!!.lastError)
+        } else {
+            // Not force pending.
+            // If regular flight (new or existing), or pending without a pendingID
+            if (pf == null || pf.getPendingID().isEmpty()) {
+                val cf = CommitFlightSvc()
+                cf.fCommitFlightForUser(AuthToken.m_szAuthToken, le, requireContext())
+            } else {
+                // By definition, here pf is non-null and it has a pending ID so it is a valid pending flight and we are not forcing - call commitpendingflight
+                val pfs = PendingFlightSvc()
+                val rgpf =
+                    pfs.commitPendingFlight(AuthToken.m_szAuthToken, pf, requireContext())
+                cachedPendingFlights = rgpf
+                pf.szError = pfs.lastError
+                pf.szError.isEmpty() // we want to show any error
             }
         }
+    }
 
+    private fun refreshFlights(fClearCache : Boolean = false) {
+        val act = requireActivity()
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<RecentFlightsSvc, Array<LogbookEntry>?>(
+                act,
+                RecentFlightsSvc(),
+                null,
+                { s->
+                    val rgleQueuedAndUnsubmitted = queuedAndUnsubmittedFlights
+                    if (fClearCache) clearCachedFlights()
+                    val cFlightsPageSize = 15
+                    val rgle = s.getRecentFlightsWithQueryAndOffset(
+                        AuthToken.m_szAuthToken,
+                        currentQuery,
+                        mRgexistingflights.size,
+                        cFlightsPageSize,
+                        requireContext()
+                    )
+
+                    // Refresh pending flights, if it's null
+                    if (cachedPendingFlights == null || cachedPendingFlights!!.isEmpty())
+                        cachedPendingFlights = PendingFlightSvc().getPendingFlightsForUser(AuthToken.m_szAuthToken, requireContext())
+                    fCouldBeMore = rgle.size >= cFlightsPageSize
+                    mRgexistingflights.addAll(rgle)
+                    mergeFlightLists(
+                        mergeFlightLists(
+                            rgleQueuedAndUnsubmitted,
+                            if (currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
+                        ), mRgexistingflights.toTypedArray()
+                    )
+                },
+                { _, result ->
+                    mRgle = result
+                    m_fIsRefreshing = false
+                    populateList()
+
+                    // Turn off the swipe refresh layout here because, unlike most other refreshable screens,
+                    // this one doesn't show a progress indicator (because of continuous scroll)
+                    // So if this was swipe-to-refresh, then we leave the indicator up until the operation is complete.
+                    val v = view
+                    if (v != null) {
+                        val srl: SwipeRefreshLayout = v.findViewById(R.id.swiperefresh)
+                        srl.isRefreshing = false
+                        val tv = requireView().findViewById<TextView>(R.id.txtFlightQueryStatus)
+                        tv.text =
+                            getString(if (currentQuery != null && currentQuery!!.hasCriteria()) R.string.fqStatusNotAllflights else R.string.fqStatusAllFlights)
+                    }
+                }
+            )
+        }
     }
 
     override fun onCreateView(
@@ -514,9 +477,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             if (!m_fIsRefreshing) {
                 m_fIsRefreshing = true // don't refresh if already in progress.
                 Log.d(MFBConstants.LOG_TAG, "ActRecentsWS - Refreshing From Server")
-                val rft = RefreshFlightsTask(context, this)
-                rft.fClearCache = fClearAll
-                rft.execute()
+                refreshFlights(fClearAll)
             }
         } else {
             mRgle = queuedAndUnsubmittedFlights
@@ -575,10 +536,8 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             )
         ).start()
         val rgUnsubmitted = unsubmittedFlights
-        if (rgUnsubmitted.isNotEmpty() && isOnline(context)) {
-            val spft = SubmitQueuedFlightsTask(context, this, rgUnsubmitted)
-            spft.execute()
-        }
+        if (rgUnsubmitted.isNotEmpty() && isOnline(context))
+            submitQueuedFlights(rgUnsubmitted)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -19,8 +19,8 @@
 package com.myflightbook.android
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -34,7 +34,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteReadOnlyDatabaseException
 import android.graphics.drawable.Icon
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
@@ -44,13 +47,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.myflightbook.android.webservices.AuthToken
+import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MFBSoap.Companion.startListeningNetwork
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
+import kotlinx.coroutines.launch
 import model.*
 import model.GPSSim.Companion.importTelemetry
 import model.MFBFlightListener.ListenerFragmentDelegate
@@ -58,7 +64,6 @@ import model.MFBLocation.Companion.getMainLocation
 import model.MFBLocation.Companion.setMainLocation
 import model.MFBTakeoffSpeed.takeOffSpeedIndex
 import model.MFBUtil.alert
-import model.MFBUtil.showProgress
 import model.Telemetry.Companion.telemetryFromURL
 import java.io.IOException
 import java.util.*
@@ -97,66 +102,41 @@ class MFBMain : AppCompatActivity() {
     private var mViewPager: ViewPager2? = null
     private var mLastTabIndex = -1
 
-    private class ImportTelemetryTask(c: Context?, m: MFBMain?) :
-        AsyncTask<Uri?, Void?, LogbookEntry?>() {
-        private var mPd: ProgressDialog? = null
-        private val mCtxt: AsyncWeakContext<MFBMain> = AsyncWeakContext(c, m)
-        private var exceptionError: String? = null
-        override fun doInBackground(vararg urls: Uri?): LogbookEntry? {
-            var leResult: LogbookEntry? = null
-            if (urls.isNotEmpty()) {
-                try {
-                    val t = telemetryFromURL(urls[0], mCtxt.context!!)
-                    if (t != null) leResult = importTelemetry(mCtxt.callingActivity!!, t, urls[0])
-                } catch (ex: IOException) {
-                    exceptionError = ex.message
+    private fun importTelemetry(uri: Uri?) {
+        if (uri == null)
+            return
+        val act = this as Activity
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<MFBSoap, LogbookEntry?>(
+                act,
+                MFBSoap(),
+                getString(R.string.telemetryImportProgress),
+                { s ->
+                    try {
+                        val t = telemetryFromURL(uri, act)
+                        if (t == null) null else importTelemetry(act, t, uri)
+                    } catch (ex: IOException) {
+                        s.lastError = ex.message ?: getString(R.string.telemetryCantIdentify)
+                        null
+                    }
+                },
+                {
+                    s, result ->
+                    when {
+                        result == null -> alert(act, getString(R.string.txtError), s.lastError)
+                        result.szError.isNotEmpty() -> alert(act, getString(R.string.txtError), result.szError)
+                        else -> {
+                            clearCachedFlights()
+                            alert(act, getString(R.string.txtSuccess), getString(R.string.telemetryImportSuccessful))
+                        }
+                    }
+                    // clear the URL from the intent.
+                    val i = act.intent
+                    if (i != null) i.data = null
+                    mViewPager!!.currentItem = MFBTab.Recent.ordinal
                 }
-            }
-            return leResult
+            )
         }
-
-        override fun onPreExecute() {
-            val c = mCtxt.context
-            if (c != null) mPd = showProgress(c, c.getString(R.string.telemetryImportProgress))
-        }
-
-        override fun onPostExecute(le: LogbookEntry?) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val c = mCtxt.context
-            val m = mCtxt.callingActivity
-            if (c == null) return
-            when {
-                le == null -> alert(
-                    c,
-                    c.getString(R.string.txtError),
-                    if (exceptionError == null) c.getString(R.string.telemetryCantIdentify) else exceptionError
-                )
-                le.szError.isNotEmpty() -> alert(
-                    c,
-                    c.getString(R.string.txtError),
-                    le.szError
-                )
-                else -> {
-                    clearCachedFlights()
-                    alert(
-                        c,
-                        c.getString(R.string.txtSuccess),
-                        c.getString(R.string.telemetryImportSuccessful)
-                    )
-                }
-            }
-            if (m == null) return
-
-            // clear the URL from the intent.
-            val i = m.intent
-            if (i != null) i.data = null
-            m.mViewPager!!.currentItem = MFBTab.Recent.ordinal
-        }
-
     }
 
     private fun initDB(fRetryOnFailure: Boolean) {
@@ -210,7 +190,6 @@ class MFBMain : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.v(MFBConstants.LOG_TAG, "onCreate: about to install splash screen")
 
-        // TODO: check splash screen works?
         installSplashScreen()
 
         Log.v(MFBConstants.LOG_TAG, "onCreate: start listening network")
@@ -385,12 +364,7 @@ class MFBMain : AppCompatActivity() {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(R.string.lblConfirm)
                     .setMessage(R.string.telemetryImportPrompt)
-                    .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int ->
-                        ImportTelemetryTask(
-                            this,
-                            this
-                        ).execute(uri)
-                    }
+                    .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int -> importTelemetry(uri) }
                     .setNegativeButton(R.string.lblCancel, null)
                     .show()
             }
@@ -535,8 +509,7 @@ class MFBMain : AppCompatActivity() {
         // a) if we're already signed in, just go to the last tab.
         // b) if we're not already signed in or need a refresh, refresh as necessary
         // c) else, just go to the options tab to sign in from there.
-        val auth = AuthToken()
-        RefreshTask(applicationContext, this).execute(auth)
+        refreshAuthToken(AuthToken())
         Log.v(MFBConstants.LOG_TAG, "onResume: start listening to GPS")
         // This is a hack, but we get a lot of crashes about too much time between startForegroundService being
         // called and startForeground being called.
@@ -555,17 +528,17 @@ class MFBMain : AppCompatActivity() {
         mDBHelperAirports!!.readableDatabase.close()
     }
 
-    private class RefreshTask(c: Context?, m: MFBMain?) :
-        AsyncTask<AuthToken?, Void?, Boolean>() {
-
-        val mCtxt: AsyncWeakContext<MFBMain> = AsyncWeakContext(c, m)
-        override fun doInBackground(vararg arg0: AuthToken?): Boolean {
-            return arg0[0]!!.refreshAuthorization(mCtxt.callingActivity)
+    private fun refreshAuthToken(auth : AuthToken) {
+        val act = this as Activity
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<AuthToken, Any?>(
+                act,
+                auth,
+                null,
+                { s -> s.refreshAuthorization(act) },
+                { _, _ -> }
+            )
         }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(f: Boolean) {}
-
     }
 
     private fun restoreState() {

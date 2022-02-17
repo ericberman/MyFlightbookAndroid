@@ -19,24 +19,20 @@
 package com.myflightbook.android
 
 import android.app.Activity
-import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.TextView
 import androidx.activity.result.ActivityResult
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActMFBForm.GallerySource
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
 import com.myflightbook.android.webservices.AircraftSvc
 import com.myflightbook.android.webservices.AuthToken
-import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
-import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
+import kotlinx.coroutines.launch
 import model.*
 import model.Aircraft.PilotRole
 import model.MFBImageInfo.PictureDestination
@@ -45,106 +41,44 @@ import java.util.*
 class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, GallerySource {
     private var mAc: Aircraft? = null
 
-    private class SubmitTask(c: Context?, aea: ActEditAircraft) :
-        AsyncTask<Void?, String?, Boolean>(), MFBSoapProgressUpdate {
-        private var mPd: ProgressDialog? = null
-        private var mAcs: AircraftSvc? = null
-        private val mCtxt: AsyncWeakContext<ActEditAircraft> = AsyncWeakContext(c, aea)
-        override fun doInBackground(vararg params: Void?): Boolean {
-            val c = mCtxt.context
-            val aea = mCtxt.callingActivity
-            if (c == null || aea == null) return false
-            mAcs = AircraftSvc()
-            mAcs!!.mProgress = this
-            mAcs!!.updateMaintenanceForAircraft(AuthToken.m_szAuthToken, aea.mAc, c)
-            return mAcs!!.lastError.isEmpty()
-        }
-
-        override fun onPreExecute() {
-            mPd = mCtxt.callingActivity?.let {
-                MFBUtil.showProgress(
-                    it,
-                    mCtxt.context!!.getString(R.string.prgUpdatingAircraft)
-                )
+    private suspend fun submitAircraftUpdate() {
+        doAsync<AircraftSvc, Boolean?>(requireActivity(),
+            AircraftSvc(),
+            getString(R.string.prgUpdatingAircraft),
+            {
+                s : AircraftSvc -> s.updateMaintenanceForAircraft(AuthToken.m_szAuthToken, mAc, requireContext())
+                true
+            },
+            {
+                    svc: AircraftSvc, _: Boolean? ->
+                if (svc.lastError.isEmpty()) {
+                    svc.flushCache()
+                    MFBMain.invalidateCachedTotals() // could have updated maintenance, leading currency to be invalid.
+                    val i = Intent()
+                    requireActivity().setResult(Activity.RESULT_OK, i)
+                    finish()
+                    ActTotals.setNeedsRefresh(false)
+                }
             }
-        }
-
-        override fun onPostExecute(b: Boolean) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val aea = mCtxt.callingActivity
-            if (aea == null || !aea.isAdded || aea.activity == null) return
-            if (b) {
-                // force a refresh.
-                mAcs!!.flushCache()
-                MFBMain.invalidateCachedTotals() // could have updated maintenance, leading currency to be invalid.
-                val i = Intent()
-                aea.requireActivity().setResult(Activity.RESULT_OK, i)
-                aea.finish()
-            } else {
-                MFBUtil.alert(aea, aea.getString(R.string.txtError), mAcs!!.lastError)
-            }
-        }
-
-        override fun onProgressUpdate(vararg msg: String?) {
-            mPd!!.setMessage(msg[0])
-        }
-
-        override fun notifyProgress(percentageComplete: Int, szMsg: String?) {
-            publishProgress(szMsg)
-        }
-
+        )
     }
 
-    private class DeleteTask(c: Context?, aea: ActEditAircraft) :
-        AsyncTask<Void?, String?, MFBSoap?>(), MFBSoapProgressUpdate {
-        private var mPd: ProgressDialog? = null
-        private val mCtxt: AsyncWeakContext<ActEditAircraft> = AsyncWeakContext(c, aea)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val mAcs = AircraftSvc()
-            mAcs.mProgress = this
-            mAcs.deleteAircraftForUser(
-                AuthToken.m_szAuthToken,
-                mCtxt.callingActivity!!.mAc!!.aircraftID,
-                mCtxt.context
-            )
-            return mAcs
-        }
-
-        override fun onPreExecute() {
-            mPd = MFBUtil.showProgress(
-                mCtxt.callingActivity!!,
-                mCtxt.context!!.getString(R.string.prgDeletingAircraft)
-            )
-        }
-
-        override fun onPostExecute(acs: MFBSoap?) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val c = mCtxt.context
-            val aea = mCtxt.callingActivity
-            if (c == null || aea == null || acs == null || aea.activity == null || !aea.isAdded) return
-            if (acs.lastError.isEmpty()) {
-                val i = Intent()
-                aea.requireActivity().setResult(Activity.RESULT_OK, i)
-                aea.finish()
-            } else MFBUtil.alert(aea, c.getString(R.string.txtError), acs.lastError)
-        }
-
-        override fun onProgressUpdate(vararg msg: String?) {
-            mPd!!.setMessage(msg[0])
-        }
-
-        override fun notifyProgress(percentageComplete: Int, szMsg: String?) {
-            publishProgress(szMsg)
-        }
-
+    private suspend fun deleteAircraft() {
+        doAsync<AircraftSvc, Boolean?>(
+            requireActivity(),
+            AircraftSvc(),
+            getString(R.string.prgDeletingAircraft),
+            {
+                s : AircraftSvc -> s.deleteAircraftForUser(AuthToken.m_szAuthToken, mAc!!.aircraftID, requireContext())
+                true
+            },
+            { service: AircraftSvc, _: Boolean? ->
+                if (service.lastError.isEmpty()) {
+                    val i = Intent()
+                    requireActivity().setResult(Activity.RESULT_OK, i)
+                    finish()
+                }
+            })
     }
 
     override fun onCreateView(
@@ -439,8 +373,9 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
 
     private fun updateAircraft() {
         fromView()
-        val st = SubmitTask(context, this)
-        st.execute()
+        lifecycleScope.launch {
+            submitAircraftUpdate()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -455,9 +390,11 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
                 getString(R.string.txtError),
                 getString(R.string.errNoInternet)
             )
-        } else if (id == R.id.menuDeleteAircraft) DeleteTask(
-            context, this
-        ).execute() else if (id == R.id.menuViewSchedule) {
+        } else if (id == R.id.menuDeleteAircraft)
+            lifecycleScope.launch {
+                deleteAircraft()
+            }
+        else if (id == R.id.menuViewSchedule) {
             if (isOnline(context)) ActWebView.viewURL(
                 requireActivity(), MFBConstants.authRedirWithParams(
                     String.format(Locale.US, "d=aircraftschedule&ac=%d", mAc!!.aircraftID), context

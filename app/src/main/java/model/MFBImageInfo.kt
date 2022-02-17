@@ -28,7 +28,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.media.ThumbnailUtils
-import android.os.AsyncTask
 import android.os.Environment
 import android.os.Handler
 import android.provider.MediaStore
@@ -40,11 +39,14 @@ import com.myflightbook.android.ActWebView
 import com.myflightbook.android.MFBMain
 import com.myflightbook.android.R
 import com.myflightbook.android.webservices.AuthToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.ksoap2.serialization.KvmSerializable
 import org.ksoap2.serialization.PropertyInfo
 import org.ksoap2.serialization.SoapObject
 import java.io.*
-import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
@@ -92,53 +94,42 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         fun imgCompleted(sender: MFBImageInfo?)
     }
 
-    private class AsyncLoadURL(
-        iv: ImageView?,
-        url: String,
-        fIsThumnbnail: Boolean,
-        icc: ImageCacheCompleted?,
-        mfbii: MFBImageInfo
-    ) : AsyncTask<Void?, Void?, Drawable?>() {
-        private val mUrl: String = url
-        private val imgView: WeakReference<ImageView?> = WeakReference(iv)
-        private val mFIsThumbnail: Boolean = fIsThumnbnail
-        private val mIcc: ImageCacheCompleted? = icc
-        private val mMfbii: WeakReference<MFBImageInfo> = WeakReference(mfbii)
-        public override fun doInBackground(vararg params: Void?): Drawable? {
-            var d: Drawable? = null
-            try {
-                val `is` = URL(mUrl).content as InputStream
-                d = Drawable.createFromStream(`is`, "src name")
-                if (d != null) {
-                    val mfbii = mMfbii.get()
-                    if (mfbii != null) {
+    private fun loadURLAsync(iv : ImageView?, urlAsString : String, fIsThumbnail : Boolean, icc : ImageCacheCompleted?) {
+        if (urlAsString.isEmpty())
+            return
+
+        val uri = URL(urlAsString)
+        var d: Drawable? = null
+        val image = this
+
+        GlobalScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                try {
+                    val inputStream = uri.content as InputStream
+                    d = Drawable.createFromStream(inputStream, "src name")
+                    if (d != null) {
                         val bd = d as BitmapDrawable
                         val bmp = bd.bitmap
                         val s = ByteArrayOutputStream()
                         bmp.compress(
-                            if (mfbii.imageType == ImageFileType.PDF || mfbii.imageType == ImageFileType.S3PDF) CompressFormat.PNG else CompressFormat.JPEG,
+                            if (imageType == ImageFileType.PDF || imageType == ImageFileType.S3PDF) CompressFormat.PNG else CompressFormat.JPEG,
                             100,
                             s
                         )
-                        if (mFIsThumbnail) mfbii.thumbnail = s.toByteArray() else mfbii.mImgdata =
-                            s.toByteArray()
+                        if (fIsThumbnail) thumbnail = s.toByteArray() else mImgdata = s.toByteArray()
+                    }
+                } catch (e: Exception) {
+                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+                }
+
+                withContext(Dispatchers.Main) {
+                    if (d != null) {
+                        iv?.setImageDrawable(d)
+                        icc?.imgCompleted(image)
                     }
                 }
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            return d
-        }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(d: Drawable?) {
-            if (d != null) {
-                val iv = imgView.get()
-                iv?.setImageDrawable(d)
-                mIcc?.imgCompleted(mMfbii.get())
             }
         }
-
     }
 
     //region Constructors
@@ -792,14 +783,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         // return if we already have everything cached.
         if (fThumbnail && thumbnail != null && thumbnail!!.isNotEmpty()) return
         if (!fThumbnail && mImgdata != null && mImgdata!!.isNotEmpty()) return
-        val alu = AsyncLoadURL(
-            null,
-            if (fThumbnail) getURLThumbnail() else getURLFullImage(),
-            fThumbnail,
-            delegate,
-            this
-        )
-        alu.execute()
+        loadURLAsync(null, if (fThumbnail) getURLThumbnail() else getURLFullImage(), fThumbnail, delegate)
     }
 
     /*
@@ -817,14 +801,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
             i.setImageBitmap(bitmapFromImage())
             return
         }
-        val alu = AsyncLoadURL(
-            i,
-            if (fThumbnail) getURLThumbnail() else getURLFullImage(),
-            fThumbnail,
-            null,
-            this
-        )
-        alu.execute()
+        loadURLAsync(i, if (fThumbnail) getURLThumbnail() else getURLFullImage(), fThumbnail, null)
     }
 
     fun viewFullImageInWebView(a: Activity) {

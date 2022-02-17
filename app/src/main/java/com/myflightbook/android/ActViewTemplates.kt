@@ -19,9 +19,7 @@
 package com.myflightbook.android
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,16 +31,15 @@ import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.fragment.app.ListFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc
+import kotlinx.coroutines.launch
 import model.MFBConstants
-import model.MFBUtil.showProgress
 import model.PropertyTemplate
 import model.PropertyTemplate.Companion.getSharedTemplates
 import model.TemplateGroup.Companion.groupTemplates
-import java.util.*
-
 
 class ActViewTemplates : ListFragment(), OnItemClickListener {
     enum class RowType {
@@ -53,34 +50,22 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
     @JvmField
     var mActivetemplates: HashSet<PropertyTemplate?>? = HashSet()
 
-    private class RefreshCPTTask(c: Context?, avt: ActViewTemplates) :
-        AsyncTask<Void?, Void?, Boolean>() {
-        private var mPd: ProgressDialog? = null
-        val mCtxt: AsyncWeakContext<ActViewTemplates> = AsyncWeakContext(c, avt)
-        override fun doInBackground(vararg params: Void?): Boolean {
-            val cptSvc = CustomPropertyTypesSvc()
-            cptSvc.getCustomPropertyTypes(AuthToken.m_szAuthToken, false, mCtxt.context!!)
-            return true
+    private fun refreshPropertyTypes() {
+        lifecycleScope.launch {
+            ActMFBForm.doAsync(
+                requireActivity(),
+                CustomPropertyTypesSvc(),
+                getString(R.string.prgCPT),
+                {s -> s.getCustomPropertyTypes(AuthToken.m_szAuthToken, false, requireContext())},
+                {
+                    _, result ->
+                    if (result != null) {
+                        mTemplaterows = arrayOf()
+                        populateList()
+                    }
+                }
+            )
         }
-
-        override fun onPreExecute() {
-            val c = mCtxt.context
-            if (c != null) mPd = showProgress(c, c.getString(R.string.prgCPT))
-        }
-
-        override fun onPostExecute(b: Boolean) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val avt = mCtxt.callingActivity
-            if (avt != null) {
-                avt.mTemplaterows = arrayOf()
-                avt.populateList()
-            }
-        }
-
     }
 
     internal class TemplateRowItem(obj: PropertyTemplate?) {
@@ -158,7 +143,7 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
         val srl: SwipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
         srl.setOnRefreshListener {
             srl.isRefreshing = false
-            refresh()
+            refreshPropertyTypes()
         }
         val rgpt = getSharedTemplates(
             requireActivity().getSharedPreferences(
@@ -166,11 +151,7 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
                 Activity.MODE_PRIVATE
             )
         )
-        if (rgpt == null || rgpt.isEmpty()) refresh()
-    }
-
-    private fun refresh() {
-        RefreshCPTTask(context, this).execute()
+        if (rgpt == null || rgpt.isEmpty()) refreshPropertyTypes()
     }
 
     override fun onResume() {

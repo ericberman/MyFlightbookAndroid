@@ -20,20 +20,21 @@ package com.myflightbook.android
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.ProgressDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
-import com.myflightbook.android.webservices.*
+import com.myflightbook.android.webservices.AircraftSvc
+import com.myflightbook.android.webservices.AuthToken
+import com.myflightbook.android.webservices.CannedQuerySvc
+import com.myflightbook.android.webservices.CustomPropertyTypesSvc
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.searchableProperties
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
+import kotlinx.coroutines.launch
 import model.*
 import model.FlightQuery.*
 import java.util.*
@@ -46,103 +47,62 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
     private var fShowAllAircraft = false
     private var fCannedQueryClicked = false
 
-    private class GetCannedQueryTask(c: Context, afq: ActFlightQuery) :
-        AsyncTask<Void?, Void?, MFBSoap?>() {
-        private val mAfq: AsyncWeakContext<ActFlightQuery> = AsyncWeakContext(c, afq)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val cqSVC = CannedQuerySvc()
-            CannedQuery.cannedQueries = cqSVC.getNamedQueriesForUser(
-                AuthToken.m_szAuthToken,
-                mAfq.context!!
-            )
-            return cqSVC
-        }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(svc: MFBSoap?) {
-            val afq = mAfq.callingActivity
-            if (svc != null && svc.lastError.isEmpty() && afq != null) afq.setUpNamedQueries()
-        }
-
-    }
-
-    private class AddCannedQueryTask(
-        c: Context?,
-        fq: FlightQuery,
-        szName: String
-    ) : AsyncTask<Void?, Void?, MFBSoap>() {
-        private val mCtxt: AsyncWeakContext<FlightQuery?> = AsyncWeakContext(c, null)
-        private val mName = szName
-        private var mFq: FlightQuery = fq
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val cqSVC = CannedQuerySvc()
-            CannedQuery.cannedQueries = cqSVC.addNamedQueryForUser(
-                AuthToken.m_szAuthToken!!,
-                mName,
-                mFq,
-                mCtxt.context
-            )
-            return cqSVC
-        }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(svc: MFBSoap) {}
-    }
-
-    private class DeleteCannedQueryTask(
-        c: Context?,
-        fq: CannedQuery,
-        afq: ActFlightQuery
-    ) : AsyncTask<Void?, Void?, MFBSoap?>() {
-        private val mCtxt: AsyncWeakContext<ActFlightQuery> = AsyncWeakContext(c, afq)
-        private var mFq: CannedQuery = fq
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val cqSVC = CannedQuerySvc()
-            CannedQuery.cannedQueries = cqSVC.deleteNamedQueryForUser(
-                AuthToken.m_szAuthToken!!,
-                mFq,
-                mCtxt.context
-            )
-            return cqSVC
-        }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(svc: MFBSoap?) {
-            if (svc != null) {
-                if (svc.lastError.isEmpty()) {
-                    val afq = mCtxt.callingActivity
-                    afq?.setUpNamedQueries()
-                } else {
-                    val c = mCtxt.context
-                    if (c != null) MFBUtil.alert(c, c.getString(R.string.txtError), svc.lastError)
+    private suspend fun getCannedQueries() {
+        doAsync<CannedQuerySvc, Array<CannedQuery>?>(requireActivity(),
+            CannedQuerySvc(),
+            null,
+            { s: CannedQuerySvc ->
+                s.getNamedQueriesForUser(AuthToken.m_szAuthToken, requireContext())
+            },
+            { s: CannedQuerySvc, result: Array<CannedQuery>? ->
+                if (s.lastError.isEmpty()) {
+                    CannedQuery.cannedQueries = result
+                    setUpNamedQueries()
                 }
-            }
-        }
+            })
     }
 
-    private class RefreshCPTTask(c: Context?, avt: ActFlightQuery) :
-        AsyncTask<Void?, Void?, Boolean>() {
-        private var mPd: ProgressDialog? = null
-        val mCtxt: AsyncWeakContext<ActFlightQuery> = AsyncWeakContext(c, avt)
-        override fun doInBackground(vararg params: Void?): Boolean {
-            val cptSvc = CustomPropertyTypesSvc()
-            cptSvc.getCustomPropertyTypes(AuthToken.m_szAuthToken, false, mCtxt.context!!)
-            return true
-        }
+    private suspend fun addCannedQuery(name : String, fq : FlightQuery) {
+        doAsync<CannedQuerySvc, Array<CannedQuery>?>(requireActivity(), CannedQuerySvc(), null,
+            {
+                s -> s.addNamedQueryForUser(AuthToken.m_szAuthToken!!, name, fq, requireContext())
+            },
+            {
+                s, result ->
+                if (s.lastError.isEmpty()) {
+                    CannedQuery.cannedQueries = result
+                    setUpNamedQueries()
+                }
+            })
+    }
 
-        override fun onPreExecute() {
-            val c = mCtxt.context
-            if (c != null) mPd = MFBUtil.showProgress(c, c.getString(R.string.prgCPT))
-        }
+    private suspend fun deleteCannedQuery(fq : CannedQuery) {
+        doAsync<CannedQuerySvc, Array<CannedQuery>?>(requireActivity(), CannedQuerySvc(), null,
+            {
+                s -> s.deleteNamedQueryForUser(AuthToken.m_szAuthToken!!, fq, requireContext())
+            },
+            {
+                s, result ->
+                if (s.lastError.isEmpty()) {
+                    CannedQuery.cannedQueries = result
+                    setUpNamedQueries()
+                }
+            })
+    }
 
-        override fun onPostExecute(b: Boolean) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+    private suspend fun refreshPropTypes()
+    {
+        doAsync<CustomPropertyTypesSvc, Boolean?>(
+            requireActivity(),
+            CustomPropertyTypesSvc(),
+            getString(R.string.prgCPT),
+            { s ->
+                s.getCustomPropertyTypes(AuthToken.m_szAuthToken, false, requireContext())
+                true
+            },
+            { _, _ ->
             }
-        }
-
+        )
     }
 
     // We are going to return only active aircraft UNLESS:
@@ -209,14 +169,13 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         val i = requireActivity().intent
         currentQuery = i.getSerializableExtra(QUERY_TO_EDIT) as FlightQuery?
         if (currentQuery == null) currentQuery = FlightQuery()
-        if (CannedQuery.cannedQueries == null) GetCannedQueryTask(
-            requireActivity(),
-            this
-        ).execute() else setUpNamedQueries()
+        if (CannedQuery.cannedQueries == null)
+            lifecycleScope.launch { getCannedQueries() }
+        else
+            setUpNamedQueries()
         val cptSvc = CustomPropertyTypesSvc()
         if (cptSvc.getCacheStatus() == DBCache.DBCacheStatus.INVALID) {
-            val rt = RefreshCPTTask(this.context, this)
-            rt.execute()
+            lifecycleScope.launch { refreshPropTypes() }
         }
         addListener(R.id.btnfqDateStart)
         addListener(R.id.btnfqDateEnd)
@@ -331,11 +290,10 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         clearCachedFlights()
         val szQueryName = stringFromField(R.id.txtNameForQuery)
         val curQ = currentQuery!!
-        if (curQ.hasCriteria() && szQueryName.isNotEmpty()) AddCannedQueryTask(
-            requireActivity(),
-            curQ,
-            szQueryName
-        ).execute()
+        if (curQ.hasCriteria() && szQueryName.isNotEmpty())
+            lifecycleScope.launch {
+                addCannedQuery(szQueryName, curQ)
+            }
 
         // in case things change before next time, clear out the cached arrays.
         mRgac = null
@@ -475,9 +433,9 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
                     .setTitle(R.string.lblConfirm)
                     .setMessage(R.string.fqQueryDeleteConfirm)
                     .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int ->
-                        DeleteCannedQueryTask(
-                            context, o, this
-                        ).execute()
+                        lifecycleScope.launch {
+                            deleteCannedQuery(o)
+                        }
                     }
                     .setNegativeButton(R.string.lblCancel, null)
                     .show()
@@ -517,7 +475,7 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
             R.id.btnfqDateEnd,
             MFBUtil.localDateFromUTCDate(currentQuery!!.dateMax)
         )
-        when (currentQuery!!.dateRange) {
+        when (currentQuery!!.dateRange!!) {
             DateRanges.None -> {}
             DateRanges.AllTime -> setRadioButton(R.id.rbAlltime)
             DateRanges.YTD -> setRadioButton(R.id.rbYTD)
@@ -583,7 +541,7 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
             AircraftInstanceRestriction.RealOnly -> setRadioButton(R.id.rbInstanceReal)
             AircraftInstanceRestriction.TrainingOnly -> setRadioButton(R.id.rbInstanceTraining)
         }
-        when (currentQuery!!.distance) {
+        when (currentQuery!!.distance!!) {
             FlightDistance.AllFlights -> setRadioButton(R.id.rbDistanceAny)
             FlightDistance.LocalOnly -> setRadioButton(R.id.rbDistanceLocal)
             FlightDistance.NonLocalOnly -> setRadioButton(R.id.rbDistanceNonlocal)

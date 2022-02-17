@@ -19,16 +19,13 @@
 package com.myflightbook.android
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.*
@@ -36,21 +33,19 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActMFBForm.GallerySource
 import com.myflightbook.android.webservices.AircraftSvc
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
-import com.myflightbook.android.webservices.MFBSoap
-import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
 import com.myflightbook.android.webservices.MakesandModelsSvc
+import kotlinx.coroutines.launch
 import model.Aircraft
 import model.CountryCode.Companion.bestGuessForCurrentLocale
-import model.MFBConstants
 import model.MFBImageInfo
 import model.MFBImageInfo.Companion.getLocalImagesForId
 import model.MFBImageInfo.PictureDestination
 import model.MFBUtil.alert
-import model.MFBUtil.showProgress
 import model.MakesandModels
 import model.MakesandModels.Companion.getMakeModelByID
 import java.util.*
@@ -108,109 +103,50 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         }
     }
 
-    private class SuggestAircraftTask(
-        c: Context?,
-        val mPrefix: String,
-        ana: ActNewAircraft
-    ) : AsyncTask<Void?, Void?, MFBSoap>() {
-        var mResult: Any? = null
-        val mCtxt: AsyncWeakContext<ActNewAircraft> = AsyncWeakContext(c, ana)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val `as` = AircraftSvc()
-            mResult = `as`.aircraftForPrefix(AuthToken.m_szAuthToken!!, mPrefix, mCtxt.context!!)
-            return `as`
+    private fun suggestAircraft(szPrefix : String) {
+        lifecycleScope.launch {
+        doAsync<AircraftSvc, Array<Aircraft>?>(
+            requireActivity(),
+            AircraftSvc(),
+            null,
+            { s -> s.aircraftForPrefix(AuthToken.m_szAuthToken!!, szPrefix, requireContext()) },
+            { _, result ->
+                if (result != null) {
+                    val lst = ArrayList(listOf(*result))
+                    autoCompleteAdapter!!.setData(lst)
+                    autoCompleteAdapter!!.notifyDataSetChanged()
+                }
+            }
+        )
         }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            val aa = mCtxt.callingActivity
-            if (aa == null || !aa.isAdded || aa.isDetached || aa.activity == null || aa.autoCompleteAdapter == null) return
-            var rgac = mResult as Array<Aircraft>?
-            if (rgac == null) rgac = arrayOf()
-            val lst = ArrayList(listOf(*rgac))
-            aa.autoCompleteAdapter!!.setData(lst)
-            aa.autoCompleteAdapter!!.notifyDataSetChanged()
-        }
-
     }
 
-    private class SaveAircraftTask(
-        c: Context?,
-        private val mAc: Aircraft?,
-        ana: ActNewAircraft
-    ) : AsyncTask<Aircraft?, String?, MFBSoap>(), MFBSoapProgressUpdate {
-        private var mPd: ProgressDialog? = null
-        var mResult: Any? = null
-        private val mCtxt: AsyncWeakContext<ActNewAircraft> = AsyncWeakContext(c, ana)
-        override fun doInBackground(vararg params: Aircraft?): MFBSoap {
-            val acs = AircraftSvc()
-            acs.mProgress = this
-            mResult = acs.addAircraft(AuthToken.m_szAuthToken!!, mAc!!, mCtxt.context!!)
-            return acs
+    private fun saveAircraft(ac : Aircraft) {
+        lifecycleScope.launch {
+            doAsync<AircraftSvc, Array<Aircraft>?>(
+                requireActivity(),
+                AircraftSvc(),
+                getString(R.string.prgNewAircraft),
+                {
+                    s -> s.addAircraft(AuthToken.m_szAuthToken!!, ac, requireContext())
+                },
+                {
+                    _, _ -> dismiss()
+                }
+            )
         }
-
-        override fun onPreExecute() {
-            mPd = showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgNewAircraft))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val ana = mCtxt.callingActivity
-            if (ana == null || !ana.isAdded || ana.isDetached || ana.activity == null) return
-            val rgac = mResult as Array<Aircraft>?
-            if (rgac == null || rgac.isEmpty()) alert(
-                ana,
-                ana.getString(R.string.txtError),
-                svc.lastError
-            ) else ana.dismiss()
-        }
-
-        override fun onProgressUpdate(vararg msg: String?) {
-            mPd!!.setMessage(msg[0])
-        }
-
-        override fun notifyProgress(percentageComplete: Int, szMsg: String?) {
-            publishProgress(szMsg)
-        }
-
     }
 
-    private class GetMakesTask(c: Context?, ana: ActNewAircraft) :
-        AsyncTask<Void?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        private val mCtxt: AsyncWeakContext<ActNewAircraft> = AsyncWeakContext(c, ana)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val mms = MakesandModelsSvc()
-            AvailableMakesAndModels = mms.getMakesAndModels(mCtxt.context)
-            return mms
+    private fun getMakes() {
+        lifecycleScope.launch {
+            doAsync<MakesandModelsSvc, Array<MakesandModels>?>(
+                requireActivity(),
+                MakesandModelsSvc(),
+                getString(R.string.prgMakes),
+                { s-> s.getMakesAndModels(requireContext())},
+                { _, result -> AvailableMakesAndModels = result }
+            )
         }
-
-        override fun onPreExecute() {
-            mPd = showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgMakes))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val ana = mCtxt.callingActivity
-            val c = mCtxt.context
-            if (ana == null || c == null) return
-            if (AvailableMakesAndModels == null || AvailableMakesAndModels!!.isEmpty()) {
-                alert(
-                    c,
-                    c.getString(R.string.txtError),
-                    c.getString(R.string.errCannotRetrieveMakes)
-                )
-                ana.cancel()
-            }
-        }
-
     }
 
     override fun onCreateView(
@@ -261,7 +197,6 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         sp.onItemSelectedListener = this
 
         // Autocompletion based on code at https://www.truiton.com/2018/06/android-autocompletetextview-suggestions-from-webservice-call/
-        val ana = this
         val act = findViewById(R.id.txtTail) as AutoCompleteTextView?
         act!!.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_CLASS_TEXT
         act.threshold = 3
@@ -281,10 +216,8 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
                 autoCompleteAdapter!!.notifyDataSetChanged()
                 if (!fNoTrigger) {
                     val szTail = act.text.toString()
-                    if (szTail.length > 2) {
-                        val sat = SuggestAircraftTask(context, szTail, ana)
-                        sat.execute()
-                    }
+                    if (szTail.length > 2)
+                        suggestAircraft(szTail)
                 }
             }
 
@@ -293,10 +226,8 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
 
         // Get available makes/models, but only if we have none.  Can refresh.
         // This avoids getting makes/models when just getting a picture.
-        if (AvailableMakesAndModels == null || AvailableMakesAndModels!!.isEmpty()) {
-            val gt = GetMakesTask(this.activity, this)
-            gt.execute()
-        }
+        if (AvailableMakesAndModels == null || AvailableMakesAndModels!!.isEmpty())
+            getMakes()
         toView()
     }
 
@@ -314,18 +245,6 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         val i = Intent()
         requireActivity().setResult(Activity.RESULT_CANCELED, i)
         requireActivity().finish()
-    }
-
-    private fun newAircraft() {
-        mAc1 = Aircraft()
-
-        // Clean up any pending image turds that could be lying around
-        val mfbii = MFBImageInfo(PictureDestination.AircraftImage)
-        mfbii.deletePendingImages(mAc1!!.aircraftID.toLong())
-
-        // Give the aircraft a tailnumber based on locale
-        mAc1!!.tailNumber = bestGuessForCurrentLocale().prefix!!
-        toView()
     }
 
     private fun dismiss() {
@@ -427,10 +346,10 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         val id = item.itemId
         if (id == R.id.menuChoosePicture) choosePicture() else if (id == R.id.menuTakePicture) takePicture() else if (id == R.id.menuAddAircraft) {
             fromView()
-            if (mAc1!!.isValid(requireContext())) {
-                val st = SaveAircraftTask(activity, mAc1, this)
-                st.execute(mAc1)
-            } else alert(this, getString(R.string.txtError), mAc1!!.errorString)
+            if (mAc1!!.isValid(requireContext()))
+                saveAircraft(mAc1!!)
+            else
+                alert(this, getString(R.string.txtError), mAc1!!.errorString)
         } else return super.onOptionsItemSelected(item)
         return true
     }

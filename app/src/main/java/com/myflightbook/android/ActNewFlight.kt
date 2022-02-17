@@ -21,16 +21,15 @@ package com.myflightbook.android
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.*
@@ -42,6 +41,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.app.ShareCompat.IntentBuilder
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActMFBForm.GallerySource
 import com.myflightbook.android.ActOptions.AltitudeUnits
 import com.myflightbook.android.ActOptions.SpeedUnits
@@ -51,9 +51,9 @@ import com.myflightbook.android.webservices.*
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.cachedPropertyTypes
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
-import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
 import com.myflightbook.android.webservices.UTCDate.isNullDate
+import kotlinx.coroutines.launch
 import model.*
 import model.Aircraft.Companion.getAircraftById
 import model.Aircraft.Companion.getHighWaterHobbsForAircraft
@@ -80,7 +80,6 @@ import model.MFBUtil.getForKey
 import model.MFBUtil.nowWith0Seconds
 import model.MFBUtil.removeForKey
 import model.MFBUtil.removeSeconds
-import model.MFBUtil.showProgress
 import model.PropertyTemplate.Companion.anonTemplate
 import model.PropertyTemplate.Companion.defaultTemplates
 import model.PropertyTemplate.Companion.getSharedTemplates
@@ -121,252 +120,173 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     private var mAppendNearestLauncher: ActivityResultLauncher<String>? = null
     private var mAddAircraftLauncher: ActivityResultLauncher<Intent>? = null
 
-    private class DeleteTask(
-        c: Context?,
-        act: ActNewFlight,
-        le: LogbookEntry
-    ) : AsyncTask<Void?, String?, MFBSoap>(), MFBSoapProgressUpdate {
-        private var mPd: ProgressDialog? = null
-        private var mResult: Any? = null
-        private val mLe: LogbookEntry = le
-        private val mCtxt: AsyncWeakContext<ActNewFlight> = AsyncWeakContext(c, act)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val pf = if (mLe is PendingFlight) mLe else null
-            val s: MFBSoap
-            if (pf != null && pf.getPendingID().isNotEmpty()) {
-                val dfs = PendingFlightSvc()
-                s = dfs
-                dfs.mProgress = this
-                ActRecentsWS.cachedPendingFlights = dfs.deletePendingFlight(
-                    AuthToken.m_szAuthToken,
-                    pf.getPendingID(),
-                    mCtxt.context
-                )
-            } else {
-                val dfs = DeleteFlightSvc()
-                s = dfs
-                dfs.mProgress = this
-                dfs.deleteFlightForUser(AuthToken.m_szAuthToken, mLe.idFlight, mCtxt.context)
-            }
-            mResult = s.lastError.isEmpty()
-            return s
-        }
+    private fun deleteFlight(le : LogbookEntry?) {
+        if (le == null)
+            return
+        val soapCall = when { (le is PendingFlight) -> PendingFlightSvc() else -> DeleteFlightSvc() }
+        val pf = le as? PendingFlight
 
-        override fun onPreExecute() {
-            val c = mCtxt.context
-            if (c != null) mPd = showProgress(c, c.getString(R.string.prgDeletingFlight))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            val act = mCtxt.callingActivity ?: return
-            if ((mResult as Boolean?)!!) {
-                clearCachedFlights()
-                MFBMain.invalidateCachedTotals()
-                act.finish()
-            } else {
-                alert(act, act.getString(R.string.txtError), svc.lastError)
-            }
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-        }
-
-        override fun onProgressUpdate(vararg msg: String?) {
-            mPd!!.setMessage(msg[0])
-        }
-
-        override fun notifyProgress(percentageComplete: Int, szMsg: String?) {
-            publishProgress(szMsg)
-        }
-
-    }
-
-    private class SubmitTask(
-        c: Context?,
-        act: ActNewFlight,
-        le: LogbookEntry?
-    ) : AsyncTask<Void?, String?, MFBSoap>(), MFBSoapProgressUpdate {
-        private var mPd: ProgressDialog? = null
-        private var mResult: Any? = null
-        private var lelocal: LogbookEntry? = null
-        private var mLe: LogbookEntry?
-        private val mCtxt: AsyncWeakContext<ActNewFlight> = AsyncWeakContext(c, act)
-        private var fIsNew = false
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            /*
-                Scenarios:
-                 - fForcePending is false, Regular flight, new or existing: call CommitFlightWithOptions
-                 - fForcePending is false, Pending flight without a pending ID call CommitFlightWithOptions.  Shouldn't happen, but no big deal if it does
-                 - fForcePending is false, Pending flight with a Pending ID: call CommitPendingFlight to commit it
-                 - fForcePending is false, Pending flight without a pending ID: THROW EXCEPTION, how did this happen?
-
-                 - fForcePending is true, Regular flight that is not new/pending (sorry about ambiguous "pending"): THROW EXCEPTION; this is an error
-                 - fForcePending is true, Regular flight that is NEW: call CreatePendingFlight
-                 - fForcePending is true, PendingFlight without a PendingID: call CreatePendingFlight.  Shouldn't happen, but no big deal if it does
-                 - fForcePending is true, PendingFlight with a PendingID: call UpdatePendingFlight
-             */
-            val pf = if (mLe is PendingFlight) mLe as PendingFlight? else null
-            return if (mLe!!.fForcePending) {
-                check(!mLe!!.isExistingFlight()) { "Attempt to save an existing flight as a pending flight" }
-                if (pf == null || pf.getPendingID().isEmpty()) {
-                    val pfs = PendingFlightSvc()
-                    pfs.mProgress = this
-                        pfs.createPendingFlight(AuthToken.m_szAuthToken, mLe, mCtxt.context)
-                            .also { ActRecentsWS.cachedPendingFlights = it }
-                    mResult = true
-                    pfs
-                } else {
-                    // existing pending flight but still force pending - call updatependingflight
-                    val pfs = PendingFlightSvc()
-                    pfs.mProgress = this
-                    pfs.updatePendingFlight(AuthToken.m_szAuthToken, pf, mCtxt.context)
-                        .also { ActRecentsWS.cachedPendingFlights = it }
-                    mResult = true
-                    pfs
-                }
-            } else {
-                // Not force pending.
-                // If regular flight (new or existing), or pending without a pendingID
-                if (pf == null || pf.getPendingID().isEmpty()) {
-                    val cf = CommitFlightSvc()
-                    cf.mProgress = this
-                    mResult =
-                        cf.fCommitFlightForUser(AuthToken.m_szAuthToken, mLe!!, mCtxt.context!!)
-                    cf
-                } else {
-                    // By definition, here pf is non-null and it has a pending ID so it is a valid pending flight and we are not forcing - call commitpendingflight
-                    val pfs = PendingFlightSvc()
-                    pfs.mProgress = this
-                    val rgpf =
-                        pfs.commitPendingFlight(AuthToken.m_szAuthToken, pf, mCtxt.context)
-                    ActRecentsWS.cachedPendingFlights = rgpf
-                    pf.szError = pfs.lastError
-                    mResult = pf.szError.isEmpty() // we want to show any error
-                    pfs
-                }
-            }
-        }
-
-        override fun onPreExecute() {
-            val c = mCtxt.context
-            if (c != null) mPd = showProgress(c, c.getString(R.string.prgSavingFlight))
-            lelocal = mLe // hold onto a reference to m_le.
-            fIsNew =
-                lelocal!!.isNewFlight() // cache this because after being successfully saved, it will no longer be new!
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            val act = mCtxt.callingActivity
-            val c = mCtxt.context
-            if (act == null || c == null || !act.isAdded || act.isDetached) return
-            if ((mResult as Boolean?)!!) {
-                MFBMain.invalidateCachedTotals()
-
-                // success, so we our cached recents are invalid
-                clearCachedFlights()
-                val ocl: DialogInterface.OnClickListener
-
-                // the flight was successfully saved, so delete any local copy regardless
-                lelocal!!.deleteUnsubmittedFlightFromLocalDB()
-                if (fIsNew) {
-                    // Reset the flight and we stay on this page
-                    act.resetFlight(true)
-                    ocl =
-                        DialogInterface.OnClickListener { d: DialogInterface, _: Int -> d.cancel() }
-                } else {
-                    // no need to reset the current flight because we will finish.
-                    ocl = DialogInterface.OnClickListener { d: DialogInterface, _: Int ->
-                        d.cancel()
-                        act.finish()
+        lifecycleScope.launch {
+            doAsync<MFBSoap, Boolean?>(
+                requireActivity(),
+                soapCall,
+                getString(R.string.prgDeletingFlight),
+                {
+                    s ->
+                    if (pf != null && pf.getPendingID().isNotEmpty())
+                        ActRecentsWS.cachedPendingFlights = (s as PendingFlightSvc).deletePendingFlight(AuthToken.m_szAuthToken, pf.getPendingID(), requireContext())
+                    else
+                        (s as DeleteFlightSvc).deleteFlightForUser(AuthToken.m_szAuthToken, le.idFlight, requireContext())
+                    s.lastError.isEmpty()
+                },
+                {
+                    _, result ->
+                    if (result!!) {
+                        clearCachedFlights()
+                        MFBMain.invalidateCachedTotals()
+                        finish()
                     }
-                    mLe = null
-                    lelocal = mLe // so that onPause won't cause it to be saved on finish() call.
                 }
-                AlertDialog.Builder(act.requireActivity(), R.style.MFBDialog)
-                    .setMessage(c.getString(R.string.txtSavedFlight))
-                    .setTitle(c.getString(R.string.txtSuccess))
-                    .setNegativeButton("OK", ocl)
-                    .create().show()
-            } else {
-                alert(act, c.getString(R.string.txtError), svc.lastError)
-            }
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-        }
-
-        override fun onProgressUpdate(vararg msg: String?) {
-            mPd!!.setMessage(msg[0])
-        }
-
-        override fun notifyProgress(percentageComplete: Int, szMsg: String?) {
-            publishProgress(szMsg)
-        }
-
-        init {
-            mLe = le
+            )
         }
     }
 
-    private class GetDigitizedSigTask(iv: ImageView?) :
-        AsyncTask<String?, Void?, Bitmap?>() {
-        val mCtxt: AsyncWeakContext<ImageView?> = AsyncWeakContext(null, iv)
-        override fun doInBackground(vararg urls: String?): Bitmap? {
-            val url = urls[0]
-            var bm: Bitmap? = null
-            try {
-                val str = URL(url).openStream()
-                bm = BitmapFactory.decodeStream(str)
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, e.message!!)
-            }
-            return bm
-        }
+    private fun submitFlight(le : LogbookEntry?) {
+        if (le == null)
+            return
+        val fIsNew = le.isNewFlight()
+        lifecycleScope.launch {
+            doAsync<MFBSoap, Boolean?>(
+                requireActivity(),
+                MFBSoap(),
+                "",
+                { submitFlightWorker(le) },
+                { _, result ->
+                    if (result!!) {
+                        MFBMain.invalidateCachedTotals()
 
-        override fun onPostExecute(result: Bitmap?) {
-            val iv = mCtxt.callingActivity
-            iv?.setImageBitmap(result)
-        }
+                        // success, so we our cached recents are invalid
+                        clearCachedFlights()
+                        val ocl: DialogInterface.OnClickListener
 
+                        // the flight was successfully saved, so delete any local copy regardless
+                        le.deleteUnsubmittedFlightFromLocalDB()
+                        if (fIsNew) {
+                            // Reset the flight and we stay on this page
+                            resetFlight(true)
+                            ocl =
+                                DialogInterface.OnClickListener { d: DialogInterface, _: Int -> d.cancel() }
+                        } else {
+                            // no need to reset the current flight because we will finish.
+                            ocl = DialogInterface.OnClickListener { d: DialogInterface, _: Int ->
+                                d.cancel()
+                                finish()
+                            }
+                            mle =
+                                null  // so that onPause won't cause it to be saved on finish() call.
+                        }
+                        AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
+                            .setMessage(getString(R.string.txtSavedFlight))
+                            .setTitle(getString(R.string.txtSuccess))
+                            .setNegativeButton("OK", ocl)
+                            .create().show()
+                    } else
+                        alert(requireContext(), getString(R.string.txtError), le.szError)
+                })
+        }
     }
 
-    private class RefreshAircraftTask(c: Context?, anf: ActNewFlight) :
-        AsyncTask<Void?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        var mResult: Any? = null
-        val mCtxt: AsyncWeakContext<ActNewFlight> = AsyncWeakContext(c, anf)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val `as` = AircraftSvc()
-            mResult = `as`.getAircraftForUser(AuthToken.m_szAuthToken, mCtxt.context)
-            return `as`
-        }
+    private fun submitFlightWorker(le : LogbookEntry) : Boolean {
+        /*
+    Scenarios:
+     - fForcePending is false, Regular flight, new or existing: call CommitFlightWithOptions
+     - fForcePending is false, Pending flight without a pending ID call CommitFlightWithOptions.  Shouldn't happen, but no big deal if it does
+     - fForcePending is false, Pending flight with a Pending ID: call CommitPendingFlight to commit it
+     - fForcePending is false, Pending flight without a pending ID: THROW EXCEPTION, how did this happen?
 
-        override fun onPreExecute() {
-            mPd = showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgAircraft))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val anf = mCtxt.callingActivity
-            if (anf == null || !anf.isAdded || anf.isDetached) {
-                return
+     - fForcePending is true, Regular flight that is not new/pending (sorry about ambiguous "pending"): THROW EXCEPTION; this is an error
+     - fForcePending is true, Regular flight that is NEW: call CreatePendingFlight
+     - fForcePending is true, PendingFlight without a PendingID: call CreatePendingFlight.  Shouldn't happen, but no big deal if it does
+     - fForcePending is true, PendingFlight with a PendingID: call UpdatePendingFlight
+ */
+        val pf = le as? PendingFlight
+        if (le.fForcePending) {
+            check(!le.isExistingFlight()) { "Attempt to save an existing flight as a pending flight" }
+            if (pf == null || pf.getPendingID().isEmpty()) {
+                val pfs = PendingFlightSvc()
+                pfs.createPendingFlight(AuthToken.m_szAuthToken, le, requireContext())
+                    .also { ActRecentsWS.cachedPendingFlights = it }
+                le.szError = pfs.lastError
             } else {
-                anf.requireActivity()
+                // existing pending flight but still force pending - call updatependingflight
+                val pfs = PendingFlightSvc()
+                pfs.updatePendingFlight(AuthToken.m_szAuthToken, pf, requireContext())
+                    .also { ActRecentsWS.cachedPendingFlights = it }
+                le.szError = pfs.lastError
             }
-            val rgac = mResult as Array<Aircraft>?
-            if (rgac == null) alert(anf, anf.getString(R.string.txtError), svc.lastError) else {
-                anf.refreshAircraft(rgac, false)
+        } else {
+            // Not force pending.
+            // If regular flight (new or existing), or pending without a pendingID
+            if (pf == null || pf.getPendingID().isEmpty()) {
+                val cf = CommitFlightSvc()
+                cf.fCommitFlightForUser(AuthToken.m_szAuthToken, le, requireContext())
+                le.szError = cf.lastError
+            } else {
+                // By definition, here pf is non-null and it has a pending ID so it is a valid pending flight and we are not forcing - call commitpendingflight
+                val pfs = PendingFlightSvc()
+                val rgpf =
+                    pfs.commitPendingFlight(AuthToken.m_szAuthToken, pf, requireContext())
+                ActRecentsWS.cachedPendingFlights = rgpf
+                pf.szError = pfs.lastError
             }
         }
+        return le.szError.isEmpty()
+    }
 
+    private fun fetchDigitizedSig(url : String?, iv : ImageView) {
+        if (url == null || url.isEmpty())
+            return
+        lifecycleScope.launch {
+            doAsync<String, Bitmap?>(
+                requireActivity(),
+                url,
+                null,
+                {
+                    url ->
+                    try {
+                        val str = URL(url).openStream()
+                        BitmapFactory.decodeStream(str)
+                    } catch (e: Exception) {
+                        Log.e(MFBConstants.LOG_TAG, e.message!!)
+                        null
+                    }
+                },
+                { _, result ->
+                    if (result != null)
+                        iv.setImageBitmap(result)
+                }
+            )
+        }
+    }
+
+    private fun refreshAircraft() {
+        lifecycleScope.launch {
+            doAsync<AircraftSvc, Array<Aircraft>?>(
+                requireActivity(),
+                AircraftSvc(),
+                getString(R.string.prgAircraft),
+                {
+                    s -> s.getAircraftForUser(AuthToken.m_szAuthToken, requireContext())
+                },
+                {
+                    s, result ->
+                    if (result == null)
+                        alert(requireActivity(),getString(R.string.txtError), s.lastError)
+                    else
+                        refreshAircraft(result, false)
+                }
+            )
+        }
     }
 
     override fun onCreateView(
@@ -593,10 +513,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (mle != null && mle!!.rgFlightImages == null) mle!!.imagesForFlight
 
         // Refresh aircraft on create
-        if (isValid() && (mRgac == null || mRgac!!.isEmpty())) {
-            val rat = RefreshAircraftTask(context, this)
-            rat.execute()
-        }
+        if (isValid() && (mRgac == null || mRgac!!.isEmpty()))
+            refreshAircraft()
         Log.w(
             MFBConstants.LOG_TAG,
             String.format(
@@ -695,7 +613,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (fIsNewFlight) {
             // ensure that we keep the elapsed time up to date
             updatePausePlayButtonState()
-            mHandlerupdatetimer = Handler()
+            mHandlerupdatetimer = Handler(Looper.getMainLooper())
             val elapsedTimeTask = object : Runnable {
                 override fun run() {
                     updateElapsedTime()
@@ -847,10 +765,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     mle = null // clear this out since we're going to finish().
                     clearCachedFlights()
                     finish()
-                } else if (mle!!.isExistingFlight() || mle is PendingFlight) {
-                    val dt = DeleteTask(context, this, mle!!)
-                    dt.execute()
-                }
+                } else if (mle!!.isExistingFlight() || mle is PendingFlight)
+                    deleteFlight(mle)
             }
             .setNegativeButton(R.string.lblCancel, null)
             .show() else if (menuId == R.id.btnSubmitFlight || menuId == R.id.btnUpdateFlight) submitFlight(
@@ -1091,34 +1007,34 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
     }
 
-    override fun updateDate(id: Int, dtIn: Date?) {
-        var dt = dtIn
+    override fun updateDate(id: Int, dt: Date?) {
+        var dt2 = dt
         fromView()
         var fEngineChanged = false
         var fFlightChanged = false
-        dt = removeSeconds(dt!!)
+        dt2 = removeSeconds(dt2!!)
         when (id) {
             R.id.btnEngineStartSet -> {
-                mle!!.dtEngineStart = dt
+                mle!!.dtEngineStart = dt2
                 fEngineChanged = true
                 resetDateOfFlight()
             }
             R.id.btnEngineEndSet -> {
-                mle!!.dtEngineEnd = dt
+                mle!!.dtEngineEnd = dt2
                 fEngineChanged = true
                 showRecordingIndicator()
             }
             R.id.btnFlightStartSet -> {
-                mle!!.dtFlightStart = dt
+                mle!!.dtFlightStart = dt2
                 resetDateOfFlight()
                 fFlightChanged = true
             }
             R.id.btnFlightEndSet -> {
-                mle!!.dtFlightEnd = dt
+                mle!!.dtFlightEnd = dt2
                 fFlightChanged = true
             }
             R.id.btnFlightSet -> {
-                mle!!.dtFlight = dt
+                mle!!.dtFlight = dt2
             }
         }
         toView()
@@ -1243,7 +1159,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     .create().show()
             }
         } else {
-            SubmitTask(context, this, mle).execute()
+            val le = mle
+            submitFlight(le)
         }
     }
 
@@ -1327,8 +1244,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                         MFBConstants.szIP,
                         mle!!.idFlight
                     )
-                    val gdst = GetDigitizedSigTask(ivDigitizedSig)
-                    gdst.execute(szURL)
+                    fetchDigitizedSig(szURL, ivDigitizedSig)
                 }
             } else ivDigitizedSig!!.visibility = View.GONE
         }
@@ -1802,47 +1718,23 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     //region in-line property editing
-    private class DeletePropertyTask(
-        c: Context?,
-        act: ActNewFlight,
-        fp: FlightProperty
-    ) : AsyncTask<Void?, Void?, Boolean>() {
-        private var mPd: ProgressDialog? = null
-        private val mFp: FlightProperty = fp
-        private val mCtxt: AsyncWeakContext<ActNewFlight> = AsyncWeakContext(c, act)
-        override fun doInBackground(vararg params: Void?): Boolean {
-            val fpsvc = FlightPropertiesSvc()
-            fpsvc.deletePropertyForFlight(
-                AuthToken.m_szAuthToken,
-                mFp.idFlight,
-                mFp.idProp,
-                mCtxt.context
-            )
-            return true
-        }
-
-        override fun onPreExecute() {
-            mPd = showProgress(
-                mCtxt.callingActivity!!,
-                mCtxt.context!!.getString(R.string.prgDeleteProp)
+    private fun deleteProperty(fp : FlightProperty) {
+        lifecycleScope.launch {
+            doAsync<FlightPropertiesSvc, Any?>(
+                requireActivity(),
+                FlightPropertiesSvc(),
+                getString(R.string.prgDeleteProp),
+                { s -> s.deletePropertyForFlight(AuthToken.m_szAuthToken, fp.idFlight, fp.idProp,requireContext()) },
+                { _, _ ->
+                    setUpPropertiesForFlight()
+                }
             )
         }
-
-        override fun onPostExecute(b: Boolean) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            val act = mCtxt.callingActivity
-            act?.setUpPropertiesForFlight()
-        }
-
     }
 
     private fun deleteDefaultedProperty(fp: FlightProperty) {
         if (fp.idProp > 0 && fp.isDefaultValue()) {
-            DeletePropertyTask(context, this, fp).execute()
+            deleteProperty(fp)
             return
         }
 

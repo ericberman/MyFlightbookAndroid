@@ -35,7 +35,6 @@ import com.myflightbook.android.webservices.CurrencySvc
 import model.CurrencyStatusItem
 import model.MFBUtil.deserializeFromString
 import model.MFBUtil.serializeToString
-import java.util.*
 
 class CurrencyWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
@@ -53,7 +52,7 @@ internal class CurrencyRemoteViewsFactory(private val mContext: Context, intent:
         val prefs = mContext.getSharedPreferences(prefCurrency, Activity.MODE_PRIVATE)
         val szTotals = prefs.getString(prefCurrencyLast, null)
         if (szTotals != null) {
-            val rgcsi = deserializeFromString<Array<CurrencyStatusItem>>(szTotals)!!
+            val rgcsi = deserializeFromString<Array<CurrencyStatusItem>>(szTotals) ?: arrayOf()
             mCurrencyItems = listOf(*rgcsi)
         }
     }

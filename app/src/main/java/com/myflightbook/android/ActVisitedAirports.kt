@@ -18,10 +18,7 @@
  */
 package com.myflightbook.android
 
-import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -30,14 +27,14 @@ import android.widget.EditText
 import android.widget.ExpandableListView
 import android.widget.SimpleExpandableListAdapter
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
 import com.myflightbook.android.webservices.AuthToken
-import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
 import com.myflightbook.android.webservices.VisitedAirportSvc
+import kotlinx.coroutines.launch
 import model.MFBUtil.alert
-import model.MFBUtil.showProgress
 import model.PackAndGo
 import model.VisitedAirport
 import model.VisitedAirport.Companion.toRoute
@@ -45,42 +42,21 @@ import java.text.DateFormat
 import java.util.*
 
 class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
-    private class RefreshVisitedAirports(
-        c: Context,
-        ava: ActVisitedAirports
-    ) : AsyncTask<Void?, Void?, MFBSoap>() {
-        private var mPd: ProgressDialog? = null
-        var mResult: Array<VisitedAirport> = arrayOf()
-        private val mCtxt: AsyncWeakContext<ActVisitedAirports> = AsyncWeakContext(c, ava)
-        override fun doInBackground(vararg params: Void?): MFBSoap {
-            val vas = VisitedAirportSvc()
-            mResult = vas.getVisitedAirportsForUser(AuthToken.m_szAuthToken, mCtxt.context!!)
-            return vas
+    private fun refreshVisitedAirports() {
+        lifecycleScope.launch {
+            ActMFBForm.doAsync<VisitedAirportSvc, Array<VisitedAirport>?>(requireActivity(),
+                VisitedAirportSvc(),
+                getString(R.string.prgVisitedAirports),
+                { s -> s.getVisitedAirportsForUser(AuthToken.m_szAuthToken, requireContext()) },
+                { _, result ->
+                    if (result != null) {
+                        visitedAirports = result
+                        PackAndGo(requireContext()).updateAirports(visitedAirports)
+                        populateList()
+                    }
+                }
+            )
         }
-
-        override fun onPreExecute() {
-            mPd =
-                showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.prgVisitedAirports))
-        }
-
-        override fun onPostExecute(svc: MFBSoap) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (ignored: Exception) {
-            }
-            val ava = mCtxt.callingActivity
-            if (ava == null || !ava.isAdded || ava.isDetached || ava.activity == null) return
-            visitedAirports = mResult
-            if (visitedAirports == null || svc.lastError.isNotEmpty()) alert(
-                ava,
-                ava.getString(R.string.txtError),
-                svc.lastError
-            ) else {
-                PackAndGo(mCtxt.context!!).updateAirports(visitedAirports)
-                ava.populateList()
-            }
-        }
-
     }
 
     override fun onCreateView(
@@ -109,7 +85,6 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
         })
         val srl: SwipeRefreshLayout = v.findViewById(R.id.swiperefresh)
         srl.setOnRefreshListener {
-            srl.isRefreshing = false
             refreshAirports()
         }
     }
@@ -125,7 +100,7 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
     }
 
     private fun refreshAirports() {
-        if (isOnline(context)) RefreshVisitedAirports(requireActivity(), this).execute() else {
+        if (isOnline(context)) refreshVisitedAirports() else {
             val p = PackAndGo(requireContext())
             val dt = p.lastAirportsPackDate()
             if (dt != null) {

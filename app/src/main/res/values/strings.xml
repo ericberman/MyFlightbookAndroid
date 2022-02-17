@@ -241,7 +241,6 @@
     <string name="prgAircraft">Retrieving Aircraft…</string>
     <string name="prgSigningIn">Signing in…</string>
     <string name="prgCreatingAccount">Creating Account…</string>
-    <string name="prgSavingFlight">Saving Flight…</string>
     <string name="prgSavingFlights">Saving Flight %1$d of %2$d</string>
     <string name="prgDeletingFlight">Deleting Flight…</string>
     <string name="prgNewAircraft">Saving Aircraft…</string>

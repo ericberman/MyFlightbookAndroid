@@ -24,7 +24,6 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -44,13 +43,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.DlgDatePicker.DatePickMode
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.ImagesSvc
+import com.myflightbook.android.webservices.MFBSoap
 import com.myflightbook.android.webservices.MFBSoap.MFBSoapProgressUpdate
 import com.myflightbook.android.webservices.UTCDate.formatDate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
+import kotlinx.coroutines.*
 import model.*
 import model.DecimalEdit.EditMode
 import model.MFBImageInfo.PictureDestination
@@ -59,7 +61,7 @@ import java.util.*
 
 /*
  * Helper class for dealing with forms.
- */ open class ActMFBForm : Fragment() {
+ */ open class ActMFBForm : Fragment(), CoroutineScope by MainScope() {
     interface GallerySource {
         fun getGalleryID(): Int
         fun getGalleryHeader(): View?
@@ -76,63 +78,54 @@ import java.util.*
     @JvmField
     var mTempfilepath: String? = ""
 
-    private class AddCameraTask(
-        fVideo: Boolean,
-        addToGallery: Boolean,
-        geoTag: Boolean,
-        frm: ActMFBForm
-    ) : AsyncTask<String?, String?, Boolean>(), MFBSoapProgressUpdate {
-        var mfbii: MFBImageInfo? = null
-        val fGeoTag: Boolean = geoTag
-        var fDeleteFileWhenDone: Boolean = addToGallery
-        val fAddToGallery: Boolean = fDeleteFileWhenDone
-        val mFvideo: Boolean = fVideo
-        val mCtxt: AsyncWeakContext<ActMFBForm> = AsyncWeakContext(frm.context, frm)
-        override fun doInBackground(vararg params: String?): Boolean {
-            val szFilename = params[0]
-            if (szFilename == null || szFilename.isEmpty()) {
-                Log.e(MFBConstants.LOG_TAG, "No filename passed back!!!")
-                return false
-            }
+    private fun addCamera(szFileName : String?,
+                          gs : GallerySource,
+                          fVideo: Boolean,
+                          addToGallery: Boolean,
+                          geoTag: Boolean) {
+        if (szFileName == null || szFileName.isEmpty()) {
+            Log.e(MFBConstants.LOG_TAG, "No filename passed back!!!")
+            return
+        }
 
-            // Add the image/video to the gallery if necessary (i.e., if from the camera)
-            if (fAddToGallery) {
-                val f = File(szFilename)
-                val uriSource = FileProvider.getUriForFile(
-                    mCtxt.context!!,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    f
-                )
-                mCtxt.callingActivity!!.requireActivity()
-                    .sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource))
-            }
-            val gs = mCtxt.callingActivity as GallerySource
-            mfbii = MFBImageInfo(gs.getPictureDestination())
-            return mfbii!!.initFromCamera(
-                szFilename,
-                if (fGeoTag) MFBLocation.lastSeenLoc() else null,
-                mFvideo,
-                fDeleteFileWhenDone
+        lifecycleScope.launch {
+            doAsync<Any, MFBImageInfo?>(
+                requireActivity(),
+                "", // any non-null object will do
+                null,
+                {
+                    // Add the image/video to the gallery if necessary (i.e., if from the camera)
+                    if (addToGallery) {
+                        val f = File(szFileName)
+                        val uriSource = FileProvider.getUriForFile(
+                            requireContext(),
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            f
+                        )
+                        requireActivity().sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource))
+                    }
+                    val mfbii = MFBImageInfo(gs.getPictureDestination())
+                    mfbii.initFromCamera(
+                        szFileName,
+                        if (geoTag) MFBLocation.lastSeenLoc() else null,
+                        fVideo,
+                        addToGallery
+                    )
+                    mfbii
+                },
+                {
+                    _, result ->
+                    if (result != null) {
+                        gs.newImage(result)
+                        gs.refreshGallery()
+                    }
+                }
             )
         }
-
-        override fun onPreExecute() {}
-        override fun onPostExecute(b: Boolean) {
-            val frm = mCtxt.callingActivity ?: return
-            if (b && mfbii != null) {
-                val gs = frm as GallerySource
-                gs.newImage(mfbii)
-                gs.refreshGallery()
-            }
-        }
-
-        override fun notifyProgress(percentageComplete: Int, szMsg: String?) {}
-
     }
 
     fun addCameraImage(szFilename: String?, fVideo: Boolean) {
-        val act = AddCameraTask(fVideo, true, geoTag = true, frm = this)
-        act.execute(szFilename)
+        addCamera(szFilename, this as GallerySource, fVideo, true, geoTag = true)
     }
 
     // Activity pseudo support.
@@ -143,6 +136,11 @@ import java.util.*
 
     fun finish() {
         requireActivity().finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 
     fun addGalleryImage(i: Intent) {
@@ -160,7 +158,6 @@ import java.util.*
             val szMimeType = cursor.getString(cursor.getColumnIndexOrThrow(filePathColumn[1]))
             val fIsVideo = szMimeType.lowercase(Locale.getDefault()).startsWith("video")
             cursor.close()
-            val act = AddCameraTask(fIsVideo, addToGallery = false, geoTag = false, frm = this)
             if (szFilename == null || szFilename.isEmpty()) { // try reading it into a temp file
                 var inputStream: InputStream? = null
                 var o: OutputStream? = null
@@ -183,7 +180,10 @@ import java.util.*
                         Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
                     }
                     szFilename = fTemp.absolutePath
-                    act.fDeleteFileWhenDone = true // delete the temp file when done.
+                    addCamera(szFilename, this as GallerySource, fIsVideo,
+                        addToGallery = false,
+                        geoTag = false
+                    )
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } catch (ex: Exception) {
@@ -207,7 +207,6 @@ import java.util.*
                 }
                 if (szFilename == null || szFilename.isEmpty()) return
             }
-            act.execute(szFilename)
         }
     }
 
@@ -615,5 +614,47 @@ import java.util.*
         private const val CAMERA_PERMISSION_VIDEO = 84
         private const val GALLERY_PERMISSION = 85
         private const val TEMP_IMG_FILE_NAME = "takenpicture"
+
+        //region async tasks
+        suspend fun <T, U> doAsync(
+            callingActivity: Activity,
+            service : T,
+            progressMsg : String?,
+            inBackground : (service : T) -> U?,
+            onComplete : (service: T, result : U?) ->Unit) {
+            val pd = if (progressMsg != null) MFBUtil.showProgress(callingActivity, progressMsg) else null
+
+            val soap = service as? MFBSoap
+
+            if (soap != null) {
+                soap.mProgress = object : MFBSoapProgressUpdate {
+                    override fun notifyProgress(percentageComplete: Int, szMsg: String?) {
+                        // we are not on the main thread here, so need to post this onto the main thread
+                        // this is a hack.  We need to move off of progress dialog anyhow.
+                        callingActivity.runOnUiThread{
+                            if (pd != null) {
+                                if (percentageComplete > 0)
+                                    pd.progress = percentageComplete
+                                pd.setMessage(szMsg)
+                            }
+                        }
+                    }
+                }
+            }
+
+            val result = withContext(Dispatchers.IO) {
+                inBackground(service)
+            }
+
+            pd?.dismiss()
+            if (soap != null && soap.lastError.isNotEmpty() && pd != null)  // null pd = silent, even error
+                MFBUtil.alert(
+                    callingActivity,
+                    callingActivity.getString(R.string.txtError),
+                    soap.lastError
+                )
+            onComplete(service, result)
+        }
+        //endregion
     }
 }

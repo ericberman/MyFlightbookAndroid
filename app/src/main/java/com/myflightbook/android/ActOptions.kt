@@ -19,13 +19,10 @@
 package com.myflightbook.android
 
 import android.Manifest
-import android.app.ProgressDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -36,10 +33,12 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActRecentsWS.FlightDetail
 import com.myflightbook.android.webservices.*
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
+import kotlinx.coroutines.launch
 import model.*
 import model.LogbookEntry.Companion.mergeFlightLists
 import model.LogbookEntry.Companion.newFlights
@@ -55,7 +54,6 @@ import model.MFBTakeoffSpeed.landingSpeed
 import model.MFBTakeoffSpeed.takeOffSpeedIndex
 import model.MFBTakeoffSpeed.takeOffspeed
 import model.MFBUtil.alert
-import model.MFBUtil.showProgress
 import java.text.DateFormat
 import java.util.*
 
@@ -72,71 +70,65 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
     private var fPendingAutodetect = false
     private var fPendingRecord = false
 
-    private class PackData(c: Context, opt: ActOptions) :
-        AsyncTask<Void?, Int?, String>() {
-        private var mPd: ProgressDialog? = null
-        private val mCtxt: AsyncWeakContext<ActOptions> = AsyncWeakContext(c, opt)
-        override fun doInBackground(vararg params: Void?): String {
-            val c = mCtxt.context!!
-            publishProgress(R.string.prgAircraft)
-            // To be safe, update aircraft and properties.
-            AircraftSvc().getAircraftForUser(AuthToken.m_szAuthToken, c)
-            publishProgress(R.string.prgCPT)
-            CustomPropertyTypesSvc().getCustomPropertyTypes(AuthToken.m_szAuthToken, false, c)
-            val p = PackAndGo(c)
-            publishProgress(R.string.prgCurrency)
-            val cs = CurrencySvc()
-            val rgcsi = cs.getCurrencyForUser(AuthToken.m_szAuthToken, c)
-            if (cs.lastError.isNotEmpty()) return cs.lastError
-            p.updateCurrency(rgcsi)
-            publishProgress(R.string.prgTotals)
-            val ts = TotalsSvc()
-            val rgti = ts.getTotalsForUser(AuthToken.m_szAuthToken, FlightQuery(), c)
-            if (ts.lastError.isNotEmpty()) return ts.lastError
-            p.updateTotals(rgti)
-            publishProgress(R.string.packAndGoInProgress)
-            val fs = RecentFlightsSvc()
-            val rgle = fs.getRecentFlightsWithQueryAndOffset(
-                AuthToken.m_szAuthToken,
-                FlightQuery(),
-                0,
-                -1,
-                c
+    private fun packData() {
+        val c = requireContext()
+
+        lifecycleScope.launch {
+            doAsync<AircraftSvc, String?>(requireActivity(),
+                AircraftSvc(),
+                getString(R.string.prgAircraft),
+                { s ->
+                    val updater: MFBSoap.MFBSoapProgressUpdate? =
+                        s.mProgress // hold onto this for updates
+                    s.getAircraftForUser(AuthToken.m_szAuthToken, c)
+                    updater?.notifyProgress(0, getString(R.string.prgCPT))
+                    CustomPropertyTypesSvc().getCustomPropertyTypes(
+                        AuthToken.m_szAuthToken,
+                        false,
+                        c
+                    )
+                    val p = PackAndGo(c)
+                    updater?.notifyProgress(0, getString(R.string.prgCurrency))
+                    val cs = CurrencySvc()
+                    val rgcsi = cs.getCurrencyForUser(AuthToken.m_szAuthToken, c)
+                    cs.lastError.ifEmpty {
+                        p.updateCurrency(rgcsi)
+                        updater?.notifyProgress(0, getString(R.string.prgTotals))
+                        val ts = TotalsSvc()
+                        val rgti = ts.getTotalsForUser(AuthToken.m_szAuthToken, FlightQuery(), c)
+                        ts.lastError.ifEmpty {
+                            p.updateTotals(rgti)
+                            updater?.notifyProgress(0, getString(R.string.packAndGoInProgress))
+                            val fs = RecentFlightsSvc()
+                            val rgle = fs.getRecentFlightsWithQueryAndOffset(
+                                AuthToken.m_szAuthToken,
+                                FlightQuery(),
+                                0,
+                                -1,
+                                c
+                            )
+                            fs.lastError.ifEmpty {
+                                p.updateFlights(rgle)
+                                updater?.notifyProgress(0, getString(R.string.prgVisitedAirports))
+                                val vs = VisitedAirportSvc()
+                                val rgva = vs.getVisitedAirportsForUser(AuthToken.m_szAuthToken, c)
+                                vs.lastError.ifEmpty {
+                                    p.updateAirports(rgva)
+                                    p.lastPackDate = Date()
+                                    ""
+                                }
+                            }
+                        }
+                    }
+                },
+                { _, lastErr ->
+                    if (lastErr == null || lastErr.isEmpty())
+                        updateStatus()
+                }
             )
-            if (fs.lastError.isNotEmpty()) return fs.lastError
-            p.updateFlights(rgle)
-            publishProgress(R.string.prgVisitedAirports)
-            val vs = VisitedAirportSvc()
-            val rgva = vs.getVisitedAirportsForUser(AuthToken.m_szAuthToken, c)
-            if (vs.lastError.isNotEmpty()) return vs.lastError
-            p.updateAirports(rgva)
-            p.lastPackDate = Date()
-            return ""
         }
-
-        override fun onPreExecute() {
-            mPd =
-                showProgress(mCtxt.context, mCtxt.context!!.getString(R.string.packAndGoInProgress))
-        }
-
-        override fun onProgressUpdate(vararg progress: Int?) {
-            mPd!!.setMessage(mCtxt.context!!.getString(progress[0]!!))
-        }
-
-        override fun onPostExecute(szErr: String) {
-            try {
-                if (mPd != null) mPd!!.dismiss()
-            } catch (e: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            if (szErr.isNotEmpty()) {
-                alert(mCtxt.context, mCtxt.context!!.getString(R.string.txtError), szErr)
-            } else {
-                mCtxt.callingActivity!!.updateStatus()
-            }
-        }
-
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -514,7 +506,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
     override fun onClick(v: View) {
         val id = v.id
         if (id == R.id.btnSignIn) {
-            val d = DlgSignIn(activity)
+            val d = DlgSignIn(requireActivity())
             d.setOnDismissListener { updateStatus() }
             d.show()
         } else if (id == R.id.btnSignOut) {
@@ -548,7 +540,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
             )
         ) else if (id == R.id.btnFAQ) ActWebView.viewURL(
             requireActivity(), MFBConstants.urlFAQ
-        ) else if (id == R.id.btnPackAndGo) PackData(requireContext(), this).execute()
+        ) else if (id == R.id.btnPackAndGo) packData()
     }
 
     companion object {
