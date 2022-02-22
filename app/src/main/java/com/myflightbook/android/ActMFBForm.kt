@@ -621,8 +621,18 @@ import java.util.*
             service : T,
             progressMsg : String?,
             inBackground : (service : T) -> U?,
-            onComplete : (service: T, result : U?) ->Unit) {
-            val pd = if (progressMsg != null) MFBUtil.showProgress(callingActivity, progressMsg) else null
+            onComplete : (service: T, result : U?) ->Unit,
+            progBar : ProgressBar? = null,
+            progText : TextView?  = null
+        ) {
+            // create a progress dialog if no progbar/progtext is provided AND if a default message is provided.
+            val pd = if (progressMsg != null && progBar == null && progText == null) MFBUtil.showProgress(callingActivity, progressMsg) else null
+
+            if (progBar != null) progBar.visibility = View.VISIBLE
+            if (progText != null) {
+                progText.visibility = View.VISIBLE
+                progText.text = progressMsg ?: ""
+            }
 
             val soap = service as? MFBSoap
 
@@ -637,6 +647,9 @@ import java.util.*
                                     pd.progress = percentageComplete
                                 pd.setMessage(szMsg)
                             }
+                            if (progText != null)
+                                progText.text = szMsg
+                            progBar?.setProgress(percentageComplete, true)
                         }
                     }
                 }
@@ -647,6 +660,9 @@ import java.util.*
             }
 
             pd?.dismiss()
+            if (progBar != null) progBar.visibility = View.GONE
+            if (progText != null) progText.visibility = View.GONE
+
             if (soap != null && soap.lastError.isNotEmpty() && pd != null)  // null pd = silent, even error
                 MFBUtil.alert(
                     callingActivity,

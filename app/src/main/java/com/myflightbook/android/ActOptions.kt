@@ -70,33 +70,36 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
 
     private fun packData() {
         val c = requireContext()
+        val progBar = findViewById(R.id.prgBarPackAndGo) as ProgressBar
+        val progTxt = findViewById(R.id.lblPackProgress) as TextView
 
         lifecycleScope.launch {
             doAsync<AircraftSvc, String?>(requireActivity(),
                 AircraftSvc(),
-                getString(R.string.prgAircraft),
+                null,
                 { s ->
                     val updater: MFBSoap.MFBSoapProgressUpdate? =
                         s.mProgress // hold onto this for updates
+                    updater?.notifyProgress(0, getString(R.string.prgAircraft))
                     s.getAircraftForUser(AuthToken.m_szAuthToken, c)
-                    updater?.notifyProgress(0, getString(R.string.prgCPT))
+                    updater?.notifyProgress(1, getString(R.string.prgCPT))
                     CustomPropertyTypesSvc().getCustomPropertyTypes(
                         AuthToken.m_szAuthToken,
                         false,
                         c
                     )
                     val p = PackAndGo(c)
-                    updater?.notifyProgress(0, getString(R.string.prgCurrency))
+                    updater?.notifyProgress(2, getString(R.string.prgCurrency))
                     val cs = CurrencySvc()
                     val rgcsi = cs.getCurrencyForUser(AuthToken.m_szAuthToken, c)
                     cs.lastError.ifEmpty {
                         p.updateCurrency(rgcsi)
-                        updater?.notifyProgress(0, getString(R.string.prgTotals))
+                        updater?.notifyProgress(3, getString(R.string.prgTotals))
                         val ts = TotalsSvc()
                         val rgti = ts.getTotalsForUser(AuthToken.m_szAuthToken, FlightQuery(), c)
                         ts.lastError.ifEmpty {
                             p.updateTotals(rgti)
-                            updater?.notifyProgress(0, getString(R.string.packAndGoInProgress))
+                            updater?.notifyProgress(4, getString(R.string.packAndGoInProgress))
                             val fs = RecentFlightsSvc()
                             val rgle = fs.getRecentFlightsWithQueryAndOffset(
                                 AuthToken.m_szAuthToken,
@@ -107,7 +110,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
                             )
                             fs.lastError.ifEmpty {
                                 p.updateFlights(rgle)
-                                updater?.notifyProgress(0, getString(R.string.prgVisitedAirports))
+                                updater?.notifyProgress(5, getString(R.string.prgVisitedAirports))
                                 val vs = VisitedAirportSvc()
                                 val rgva = vs.getVisitedAirportsForUser(AuthToken.m_szAuthToken, c)
                                 vs.lastError.ifEmpty {
@@ -122,7 +125,9 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
                 { _, lastErr ->
                     if (lastErr == null || lastErr.isEmpty())
                         updateStatus()
-                }
+                },
+                progBar,
+                progTxt
             )
         }
     }
@@ -202,7 +207,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
             if (dtLast == null) getString(R.string.packAndGoStatusNone) else String.format(
                 Locale.getDefault(),
                 getString(R.string.packAndGoStatusOK),
-                DateFormat.getDateTimeInstance().format(dtLast)
+                DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault()).format(dtLast)
             )
         addListener(R.id.btnSignIn)
         addListener(R.id.btnSignOut)
