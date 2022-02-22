@@ -50,9 +50,7 @@ import model.MFBImageInfo.Companion.deleteOrphansNotInList
 import model.MFBImageInfo.PictureDestination
 import model.MFBLocation.Companion.hasGPS
 import model.MFBTakeoffSpeed.getDisplaySpeeds
-import model.MFBTakeoffSpeed.landingSpeed
 import model.MFBTakeoffSpeed.takeOffSpeedIndex
-import model.MFBTakeoffSpeed.takeOffspeed
 import model.MFBUtil.alert
 import java.text.DateFormat
 import java.util.*
@@ -356,21 +354,9 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
         sp!!.adapter = adapter
         sp.setSelection(speedUnits.ordinal)
         sp.onItemSelectedListener = this
-        t = findViewById(R.id.txtCopyright) as TextView?
-        if (MFBConstants.fIsDebug) {
-            val s = String.format(
-                "%s - DEBUG (%s)",
-                t!!.text.toString(),
-                String.format(
-                    Locale.getDefault(),
-                    "%s %d %d",
-                    MFBConstants.szIP,
-                    landingSpeed,
-                    takeOffspeed
-                )
-            )
-            t.text = s
-        }
+        t = findViewById(R.id.txtCopyright) as TextView
+        t.text = String.format(Locale.getDefault(), "%s %s %s", getString(R.string.lblCopyright), MFBMain.versionName,
+        if (MFBConstants.fIsDebug) " - DEBUG (" + MFBConstants.szIP + ")" else "")
     }
 
     override fun onResume() {
