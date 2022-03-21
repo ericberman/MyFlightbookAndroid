@@ -250,7 +250,7 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
             val i = Intent(this@ActVisitedAirports.activity, ActFlightMap::class.java)
             i.putExtra(ActFlightMap.ROUTEFORFLIGHT, szRoute)
             i.putExtra(ActFlightMap.EXISTINGFLIGHTID, -1)
-            i.putExtra(ActFlightMap.PENDINGFLIGHTID, -1)
+            i.putExtra(ActFlightMap.PENDINGFLIGHTID, -1L)
             i.putExtra(ActFlightMap.ALIASES, szAlias)
             startActivity(i)
             false

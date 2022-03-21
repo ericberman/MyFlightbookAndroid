@@ -55,9 +55,12 @@
         </LinearLayout>
     </LinearLayout>
 
+
     <androidx.fragment.app.FragmentContainerView
+        xmlns:tools="http:`//schemas.android.com/tools"
         android:id="@+id/mfbMap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:context=".ActFlightMap" />
 </LinearLayout>

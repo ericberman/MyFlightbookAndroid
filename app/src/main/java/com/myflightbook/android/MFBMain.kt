@@ -50,6 +50,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.MapsInitializer.Renderer
+import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.myflightbook.android.webservices.AuthToken
@@ -68,7 +71,7 @@ import model.Telemetry.Companion.telemetryFromURL
 import java.io.IOException
 import java.util.*
 
-class MFBMain : AppCompatActivity() {
+class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
     interface Invalidatable {
         fun invalidate()
     }
@@ -188,6 +191,7 @@ class MFBMain : AppCompatActivity() {
     //  Called when the activity is first created. */
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MapsInitializer.initialize(applicationContext, Renderer.LEGACY, this)
         Log.v(MFBConstants.LOG_TAG, "onCreate: about to install splash screen")
 
         installSplashScreen()
@@ -311,6 +315,13 @@ class MFBMain : AppCompatActivity() {
         // Set up the GPS service, but don't start it until OnResume
         if (getMainLocation() == null) setMainLocation(MFBLocation(this, false))
         Log.v(MFBConstants.LOG_TAG, "onCreate: finished")
+    }
+
+    override fun onMapsSdkInitialized(renderer: Renderer) {
+        when (renderer) {
+            Renderer.LATEST -> Log.d(MFBConstants.LOG_TAG, "The latest version of the renderer is used.")
+            Renderer.LEGACY -> Log.d(MFBConstants.LOG_TAG, "The legacy version of the renderer is used.")
+        }
     }
 
     override fun onNewIntent(intent: Intent) {

@@ -68,6 +68,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
     private val mHmairports = HashMap<String, Airport>()
     private val mHmimages = HashMap<String, MFBImageInfo>()
     private var mPassedaliases: String? = ""
+    private var mGmap: GoogleMap? = null
 
     override fun onDestroy() {
         super.onDestroy()
@@ -133,20 +134,6 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         return false
     }
 
-    private fun sendGpxAsync(idFlight : Int, ctxt : Context) {
-        Thread {
-            val rf = RecentFlightsSvc()
-            val resultGPX = rf.getFlightPathForFlightGPX(AuthToken.m_szAuthToken, idFlight, ctxt)
-            if (resultGPX.isNotEmpty()) {
-                runOnUiThread {
-                    mGpxpath = resultGPX
-                    sendGPX(mGpxpath)
-                }
-            }
-
-        }.start()
-    }
-
     private fun fetchFlightPath(idFlight: Int, ctxt : Context)  {
         Thread {
             val rfs = RecentFlightsSvc()
@@ -172,7 +159,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         )
         if (!mfbii.hasGeoTag())
             return
-        val map = map
+        val map = mGmap
         if (map != null) {
             val m = map.addMarker(
                 MarkerOptions()
@@ -189,7 +176,8 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
 
     private fun updateMapElements(fNoResize: Boolean = false) {
         val t = findViewById<EditText>(R.id.txtMapRoute)
-        val map = map ?: return
+        Log.d(MFBConstants.LOG_TAG, String.format(Locale.getDefault(), "updateMapElements, mGMap is%s null", if (mGmap == null) "" else " NOT"))
+        val map = mGmap ?: return
         val llb = LatLngBounds.Builder()
 
         // 4 layers to add:
@@ -305,64 +293,51 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             mLlb!!.including(sender.location!!.latLng)
     }
 
-    private var mGmap: GoogleMap? = null
     override fun onMapReady(googleMap: GoogleMap) {
-        if (mGmap == null) {
-            mGmap = googleMap
-            val map = map
-            if (map == null) {
-                MFBUtil.alert(
-                    this,
-                    getString(R.string.txtError),
-                    getString(R.string.errNoGoogleMaps)
-                )
-                finish()
-                return
-            }
-            map.mapType = GoogleMap.MAP_TYPE_HYBRID
-            val settings = map.uiSettings
-            settings.isCompassEnabled = false
-            settings.isRotateGesturesEnabled = false
-            settings.isScrollGesturesEnabled = true
-            settings.isZoomControlsEnabled = false
-            settings.isZoomGesturesEnabled = true
-            val mf = supportFragmentManager.findFragmentById(R.id.mfbMap) as SupportMapFragment?
-            val mapView = mf?.view
-            if (mapView != null && mapView.viewTreeObserver != null && mapView.viewTreeObserver.isAlive) {
-                mapView.viewTreeObserver.addOnGlobalLayoutListener(this)
-            }
-            map.setOnMarkerClickListener(this)
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                map.isMyLocationEnabled = true
-            }
-            map.setOnMapLongClickListener(this)
-            updateMapElements()
+        mGmap = googleMap
+        Log.d(MFBConstants.LOG_TAG, "onMapReady called")
+        val map = mGmap
+        if (map == null) {
+            MFBUtil.alert(
+                this,
+                getString(R.string.txtError),
+                getString(R.string.errNoGoogleMaps)
+            )
+            finish()
+            return
         }
+        map.mapType = GoogleMap.MAP_TYPE_HYBRID
+        val settings = map.uiSettings
+        settings.isCompassEnabled = false
+        settings.isRotateGesturesEnabled = false
+        settings.isScrollGesturesEnabled = true
+        settings.isZoomControlsEnabled = false
+        settings.isZoomGesturesEnabled = true
+        val mf = supportFragmentManager.findFragmentById(R.id.mfbMap) as SupportMapFragment?
+        val mapView = mf?.view
+        if (mapView != null && mapView.viewTreeObserver != null && mapView.viewTreeObserver.isAlive) {
+            mapView.viewTreeObserver.addOnGlobalLayoutListener(this)
+        }
+        map.setOnMarkerClickListener(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            map.isMyLocationEnabled = true
+        }
+        map.setOnMapLongClickListener(this)
+        updateMapElements()
     }
 
-    private val map: GoogleMap?
-        get() {
-            if (mGmap != null) return mGmap
-            val mf = supportFragmentManager.findFragmentById(R.id.mfbMap) as SupportMapFragment?
-            try {
-                mf?.getMapAsync(this)
-            } catch (ex: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.localizedMessage))
-            }
-            return null
-        }
-
     private fun autoZoom() {
-        val gm = map ?: return
+        val gm = mGmap ?: return
         if (mLlb == null) {
             val l = MFBLocation.lastSeenLoc()
+            Log.d(MFBConstants.LOG_TAG, String.format(Locale.getDefault(),"AutoZoom: no box, %s", if (l == null) "and no location so no zoom" else "but location"))
             if (l != null) gm.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(
@@ -375,11 +350,13 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             val height = abs(mLlb!!.northeast.latitude - mLlb!!.southwest.latitude)
             val width = abs(mLlb!!.northeast.longitude - mLlb!!.southwest.longitude)
             gm.moveCamera(CameraUpdateFactory.newLatLngBounds(mLlb!!, 20))
+            Log.d(MFBConstants.LOG_TAG, String.format(Locale.getDefault(), "AutoZoom, height=%.1f, width=%.1f", height, width))
             if (height < 0.001 || width < 0.001) gm.moveCamera(CameraUpdateFactory.zoomTo(if (mRgaproute != null && mRgaproute!!.size == 1) ZOOM_LEVEL_AIRPORT.toFloat() else ZOOM_LEVEL_AREA.toFloat()))
         }
     }
 
     override fun onGlobalLayout() {
+        Log.d(MFBConstants.LOG_TAG, "onGlobalLayout called")
         mFhashadlayout = true
         autoZoom()
     }
@@ -387,7 +364,15 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.flightmap)
-        mGmap = map
+
+        // get the map - this will set mGMap in onMapReady
+        val mf = supportFragmentManager.findFragmentById(R.id.mfbMap) as SupportMapFragment?
+        try {
+            mf?.getMapAsync(this)
+        } catch (ex: Exception) {
+            Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.localizedMessage))
+        }
+
         val t = findViewById<EditText>(R.id.txtMapRoute)
         val b = findViewById<ImageButton>(R.id.btnUpdateMapRoute)
         b.setOnClickListener(this)
@@ -399,7 +384,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         val i = intent
         val szRoute = i.getStringExtra(ROUTEFORFLIGHT)
         t.setText(szRoute)
-        val idPending = i.getLongExtra(PENDINGFLIGHTID, 0)
+        val idPending = i.getLongExtra(PENDINGFLIGHTID, 0L)
         val idExisting = i.getIntExtra(EXISTINGFLIGHTID, 0)
         val idNew = i.getIntExtra(NEWFLIGHTID, 0).toLong()
         if (idPending > 0) {
@@ -428,6 +413,53 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         val ll = findViewById<LinearLayout>(R.id.llMapToolbar)
         ll.visibility = if (f) View.INVISIBLE else View.VISIBLE
         updateMapElements(true)
+    }
+
+    override fun onClick(v: View) {
+        val id = v.id
+        if (id == R.id.btnUpdateMapRoute) updateMapElements() else if (id == R.id.btnExportGPX) {
+            if (!checkDocPermissions()) return
+            if (mGpxpath == null && mLe != null && !mLe!!.isAwaitingUpload() && !mLe!!.isNewFlight()) {
+                sendGpxAsync(mLe!!.idFlight, this)
+            } else sendGPX(mGpxpath)
+        }
+    }
+
+    override fun onMapLongClick(point: LatLng) {
+        val t = findViewById<EditText>(R.id.txtMapRoute)
+        val szAdHoc = LatLong(point.latitude, point.longitude).toAdHocLocString()
+        t.setText(String.format(Locale.getDefault(), "%s %s", t.text, szAdHoc).trim { it <= ' ' })
+    }
+
+    override fun onCheckedChanged(v: CompoundButton, isChecked: Boolean) {
+        if (v.id == R.id.ckShowAllAirports) {
+            setShowAllAirports(v.isChecked)
+        }
+    }
+
+    override fun onBackPressed() {
+        setResult(RESULT_OK, intent)
+        val newRoute =
+            (findViewById<View>(R.id.txtMapRoute) as EditText).text.toString().uppercase(
+                Locale.getDefault()
+            )
+        intent.putExtra(ROUTEFORFLIGHT, newRoute)
+        super.onBackPressed()
+    }
+
+    // region GPX export
+    private fun sendGpxAsync(idFlight : Int, ctxt : Context) {
+        Thread {
+            val rf = RecentFlightsSvc()
+            val resultGPX = rf.getFlightPathForFlightGPX(AuthToken.m_szAuthToken, idFlight, ctxt)
+            if (resultGPX.isNotEmpty()) {
+                runOnUiThread {
+                    mGpxpath = resultGPX
+                    sendGPX(mGpxpath)
+                }
+            }
+
+        }.start()
     }
 
     private fun filenameForPath(): String {
@@ -504,38 +536,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
-    override fun onClick(v: View) {
-        val id = v.id
-        if (id == R.id.btnUpdateMapRoute) updateMapElements() else if (id == R.id.btnExportGPX) {
-            if (!checkDocPermissions()) return
-            if (mGpxpath == null && mLe != null && !mLe!!.isAwaitingUpload() && !mLe!!.isNewFlight()) {
-                sendGpxAsync(mLe!!.idFlight, this)
-            } else sendGPX(mGpxpath)
-        }
-    }
-
-    override fun onMapLongClick(point: LatLng) {
-        val t = findViewById<EditText>(R.id.txtMapRoute)
-        val szAdHoc = LatLong(point.latitude, point.longitude).toAdHocLocString()
-        t.setText(String.format(Locale.getDefault(), "%s %s", t.text, szAdHoc).trim { it <= ' ' })
-    }
-
-    override fun onCheckedChanged(v: CompoundButton, isChecked: Boolean) {
-        if (v.id == R.id.ckShowAllAirports) {
-            setShowAllAirports(v.isChecked)
-        }
-    }
-
-    override fun onBackPressed() {
-        setResult(RESULT_OK, intent)
-        val newRoute =
-            (findViewById<View>(R.id.txtMapRoute) as EditText).text.toString().uppercase(
-                Locale.getDefault()
-            )
-        intent.putExtra(ROUTEFORFLIGHT, newRoute)
-        super.onBackPressed()
-    }
+    // endregion
 
     companion object {
         private const val DimensionImageOverlay = 60
