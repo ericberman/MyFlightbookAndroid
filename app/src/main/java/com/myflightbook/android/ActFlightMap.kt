@@ -306,10 +306,11 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             finish()
             return
         }
+        map.isIndoorEnabled = false
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
         val settings = map.uiSettings
         settings.isCompassEnabled = false
-        settings.isRotateGesturesEnabled = false
+        settings.isRotateGesturesEnabled = true
         settings.isScrollGesturesEnabled = true
         settings.isZoomControlsEnabled = false
         settings.isZoomGesturesEnabled = true

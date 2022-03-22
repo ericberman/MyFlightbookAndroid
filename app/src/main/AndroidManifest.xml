@@ -153,7 +153,7 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ActFlightMap"
-            android:theme="@style/MFBTheme"
+            android:theme="@style/Theme.AppCompat.DayNight"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ActNewUser"
