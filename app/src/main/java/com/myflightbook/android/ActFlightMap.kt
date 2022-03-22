@@ -320,6 +320,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             mapView.viewTreeObserver.addOnGlobalLayoutListener(this)
         }
         map.setOnMarkerClickListener(this)
+        map.setOnCameraIdleListener { updateMapElements(true) }
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
