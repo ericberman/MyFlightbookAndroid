@@ -659,7 +659,8 @@ import java.util.*
                 inBackground(service)
             }
 
-            pd?.dismiss()
+            if (pd != null && pd.isShowing)
+                pd.dismiss()
             if (progBar != null) progBar.visibility = View.GONE
             if (progText != null) progText.visibility = View.GONE
 
