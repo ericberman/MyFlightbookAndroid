@@ -471,7 +471,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 id: Long
             ) {
                 val ac = parent.selectedItem as Aircraft
-                if (mle!!.idAircraft != ac.aircraftID) {
+                if (mle != null && mle!!.idAircraft != ac.aircraftID) {
                     if (ac.aircraftID == -1) {   // show all!
                         refreshAircraft(mRgac, true)
                         sp.performClick()
