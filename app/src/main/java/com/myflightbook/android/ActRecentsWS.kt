@@ -387,12 +387,12 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                         currentQuery,
                         mRgexistingflights.size,
                         cFlightsPageSize,
-                        requireContext()
+                        act
                     )
 
                     // Refresh pending flights, if it's null
                     if (cachedPendingFlights == null || cachedPendingFlights!!.isEmpty())
-                        cachedPendingFlights = PendingFlightSvc().getPendingFlightsForUser(AuthToken.m_szAuthToken, requireContext())
+                        cachedPendingFlights = PendingFlightSvc().getPendingFlightsForUser(AuthToken.m_szAuthToken, act)
                     fCouldBeMore = rgle.size >= cFlightsPageSize
                     mRgexistingflights.addAll(rgle)
                     mergeFlightLists(
