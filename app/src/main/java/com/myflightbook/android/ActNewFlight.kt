@@ -565,7 +565,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (rgFilteredAircraft != null && rgFilteredAircraft.isNotEmpty()) {
             var pos = 0
             for (i in rgFilteredAircraft.indices) {
-                if (mle!!.idAircraft == rgFilteredAircraft[i].aircraftID) {
+                if (mle == null || mle!!.idAircraft == rgFilteredAircraft[i].aircraftID) {
                     pos = i
                     break
                 }
