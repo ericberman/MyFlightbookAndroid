@@ -241,6 +241,7 @@
     <string name="prgAircraft">Récupération des aéronefs…</string>
     <string name="prgSigningIn">S\'identifier…</string>
     <string name="prgCreatingAccount">Créer un compte…</string>
+    <string name="prgSavingFlight">Enregistrer le Vol</string>
     <string name="prgSavingFlights">Enregistrer le Vol %1$d sur %2$d</string>
     <string name="prgDeletingFlight">Suppression de vol</string>
     <string name="prgNewAircraft">Enregistrer l\'aéronef…</string>

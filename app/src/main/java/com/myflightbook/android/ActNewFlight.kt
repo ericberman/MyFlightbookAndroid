@@ -155,12 +155,15 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (le == null)
             return
         val fIsNew = le.isNewFlight()
+
+        val pf = le as? PendingFlight
+
         lifecycleScope.launch {
             doAsync<MFBSoap, Boolean?>(
                 requireActivity(),
-                MFBSoap(),
-                "",
-                { submitFlightWorker(le) },
+                if (le.fForcePending || (pf != null && pf.getPendingID().isNotEmpty())) PendingFlightSvc() else CommitFlightSvc(),
+                getString(R.string.prgSavingFlight),
+                { s -> submitFlightWorker(le, s) },
                 { _, result ->
                     if (result!!) {
                         MFBMain.invalidateCachedTotals()
@@ -196,7 +199,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
     }
 
-    private fun submitFlightWorker(le : LogbookEntry) : Boolean {
+    private fun submitFlightWorker(le : LogbookEntry, s : MFBSoap) : Boolean {
         /*
     Scenarios:
      - fForcePending is false, Regular flight, new or existing: call CommitFlightWithOptions
@@ -211,15 +214,14 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
  */
         val pf = le as? PendingFlight
         if (le.fForcePending) {
+            val pfs = s as PendingFlightSvc
             check(!le.isExistingFlight()) { "Attempt to save an existing flight as a pending flight" }
             if (pf == null || pf.getPendingID().isEmpty()) {
-                val pfs = PendingFlightSvc()
                 pfs.createPendingFlight(AuthToken.m_szAuthToken, le, requireContext())
                     .also { ActRecentsWS.cachedPendingFlights = it }
                 le.szError = pfs.lastError
             } else {
                 // existing pending flight but still force pending - call updatependingflight
-                val pfs = PendingFlightSvc()
                 pfs.updatePendingFlight(AuthToken.m_szAuthToken, pf, requireContext())
                     .also { ActRecentsWS.cachedPendingFlights = it }
                 le.szError = pfs.lastError
@@ -228,12 +230,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             // Not force pending.
             // If regular flight (new or existing), or pending without a pendingID
             if (pf == null || pf.getPendingID().isEmpty()) {
-                val cf = CommitFlightSvc()
+                val cf = s as CommitFlightSvc
                 cf.fCommitFlightForUser(AuthToken.m_szAuthToken, le, requireContext())
                 le.szError = cf.lastError
             } else {
                 // By definition, here pf is non-null and it has a pending ID so it is a valid pending flight and we are not forcing - call commitpendingflight
-                val pfs = PendingFlightSvc()
+                val pfs = s as PendingFlightSvc
                 val rgpf =
                     pfs.commitPendingFlight(AuthToken.m_szAuthToken, pf, requireContext())
                 ActRecentsWS.cachedPendingFlights = rgpf
