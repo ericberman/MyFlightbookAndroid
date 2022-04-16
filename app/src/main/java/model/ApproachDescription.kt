@@ -77,6 +77,7 @@ class ApproachDescription {
         )
         val ApproachSuffixes = arrayOf("", "-A", "-B", "-C", "-D", "-V", "-W", "-X", "-Y", "-Z")
         val RunwayNames = arrayOf(
+            "",
             "1",
             "2",
             "3",
