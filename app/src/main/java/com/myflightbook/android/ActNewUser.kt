@@ -92,7 +92,7 @@ class ActNewUser : AppCompatActivity(), View.OnClickListener {
         adapter.setDropDownViewResource(R.layout.samplequestion)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
                 val txtQ = findViewById<TextView>(R.id.txtQuestion)
                 txtQ.text = rgSampleQuestions[i]
             }
