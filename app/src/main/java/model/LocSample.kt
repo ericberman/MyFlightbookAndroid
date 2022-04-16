@@ -25,8 +25,6 @@ import android.util.Log
 import com.myflightbook.android.MFBMain
 import java.io.BufferedReader
 import java.io.StringReader
-import java.lang.Exception
-import java.lang.StringBuilder
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -184,6 +182,8 @@ class LocSample : LatLong {
 
         @JvmStatic
         fun samplesFromDataString(s: String?): Array<LocSample> {
+            if (s == null)
+                return arrayOf()
             val r = BufferedReader(StringReader(s))
             val nf = NumberFormat.getInstance(Locale.US)
             val al = ArrayList<LocSample>()

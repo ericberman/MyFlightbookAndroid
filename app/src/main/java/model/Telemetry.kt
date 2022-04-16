@@ -138,13 +138,13 @@ abstract class Telemetry internal constructor(uri: Uri?, c: Context?) {
         @Throws(IOException::class)
         private fun typeFromBufferedReader(br: BufferedReader): ImportedFileType {
             var result = ImportedFileType.Unknown
-            var s: String
+            var s: String?
             while (br.readLine().also { s = it } != null) {
-                s = s.uppercase(Locale.ENGLISH)
-                if (s.contains("GPX")) {
+                val s2 = s!!.uppercase(Locale.ENGLISH)
+                if (s2.contains("GPX")) {
                     result = ImportedFileType.GPX
                     break
-                } else if (s.contains("KML")) {
+                } else if (s2.contains("KML")) {
                     result = ImportedFileType.KML
                     break
                 }
