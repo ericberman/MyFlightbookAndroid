@@ -93,8 +93,8 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
             if (AvailableMakesAndModels == null || getMakeModelByID(
                     ac.modelID,
                     AvailableMakesAndModels
-                ).also { mm = it!! } == null
-            ) tv.text = ac.modelDescription else tv.text = mm!!.description
+                ).also { mm = it } == null
+            ) tv.text = ac.modelDescription else if (mm != null) tv.text = mm!!.description
             return v
         }
 
