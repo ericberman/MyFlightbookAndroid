@@ -242,7 +242,7 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
             val position = hmProp["Position"]!!.toInt()
             var szRoute = ""
             var szAlias: String? = ""
-            if (position < 0) // all airports
+            if (position < 0 && visitedAirports != null) // all airports
                 szRoute = toRoute(visitedAirports!!) else if (position < visitedAirports!!.size) {
                 szRoute = visitedAirports!![position].code
                 szAlias = visitedAirports!![position].aliases
