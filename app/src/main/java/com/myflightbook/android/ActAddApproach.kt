@@ -18,20 +18,14 @@
  */
 package com.myflightbook.android
 
-import androidx.appcompat.app.AppCompatActivity
-import model.ApproachDescription
-import android.os.Bundle
-import android.widget.Spinner
-import android.widget.ArrayAdapter
-import android.widget.AdapterView
-import model.Airport
-import android.widget.AutoCompleteTextView
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import model.DecimalEdit
-import android.widget.EditText
 import android.content.Intent
-import android.view.*
+import android.os.Bundle
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import model.Airport
+import model.ApproachDescription
+import model.DecimalEdit
 import java.util.*
 
 class ActAddApproach : AppCompatActivity() {
@@ -96,7 +90,7 @@ class ActAddApproach : AppCompatActivity() {
         adapter.setDropDownViewResource(R.layout.samplequestion)
         s.adapter = adapter
         s.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
                 runwayBase = ApproachDescription.RunwayNames[i]
                 approachDescription.runwayName = runwayBase + runwaySuffix
             }
