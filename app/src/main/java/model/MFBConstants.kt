@@ -20,7 +20,6 @@ package model
 
 import android.content.Context
 import android.content.res.Configuration
-import kotlin.jvm.JvmOverloads
 import com.myflightbook.android.webservices.AuthToken
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -41,7 +40,7 @@ object MFBConstants {
 
     // DB Versioning
     const val DBVersionMain = 36
-    const val DBVersionAirports = 42
+    const val DBVersionAirports = 43
 
     // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
     // To read it: PRAGMA user_version
