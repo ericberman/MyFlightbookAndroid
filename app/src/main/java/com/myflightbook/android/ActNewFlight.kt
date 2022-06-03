@@ -1541,6 +1541,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     private fun updateElapsedTime() {            // update the button state
         val ib = findViewById(R.id.btnPausePlay) as ImageButton?
         // pause/play should only be visible on ground with engine running (or flight start known but engine end unknown)
+        if (mle == null)    // should never happen!
+            return
         val fShowPausePlay =
             !MFBLocation.IsFlying && (mle!!.isKnownEngineStart || mle!!.isKnownFlightStart) && !mle!!.isKnownEngineEnd
         ib!!.visibility = if (fShowPausePlay) View.VISIBLE else View.INVISIBLE
