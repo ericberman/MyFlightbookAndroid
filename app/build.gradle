@@ -33,6 +33,7 @@ android {
             shrinkResources false
         }
     }
+    namespace 'com.myflightbook.android'
 }
 
 dependencies {
