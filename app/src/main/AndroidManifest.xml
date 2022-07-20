@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.myflightbook.android"
-    android:versionCode="144"
-    android:versionName="2022.04.27.1">
+    package="com.myflightbook.android">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -36,7 +33,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning"
         android:fullBackupContent="@xml/backup_descriptor">
         <uses-library
             android:name="com.google.android.maps"
