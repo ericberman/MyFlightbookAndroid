@@ -29,7 +29,7 @@
         android:required="true" />
 
     <application
-        android:name="androidx.multidex.MultiDexApplication"
+        android:name="android.app.Application"
         android:allowBackup="true"
         android:icon="@mipmap/ic_app"
         android:roundIcon="@mipmap/ic_app_round"
