@@ -1,5 +1,7 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
 
 android {
     compileSdkVersion 32
@@ -7,37 +9,55 @@ android {
 
     defaultConfig {
         applicationId "com.myflightbook.android"
-        minSdkVersion 24
-        targetSdkVersion 32
+        minSdk 24
+        targetSdk 32
+        versionCode 144
+        versionName "2022.04.27.1"
 
-        android.compileOptions.sourceCompatibility 1.8
-        android.compileOptions.targetCompatibility 1.8
+        // For Kotlin projects
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
     }
 
     buildTypes {
         debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-
-            // Enables resource shrinking, which is performed by the
-            // Android Gradle plugin.
-            shrinkResources false
+            applicationIdSuffix ".debug"
         }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-
-            // Enables resource shrinking, which is performed by the
-            // Android Gradle plugin.
-            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+    }
+
+    lint {
+        disable 'TooManyViews', 'AllowBackup', 'GoogleAppIndexingWarning'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/*'
+    }
+
     namespace 'com.myflightbook.android'
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android'
-    implementation "androidx.core:core-ktx:1.7.0"
+    // JARs
+    implementation files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')
+
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
