@@ -200,7 +200,7 @@
     <string name="lblRoleNone">Ne pas remplir automatiquement</string>
     <string name="lblRolePIC">Remplir la case PIC avec le temps total, si elle est vide</string>
     <string name="lblRoleSIC">Remplir la case SIC avec le temps total, si elle est vide</string>
-    <string name="lblRoleCFI">Remplir la case instruction avec le temps total, si elle est vide</string>
+    <string name="lblRoleCFI">Remplir la case instruction/PIC avec le temps total, si elle est vide</string>
     <string name="lblNotesHeader">Notes sur cet aéronef</string>
     <string name="lblPublicNotes">Notes publiques :</string>
     <string name="lblPrivateNotes">Notes privées :</string>

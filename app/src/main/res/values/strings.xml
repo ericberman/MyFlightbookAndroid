@@ -195,12 +195,12 @@
     <string name="lblNewEngine">New Engine:</string>
     <string name="lblMaintNotes">Notes:</string>
     <string name="lblMaintNotesHint">E.g., location/type/error of VOR check</string>
-    <string name="lblAircraftPrefsHeader">Autofill for new flights in this aircraft</string>
+    <string name="lblAircraftPrefsHeader">Crossfill for new flights in this aircraft</string>
     <string name="lblShowAircraft">Show this aircraft for new flights</string>
-    <string name="lblRoleNone">Do not autofill</string>
-    <string name="lblRolePIC">Autofill total time to PIC time, if empty</string>
-    <string name="lblRoleSIC">Autofill total time to SIC, if empty</string>
-    <string name="lblRoleCFI">Autofill total time to Instructor time, if empty</string>
+    <string name="lblRoleNone">Do not crossfill</string>
+    <string name="lblRolePIC">Crossfill total time to PIC time, if empty</string>
+    <string name="lblRoleSIC">Crossfill total time to SIC, if empty</string>
+    <string name="lblRoleCFI">Crossfill total time to Instructor/PIC time, if empty</string>
     <string name="lblNotesHeader">Notes about this aircraft</string>
     <string name="lblPublicNotes">Public Notes:</string>
     <string name="lblPrivateNotes">Private Notes:</string>
