@@ -254,7 +254,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
                     .icon(BitmapDescriptorFactory.fromResource(if (ap.isPort()) R.drawable.airport else R.drawable.tower))
                     .title(szTitle).snippet(szSnippet)
             )
-            if (ap.isPort() && m != null) mHmairports[m.id] = ap
+            if (m != null) mHmairports[m.id] = ap
         }
 
         // Add images
