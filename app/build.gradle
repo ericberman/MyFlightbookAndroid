@@ -39,10 +39,15 @@ android {
     lint {
         disable 'TooManyViews', 'AllowBackup', 'GoogleAppIndexingWarning'
     }
-
     packagingOptions {
-        exclude 'META-INF/*'
+        jniLibs {
+            excludes += ['META-INF/*']
+        }
+        resources {
+            excludes += ['META-INF/*']
+        }
     }
+
 
     namespace 'com.myflightbook.android'
 }
