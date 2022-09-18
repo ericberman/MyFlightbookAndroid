@@ -458,6 +458,28 @@
                 android:padding="5dp">
 
                 <TableRow
+                    android:id="@+id/rowTachStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:text="@string/lblTachStart" />
+
+                    <model.DecimalEdit
+                        android:id="@+id/txtTachStart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:width="90dip"
+                        android:text=""
+                        mfb:EditMode="DECIMAL" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/rowHobbsStart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
@@ -478,6 +500,7 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/rowEngineStart"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -499,6 +522,29 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/rowBlockOut"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:text="@string/lblBlockOut" />
+
+                    <TextView
+                        style="@style/DateButton"
+                        android:id="@+id/btnBlockOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="@string/lblTouchForNow" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/rowFlightStart"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -520,6 +566,7 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/rowFlightEnd"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -541,6 +588,29 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/rowBlockIn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:text="@string/lblBlockIn" />
+
+                    <TextView
+                        style="@style/DateButton"
+                        android:id="@+id/btnBlockIn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="@string/lblTouchForNow" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/rowEngineEnd"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -562,6 +632,7 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/rowHobbsEnd"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
@@ -581,8 +652,29 @@
                         android:text=""
                         mfb:EditMode="DECIMAL" />
                 </TableRow>
-            </TableLayout>
 
+                <TableRow
+                    android:id="@+id/rowTachEnd"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:width="100dip"
+                        android:text="@string/lblTachEnd" />
+
+                    <model.DecimalEdit
+                        android:id="@+id/txtTachEnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:width="90dip"
+                        android:nextFocusDown="@+id/txtNight"
+                        android:text=""
+                        mfb:EditMode="DECIMAL" />
+                </TableRow>
+            </TableLayout>
 
         </LinearLayout>
 

@@ -592,6 +592,13 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
             ActOptions.altitudeUnits = ActOptions.AltitudeUnits.values()[mPrefs!!.getInt(
                 m_KeysAltUnits, 0
             )]
+
+            ActNewFlight.fShowTach = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowTach, false)
+            ActNewFlight.fShowHobbs = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowHobbs, true)
+            ActNewFlight.fShowEngine = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowEngine, true)
+            ActNewFlight.fShowBlock = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowBlock, false)
+            ActNewFlight.fShowFlight = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowFlight, true)
+
             mLastTabIndex = mPrefs!!.getInt(m_KeysLastTab, 0)
             mLastVacuum = mPrefs!!.getLong(m_TimeOfLastVacuum, Date().time)
             takeOffSpeedIndex = mPrefs!!.getInt(m_KeysTOSpeed, MFBTakeoffSpeed.DefaultTakeOffIndex)
@@ -630,6 +637,13 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         ed.putInt(m_KeysLastTab, mViewPager!!.currentItem.also { mLastTabIndex = it })
         ed.putLong(m_TimeOfLastVacuum, mLastVacuum)
         ed.putInt(m_KeysTOSpeed, takeOffSpeedIndex)
+
+        ed.putBoolean(ActNewFlight.prefKeyShowTach, ActNewFlight.fShowTach)
+        ed.putBoolean(ActNewFlight.prefKeyShowHobbs, ActNewFlight.fShowHobbs)
+        ed.putBoolean(ActNewFlight.prefKeyShowEngine, ActNewFlight.fShowEngine)
+        ed.putBoolean(ActNewFlight.prefKeyShowBlock, ActNewFlight.fShowBlock)
+        ed.putBoolean(ActNewFlight.prefKeyShowFlight, ActNewFlight.fShowFlight)
+
         ed.apply()
     }
 

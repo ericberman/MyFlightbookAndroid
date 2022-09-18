@@ -406,145 +406,233 @@
                 </TableRow>
             </TableLayout>
 
-            <TableLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dip">
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center_horizontal"
-                    android:padding="3dip">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:width="100dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblHobbsStart" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:width="100dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblEngineStart" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:width="100dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblFlightStart" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:padding="3dip">
-
-                    <model.DecimalEdit
-                        android:id="@+id/txtHobbsStart"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:width="90dip"
-                        android:ems="10"
-                        mfb:EditMode="DECIMAL" />
-
-                    <TextView
-                        android:id="@+id/btnEngineStartSet"
-                        style="@style/DateButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="@string/lblTouchForNow" />
-
-                    <TextView
-                        android:id="@+id/btnFlightStartSet"
-                        style="@style/DateButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="@string/lblTouchForNow" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center_horizontal"
-                    android:padding="3dip">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:width="100dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblHobbsEnd" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:width="100dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblEngineEnd" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:width="100dip"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lblFlightEnd" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:padding="3dip">
-
-                    <model.DecimalEdit
-                        android:id="@+id/txtHobbsEnd"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:width="90dip"
-                        android:nextFocusDown="@+id/txtNight"
-                        mfb:EditMode="DECIMAL" />
-
-                    <TextView
-                        style="@style/DateButton"
-                        android:id="@+id/btnEngineEndSet"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="@string/lblTouchForNow" />
-
-                    <TextView
-                        style="@style/DateButton"
-                        android:id="@+id/btnFlightEndSet"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="@string/lblTouchForNow" />
-                </TableRow>
-            </TableLayout>
-
         </LinearLayout>
-        <!-- Remainder of "In the Cockpit" -->
 
+        <!-- Remainder of "In the Cockpit" -->
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="5dp">
+
+            <TableRow
+                android:id="@+id/rowTachStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblTachStart" />
+
+                <model.DecimalEdit
+                    android:id="@+id/txtTachStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:width="90dip"
+                    android:text=""
+                    mfb:EditMode="DECIMAL" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowHobbsStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblHobbsStart" />
+
+                <model.DecimalEdit
+                    android:id="@+id/txtHobbsStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:width="90dip"
+                    android:text=""
+                    mfb:EditMode="DECIMAL" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowEngineStart"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblEngineStart" />
+
+                <TextView
+                    style="@style/DateButton"
+                    android:id="@+id/btnEngineStartSet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/lblTouchForNow" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowBlockOut"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblBlockOut" />
+
+                <TextView
+                    style="@style/DateButton"
+                    android:id="@+id/btnBlockOut"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/lblTouchForNow" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowFlightStart"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblFlightStart" />
+
+                <TextView
+                    style="@style/DateButton"
+                    android:id="@+id/btnFlightStartSet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/lblTouchForNow" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowFlightEnd"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblFlightEnd" />
+
+                <TextView
+                    style="@style/DateButton"
+                    android:id="@+id/btnFlightEndSet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/lblTouchForNow" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowBlockIn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblBlockIn" />
+
+                <TextView
+                    style="@style/DateButton"
+                    android:id="@+id/btnBlockIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/lblTouchForNow" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowEngineEnd"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblEngineEnd" />
+
+                <TextView
+                    style="@style/DateButton"
+                    android:id="@+id/btnEngineEndSet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/lblTouchForNow" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowHobbsEnd"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblHobbsEnd" />
+
+                <model.DecimalEdit
+                    android:id="@+id/txtHobbsEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:width="90dip"
+                    android:nextFocusDown="@+id/txtNight"
+                    android:text=""
+                    mfb:EditMode="DECIMAL" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowTachEnd"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:width="100dip"
+                    android:text="@string/lblTachEnd" />
+
+                <model.DecimalEdit
+                    android:id="@+id/txtTachEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:width="90dip"
+                    android:nextFocusDown="@+id/txtNight"
+                    android:text=""
+                    mfb:EditMode="DECIMAL" />
+            </TableRow>
+        </TableLayout>
 
         <!-- Times and properties -->
 

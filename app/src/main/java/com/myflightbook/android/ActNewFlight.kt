@@ -402,6 +402,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         addListener(R.id.btnEngineStartSet)
         addListener(R.id.btnFlightEndSet)
         addListener(R.id.btnEngineEndSet)
+        addListener(R.id.btnBlockOut)
+        addListener(R.id.btnBlockIn)
         addListener(R.id.btnProps)
         addListener(R.id.btnAppendNearest)
         addListener(R.id.btnAddAircraft)
@@ -425,6 +427,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         enableCrossFill(R.id.txtSIC)
         enableCrossFill(R.id.txtPIC)
         enableCrossFill(R.id.txtHobbsStart)
+        enableCrossFill(R.id.txtTachStart)
         findViewById(R.id.txtTotal)!!.setOnLongClickListener {
             val i = Intent(requireActivity(), ActTimeCalc::class.java)
             i.putExtra(ActTimeCalc.INITIAL_TIME, doubleFromField(R.id.txtTotal))
@@ -535,6 +538,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         fromView()
         if (sender!!.id == R.id.txtHobbsStart) {
             val d = getHighWaterHobbsForAircraft(mle!!.idAircraft)
+            if (d > 0) sender.doubleValue = d
+        } else if (sender.id == R.id.txtTachStart) {
+            val d = getHighWaterTachForAircraft(mle!!.idAircraft)
             if (d > 0) sender.doubleValue = d
         } else if (mle!!.decTotal > 0) sender.doubleValue = mle!!.decTotal
         fromView()
@@ -738,74 +744,90 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
         // Handle item selection
         val menuId = item.itemId
-        if (menuId == R.id.menuUploadLater) submitFlight(true) else if (menuId == R.id.menuResetFlight) {
-            if (mle!!.idLocalDB > 0) mle!!.deleteUnsubmittedFlightFromLocalDB()
-            resetFlight(false)
-        } else if (menuId == R.id.menuSignFlight) {
-            try {
-                ActWebView.viewURL(
-                    requireActivity(), String.format(
-                        Locale.US, MFBConstants.urlSign,
-                        MFBConstants.szIP,
-                        mle!!.idFlight,
-                        URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
-                        nightParam(context)
+        when (menuId) {
+            R.id.menuUploadLater -> submitFlight(true)
+            R.id.menuResetFlight -> {
+                if (mle!!.idLocalDB > 0) mle!!.deleteUnsubmittedFlightFromLocalDB()
+                resetFlight(false)
+            }
+            R.id.menuSignFlight -> {
+                try {
+                    ActWebView.viewURL(
+                        requireActivity(), String.format(
+                            Locale.US, MFBConstants.urlSign,
+                            MFBConstants.szIP,
+                            mle!!.idFlight,
+                            URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
+                            nightParam(context)
+                        )
                     )
-                )
-            } catch (ignored: UnsupportedEncodingException) {
-            }
-        } else if (menuId == R.id.btnDeleteFlight) AlertDialog.Builder(
-            requireActivity(),
-            R.style.MFBDialog
-        )
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setTitle(R.string.lblConfirm)
-            .setMessage(R.string.lblConfirmFlightDelete)
-            .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int ->
-                if (mle!!.isAwaitingUpload()) {
-                    mle!!.deleteUnsubmittedFlightFromLocalDB()
-                    mle = null // clear this out since we're going to finish().
-                    clearCachedFlights()
-                    finish()
-                } else if (mle!!.isExistingFlight() || mle is PendingFlight)
-                    deleteFlight(mle)
-            }
-            .setNegativeButton(R.string.lblCancel, null)
-            .show() else if (menuId == R.id.btnSubmitFlight || menuId == R.id.btnUpdateFlight) submitFlight(
-            false
-        ) else if (menuId == R.id.btnSavePending) {
-            mle!!.fForcePending = true
-            submitFlight(false)
-        } else if (menuId == R.id.menuTakePicture) takePictureClicked() else if (menuId == R.id.menuTakeVideo) takeVideoClicked() else if (menuId == R.id.menuChoosePicture) choosePictureClicked() else if (menuId == R.id.menuChooseTemplate) {
-            val i = Intent(requireActivity(), ViewTemplatesActivity::class.java)
-            val b = Bundle()
-            b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
-            i.putExtras(b)
-            mTemplateLauncher!!.launch(i)
-        } else if (menuId == R.id.menuRepeatFlight || menuId == R.id.menuReverseFlight) {
-            assert(mle != null)
-            val leNew =
-                if (menuId == R.id.menuRepeatFlight) mle!!.clone() else mle!!.cloneAndReverse()
-            leNew!!.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED
-            leNew.toDB()
-            rewritePropertiesForFlight(leNew.idLocalDB, leNew.rgCustomProperties)
-            leNew.syncProperties()
-            clearCachedFlights()
-            AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
-                .setMessage(getString(R.string.txtRepeatFlightComplete))
-                .setTitle(getString(R.string.txtSuccess))
-                .setNegativeButton("OK") { d: DialogInterface, _: Int ->
-                    d.cancel()
-                    finish()
+                } catch (ignored: UnsupportedEncodingException) {
                 }
-                .create().show()
-            return true
-        } else if (menuId == R.id.menuSendFlight) sendFlight() else if (menuId == R.id.menuShareFlight) shareFlight() else if (menuId == R.id.btnAutoFill) {
-            assert(mle != null)
-            fromView()
-            autoFill(requireContext(), mle)
-            toView()
-        } else return super.onOptionsItemSelected(item)
+            }
+            R.id.btnDeleteFlight -> AlertDialog.Builder(
+                requireActivity(),
+                R.style.MFBDialog
+            )
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.lblConfirm)
+                .setMessage(R.string.lblConfirmFlightDelete)
+                .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int ->
+                    if (mle!!.isAwaitingUpload()) {
+                        mle!!.deleteUnsubmittedFlightFromLocalDB()
+                        mle = null // clear this out since we're going to finish().
+                        clearCachedFlights()
+                        finish()
+                    } else if (mle!!.isExistingFlight() || mle is PendingFlight)
+                        deleteFlight(mle)
+                }
+                .setNegativeButton(R.string.lblCancel, null)
+                .show()
+            R.id.btnSubmitFlight, R.id.btnUpdateFlight -> submitFlight(
+                false
+            )
+            R.id.btnSavePending -> {
+                mle!!.fForcePending = true
+                submitFlight(false)
+            }
+            R.id.menuTakePicture -> takePictureClicked()
+            R.id.menuTakeVideo -> takeVideoClicked()
+            R.id.menuChoosePicture -> choosePictureClicked()
+            R.id.menuChooseTemplate -> {
+                val i = Intent(requireActivity(), ViewTemplatesActivity::class.java)
+                val b = Bundle()
+                b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
+                i.putExtras(b)
+                mTemplateLauncher!!.launch(i)
+            }
+            R.id.menuRepeatFlight, R.id.menuReverseFlight -> {
+                assert(mle != null)
+                val leNew =
+                    if (menuId == R.id.menuRepeatFlight) mle!!.clone() else mle!!.cloneAndReverse()
+                leNew!!.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED
+                leNew.toDB()
+                rewritePropertiesForFlight(leNew.idLocalDB, leNew.rgCustomProperties)
+                leNew.syncProperties()
+                clearCachedFlights()
+                AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
+                    .setMessage(getString(R.string.txtRepeatFlightComplete))
+                    .setTitle(getString(R.string.txtSuccess))
+                    .setNegativeButton("OK") { d: DialogInterface, _: Int ->
+                        d.cancel()
+                        finish()
+                    }
+                    .create().show()
+                return true
+            }
+            R.id.menuSendFlight -> sendFlight()
+            R.id.menuShareFlight -> shareFlight()
+            R.id.btnAutoFill -> {
+                assert(mle != null)
+                fromView()
+                autoFill(requireContext(), mle)
+                toView()
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
         return true
     }
 
@@ -883,89 +905,120 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     override fun onClick(v: View) {
         fromView()
-        val id = v.id
-        if (id == R.id.btnEngineStartSet) {
-            if (!mle!!.isKnownEngineStart) {
-                mle!!.dtEngineStart = nowWith0Seconds()
-                engineStart()
-            } else setDateTime(
-                id,
-                mle!!.dtEngineStart,
-                this,
-                DlgDatePicker.DatePickMode.UTCDATETIME
-            )
-        } else if (id == R.id.btnEngineEndSet) {
-            if (!mle!!.isKnownEngineEnd) {
-                mle!!.dtEngineEnd = nowWith0Seconds()
-                engineStop()
-            } else setDateTime(id, mle!!.dtEngineEnd, this, DlgDatePicker.DatePickMode.UTCDATETIME)
-        } else if (id == R.id.btnFlightStartSet) {
-            if (!mle!!.isKnownFlightStart) {
-                mle!!.dtFlightStart = nowWith0Seconds()
-                flightStart()
-            } else setDateTime(
-                id,
-                mle!!.dtFlightStart,
-                this,
-                DlgDatePicker.DatePickMode.UTCDATETIME
-            )
-        } else if (id == R.id.btnFlightEndSet) {
-            if (!mle!!.isKnownFlightEnd) {
-                mle!!.dtFlightEnd = nowWith0Seconds()
-                flightStop()
-            } else setDateTime(id, mle!!.dtFlightEnd, this, DlgDatePicker.DatePickMode.UTCDATETIME)
-        } else if (id == R.id.btnFlightSet) {
-            val dlg = DlgDatePicker(
-                requireActivity(),
-                DlgDatePicker.DatePickMode.LOCALDATEONLY,
-                mle!!.dtFlight
-            )
-            dlg.mDelegate = this
-            dlg.mId = id
-            dlg.show()
-        } else if (id == R.id.btnProps) viewPropsForFlight() else if (id == R.id.btnAppendNearest) appendNearest() else if (id == R.id.btnAddAircraft) mAddAircraftLauncher!!.launch(
-            Intent(
-                activity, NewAircraftActivity::class.java
-            )
-        ) else if (id == R.id.btnAddApproach) {
-            val i = Intent(requireActivity(), ActAddApproach::class.java)
-            i.putExtra(ActAddApproach.AIRPORTSFORAPPROACHES, mle!!.szRoute)
-            mApproachHelperLauncher!!.launch(i)
-        } else if (id == R.id.btnViewOnMap) {
-            val i = Intent(requireActivity(), ActFlightMap::class.java)
-            i.putExtra(ActFlightMap.ROUTEFORFLIGHT, mle!!.szRoute)
-            i.putExtra(
-                ActFlightMap.EXISTINGFLIGHTID,
-                if (mle!!.isExistingFlight()) mle!!.idFlight else 0
-            )
-            i.putExtra(
-                ActFlightMap.PENDINGFLIGHTID,
-                if (mle!!.isAwaitingUpload()) mle!!.idLocalDB else 0
-            )
-            i.putExtra(
-                ActFlightMap.NEWFLIGHTID,
-                if (mle!!.isNewFlight()) LogbookEntry.ID_NEW_FLIGHT else 0
-            )
-            i.putExtra(ActFlightMap.ALIASES, "")
-            mMapRouteLauncher!!.launch(i)
-        } else if (id == R.id.btnPausePlay) toggleFlightPause() else if (id == R.id.txtViewInTheCockpit) {
-            val target = findViewById(R.id.sectInTheCockpit)
-            val fExpandCockpit = target!!.visibility != View.VISIBLE
-            if (mle != null && mle!!.isNewFlight()) {
-                val e = requireActivity().getPreferences(Context.MODE_PRIVATE).edit()
-                e.putBoolean(m_KeyShowInCockpit, fExpandCockpit)
-                e.apply()
+        when (val id = v.id) {
+            R.id.btnEngineStartSet -> {
+                if (!mle!!.isKnownEngineStart) {
+                    mle!!.dtEngineStart = nowWith0Seconds()
+                    engineStart()
+                } else setDateTime(
+                    id,
+                    mle!!.dtEngineStart,
+                    this,
+                    DlgDatePicker.DatePickMode.UTCDATETIME
+                )
             }
-            setExpandedState((v as TextView), target, fExpandCockpit)
-        } else if (id == R.id.txtImageHeader) {
-            val target = findViewById(R.id.tblImageTable)
-            setExpandedState((v as TextView), target!!, target.visibility != View.VISIBLE)
-        } else if (id == R.id.txtSignatureHeader) {
-            val target = findViewById(R.id.sectSignature)
-            setExpandedState((v as TextView), target!!, target.visibility != View.VISIBLE)
-        } else if (id == R.id.txtPinnedPropertiesHeader) {
-            val target = findViewById(R.id.sectPinnedProperties)
-            setExpandedState((v as TextView), target!!, target.visibility != View.VISIBLE)
+            R.id.btnEngineEndSet -> {
+                if (!mle!!.isKnownEngineEnd) {
+                    mle!!.dtEngineEnd = nowWith0Seconds()
+                    engineStop()
+                } else setDateTime(id, mle!!.dtEngineEnd, this, DlgDatePicker.DatePickMode.UTCDATETIME)
+            }
+            R.id.btnBlockOut -> {
+                val dtBlockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
+                if (dtBlockOut == null) {
+                    mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockOut, nowWith0Seconds())
+                    resetDateOfFlight()
+                }
+                else
+                    setDateTime(id, dtBlockOut, this, DlgDatePicker.DatePickMode.UTCDATETIME)
+            }
+            R.id.btnBlockIn -> {
+                val dtBlockIn = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockIn)
+                if (dtBlockIn == null)
+                    mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, nowWith0Seconds())
+                else
+                    setDateTime(id, dtBlockIn, this, DlgDatePicker.DatePickMode.UTCDATETIME)
+            }
+            R.id.btnFlightStartSet -> {
+                if (!mle!!.isKnownFlightStart) {
+                    mle!!.dtFlightStart = nowWith0Seconds()
+                    flightStart()
+                } else setDateTime(
+                    id,
+                    mle!!.dtFlightStart,
+                    this,
+                    DlgDatePicker.DatePickMode.UTCDATETIME
+                )
+            }
+            R.id.btnFlightEndSet -> {
+                if (!mle!!.isKnownFlightEnd) {
+                    mle!!.dtFlightEnd = nowWith0Seconds()
+                    flightStop()
+                } else setDateTime(id, mle!!.dtFlightEnd, this, DlgDatePicker.DatePickMode.UTCDATETIME)
+            }
+            R.id.btnFlightSet -> {
+                val dlg = DlgDatePicker(
+                    requireActivity(),
+                    DlgDatePicker.DatePickMode.LOCALDATEONLY,
+                    mle!!.dtFlight
+                )
+                dlg.mDelegate = this
+                dlg.mId = id
+                dlg.show()
+            }
+            R.id.btnProps -> viewPropsForFlight()
+            R.id.btnAppendNearest -> appendNearest()
+            R.id.btnAddAircraft -> mAddAircraftLauncher!!.launch(
+                Intent(
+                    activity, NewAircraftActivity::class.java
+                )
+            )
+            R.id.btnAddApproach -> {
+                val i = Intent(requireActivity(), ActAddApproach::class.java)
+                i.putExtra(ActAddApproach.AIRPORTSFORAPPROACHES, mle!!.szRoute)
+                mApproachHelperLauncher!!.launch(i)
+            }
+            R.id.btnViewOnMap -> {
+                val i = Intent(requireActivity(), ActFlightMap::class.java)
+                i.putExtra(ActFlightMap.ROUTEFORFLIGHT, mle!!.szRoute)
+                i.putExtra(
+                    ActFlightMap.EXISTINGFLIGHTID,
+                    if (mle!!.isExistingFlight()) mle!!.idFlight else 0
+                )
+                i.putExtra(
+                    ActFlightMap.PENDINGFLIGHTID,
+                    if (mle!!.isAwaitingUpload()) mle!!.idLocalDB else 0
+                )
+                i.putExtra(
+                    ActFlightMap.NEWFLIGHTID,
+                    if (mle!!.isNewFlight()) LogbookEntry.ID_NEW_FLIGHT else 0
+                )
+                i.putExtra(ActFlightMap.ALIASES, "")
+                mMapRouteLauncher!!.launch(i)
+            }
+            R.id.btnPausePlay -> toggleFlightPause()
+            R.id.txtViewInTheCockpit -> {
+                val target = findViewById(R.id.sectInTheCockpit)
+                val fExpandCockpit = target!!.visibility != View.VISIBLE
+                if (mle != null && mle!!.isNewFlight()) {
+                    val e = requireActivity().getPreferences(Context.MODE_PRIVATE).edit()
+                    e.putBoolean(m_KeyShowInCockpit, fExpandCockpit)
+                    e.apply()
+                }
+                setExpandedState((v as TextView), target, fExpandCockpit)
+            }
+            R.id.txtImageHeader -> {
+                val target = findViewById(R.id.tblImageTable)
+                setExpandedState((v as TextView), target!!, target.visibility != View.VISIBLE)
+            }
+            R.id.txtSignatureHeader -> {
+                val target = findViewById(R.id.sectSignature)
+                setExpandedState((v as TextView), target!!, target.visibility != View.VISIBLE)
+            }
+            R.id.txtPinnedPropertiesHeader -> {
+                val target = findViewById(R.id.sectPinnedProperties)
+                setExpandedState((v as TextView), target!!, target.visibility != View.VISIBLE)
+            }
         }
         toView()
     }
@@ -1014,6 +1067,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         fromView()
         var fEngineChanged = false
         var fFlightChanged = false
+        var fBlockChanged = false
         dt2 = removeSeconds(dt2!!)
         when (id) {
             R.id.btnEngineStartSet -> {
@@ -1025,6 +1079,15 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 mle!!.dtEngineEnd = dt2
                 fEngineChanged = true
                 showRecordingIndicator()
+            }
+            R.id.btnBlockOut -> {
+                handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockOut, dt2))
+                resetDateOfFlight()
+                fBlockChanged = true
+            }
+            R.id.btnBlockIn -> {
+                handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, dt2))
+                fBlockChanged = true
             }
             R.id.btnFlightStartSet -> {
                 mle!!.dtFlightStart = dt2
@@ -1048,6 +1111,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         when (MFBLocation.fPrefAutoFillTime) {
             AutoFillOptions.EngineTime -> if (fEngineChanged) doAutoTotals()
             AutoFillOptions.FlightTime -> if (fFlightChanged) doAutoTotals()
+            AutoFillOptions.BlockTime -> if (fBlockChanged) doAutoTotals()
             AutoFillOptions.HobbsTime -> {}
             AutoFillOptions.FlightStartToEngineEnd -> doAutoTotals()
             else -> {}
@@ -1166,6 +1230,11 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
     }
 
+    private fun setVisibilityForRow(rowID: Int, visible : Boolean) {
+        val v = findViewById(rowID)
+        v!!.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     override fun toView() {
         if (view == null) return
         setStringForField(R.id.txtComments, mle!!.szComments)
@@ -1179,12 +1248,40 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         setLocalDateForField(R.id.btnFlightSet, mle!!.dtFlight)
 
         // Engine/Flight dates
+        val tachStart = mle!!.propDoubleForID(CustomPropertyType.idPropTypeTachStart)
+        val tachEnd = mle!!.propDoubleForID(CustomPropertyType.idPropTypeTachEnd)
+        val blockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
+        val blockIn = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockIn)
+
         setUTCDateForField(R.id.btnEngineStartSet, mle!!.dtEngineStart)
         setUTCDateForField(R.id.btnEngineEndSet, mle!!.dtEngineEnd)
         setUTCDateForField(R.id.btnFlightStartSet, mle!!.dtFlightStart)
         setUTCDateForField(R.id.btnFlightEndSet, mle!!.dtFlightEnd)
         setDoubleForField(R.id.txtHobbsStart, mle!!.hobbsStart)
         setDoubleForField(R.id.txtHobbsEnd, mle!!.hobbsEnd)
+        setDoubleForField(R.id.txtTachStart, tachStart)
+        setDoubleForField(R.id.txtTachEnd, tachEnd)
+        setUTCDateForField(R.id.btnBlockOut, blockOut)
+        setUTCDateForField(R.id.btnBlockIn, blockIn)
+
+        // show tach/block in "In the cockpit" only if the options are selected (will otherwise show in properties)...
+        val showTach = fShowTach
+        val showBlock = fShowBlock
+        //...but hobbs/engine/flight must be shown if they have values, since they won't show anywhere else.
+        val showHobbs = fShowHobbs || mle!!.hobbsStart > 0 || mle!!.hobbsEnd > 0
+        val showEngine = fShowEngine || mle!!.isKnownEngineStart || mle!!.isKnownEngineEnd
+        val showFlight = fShowFlight || mle!!.isKnownFlightStart || mle!!.isKnownFlightEnd
+        setVisibilityForRow(R.id.rowTachStart, showTach)
+        setVisibilityForRow(R.id.rowTachEnd, showTach)
+        setVisibilityForRow(R.id.rowHobbsStart, showHobbs)
+        setVisibilityForRow(R.id.rowHobbsEnd, showHobbs)
+        setVisibilityForRow(R.id.rowEngineStart, showEngine)
+        setVisibilityForRow(R.id.rowEngineEnd, showEngine)
+        setVisibilityForRow(R.id.rowBlockOut, showBlock)
+        setVisibilityForRow(R.id.rowBlockIn, showBlock)
+        setVisibilityForRow(R.id.rowFlightStart, showFlight)
+        setVisibilityForRow(R.id.rowFlightEnd, showFlight)
+
         setDoubleForField(R.id.txtCFI, mle!!.decCFI)
         setDoubleForField(R.id.txtDual, mle!!.decDual)
         setDoubleForField(R.id.txtGround, mle!!.decGrndSim)
@@ -1274,7 +1371,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
 
         // Current properties
-        if (!mle!!.isExistingFlight() && mle!!.rgCustomProperties.count() == 0) mle!!.syncProperties()
+        if (!mle!!.isExistingFlight() && mle!!.rgCustomProperties.isEmpty()) mle!!.syncProperties()
         setUpPropertiesForFlight()
         updateElapsedTime()
         updatePausePlayButtonState()
@@ -1305,6 +1402,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
         // Date - no-op because it should be in sync
         // Flight/Engine times - ditto
+
+        // But tach, if shown, isn't coming from props, so load it here.
+        if (fShowTach) {
+            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(CustomPropertyType.idPropTypeTachStart, doubleFromField(R.id.txtTachStart)))
+            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(CustomPropertyType.idPropTypeTachEnd, doubleFromField(R.id.txtTachEnd)))
+        }
 
         // checkboxes
         mle!!.fHold = checkState(R.id.ckHold)
@@ -1356,6 +1459,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 mle!!.dtEngineStart
             if (mle!!.isKnownFlightStart && mle!!.dtFlightStart < dt) dt =
                 mle!!.dtFlightStart
+
+            val dtBlockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
+            if (dtBlockOut != null && !isNullDate(dtBlockOut) && dtBlockOut < dt)
+                dt = dtBlockOut
             mle!!.dtFlight = dt
             setLocalDateForField(R.id.btnFlightSet, mle!!.dtFlight)
         }
@@ -1692,8 +1799,18 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             if (fp.getCustomPropertyType() == null) fp.refreshPropType()
             if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut && !fp.isDefaultValue()) fHasBlockOutAdded =
                 true
+
+            // Don't show any properties that are:
+            // a) unpinned and default value, or
+            // b) "hoisted" into the "in the cockpit" section
             val fIsPinned = isPinnedProperty(pinnedProps, fp.idPropType)
             if (!fIsPinned && !templateProps.contains(fp.idPropType) && fp.isDefaultValue()) continue
+
+            if (fShowTach && (fp.idPropType == CustomPropertyType.idPropTypeTachStart || fp.idPropType == CustomPropertyType.idPropTypeTachEnd))
+                continue
+            if (fShowBlock && (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn))
+                continue
+
             val tr = l.inflate(R.layout.cpttableitem, tl, false) as TableRow
             tr.id = View.generateViewId()
             val pe: PropertyEdit = tr.findViewById(R.id.propEdit)
@@ -1746,6 +1863,13 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         val rgProps = crossProduct(mle!!.rgCustomProperties, cachedPropertyTypes)
         val rgfpUpdated = distillList(rgProps)
         rewritePropertiesForFlight(mle!!.idLocalDB, rgfpUpdated)
+    }
+
+    private fun handlePotentiallyDefaultedProperty(fp : FlightProperty?) {
+        if (mle!!.idFlight > 0 && fp != null && fp.idProp > 0 && fp.isDefaultValue()) {
+            fp.idFlight = mle!!.idFlight   // this is pointing to the LOCAL db ID of the flight, so we need to point it instead to the server-based flight id2
+            deleteProperty(fp)
+        }
     }
 
     override fun updateProperty(id: Int, fp: FlightProperty) {
@@ -1827,5 +1951,18 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
         // Expand state of "in the cockpit"
         private const val m_KeyShowInCockpit = "inTheCockpit"
+
+        // Display options
+        var fShowTach = false
+        var fShowHobbs = true
+        var fShowEngine = true
+        var fShowBlock = false
+        var fShowFlight = true
+
+        const val prefKeyShowTach = "cockpitShowTach"
+        const val prefKeyShowHobbs = "cockpitShowHobbs"
+        const val prefKeyShowEngine = "cockpitShowEngine"
+        const val prefKeyShowBlock = "cockpitShowBlock"
+        const val prefKeyShowFlight = "cockpitShowFlight"
     }
 }

@@ -311,6 +311,41 @@
 
         <TextView
             style="@style/DividerBar"
+            android:text="@string/lblCockpitOptions" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblCockpitTach"
+                android:id="@+id/ckCockpitTach" />
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblCockpitHobbs"
+                android:id="@+id/ckCockpitHobbs" />
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblCockpitEngine"
+                android:id="@+id/ckCockpitEngine" />
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblCockpitBlock"
+                android:id="@+id/ckCockpitBlock" />
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblCockpitFlight"
+                android:id="@+id/ckCockpitFlight" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/DividerBar"
             android:text="@string/lblImageOptions" />
 
         <TableLayout

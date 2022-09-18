@@ -64,6 +64,12 @@
     <string name="lblNightModeOff">Off</string>
     <string name="lblNightModeOn">On</string>
     <string name="lblNightModeAuto">Automatic</string>
+    <string name="lblCockpitOptions">In the Cockpit</string>
+    <string name="lblCockpitTach">Show Tachometer Start/Stop</string>
+    <string name="lblCockpitHobbs">Show Hobbs Start/Stop</string>
+    <string name="lblCockpitBlock">Show Block Out/In</string>
+    <string name="lblCockpitFlight">Show Flight Start/Stop</string>
+    <string name="lblCockpitEngine">Show Engine Start/Stop</string>
 
     <string name="lblRoute">Route</string>
     <string name="lblAppendNearest">Nearest</string>
@@ -92,6 +98,10 @@
     <string name="lblHobbsEnd">Ending Hobbs</string>
     <string name="lblEngineEnd">Engine Stop</string>
     <string name="lblFlightEnd">Flight End</string>
+    <string name="lblTachStart">Starting Tach</string>
+    <string name="lblTachEnd">Ending Tach</string>
+    <string name="lblBlockOut">Block Out</string>
+    <string name="lblBlockIn">Block In</string>
     <string name="lblProperties">Edit Flight Properties…</string>
     <string name="lblCatApproachesAndLandings">Landings and Approaches</string>
     <string name="lblCatTimes">Flight Times</string>

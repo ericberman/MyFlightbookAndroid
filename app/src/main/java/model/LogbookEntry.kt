@@ -359,7 +359,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         for (fp in rgCustomProperties) fp.idFlight = idFlight
     }
 
-    private fun addOrSetPropertyValue(idPropType: Int, decValue: Double) {
+    fun addOrSetPropertyDouble(idPropType: Int, decValue: Double) : FlightProperty? {
         // expand the list of all properties, even ones that aren't currently set
         val rgfpAll = crossProduct(fromDB(idLocalDB), cachedPropertyTypes)
 
@@ -371,9 +371,29 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                 val rgfpUpdated = distillList(rgfpAll)
                 rewritePropertiesForFlight(idLocalDB, rgfpUpdated)
                 syncProperties()
-                return
+                return fp
             }
         }
+        return null
+    }
+
+    fun addOrSetPropertyDate(idPropType: Int, dateValue: Date) : FlightProperty? {
+        // expand the list of all properties, even ones that aren't currently set
+        val rgfpAll = crossProduct(fromDB(idLocalDB), cachedPropertyTypes)
+
+        // find the nighttime takeoff property
+        for (fp in rgfpAll) {
+            if (fp.idPropType == idPropType) {
+                // set it, distill the properties, and save 'em to the db.
+                fp.dateValue = dateValue
+                val rgfpUpdated = distillList(rgfpAll)
+                rewritePropertiesForFlight(idLocalDB, rgfpUpdated)
+                syncProperties()
+                return fp
+            }
+        }
+
+        return null
     }
 
     fun addNightTakeoff() {
@@ -398,6 +418,16 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             if (fp.idPropType == id) return fp
         }
         return null
+    }
+
+    fun propDoubleForID(id: Int): Double {
+        val fp = propertyWithID(id)
+        return if (fp == null) 0.0 else fp.decValue
+    }
+
+    fun propDateForID(id: Int): Date? {
+        val fp = propertyWithID(id)
+        return if (fp == null) null else fp.dateValue
     }
 
     fun removePropertyWithID(idPropType: Int) {
@@ -1097,7 +1127,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         val time =
             if (hobbsEnd > hobbsStart && hobbsStart > 0) hobbsEnd - hobbsStart else if (tachEnd > tachStart && tachStart > 0) tachEnd - tachStart else decTotal
         val cost = rate * time
-        if (cost > 0) addOrSetPropertyValue(CustomPropertyType.idPropTypeFlightCost, cost)
+        if (cost > 0) addOrSetPropertyDouble(CustomPropertyType.idPropTypeFlightCost, cost)
     }
 
     private fun autoFillInstruction() {
@@ -1121,7 +1151,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             val groundHours = (tsLesson - tsNonGround) / MFBConstants.MS_PER_HOUR
             val idPropTarget =
                 if (dual > 0) CustomPropertyType.idPropTypeGroundInstructionReceived else CustomPropertyType.idPropTypeGroundInstructionGiven
-            if (groundHours > 0) addOrSetPropertyValue(idPropTarget, groundHours)
+            if (groundHours > 0) addOrSetPropertyDouble(idPropTarget, groundHours)
         }
     }
 

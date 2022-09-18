@@ -175,6 +175,13 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
         return inflater.inflate(R.layout.options, container, false)
     }
 
+    private fun initCheckbox(id : Int, checked : Boolean, enabled : Boolean = true) {
+        val ck = findViewById(id) as CheckBox
+        ck.setOnClickListener(this)
+        ck.isChecked = checked
+        ck.isEnabled = enabled
+    }
+
     private fun updateStatus() {
         // refresh sign-in status
         var t = findViewById(R.id.txtSignInStatus) as TextView?
@@ -226,34 +233,20 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
             MFBLocation.fPrefRecordFlight = MFBLocation.fPrefRecordFlightHighRes
             MFBLocation.fPrefAutoDetect = MFBLocation.fPrefRecordFlight
         }
-        var ck = findViewById(R.id.ckAutodetect) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = MFBLocation.fPrefAutoDetect
-        ck.isEnabled = fHasGPS
-        ck = findViewById(R.id.ckRecord) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = MFBLocation.fPrefRecordFlight
-        ck.isEnabled = fHasGPS
-        ck = findViewById(R.id.ckRecordHighRes) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = MFBLocation.fPrefRecordFlightHighRes
-        ck.isEnabled = fHasGPS
-        ck = findViewById(R.id.ckHeliports) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = Airport.fPrefIncludeHeliports
-        ck.isEnabled = fHasGPS
-        ck = findViewById(R.id.ckUseHHMM) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = DecimalEdit.DefaultHHMM
-        ck = findViewById(R.id.ckUseLocalTime) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = DlgDatePicker.fUseLocalTime
-        ck = findViewById(R.id.ckRoundNearestTenth) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = MFBLocation.fPrefRoundNearestTenth
-        ck = findViewById(R.id.ckShowFlightImages) as CheckBox?
-        ck!!.setOnClickListener(this)
-        ck.isChecked = ActRecentsWS.fShowFlightImages
+
+        initCheckbox(R.id.ckAutodetect, MFBLocation.fPrefAutoDetect, fHasGPS)
+        initCheckbox(R.id.ckRecord, MFBLocation.fPrefRecordFlight, fHasGPS)
+        initCheckbox(R.id.ckRecordHighRes, MFBLocation.fPrefRecordFlightHighRes, fHasGPS)
+        initCheckbox(R.id.ckHeliports, Airport.fPrefIncludeHeliports, fHasGPS)
+        initCheckbox(R.id.ckUseHHMM, DecimalEdit.DefaultHHMM)
+        initCheckbox(R.id.ckUseLocalTime, DlgDatePicker.fUseLocalTime)
+        initCheckbox(R.id.ckRoundNearestTenth, MFBLocation.fPrefRoundNearestTenth)
+        initCheckbox(R.id.ckShowFlightImages, ActRecentsWS.fShowFlightImages)
+        initCheckbox(R.id.ckCockpitTach, ActNewFlight.fShowTach)
+        initCheckbox(R.id.ckCockpitHobbs, ActNewFlight.fShowHobbs)
+        initCheckbox(R.id.ckCockpitEngine, ActNewFlight.fShowEngine)
+        initCheckbox(R.id.ckCockpitBlock, ActNewFlight.fShowBlock)
+        initCheckbox(R.id.ckCockpitFlight, ActNewFlight.fShowFlight)
 
         // Strings for spinner
         val rgAutoHobbs = arrayOf(
@@ -495,43 +488,66 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
     }
 
     override fun onClick(v: View) {
-        val id = v.id
-        if (id == R.id.btnSignIn) {
-            val d = DlgSignIn(requireActivity())
-            d.setOnDismissListener { updateStatus() }
-            d.show()
-        } else if (id == R.id.btnSignOut) {
-            AuthToken.m_szPass = ""
-            AuthToken.m_szEmail = AuthToken.m_szPass
-            AuthToken.m_szAuthToken = AuthToken.m_szEmail
-            AuthToken().flushCache()
-            PackAndGo(requireContext()).clearPackedData()
-            MFBMain.invalidateAll()
-            updateStatus()
-        } else if (id == R.id.btnCreateNewAccount) {
-            startActivity(Intent(v.context, ActNewUser::class.java))
-        } else if (id == R.id.ckAutodetect || id == R.id.ckRecord) {
-            fPendingAutodetect =
-                if (id == R.id.ckAutodetect) (v as CheckBox).isChecked else (findViewById(R.id.ckAutodetect) as CheckBox?)!!.isChecked
-            fPendingRecord =
-                if (id == R.id.ckRecord) (v as CheckBox).isChecked else (findViewById(R.id.ckRecord) as CheckBox?)!!.isChecked
-            mPermissionLauncher!!.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        } else if (id == R.id.ckRecordHighRes) MFBLocation.fPrefRecordFlightHighRes =
-            (v as CheckBox).isChecked else if (id == R.id.ckHeliports) Airport.fPrefIncludeHeliports =
-            (v as CheckBox).isChecked else if (id == R.id.ckUseHHMM) DecimalEdit.DefaultHHMM =
-            (v as CheckBox).isChecked else if (id == R.id.ckUseLocalTime) DlgDatePicker.fUseLocalTime =
-            (v as CheckBox).isChecked else if (id == R.id.ckRoundNearestTenth) MFBLocation.fPrefRoundNearestTenth =
-            (v as CheckBox).isChecked else if (id == R.id.ckShowFlightImages) ActRecentsWS.fShowFlightImages =
-            (v as CheckBox).isChecked else if (id == R.id.btnContact) contactUs() else if (id == R.id.btnFacebook) viewFacebook() else if (id == R.id.btnTwitter) viewTwitter() else if (id == R.id.btnCleanUp) cleanUp() else if (id == R.id.btnSupport) viewPreferences(
-            authRedirWithParams("d=donate", context, false)
-        ) else if (id == R.id.btnAdditionalOptions) viewPreferences(
-            authRedirWithParams(
-                "d=profile",
-                context
+        when (val id = v.id) {
+            R.id.btnSignIn -> {
+                val d = DlgSignIn(requireActivity())
+                d.setOnDismissListener { updateStatus() }
+                d.show()
+            }
+            R.id.btnSignOut -> {
+                AuthToken.m_szPass = ""
+                AuthToken.m_szEmail = AuthToken.m_szPass
+                AuthToken.m_szAuthToken = AuthToken.m_szEmail
+                AuthToken().flushCache()
+                PackAndGo(requireContext()).clearPackedData()
+                MFBMain.invalidateAll()
+                updateStatus()
+            }
+            R.id.btnCreateNewAccount -> {
+                startActivity(Intent(v.context, ActNewUser::class.java))
+            }
+            R.id.ckAutodetect, R.id.ckRecord -> {
+                fPendingAutodetect =
+                    if (id == R.id.ckAutodetect) (v as CheckBox).isChecked else (findViewById(R.id.ckAutodetect) as CheckBox?)!!.isChecked
+                fPendingRecord =
+                    if (id == R.id.ckRecord) (v as CheckBox).isChecked else (findViewById(R.id.ckRecord) as CheckBox?)!!.isChecked
+                mPermissionLauncher!!.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            R.id.ckRecordHighRes -> MFBLocation.fPrefRecordFlightHighRes =
+                (v as CheckBox).isChecked
+            R.id.ckHeliports -> Airport.fPrefIncludeHeliports =
+                (v as CheckBox).isChecked
+            R.id.ckUseHHMM -> DecimalEdit.DefaultHHMM =
+                (v as CheckBox).isChecked
+            R.id.ckUseLocalTime -> DlgDatePicker.fUseLocalTime =
+                (v as CheckBox).isChecked
+            R.id.ckRoundNearestTenth -> MFBLocation.fPrefRoundNearestTenth =
+                (v as CheckBox).isChecked
+            R.id.ckShowFlightImages -> ActRecentsWS.fShowFlightImages =
+                (v as CheckBox).isChecked
+            R.id.btnContact -> contactUs()
+            R.id.btnFacebook -> viewFacebook()
+            R.id.btnTwitter -> viewTwitter()
+            R.id.btnCleanUp -> cleanUp()
+            R.id.btnSupport -> viewPreferences(
+                authRedirWithParams("d=donate", context, false)
             )
-        ) else if (id == R.id.btnFAQ) ActWebView.viewURL(
-            requireActivity(), MFBConstants.urlFAQ
-        ) else if (id == R.id.btnPackAndGo) packData()
+            R.id.btnAdditionalOptions -> viewPreferences(
+                authRedirWithParams(
+                    "d=profile",
+                    context
+                )
+            )
+            R.id.btnFAQ -> ActWebView.viewURL(
+                requireActivity(), MFBConstants.urlFAQ
+            )
+            R.id.btnPackAndGo -> packData()
+            R.id.ckCockpitTach -> ActNewFlight.fShowTach = (v as CheckBox).isChecked
+            R.id.ckCockpitHobbs -> ActNewFlight.fShowHobbs = (v as CheckBox).isChecked
+            R.id.ckCockpitEngine -> ActNewFlight.fShowEngine = (v as CheckBox).isChecked
+            R.id.ckCockpitBlock -> ActNewFlight.fShowBlock = (v as CheckBox).isChecked
+            R.id.ckCockpitFlight -> ActNewFlight.fShowFlight = (v as CheckBox).isChecked
+        }
     }
 
     companion object {

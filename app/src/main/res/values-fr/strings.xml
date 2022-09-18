@@ -64,6 +64,12 @@
     <string name="lblNightModeOff">Désactivé</string>
     <string name="lblNightModeOn">Activé</string>
     <string name="lblNightModeAuto">Automatique</string>
+    <string name="lblCockpitOptions">Dans le poste de pilotage</string>
+    <string name="lblCockpitTach">Afficher le démarrage/arrêt du tachymètre</string>
+    <string name="lblCockpitHobbs">Afficher les passe-temps</string>
+    <string name="lblCockpitBlock">Afficher le bloc d\'entrée/de sortie</string>
+    <string name="lblCockpitFlight">Afficher le départ/arrêt du vol</string>
+    <string name="lblCockpitEngine">Afficher le démarrage/l\'arrêt du moteur</string>
 
     <string name="lblRoute">Trajet</string>
     <string name="lblAppendNearest">Le plus proche</string>
@@ -92,6 +98,10 @@
     <string name="lblHobbsEnd">Horamètre arrivée</string>
     <string name="lblEngineEnd">Arrêt Moteur</string>
     <string name="lblFlightEnd">Fin du vol</string>
+    <string name="lblTachStart">Démarrage du tachymètre</string>
+    <string name="lblTachEnd">Fin tachymètre</string>
+    <string name="lblBlockOut">Hors bloc</string>
+    <string name="lblBlockIn">Sur bloc</string>
     <string name="lblProperties">Éditer les propriétés</string>
     <string name="lblCatApproachesAndLandings">Atterrissages et Approches</string>
     <string name="lblCatTimes">Temps de vol</string>
