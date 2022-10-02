@@ -363,7 +363,6 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         // expand the list of all properties, even ones that aren't currently set
         val rgfpAll = crossProduct(fromDB(idLocalDB), cachedPropertyTypes)
 
-        // find the nighttime takeoff property
         for (fp in rgfpAll) {
             if (fp.idPropType == idPropType) {
                 // set it, distill the properties, and save 'em to the db.
@@ -381,7 +380,6 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         // expand the list of all properties, even ones that aren't currently set
         val rgfpAll = crossProduct(fromDB(idLocalDB), cachedPropertyTypes)
 
-        // find the nighttime takeoff property
         for (fp in rgfpAll) {
             if (fp.idPropType == idPropType) {
                 // set it, distill the properties, and save 'em to the db.
@@ -421,13 +419,11 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     }
 
     fun propDoubleForID(id: Int): Double {
-        val fp = propertyWithID(id)
-        return if (fp == null) 0.0 else fp.decValue
+        return propertyWithID(id)?.decValue ?: 0.0
     }
 
     fun propDateForID(id: Int): Date? {
-        val fp = propertyWithID(id)
-        return if (fp == null) null else fp.dateValue
+        return propertyWithID(id)?.dateValue
     }
 
     fun removePropertyWithID(idPropType: Int) {
@@ -1130,6 +1126,17 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         if (cost > 0) addOrSetPropertyDouble(CustomPropertyType.idPropTypeFlightCost, cost)
     }
 
+    private fun autoFillFuel() {
+        val fpFuelAtStart = propertyWithID(CustomPropertyType.idPropTypeFuelAtStart)
+        val fpFuelAtEnd = propertyWithID(CustomPropertyType.idPropTypeFuelAtEnd)
+        val fuelConsumed = (fpFuelAtStart?.decValue ?: 0.0) - (fpFuelAtEnd?.decValue ?: 0.0)
+        if (fuelConsumed > 0) {
+            addOrSetPropertyDouble(CustomPropertyType.idPropTypeFuelConsumed, fuelConsumed)
+            if (decTotal > 0)
+                addOrSetPropertyDouble(CustomPropertyType.idPropTypeFuelBurnRate, fuelConsumed / decTotal)
+        }
+    }
+
     private fun autoFillInstruction() {
         // Check for ground instruction given or received
         val dual = decDual
@@ -1157,6 +1164,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
 
     fun autoFillFinish() {
         autoFillCostOfFlight()
+        autoFillFuel()
         autoFillInstruction()
     }
 

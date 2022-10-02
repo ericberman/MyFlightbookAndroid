@@ -226,6 +226,10 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         const val idPropTypeLessonEnd = 669
         const val idPropTypeGroundInstructionGiven = 198
         const val idPropTypeGroundInstructionReceived = 158
+        const val idPropTypeFuelAtStart = 622
+        const val idPropTypeFuelAtEnd = 72
+        const val idPropTypeFuelConsumed = 71
+        const val idPropTypeFuelBurnRate = 381
 
         // DB Column names
         private const val COL_IDPROPTYPE = "idPropType"
