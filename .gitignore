@@ -38,3 +38,5 @@ local.properties
 #.externalNativeBuild
 
 /app/src/main/res/values/apikeys.xml
+/app/release/app-release.apk
+/app/release/output-metadata.json
