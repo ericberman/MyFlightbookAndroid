@@ -743,8 +743,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (mle == null) return false
 
         // Handle item selection
-        val menuId = item.itemId
-        when (menuId) {
+        when (val menuId = item.itemId) {
             R.id.menuUploadLater -> submitFlight(true)
             R.id.menuResetFlight -> {
                 if (mle!!.idLocalDB > 0) mle!!.deleteUnsubmittedFlightFromLocalDB()
@@ -1153,6 +1152,26 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     private fun submitFlight(forceQueued: Boolean) {
+        val le = mle!!
+        if (le.isNewFlight() || le.signatureStatus != SigStatus.Valid)
+            submitFlightConfirmed(forceQueued)
+        else {
+            AlertDialog.Builder(
+                requireActivity(),
+                R.style.MFBDialog
+            )
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.lblConfirm)
+                .setMessage(R.string.lblConfirmModifySignedFlight)
+                .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int ->
+                    submitFlightConfirmed(forceQueued)
+                }
+                .setNegativeButton(R.string.lblCancel, null)
+                .show()
+        }
+    }
+
+    private fun submitFlightConfirmed(forceQueued: Boolean) {
         fromView()
         val a: Activity = requireActivity()
         if (a.currentFocus != null) a.currentFocus!!.clearFocus() // force any in-progress edit to commit, particularly for properties.
