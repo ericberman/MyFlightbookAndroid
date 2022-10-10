@@ -62,16 +62,16 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
     var stringValue = ""
     private var mCpt: CustomPropertyType? = null // not persisted, just cached.
     fun isDefaultValue(): Boolean {
-        when (mCpt?.cptType) {
-            CFPPropertyType.cfpInteger -> return intValue == 0
-            CFPPropertyType.cfpCurrency, CFPPropertyType.cfpDecimal -> return decValue == 0.0
-            CFPPropertyType.cfpBoolean -> return !boolValue
-            CFPPropertyType.cfpDate, CFPPropertyType.cfpDateTime -> return dateValue == null || isNullDate(
+        return when (mCpt?.cptType) {
+            CFPPropertyType.cfpInteger -> intValue == 0
+            CFPPropertyType.cfpCurrency, CFPPropertyType.cfpDecimal -> decValue == 0.0
+            CFPPropertyType.cfpBoolean -> !boolValue
+            CFPPropertyType.cfpDate, CFPPropertyType.cfpDateTime -> dateValue == null || isNullDate(
                 dateValue
             )
-            CFPPropertyType.cfpString -> return stringValue.isEmpty()
+            CFPPropertyType.cfpString -> stringValue.isEmpty()
+            null -> true
         }
-        return true
     }
 
     fun getType() : CFPPropertyType? {
@@ -93,7 +93,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
                 "%.1f",
                 decValue
             )
-            CFPPropertyType.cfpBoolean -> return if (boolValue) "Yes" else ""
+            CFPPropertyType.cfpBoolean -> return if (boolValue) "✓" else ""
             CFPPropertyType.cfpDate -> return if (dateValue != null) {
                 SimpleDateFormat.getDateInstance().format(dateValue!!)
             } else ""
@@ -103,8 +103,8 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
                 c
             ) else ""
             CFPPropertyType.cfpString -> return stringValue
+            null -> return ""
         }
-        return ""
     }
 
     override fun toString(): String {
@@ -130,7 +130,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
         )
     }
 
-    fun format(fLocal: Boolean, c: Context?): String {
+    fun format(fLocal: Boolean, fBoldValue: Boolean, c: Context?): String {
         // try to find the custom property type if not already filled in.  This COULD miss
         if (mCpt == null) {
             // may even need to get the cached array of property types from the DB
@@ -139,10 +139,15 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
                 idPropType, m_rgcptCached!!
             )
         }
-        return if (mCpt != null) mCpt!!.szFormatString.replace(
+        if (mCpt == null)
+            return ""
+
+        val cpt = mCpt!!
+        val szFormat = cpt.szFormatString + if (cpt.cptType == CFPPropertyType.cfpBoolean) " {0}" else ""
+        return szFormat.replace(
             "{0}",
-            this.toString(fLocal, c)
-        ) else ""
+            String.format(if (fBoldValue) "<b>%s</b>" else "%s", this.toString(fLocal, c))
+        )
     }
 
     internal constructor() : super()

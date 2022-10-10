@@ -86,7 +86,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
         private fun formattedTimeForLabel(idLabel: Int, `val`: Double, em: EditMode): String {
             return if (`val` == 0.0) "" else String.format(
                 Locale.getDefault(),
-                "<b>%s:</b> %s ",
+                "%s: <b>%s</b> ",
                 getString(idLabel),
                 stringForMode(`val`, em)
             )
@@ -95,7 +95,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
         private fun formattedTimeForLabel(idLabel: Int, `val`: Int): String {
             return if (`val` == 0) "" else String.format(
                 Locale.getDefault(),
-                "<b>%s:</b> %d ",
+                "%s: <b>%d</b> ",
                 getString(idLabel),
                 `val`
             )
@@ -114,7 +114,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             ) else ""
             return String.format(
                 Locale.getDefault(),
-                "<b>%s: </b> %s - %s%s ",
+                "%s: <b>%s - %s%s</b> ",
                 getString(idLabel),
                 formatDate(fLocal, dtStart, this.context),
                 formatDate(fLocal, dtEnd, this.context),
@@ -220,6 +220,15 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                 sb.append(formattedTimeForLabel(R.string.lblSIC, le.decSIC, em))
                 sb.append(formattedTimeForLabel(R.string.lblPIC, le.decPIC, em))
                 if (flightDetail == FlightDetail.High) {
+                    val blockOut = le.propertyWithID(CustomPropertyType.idPropTypeBlockOut)
+                    val blockIn = le.propertyWithID(CustomPropertyType.idPropTypeBlockIn)
+                    if (blockOut != null && blockIn != null) sb.append(
+                        formattedTimeForLabel(
+                            R.string.autoBlock,
+                            blockOut.dateValue,
+                            blockIn.dateValue
+                        )
+                    )
                     sb.append(
                         formattedTimeForLabel(
                             R.string.autoEngine,
@@ -234,15 +243,12 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                             le.dtFlightEnd
                         )
                     )
-                    val blockOut = le.propertyWithID(CustomPropertyType.idPropTypeBlockOut)
-                    val blockIn = le.propertyWithID(CustomPropertyType.idPropTypeBlockIn)
-                    if (blockOut != null && blockIn != null) sb.append(
-                        formattedTimeForLabel(
-                            R.string.autoBlock,
-                            blockOut.dateValue,
-                            blockIn.dateValue
-                        )
-                    )
+
+                    for (fp in le.rgCustomProperties) {
+                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn)
+                            continue
+                        sb.append(fp.format(DlgDatePicker.fUseLocalTime, true, this.context) + " ")
+                    }
                 }
             }
             txtFlightTimes.visibility = if (sb.isEmpty()) View.GONE else View.VISIBLE
