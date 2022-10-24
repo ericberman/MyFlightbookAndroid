@@ -151,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lblPublicNoteHint"
                     android:autofillHints=""
-                    android:inputType="textCapSentences|textAutoCorrect" />
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
             </TableRow>
 
             <TableRow
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lblPrivateNoteHint"
                     android:autofillHints=""
-                    android:inputType="textCapSentences|textAutoCorrect" />
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
             </TableRow>
         </TableLayout>
 
