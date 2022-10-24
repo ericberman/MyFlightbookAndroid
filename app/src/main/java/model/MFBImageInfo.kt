@@ -650,7 +650,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         return FPProp.values().size
     }
 
-    override fun getProperty(arg0: Int): Any {
+    override fun getProperty(arg0: Int): Any? {
         return when (FPProp.values()[arg0]) {
             FPProp.PIDComment -> comment
             FPProp.PIDVirtualPath -> virtualPath
@@ -661,7 +661,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
             FPProp.PIDHeight -> mHeight
             FPProp.PIDTHWidth -> mWidthThumbnail
             FPProp.PIDTHHeight -> mHeightThumbnail
-            FPProp.PIDLocation -> location!!
+            FPProp.PIDLocation -> location
             FPProp.PIDImageType -> imageType.toString()
         }
     }
