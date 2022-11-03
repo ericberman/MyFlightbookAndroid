@@ -80,10 +80,9 @@ class ActTraining : ListFragment(), OnItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(false)
         mPermissionLauncher = registerForActivityResult(
             RequestMultiplePermissions()
-        ) { result: Map<String?, Boolean?>? ->
+        ) { result: Map<String, Boolean>? ->
             if (result != null) {
                 var fAllGranted = true
                 for (sz in result.keys) {

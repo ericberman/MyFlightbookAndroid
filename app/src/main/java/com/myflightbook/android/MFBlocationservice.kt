@@ -35,14 +35,16 @@ import model.MFBConstants
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ // Background location service, modeled on the code sample at http://devdeeds.com/android-location-tracking-in-background-service/; thanks!!
+ */
+// Background location service, modeled on the code sample at http://devdeeds.com/android-location-tracking-in-background-service/; thanks!!
 class MFBlocationservice : Service(), LocationListener {
     internal inner class MFBLocationCallback : LocationCallback() {
         override fun onLocationAvailability(availability: LocationAvailability) {}
         override fun onLocationResult(result: LocationResult) {
             val lst = result.locations
             if (lst.size == 0) {
-                onLocationChanged(result.lastLocation)
+                if (result.lastLocation != null)
+                    onLocationChanged(result.lastLocation!!)
             } else {
                 for (loc in lst) onLocationChanged(loc)
             }
