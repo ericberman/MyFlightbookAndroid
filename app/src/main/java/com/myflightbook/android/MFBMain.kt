@@ -359,18 +359,6 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         if (i != null) {
             val uri = i.data
             if (uri != null) {
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_READ
-                    )
-                    return
-                }
                 AlertDialog.Builder(this, R.style.MFBDialog)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(R.string.lblConfirm)

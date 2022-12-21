@@ -508,16 +508,13 @@ import java.util.*
         return when (permission) {
             CAMERA_PERMISSION_IMAGE, CAMERA_PERMISSION_VIDEO -> if (fNeedWritePerm) arrayOf(
                 Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) else arrayOf(
                 Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
             )
             GALLERY_PERMISSION -> if (fNeedWritePerm) arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) else arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            ) else arrayOf()
             else -> null //should never happen.
         }
     }
