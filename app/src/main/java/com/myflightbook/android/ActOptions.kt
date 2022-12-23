@@ -33,6 +33,9 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActRecentsWS.FlightDetail
 import com.myflightbook.android.webservices.*
@@ -132,19 +135,44 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.optionsmenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                // Handle item selection
+                when (item.itemId) {
+                    R.id.menuContact -> contactUs()
+                    R.id.menuFacebook -> viewFacebook()
+                    R.id.menuTwitter -> viewTwitter()
+                    else -> return false
+                }
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         mPermissionLauncher = registerForActivityResult(
             RequestPermission()
         ) { result: Boolean ->
             if (!result) {
                 fPendingAutodetect = false
-                fPendingRecord = fPendingAutodetect
+                fPendingRecord = false
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
                 result &&
@@ -459,23 +487,6 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
             getString(R.string.lblCleanup),
             getString(if (fOrphansFound) R.string.errCleanupOrphansFound else R.string.txtCleanupComplete)
         )
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.optionsmenu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        when (item.itemId) {
-            R.id.menuContact -> contactUs()
-            R.id.menuFacebook -> viewFacebook()
-            R.id.menuTwitter -> viewTwitter()
-            else -> return super.onOptionsItemSelected(
-                item
-            )
-        }
-        return true
     }
 
     override fun onNothingSelected(arg0: AdapterView<*>?) {}

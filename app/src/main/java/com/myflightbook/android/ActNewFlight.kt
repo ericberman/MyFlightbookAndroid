@@ -27,6 +27,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -41,6 +42,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.app.ShareCompat.IntentBuilder
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActMFBForm.GallerySource
 import com.myflightbook.android.ActOptions.AltitudeUnits
@@ -298,7 +302,6 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.newflight, container, false)
     }
 
@@ -349,8 +352,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             if (result.resultCode == Activity.RESULT_OK) {
                 val b = result.data!!.extras
                 try {
-                    val o = b!!.getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES)
-                    mActivetemplates = o as HashSet<PropertyTemplate?>?
+                    val o = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                        b!!.getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
+                    else
+                        @Suppress("UNCHECKED_CAST")
+                        b!!.getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES) as? HashSet<PropertyTemplate?>?
+                    mActivetemplates = o
                     updateTemplatesForAircraft(true)
                     toView()
                 } catch (ex: ClassCastException) {
@@ -398,6 +405,117 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                val idMenu: Int
+                if (mle != null) {
+                    idMenu =
+                        if (mle!!.isExistingFlight()) R.menu.mfbexistingflightmenu else if (mle!!.isNewFlight()) R.menu.mfbnewflightmenu else if (mle is PendingFlight) R.menu.mfbpendingflightmenu else if (mle!!.isQueuedFlight()) R.menu.mfbqueuedflightmenu else R.menu.mfbqueuedflightmenu
+                    menuInflater.inflate(idMenu, menu)
+                }
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                // Should never happen.
+                if (mle == null) return false
+
+                // Handle item selection
+                when (val menuId = item.itemId) {
+                    R.id.menuUploadLater -> submitFlight(true)
+                    R.id.menuResetFlight -> {
+                        if (mle!!.idLocalDB > 0) mle!!.deleteUnsubmittedFlightFromLocalDB()
+                        resetFlight(false)
+                    }
+                    R.id.menuSignFlight -> {
+                        try {
+                            ActWebView.viewURL(
+                                requireActivity(), String.format(
+                                    Locale.US, MFBConstants.urlSign,
+                                    MFBConstants.szIP,
+                                    mle!!.idFlight,
+                                    URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
+                                    nightParam(context)
+                                )
+                            )
+                        } catch (ignored: UnsupportedEncodingException) {
+                        }
+                    }
+                    R.id.btnDeleteFlight -> AlertDialog.Builder(
+                        requireActivity(),
+                        R.style.MFBDialog
+                    )
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(R.string.lblConfirm)
+                        .setMessage(R.string.lblConfirmFlightDelete)
+                        .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int ->
+                            if (mle!!.isAwaitingUpload()) {
+                                mle!!.deleteUnsubmittedFlightFromLocalDB()
+                                mle = null // clear this out since we're going to finish().
+                                clearCachedFlights()
+                                finish()
+                            } else if (mle!!.isExistingFlight() || mle is PendingFlight)
+                                deleteFlight(mle)
+                        }
+                        .setNegativeButton(R.string.lblCancel, null)
+                        .show()
+                    R.id.btnSubmitFlight, R.id.btnUpdateFlight -> submitFlight(
+                        false
+                    )
+                    R.id.btnSavePending -> {
+                        mle!!.fForcePending = true
+                        submitFlight(false)
+                    }
+                    R.id.menuTakePicture -> takePictureClicked()
+                    R.id.menuTakeVideo -> takeVideoClicked()
+                    R.id.menuChoosePicture -> choosePictureClicked()
+                    R.id.menuChooseTemplate -> {
+                        val i = Intent(requireActivity(), ViewTemplatesActivity::class.java)
+                        val b = Bundle()
+                        b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
+                        i.putExtras(b)
+                        mTemplateLauncher!!.launch(i)
+                    }
+                    R.id.menuRepeatFlight, R.id.menuReverseFlight -> {
+                        assert(mle != null)
+                        val leNew =
+                            if (menuId == R.id.menuRepeatFlight) mle!!.clone() else mle!!.cloneAndReverse()
+                        leNew!!.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED
+                        leNew.toDB()
+                        rewritePropertiesForFlight(leNew.idLocalDB, leNew.rgCustomProperties)
+                        leNew.syncProperties()
+                        clearCachedFlights()
+                        AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
+                            .setMessage(getString(R.string.txtRepeatFlightComplete))
+                            .setTitle(getString(R.string.txtSuccess))
+                            .setNegativeButton("OK") { d: DialogInterface, _: Int ->
+                                d.cancel()
+                                finish()
+                            }
+                            .create().show()
+                        return true
+                    }
+                    R.id.menuSendFlight -> sendFlight()
+                    R.id.menuShareFlight -> shareFlight()
+                    R.id.btnAutoFill -> {
+                        assert(mle != null)
+                        fromView()
+                        autoFill(requireContext(), mle)
+                        toView()
+                    }
+                    else -> return false
+                }
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         setUpActivityLaunchers()
         addListener(R.id.btnFlightSet)
         addListener(R.id.btnFlightStartSet)
@@ -604,9 +722,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             val d = DlgSignIn(requireActivity())
             d.show()
         }
-        val rgac = AircraftSvc().cachedAircraft
-        mRgac = rgac
-        if (mRgac != null) refreshAircraft(mRgac, false)
+        mRgac = AircraftSvc().cachedAircraft
+        refreshAircraft(mRgac, false)
 
         // Not sure why le can sometimes be empty here...
         if (mle == null) mle =
@@ -724,112 +841,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         toView()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val idMenu: Int
-        if (mle != null) {
-            idMenu =
-                if (mle!!.isExistingFlight()) R.menu.mfbexistingflightmenu else if (mle!!.isNewFlight()) R.menu.mfbnewflightmenu else if (mle is PendingFlight) R.menu.mfbpendingflightmenu else if (mle!!.isQueuedFlight()) R.menu.mfbqueuedflightmenu else R.menu.mfbqueuedflightmenu
-            inflater.inflate(idMenu, menu)
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val inflater = requireActivity().menuInflater
         inflater.inflate(R.menu.imagemenu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Should never happen.
-        if (mle == null) return false
-
-        // Handle item selection
-        when (val menuId = item.itemId) {
-            R.id.menuUploadLater -> submitFlight(true)
-            R.id.menuResetFlight -> {
-                if (mle!!.idLocalDB > 0) mle!!.deleteUnsubmittedFlightFromLocalDB()
-                resetFlight(false)
-            }
-            R.id.menuSignFlight -> {
-                try {
-                    ActWebView.viewURL(
-                        requireActivity(), String.format(
-                            Locale.US, MFBConstants.urlSign,
-                            MFBConstants.szIP,
-                            mle!!.idFlight,
-                            URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
-                            nightParam(context)
-                        )
-                    )
-                } catch (ignored: UnsupportedEncodingException) {
-                }
-            }
-            R.id.btnDeleteFlight -> AlertDialog.Builder(
-                requireActivity(),
-                R.style.MFBDialog
-            )
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.lblConfirm)
-                .setMessage(R.string.lblConfirmFlightDelete)
-                .setPositiveButton(R.string.lblOK) { _: DialogInterface?, _: Int ->
-                    if (mle!!.isAwaitingUpload()) {
-                        mle!!.deleteUnsubmittedFlightFromLocalDB()
-                        mle = null // clear this out since we're going to finish().
-                        clearCachedFlights()
-                        finish()
-                    } else if (mle!!.isExistingFlight() || mle is PendingFlight)
-                        deleteFlight(mle)
-                }
-                .setNegativeButton(R.string.lblCancel, null)
-                .show()
-            R.id.btnSubmitFlight, R.id.btnUpdateFlight -> submitFlight(
-                false
-            )
-            R.id.btnSavePending -> {
-                mle!!.fForcePending = true
-                submitFlight(false)
-            }
-            R.id.menuTakePicture -> takePictureClicked()
-            R.id.menuTakeVideo -> takeVideoClicked()
-            R.id.menuChoosePicture -> choosePictureClicked()
-            R.id.menuChooseTemplate -> {
-                val i = Intent(requireActivity(), ViewTemplatesActivity::class.java)
-                val b = Bundle()
-                b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
-                i.putExtras(b)
-                mTemplateLauncher!!.launch(i)
-            }
-            R.id.menuRepeatFlight, R.id.menuReverseFlight -> {
-                assert(mle != null)
-                val leNew =
-                    if (menuId == R.id.menuRepeatFlight) mle!!.clone() else mle!!.cloneAndReverse()
-                leNew!!.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED
-                leNew.toDB()
-                rewritePropertiesForFlight(leNew.idLocalDB, leNew.rgCustomProperties)
-                leNew.syncProperties()
-                clearCachedFlights()
-                AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
-                    .setMessage(getString(R.string.txtRepeatFlightComplete))
-                    .setTitle(getString(R.string.txtSuccess))
-                    .setNegativeButton("OK") { d: DialogInterface, _: Int ->
-                        d.cancel()
-                        finish()
-                    }
-                    .create().show()
-                return true
-            }
-            R.id.menuSendFlight -> sendFlight()
-            R.id.menuShareFlight -> shareFlight()
-            R.id.btnAutoFill -> {
-                assert(mle != null)
-                fromView()
-                autoFill(requireContext(), mle)
-                toView()
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-        return true
     }
 
     private fun sendFlight() {
@@ -1134,7 +1149,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // start up a new flight with the same aircraft ID and public setting.
         // first, validate that the aircraft is still OK for the user
         val hobbsEnd = mle!!.hobbsEnd
-        val cfpTachEnd = mle!!.propertyWithID((idPropTypeTachEnd));
+        val cfpTachEnd = mle!!.propertyWithID((idPropTypeTachEnd))
         val leNew = LogbookEntry(validateAircraftID(mle!!.idAircraft), mle!!.fPublic)
         if (fCarryHobbs) leNew.hobbsStart = hobbsEnd
         mActivetemplates!!.clear()
@@ -1147,8 +1162,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // Add the property here, after savecurrentflight, so that we have a local db id for the flight.
         if (fCarryHobbs && cfpTachEnd != null) {
             leNew.addOrSetPropertyDouble(idPropTypeTachStart, cfpTachEnd.decValue)
-            toView();
-        };
+            toView()
+        }
 
         // flush any pending flight data
         getMainLocation()!!.resetFlightData()
@@ -1276,8 +1291,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         setLocalDateForField(R.id.btnFlightSet, mle!!.dtFlight)
 
         // Engine/Flight dates
-        val tachStart = mle!!.propDoubleForID(CustomPropertyType.idPropTypeTachStart)
-        val tachEnd = mle!!.propDoubleForID(CustomPropertyType.idPropTypeTachEnd)
+        val tachStart = mle!!.propDoubleForID(idPropTypeTachStart)
+        val tachEnd = mle!!.propDoubleForID(idPropTypeTachEnd)
         val blockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
         val blockIn = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockIn)
 
@@ -1433,8 +1448,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
         // But tach, if shown, isn't coming from props, so load it here.
         if (fShowTach) {
-            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(CustomPropertyType.idPropTypeTachStart, doubleFromField(R.id.txtTachStart)))
-            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(CustomPropertyType.idPropTypeTachEnd, doubleFromField(R.id.txtTachEnd)))
+            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(idPropTypeTachStart, doubleFromField(R.id.txtTachStart)))
+            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(idPropTypeTachEnd, doubleFromField(R.id.txtTachEnd)))
         }
 
         // checkboxes
@@ -1834,7 +1849,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             val fIsPinned = isPinnedProperty(pinnedProps, fp.idPropType)
             if (!fIsPinned && !templateProps.contains(fp.idPropType) && fp.isDefaultValue()) continue
 
-            if (fShowTach && (fp.idPropType == CustomPropertyType.idPropTypeTachStart || fp.idPropType == CustomPropertyType.idPropTypeTachEnd))
+            if (fShowTach && (fp.idPropType == idPropTypeTachStart || fp.idPropType == idPropTypeTachEnd))
                 continue
             if (fShowBlock && (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn))
                 continue
@@ -1852,7 +1867,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 fp,
                 tr.id,
                 this,
-                if (fp.getCustomPropertyType()!!.idPropType == CustomPropertyType.idPropTypeTachStart) onCrossFill else this)
+                if (fp.getCustomPropertyType()!!.idPropType == idPropTypeTachStart) onCrossFill else this)
             tr.findViewById<View>(R.id.imgFavorite).visibility =
                 if (fIsPinned) View.VISIBLE else View.INVISIBLE
             tl.addView(

@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android
 
-import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -42,8 +41,6 @@ import android.util.Log
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -218,8 +215,12 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
 
         // Get the version name/code for crash reports
         try {
-            versionName = packageManager.getPackageInfo(packageName, 0).versionName
-            versionCode = packageManager.getPackageInfo(packageName, 0).versionCode
+            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+            else
+                packageManager.getPackageInfo(packageName, 0)
+            versionName = packageInfo.versionName
+            versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode.toLong()
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
         }
@@ -680,7 +681,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         var mDBHelperAirports: DataBaseHelper? = null
         private var m_FlightEventListener: MFBFlightListener? = null
         var versionName = ""
-        var versionCode = 0
+        var versionCode = 0L
         const val ACTION_VIEW_CURRENCY = "com.myflightbook.android.VIEWCURRENCY"
         const val ACTION_VIEW_TOTALS = "com.myflightbook.android.VIEWTOTALS"
         private const val ACTION_VIEW_CURRENT = "com.myflightbook.android.VIEWCURRENT"
