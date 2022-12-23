@@ -61,6 +61,8 @@ import model.Aircraft.Companion.getHighWaterTachForAircraft
 import model.Airport.Companion.appendCodeToRoute
 import model.Airport.Companion.appendNearestToRoute
 import model.CustomPropertyType.Companion.getPinnedProperties
+import model.CustomPropertyType.Companion.idPropTypeTachEnd
+import model.CustomPropertyType.Companion.idPropTypeTachStart
 import model.CustomPropertyType.Companion.isPinnedProperty
 import model.DecimalEdit.CrossFillDelegate
 import model.FlightProperty.Companion.crossProduct
@@ -1132,6 +1134,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // start up a new flight with the same aircraft ID and public setting.
         // first, validate that the aircraft is still OK for the user
         val hobbsEnd = mle!!.hobbsEnd
+        val cfpTachEnd = mle!!.propertyWithID((idPropTypeTachEnd));
         val leNew = LogbookEntry(validateAircraftID(mle!!.idAircraft), mle!!.fPublic)
         if (fCarryHobbs) leNew.hobbsStart = hobbsEnd
         mActivetemplates!!.clear()
@@ -1140,6 +1143,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         setLogbookEntry(leNew)
         MFBMain.newFlightListener?.setInProgressFlight(leNew)
         saveCurrentFlight()
+
+        // Add the property here, after savecurrentflight, so that we have a local db id for the flight.
+        if (fCarryHobbs && cfpTachEnd != null) {
+            leNew.addOrSetPropertyDouble(idPropTypeTachStart, cfpTachEnd.decValue)
+            toView();
+        };
 
         // flush any pending flight data
         getMainLocation()!!.resetFlightData()
