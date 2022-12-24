@@ -116,7 +116,7 @@ class MFBLocation : LocationListener {
                 // start background service
                 // We only have 5 seconds from startForegroundService to calling startForeground, so let's build the Notification here first.
                 val i = Intent(c, MFBlocationservice::class.java)
-                if (Build.VERSION.SDK_INT >= 26) c.startForegroundService(i) else c.startService(i)
+                c.startForegroundService(i)
                 isListening = true
             } catch (ex: IllegalArgumentException) {
                 MFBUtil.alert(

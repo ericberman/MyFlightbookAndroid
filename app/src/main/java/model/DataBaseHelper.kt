@@ -132,6 +132,7 @@ class DataBaseHelper(context: Context, private val m_DBName: String, dbVersion: 
     }
 
     @Throws(SQLException::class)
+    @Suppress("UNUSED")
     fun openDataBase() {
 
         // Open the database

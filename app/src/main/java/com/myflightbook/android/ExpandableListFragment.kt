@@ -151,6 +151,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * @param position The position of the view in the list
      * @param id The row id of the item that was clicked
      */
+    @Suppress("EmptyMethod")
     private fun onListItemClick(l: ExpandableListView?, v: View, position: Int, id: Long) {}
 
     /**
@@ -158,6 +159,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * position with the adapter's data
      *
      */
+    @Suppress("UNUSED")
     fun setSelection(position: Int) {
         ensureList()
         mExpandableList!!.setSelection(position)
@@ -166,6 +168,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
     /**
      * Get the position of the currently selected list item.
      */
+    @Suppress("UNUSED")
     val selectedItemPosition: Int
         get() {
             ensureList()
@@ -195,6 +198,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * be shown when the list is empty. If you would like to have it
      * shown, call this method to supply the text it should use.
      */
+    @Suppress("UNUSED")
     fun setEmptyText(text: CharSequence?) {
         ensureList()
         checkNotNull(mStandardEmptyView) { "Can't be used with a custom content view" }
@@ -220,6 +224,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * @param shown If true, the list view is shown; if false, the progress
      * indicator. The initial value is true.
      */
+    @Suppress("UNUSED")
     fun setListShown(shown: Boolean) {
         setListShown(shown, true)
     }
@@ -228,6 +233,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * Like [.setListShown], but no animation is used when
      * transitioning from the previous state.
      */
+    @Suppress("UNUSED")
     fun setListShownNoAnimation(shown: Boolean) {
         setListShown(shown, false)
     }
@@ -424,6 +430,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * content changes.
      *
      */
+    @Suppress("UNUSED")
     fun onContentChanged() {
 // super.onContentChanged();
         val v = view ?: return
@@ -464,6 +471,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      *
      * @return The ID of the currently selected group or child.
      */
+    @Suppress("UNUSED")
     val selectedId: Long
         get() = mExpandableList!!.selectedId
 
@@ -478,6 +486,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * @return A packed position representation containing the currently
      * selected group or child's position and type.
      */
+    @Suppress("UNUSED")
     val selectedPosition: Long
         get() = mExpandableList!!.selectedPosition
 
@@ -492,6 +501,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * it is collapsed.
      * @return Whether the selection was successfully set on the child.
      */
+    @Suppress("UNUSED")
     fun setSelectedChild(
         groupPosition: Int,
         childPosition: Int,
@@ -504,6 +514,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * Sets the selection to the specified group.
      * @param groupPosition The position of the group that should be selected.
      */
+    @Suppress("UNUSED")
     fun setSelectedGroup(groupPosition: Int) {
         mExpandableList!!.setSelectedGroup(groupPosition)
     }

@@ -24,11 +24,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object UTCDate {
-    /**
-     *
-     */
-    private const val serialVersionUID = 1L
-
     @JvmStatic
     val getUTCTimeZone: TimeZone
         get() = TimeZone.getTimeZone("UTC")

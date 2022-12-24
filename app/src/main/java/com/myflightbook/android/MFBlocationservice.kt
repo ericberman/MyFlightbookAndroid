@@ -55,23 +55,21 @@ class MFBlocationservice : Service(), LocationListener {
     private val mLocationCallback: LocationCallback = MFBLocationCallback()
     private var mFusedLocationProvider: FusedLocationProviderClient? = null
     private fun startInForeground() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            val nc = NotificationChannel(
-                "mfbGPSChannelDefault1",
-                "com.myflightbook.android.channel",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            nc.enableLights(false)
-            nc.enableVibration(false)
-            nm.createNotificationChannel(nc)
-            val n = Notification.Builder(this, nc.id)
-                .setContentText(getString(R.string.lblGPSRunningInBackground))
-                .setContentTitle(getString(R.string.app_name))
-                .setSmallIcon(R.drawable.ic_gps_notification)
-                .build()
-            this.startForeground(NOTIFICATION_ID, n)
-        }
+        val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val nc = NotificationChannel(
+            "mfbGPSChannelDefault1",
+            "com.myflightbook.android.channel",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        nc.enableLights(false)
+        nc.enableVibration(false)
+        nm.createNotificationChannel(nc)
+        val n = Notification.Builder(this, nc.id)
+            .setContentText(getString(R.string.lblGPSRunningInBackground))
+            .setContentTitle(getString(R.string.app_name))
+            .setSmallIcon(R.drawable.ic_gps_notification)
+            .build()
+        this.startForeground(NOTIFICATION_ID, n)
     }
 
     override fun onCreate() {

@@ -267,6 +267,7 @@ open class FixedExpandableListActivity : AppCompatActivity(), OnCreateContextMen
      *
      * @return The ID of the currently selected group or child.
      */
+    @Suppress("UNUSED")
     val selectedId: Long
         get() = mList!!.selectedId
 
@@ -281,6 +282,7 @@ open class FixedExpandableListActivity : AppCompatActivity(), OnCreateContextMen
      * @return A packed position representation containing the currently
      * selected group or child's position and type.
      */
+    @Suppress("UNUSED")
     val selectedPosition: Long
         get() = mList!!.selectedPosition
 
@@ -295,6 +297,7 @@ open class FixedExpandableListActivity : AppCompatActivity(), OnCreateContextMen
      * it is collapsed.
      * @return Whether the selection was successfully set on the child.
      */
+    @Suppress("UNUSED")
     fun setSelectedChild(
         groupPosition: Int,
         childPosition: Int,
@@ -307,6 +310,7 @@ open class FixedExpandableListActivity : AppCompatActivity(), OnCreateContextMen
      * Sets the selection to the specified group.
      * @param groupPosition The position of the group that should be selected.
      */
+    @Suppress("UNUSED")
     fun setSelectedGroup(groupPosition: Int) {
         mList!!.setSelectedGroup(groupPosition)
     }

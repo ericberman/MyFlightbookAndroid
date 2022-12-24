@@ -390,92 +390,90 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         // puase/play.
         // If engine is not started, only show start.
         // if engine is started, show stop and pause/play
-        if (Build.VERSION.SDK_INT >= 25) {
-            val shortcutManager = getSystemService(
-                ShortcutManager::class.java
-            )
-            if (shortcutManager != null && getMainLocation() != null) {
-                val lst = ArrayList<ShortcutInfo>()
-                val fFlightStarted = newFlightListener!!.shouldKeepListening()
-                val fPaused: Boolean = ActNewFlight.fPaused
-                val le = newFlightListener!!.getInProgressFlight(this)
-                val fFlightEnded = le.isKnownEngineEnd
-                if (fFlightStarted) {
-                    lst.add(
-                        ShortcutInfo.Builder(this, "startEngine")
-                            .setShortLabel(getString(R.string.shortcutStopEngine))
-                            .setLongLabel(getString(R.string.shortcutStopEngine))
-                            .setIcon(Icon.createWithResource(this, R.drawable.ic_action_stop))
-                            .setIntent(
-                                Intent(this, MFBMain::class.java).setAction(
-                                    ACTION_STOP_ENGINE
-                                )
-                            )
-                            .build()
-                    )
-                    if (fPaused) lst.add(
-                        ShortcutInfo.Builder(this, "resume")
-                            .setShortLabel(getString(R.string.shortcutResume))
-                            .setLongLabel(getString(R.string.shortcutResume))
-                            .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
-                            .setIntent(
-                                Intent(this, MFBMain::class.java).setAction(
-                                    ACTION_RESUME_FLIGHT
-                                )
-                            )
-                            .build()
-                    ) else lst.add(
-                        ShortcutInfo.Builder(this, "pause")
-                            .setShortLabel(getString(R.string.shortcutPause))
-                            .setLongLabel(getString(R.string.shortcutPause))
-                            .setIcon(Icon.createWithResource(this, R.drawable.ic_action_pause))
-                            .setIntent(
-                                Intent(this, MFBMain::class.java).setAction(
-                                    ACTION_PAUSE_FLIGHT
-                                )
-                            )
-                            .build()
-                    )
-                } else if (!fFlightEnded) lst.add(
-                    ShortcutInfo.Builder(this, "startEngine")
-                        .setShortLabel(getString(R.string.shortcutStartEngine))
-                        .setLongLabel(getString(R.string.shortcutStartEngine))
-                        .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
-                        .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_START_ENGINE))
-                        .build()
-                ) else lst.add(
-                    ShortcutInfo.Builder(this, "viewCurrent")
-                        .setShortLabel(getString(R.string.shortcutCurrentFlight))
-                        .setLongLabel(getString(R.string.shortcutCurrentFlight))
-                        .setIcon(Icon.createWithResource(this, R.drawable.ic_tab_newflight))
-                        .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_VIEW_CURRENT))
-                        .build()
-                )
-
-                // Now add Currency and Totals
+        val shortcutManager = getSystemService(
+            ShortcutManager::class.java
+        )
+        if (shortcutManager != null && getMainLocation() != null) {
+            val lst = ArrayList<ShortcutInfo>()
+            val fFlightStarted = newFlightListener!!.shouldKeepListening()
+            val fPaused: Boolean = ActNewFlight.fPaused
+            val le = newFlightListener!!.getInProgressFlight(this)
+            val fFlightEnded = le.isKnownEngineEnd
+            if (fFlightStarted) {
                 lst.add(
-                    ShortcutInfo.Builder(this, "currency")
-                        .setShortLabel(getString(R.string.shortcutCurrency))
-                        .setLongLabel(getString(R.string.shortcutCurrency))
-                        .setIcon(Icon.createWithResource(this, R.drawable.currency))
+                    ShortcutInfo.Builder(this, "startEngine")
+                        .setShortLabel(getString(R.string.shortcutStopEngine))
+                        .setLongLabel(getString(R.string.shortcutStopEngine))
+                        .setIcon(Icon.createWithResource(this, R.drawable.ic_action_stop))
                         .setIntent(
-                            Intent(
-                                this,
-                                MFBMain::class.java
-                            ).setAction(ACTION_VIEW_CURRENCY)
+                            Intent(this, MFBMain::class.java).setAction(
+                                ACTION_STOP_ENGINE
+                            )
                         )
                         .build()
                 )
-                lst.add(
-                    ShortcutInfo.Builder(this, "totals")
-                        .setShortLabel(getString(R.string.shortcutTotals))
-                        .setLongLabel(getString(R.string.shortcutTotals))
-                        .setIcon(Icon.createWithResource(this, R.drawable.totals))
-                        .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_VIEW_TOTALS))
+                if (fPaused) lst.add(
+                    ShortcutInfo.Builder(this, "resume")
+                        .setShortLabel(getString(R.string.shortcutResume))
+                        .setLongLabel(getString(R.string.shortcutResume))
+                        .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
+                        .setIntent(
+                            Intent(this, MFBMain::class.java).setAction(
+                                ACTION_RESUME_FLIGHT
+                            )
+                        )
+                        .build()
+                ) else lst.add(
+                    ShortcutInfo.Builder(this, "pause")
+                        .setShortLabel(getString(R.string.shortcutPause))
+                        .setLongLabel(getString(R.string.shortcutPause))
+                        .setIcon(Icon.createWithResource(this, R.drawable.ic_action_pause))
+                        .setIntent(
+                            Intent(this, MFBMain::class.java).setAction(
+                                ACTION_PAUSE_FLIGHT
+                            )
+                        )
                         .build()
                 )
-                shortcutManager.dynamicShortcuts = lst
-            }
+            } else if (!fFlightEnded) lst.add(
+                ShortcutInfo.Builder(this, "startEngine")
+                    .setShortLabel(getString(R.string.shortcutStartEngine))
+                    .setLongLabel(getString(R.string.shortcutStartEngine))
+                    .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
+                    .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_START_ENGINE))
+                    .build()
+            ) else lst.add(
+                ShortcutInfo.Builder(this, "viewCurrent")
+                    .setShortLabel(getString(R.string.shortcutCurrentFlight))
+                    .setLongLabel(getString(R.string.shortcutCurrentFlight))
+                    .setIcon(Icon.createWithResource(this, R.drawable.ic_tab_newflight))
+                    .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_VIEW_CURRENT))
+                    .build()
+            )
+
+            // Now add Currency and Totals
+            lst.add(
+                ShortcutInfo.Builder(this, "currency")
+                    .setShortLabel(getString(R.string.shortcutCurrency))
+                    .setLongLabel(getString(R.string.shortcutCurrency))
+                    .setIcon(Icon.createWithResource(this, R.drawable.currency))
+                    .setIntent(
+                        Intent(
+                            this,
+                            MFBMain::class.java
+                        ).setAction(ACTION_VIEW_CURRENCY)
+                    )
+                    .build()
+            )
+            lst.add(
+                ShortcutInfo.Builder(this, "totals")
+                    .setShortLabel(getString(R.string.shortcutTotals))
+                    .setLongLabel(getString(R.string.shortcutTotals))
+                    .setIcon(Icon.createWithResource(this, R.drawable.totals))
+                    .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_VIEW_TOTALS))
+                    .build()
+            )
+            shortcutManager.dynamicShortcuts = lst
         }
     }
 
