@@ -19,7 +19,6 @@
 package model
 
 import android.content.Context
-import android.os.Build
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
@@ -28,7 +27,6 @@ import android.view.View.OnLongClickListener
 import androidx.appcompat.widget.AppCompatEditText
 import com.myflightbook.android.R
 import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToLong
@@ -89,40 +87,20 @@ class DecimalEdit : AppCompatEditText, OnLongClickListener {
             EditMode.HHMM -> {
                 this.setHint(R.string.emptyWaterMarkHHMM)
                 this.inputType = InputType.TYPE_CLASS_NUMBER
-                keyListener = DigitsKeyListener.getInstance(false, false)
+                keyListener = DigitsKeyListener.getInstance(Locale.getDefault(), false, false)
             }
             EditMode.INTEGER -> {
                 this.setHint(R.string.emptyWaterMarkInt)
                 this.inputType = InputType.TYPE_CLASS_NUMBER
-                this.keyListener = DigitsKeyListener.getInstance(false, false)
+                this.keyListener = DigitsKeyListener.getInstance(Locale.getDefault(), false, false)
             }
             EditMode.DECIMAL -> {
-                // See Android bug #2626 (http://code.google.com/p/android/issues/detail?id=2626&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars)
-                // However:
-                //  * setKeyListener with a string of characters reverts from decimal input on some versions of android (i.e., becomes integer only - lame!)
-                //  * setKeyListener(DigitsKeyListener.getInstance(sign, decimal)) doesn't work internationally (only accepts a period)
-                //  * setKeyListener(DigitsKeyListener.getInstance(Locale.getDefault()...) only works on 26 and higher.
-                // Uggh.  So here's the hack we will do:
-                //  * Use DigitsKeyListener.getInstance(Locale.getDefault()...) if on 26 and higher.  This does the right thing.
-                //  * Otherwise, if in a locale that uses a period, use DigitsKeyListener.getInstance(false, true)
-                //  * Otherwise, essentially give up and use a default keyboard.
                 this.hint = String.format(Locale.getDefault(), "%.1f", 0.0)
                 this.inputType =
                     InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-                if (Build.VERSION.SDK_INT >= 26) {
-                    // this is preferred and works internationally, but only works on version 26 and higher, which we don't require
-                    this.keyListener =
-                        DigitsKeyListener.getInstance(Locale.getDefault(), false, true)
-                } else {
-                    val dfs = DecimalFormatSymbols(Locale.getDefault())
-                    if (dfs.decimalSeparator == '.') // US style - we can use regular digitsKeyListener
-                        this.keyListener = DigitsKeyListener.getInstance(false, true) else {
-                        this.keyListener =
-                            DigitsKeyListener.getInstance("0123456789" + dfs.decimalSeparator) // should work but bug above means it will ALWAYS use a period.
-                        this.inputType =
-                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                    }
-                }
+                // this is preferred and works internationally, but only works on version 26 and higher, which we don't require
+                this.keyListener =
+                    DigitsKeyListener.getInstance(Locale.getDefault(), false, true)
             }
         }
     }

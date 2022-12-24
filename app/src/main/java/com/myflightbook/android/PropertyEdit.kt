@@ -26,11 +26,11 @@ import android.text.InputType
 import android.text.format.DateFormat
 import android.text.method.TextKeyListener
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
+import com.google.android.material.snackbar.Snackbar
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
 import com.myflightbook.android.webservices.UTCDate.formatDate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
@@ -160,17 +160,7 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
             true
         }
         findViewById<View>(R.id.imgAboutProp).setOnClickListener {
-            val inflater =
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val layout = inflater.inflate(R.layout.toastlayout, findViewById(R.id.toastLayout))
-            val txt = layout.findViewById<TextView>(R.id.txtToastText)
-            val t = Toast.makeText(context, fp.descriptionString(), Toast.LENGTH_SHORT)
-            val location = IntArray(2)
-            findViewById<View>(R.id.layoutPropEdit).getLocationOnScreen(location)
-            t.setGravity(Gravity.TOP or Gravity.START, location[0], location[1])
-            txt.text = fp.descriptionString()
-            t.view = layout
-            t.show()
+            Snackbar.make(context, this, fp.descriptionString(), Snackbar.LENGTH_SHORT).setTextMaxLines(4).setTextColor(context.getColor(R.color.textColorPrimary)).setBackgroundTint(context.getColor(R.color.colorBackground)).show()
         }
         val txtStringVal = mTxtstringval
         val txtNumericField = mTxtnumericfield

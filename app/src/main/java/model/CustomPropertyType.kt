@@ -198,6 +198,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
     override fun setProperty(arg0: Int, arg1: Any) {
         val pid = CPTPropID.values()[arg0]
         val sz = arg1.toString()
+        @Suppress("UNCHECKED_CAST")
         when (pid) {
             CPTPropID.PIDFavorite -> isFavorite = java.lang.Boolean.parseBoolean(sz)
             CPTPropID.PIDFlags -> cptFlag = sz.toInt()

@@ -20,6 +20,7 @@ package com.myflightbook.android
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 
 class FlightQueryActivity : AppCompatActivity() {
@@ -32,13 +33,13 @@ class FlightQueryActivity : AppCompatActivity() {
         mFlightquery = ActFlightQuery()
         fragmentTransaction.replace(android.R.id.content, mFlightquery!!)
         fragmentTransaction.commitAllowingStateLoss()
-    }
 
-    override fun onBackPressed() {
-        val mIntent = Intent()
-        mIntent.putExtra(ActFlightQuery.QUERY_TO_EDIT, mFlightquery!!.getCurrentQuery())
-        setResult(RESULT_OK, mIntent)
-        finish()
-        super.onBackPressed()
+
+        onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            val mIntent = Intent()
+            mIntent.putExtra(ActFlightQuery.QUERY_TO_EDIT, mFlightquery!!.getCurrentQuery())
+            setResult(RESULT_OK, mIntent)
+            finish()
+        }
     }
 }

@@ -20,6 +20,7 @@ package com.myflightbook.android
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 
 class ViewTemplatesActivity : AppCompatActivity() {
@@ -33,18 +34,17 @@ class ViewTemplatesActivity : AppCompatActivity() {
         mViewtemplates = ActViewTemplates()
         fragmentTransaction.replace(android.R.id.content, mViewtemplates!!)
         fragmentTransaction.commitAllowingStateLoss()
-    }
 
-    override fun onBackPressed() {
-        val mIntent = Intent()
-        val b = Bundle()
-        b.putSerializable(
-            ActViewTemplates.ACTIVE_PROPERTYTEMPLATES,
-            mViewtemplates!!.mActivetemplates
-        )
-        mIntent.putExtras(b)
-        setResult(RESULT_OK, mIntent)
-        finish()
-        super.onBackPressed()
+        onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            val mIntent = Intent()
+            val b = Bundle()
+            b.putSerializable(
+                ActViewTemplates.ACTIVE_PROPERTYTEMPLATES,
+                mViewtemplates!!.mActivetemplates
+            )
+            mIntent.putExtras(b)
+            setResult(RESULT_OK, mIntent)
+            finish()
+        }
     }
 }

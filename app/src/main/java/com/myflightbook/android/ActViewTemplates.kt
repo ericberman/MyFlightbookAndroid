@@ -20,6 +20,7 @@ package com.myflightbook.android
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -136,7 +137,11 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
         try {
             val b = i.extras!!
             mActivetemplates =
-                b.getSerializable(ACTIVE_PROPERTYTEMPLATES) as HashSet<PropertyTemplate?>?
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                    b.getSerializable(ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
+                else
+                    @Suppress("UNCHECKED_CAST")
+                    b.getSerializable(ACTIVE_PROPERTYTEMPLATES) as HashSet<PropertyTemplate?>?
         } catch (ex: ClassCastException) {
             Log.e(MFBConstants.LOG_TAG, ex.message!!)
         }

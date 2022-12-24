@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.myflightbook.android"
-        minSdk 24
+        minSdk 26
         targetSdk 33
         versionCode 147
         versionName "2022.11.02.1"

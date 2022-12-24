@@ -319,6 +319,7 @@ internal object Solar {
     /// </summary>
     /// <param name="t"> t : number of Julian centuries since J2000.0</param>
     /// <returns>sun radius vector in AUs</returns>
+    @Suppress("UNUSED")
     fun calcSunRadVector(t: Double): Double {
         val v = calcSunTrueAnomaly(t)
         val e = calcEccentricityEarthOrbit(t)
@@ -362,6 +363,7 @@ internal object Solar {
     /// </summary>
     /// <param name="t"> t : number of Julian centuries since J2000.0</param>
     /// <returns>sun's right ascension in degrees</returns>
+    @Suppress("UNUSED")
     fun calcSunRtAscension(t: Double): Double {
         val e = calcObliquityCorrection(t)
         val lambda = calcSunApparentLong(t)

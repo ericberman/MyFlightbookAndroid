@@ -30,9 +30,10 @@ class PackAndGo(private val m_context: Context) {
     private val prefs: SharedPreferences
         get() = m_context.getSharedPreferences("packAndGo", Activity.MODE_PRIVATE)
 
-    private fun getForKey(key: String): Serializable? {
+    private fun <T> getForKey(key: String): T? {
         val sp = prefs
-        return deserializeFromString<Serializable>(sp.getString(key, null))
+        @Suppress("UNCHECKED_CAST")
+        return deserializeFromString<Serializable>(sp.getString(key, null)) as? T?
     }
 
     private fun setForKey(key: String, v: Serializable?) {

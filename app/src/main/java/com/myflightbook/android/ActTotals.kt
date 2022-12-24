@@ -21,6 +21,7 @@ package com.myflightbook.android
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
@@ -30,7 +31,10 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.ListFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
@@ -105,25 +109,57 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.totalslist, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.totalsmenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                val id = item.itemId
+                if (id == R.id.menuRefresh) refresh(true) else if (id == R.id.findFlights) {
+                    if (isOnline(context)) {
+                        val i = Intent(activity, FlightQueryActivity::class.java)
+                        i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery)
+                        mQueryLauncher!!.launch(i)
+                    } else alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
+                } else return false
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         MFBMain.registerNotifyDataChange(this)
         MFBMain.registerNotifyResetAll(this)
         mQueryLauncher = registerForActivityResult(
             StartActivityForResult()
         ) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
-                currentQuery = result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
+
+                currentQuery = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                        result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
+                    else
+                        result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
             }
         }
         val i = requireActivity().intent
         if (i != null) {
-            val o: Any? = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT)
-            if (o != null) currentQuery = o as FlightQuery?
+            val o = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
+            else
+                i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
+            if (o != null) currentQuery = o
         }
         val srl: SwipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
         srl.setOnRefreshListener {
@@ -255,22 +291,6 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
                 )
             }
         } else bindTable()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.totalsmenu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.menuRefresh) refresh(true) else if (id == R.id.findFlights) {
-            if (isOnline(context)) {
-                val i = Intent(activity, FlightQueryActivity::class.java)
-                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery)
-                mQueryLauncher!!.launch(i)
-            } else alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
-        } else return super.onOptionsItemSelected(item)
-        return true
     }
 
     override fun onResume() {

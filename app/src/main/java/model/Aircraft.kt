@@ -314,6 +314,7 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
             AircraftProp.PIDDefaultImage -> mDefaultImage = sz
             AircraftProp.PIDDefaultTemplates -> {
                 defaultTemplates.clear()
+                @Suppress("UNCHECKED_CAST")
                 val rgVals = value as Array<Int>
                 defaultTemplates.addAll(listOf(*rgVals))
             }

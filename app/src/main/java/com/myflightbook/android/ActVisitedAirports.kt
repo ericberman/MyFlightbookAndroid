@@ -27,6 +27,9 @@ import android.widget.EditText
 import android.widget.ExpandableListView
 import android.widget.SimpleExpandableListAdapter
 import android.widget.TextView
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
@@ -64,12 +67,33 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        super.setHasOptionsMenu(true)
         return inflater.inflate(R.layout.expandablelist, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.currencymenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                if (item.itemId == R.id.menuRefresh) {
+                    refreshAirports()
+                    return true
+                }
+                return false
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         MFBMain.registerNotifyDataChange(this)
         MFBMain.registerNotifyResetAll(this)
         val v = requireView()
@@ -94,11 +118,6 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
         if (visitedAirports == null) refreshAirports() else populateList()
     }
 
-    // reuse currency menu here.
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.currencymenu, menu)
-    }
-
     private fun refreshAirports() {
         if (isOnline(context)) refreshVisitedAirports() else {
             val p = PackAndGo(requireContext())
@@ -117,15 +136,6 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
                 )
             } else alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        if (item.itemId == R.id.menuRefresh) {
-            refreshAirports()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun populateList() {
@@ -238,8 +248,8 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
                     context
                 )
             ) return@setOnChildClickListener false
-            val hmProp = adapter.getChild(groupPosition, childPosition) as HashMap<String, String>
-            val position = hmProp["Position"]!!.toInt()
+            val hmProp = adapter.getChild(groupPosition, childPosition) as HashMap<*, *>
+            val position = (hmProp["Position"]!! as String).toInt()
             var szRoute = ""
             var szAlias: String? = ""
             if (position < 0 && visitedAirports != null) // all airports

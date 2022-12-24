@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.addCallback
 import model.Airport
 import model.ApproachDescription
 import model.DecimalEdit
@@ -141,31 +142,32 @@ class ActAddApproach : AppCompatActivity() {
                 )
             )
         }
+
         val ckAddToTotals = findViewById<CheckBox>(R.id.ckAddToApproachTotals)
         ckAddToTotals.isChecked = approachDescription.addToApproachCount
         ckAddToTotals.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             approachDescription.addToApproachCount = isChecked
         }
-    }
 
-    override fun onBackPressed() {
-        approachDescription.approachCount =
-            (findViewById<View>(R.id.txtApproachCount) as DecimalEdit).intValue
-        val szTypedAirports = (findViewById<View>(R.id.txtAirport) as EditText).text.toString()
-        if (szTypedAirports.isNotEmpty()) approachDescription.airportName =
-            szTypedAirports.uppercase(
-                Locale.getDefault()
+        onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            approachDescription.approachCount =
+                (findViewById<View>(R.id.txtApproachCount) as DecimalEdit).intValue
+            val szTypedAirports = et.text.toString()
+            if (szTypedAirports.isNotEmpty()) approachDescription.airportName =
+                szTypedAirports.uppercase(
+                    Locale.getDefault()
+                )
+            val bundle = Bundle()
+            bundle.putString(APPROACHDESCRIPTIONRESULT, approachDescription.toString())
+            bundle.putInt(
+                APPROACHADDTOTOTALSRESULT,
+                if (approachDescription.addToApproachCount) approachDescription.approachCount else 0
             )
-        val bundle = Bundle()
-        bundle.putString(APPROACHDESCRIPTIONRESULT, approachDescription.toString())
-        bundle.putInt(
-            APPROACHADDTOTOTALSRESULT,
-            if (approachDescription.addToApproachCount) approachDescription.approachCount else 0
-        )
-        val mIntent = Intent()
-        mIntent.putExtras(bundle)
-        setResult(RESULT_OK, mIntent)
-        super.onBackPressed()
+            val mIntent = Intent()
+            mIntent.putExtras(bundle)
+            setResult(RESULT_OK, mIntent)
+            finish()
+        }
     }
 
     companion object {

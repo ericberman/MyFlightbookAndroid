@@ -49,6 +49,7 @@ class Totals : SoapableObject, Serializable {
         fromProperties(so)
     }
 
+    @Suppress("UNUSED")
     constructor() : super()
 
     override fun toString(): String {

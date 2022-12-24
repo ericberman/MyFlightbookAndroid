@@ -188,35 +188,35 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
         propertiesConjunction = GroupConjunction.Any
         flightCharacteristicsConjunction = GroupConjunction.All
         isMotorglider = false
-        isMultiEngineHeli = isMotorglider
-        isTailwheel = isMultiEngineHeli
-        isTAA = isTailwheel
-        isGlass = isTAA
-        isRetract = isGlass
-        isConstantSpeedProp = isRetract
-        isHighPerformance = isConstantSpeedProp
-        hasFlaps = isHighPerformance
-        isComplex = hasFlaps
-        hasImages = isComplex
-        hasTelemetry = hasImages
-        hasTotalTime = hasTelemetry
-        hasPIC = hasTotalTime
-        hasSIC = hasPIC
-        hasCFI = hasSIC
-        hasDual = hasCFI
-        hasNight = hasDual
-        hasAnyInstrument = hasNight
-        hasIMC = hasAnyInstrument
-        hasGroundSim = hasIMC
-        hasSimIMCTime = hasGroundSim
-        hasXC = hasSimIMCTime
-        hasHolds = hasXC
-        hasApproaches = hasHolds
-        hasLandings = hasApproaches
-        hasFullStopLandings = hasLandings
-        hasNightLandings = hasFullStopLandings
-        isSigned = hasNightLandings
-        isPublic = isSigned
+        isMultiEngineHeli = false
+        isTailwheel = false
+        isTAA = false
+        isGlass = false
+        isRetract = false
+        isConstantSpeedProp = false
+        isHighPerformance = false
+        hasFlaps = false
+        isComplex = false
+        hasImages = false
+        hasTelemetry = false
+        hasTotalTime = false
+        hasPIC = false
+        hasSIC = false
+        hasCFI = false
+        hasDual = false
+        hasNight = false
+        hasAnyInstrument = false
+        hasIMC = false
+        hasGroundSim = false
+        hasSimIMCTime = false
+        hasXC = false
+        hasHolds = false
+        hasApproaches = false
+        hasLandings = false
+        hasFullStopLandings = false
+        hasNightLandings = false
+        isSigned = false
+        isPublic = false
     }
 
     fun hasAircraftCriteria(): Boolean {
@@ -234,6 +234,7 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
                 hasFlightCriteria()
     }
 
+    @Suppress("UNUSED")
     fun hasSearchProperty(cpt: CustomPropertyType): Boolean {
         for (cpt2 in propertyTypes) if (cpt.idPropType == cpt2.idPropType) return true
         return false
@@ -642,6 +643,7 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
 
     companion object {
         private const val serialVersionUID = 4L
+        @Suppress("UNUSED")
         fun dateRangeToString(dr: DateRanges?): String {
             return when (dr) {
                 DateRanges.AllTime -> "All Time"

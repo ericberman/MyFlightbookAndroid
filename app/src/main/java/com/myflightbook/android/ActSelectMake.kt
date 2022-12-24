@@ -180,6 +180,7 @@ class ActSelectMake : FixedExpandableListActivity() {
             i
         )
         expandableListView!!.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
+            @Suppress("UNCHECKED_CAST")
             val hmProp = adapter.getChild(groupPosition, childPosition) as HashMap<String, String>
             val position = hmProp["Position"]!!.toInt()
             val i = Intent()

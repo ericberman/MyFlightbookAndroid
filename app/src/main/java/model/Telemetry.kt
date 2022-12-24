@@ -53,6 +53,7 @@ abstract class Telemetry internal constructor(uri: Uri?, c: Context?) {
         metaData = Hashtable()
     }
 
+    @Suppress("UNUSED")
     fun getMetaData(): Dictionary<String, Any>? {
         return metaData
     }

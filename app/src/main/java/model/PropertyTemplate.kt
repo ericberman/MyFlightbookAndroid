@@ -280,7 +280,9 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
 
     companion object {
         private const val serialVersionUID = 1L
+        @Suppress("UNUSED")
         private const val ID_NEW = -1
+        @Suppress("UNUSED")
         private const val ID_MRU = -2
         private const val ID_SIM = -3
         private const val ID_ANON = -4

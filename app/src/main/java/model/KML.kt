@@ -85,6 +85,7 @@ class KML internal constructor(uri: Uri?, c: Context?) : Telemetry(uri, c) {
     }
 
     companion object {
+        @Suppress("UNUSED")
         fun getFlightDataStringAsKML(rgloc: Array<LatLong>): String {
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
             sdf.timeZone = TimeZone.getTimeZone("UTC")

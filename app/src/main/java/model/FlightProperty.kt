@@ -125,9 +125,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
 
     fun refreshPropType() {
         if (m_rgcptCached == null) m_rgcptCached = cachedPropertyTypes
-        if (m_rgcptCached != null) mCpt = cptFromId(
-            idPropType, m_rgcptCached!!
-        )
+        mCpt = cptFromId(idPropType, m_rgcptCached!!)
     }
 
     fun format(fLocal: Boolean, fBoldValue: Boolean, c: Context?): String {
@@ -135,9 +133,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
         if (mCpt == null) {
             // may even need to get the cached array of property types from the DB
             if (m_rgcptCached == null) m_rgcptCached = cachedPropertyTypes
-            if (m_rgcptCached != null) mCpt = cptFromId(
-                idPropType, m_rgcptCached!!
-            )
+            mCpt = cptFromId(idPropType, m_rgcptCached!!)
         }
         if (mCpt == null)
             return ""
