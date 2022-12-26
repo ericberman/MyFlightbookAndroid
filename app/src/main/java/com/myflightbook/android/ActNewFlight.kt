@@ -1522,7 +1522,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             getMainLocation()!!.stopListening(requireContext())
             getMainLocation()?.isRecording = true // will respect preference
             val gpss = GPSSim(getMainLocation()!!)
-            gpss.feedEvents()
+            lifecycleScope.launch{
+                gpss.feedEvents()
+            }
         }
     }
 
