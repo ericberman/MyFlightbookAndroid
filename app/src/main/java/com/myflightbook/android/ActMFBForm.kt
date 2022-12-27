@@ -24,6 +24,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -97,12 +98,9 @@ import java.util.*
                     // Add the image/video to the gallery if necessary (i.e., if from the camera)
                     if (addToGallery) {
                         val f = File(szFileName)
-                        val uriSource = FileProvider.getUriForFile(
-                            requireContext(),
-                            BuildConfig.APPLICATION_ID + ".provider",
-                            f
-                        )
-                        requireActivity().sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriSource))
+
+                        MediaScannerConnection.scanFile(context, arrayOf(f.toString()),
+                            null, null)
                     }
                     val mfbii = MFBImageInfo(gs.getPictureDestination())
                     mfbii.initFromCamera(
