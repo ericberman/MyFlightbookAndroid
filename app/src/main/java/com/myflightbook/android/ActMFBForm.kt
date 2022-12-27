@@ -639,11 +639,9 @@ import java.util.*
                         // we are not on the main thread here, so need to post this onto the main thread
                         // this is a hack.  We need to move off of progress dialog anyhow.
                         callingActivity.runOnUiThread{
-                            if (pd != null) {
-                                if (percentageComplete > 0)
-                                    pd.progress = percentageComplete
-                                pd.setMessage(szMsg)
-                            }
+                            if (percentageComplete > 0 && progBar != null)
+                                progBar.progress = percentageComplete
+                            pd?.setText(szMsg)
                             if (progText != null)
                                 progText.text = szMsg
                             progBar?.setProgress(percentageComplete, true)
