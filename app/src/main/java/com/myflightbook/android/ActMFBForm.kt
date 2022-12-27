@@ -253,34 +253,38 @@ import java.util.*
             RequestMultiplePermissions()
         ) { result: Map<String, Boolean>? ->
             if (checkAllTrue(result)) {
-                val fTemp: File
-                val storageDir =
-                    requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                try {
-                    fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir)
-                    fTemp.deleteOnExit()
-                    mTempfilepath =
-                        fTemp.absolutePath // need to save this for when the picture comes back
-                    val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
-                    val ed = prefs.edit()
-                    ed.putString(keyTempFileInProgress, mTempfilepath)
-                    ed.apply()
-                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    val uriImage = FileProvider.getUriForFile(
-                        requireContext(),
-                        BuildConfig.APPLICATION_ID + ".provider",
-                        fTemp
-                    )
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage)
-                    intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
-                    takePictureLauncher.launch(intent)
-                } catch (e: IOException) {
-                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-                    MFBUtil.alert(
-                        requireActivity(),
-                        getString(R.string.txtError),
-                        getString(R.string.errNoCamera)
-                    )
+                lifecycleScope.launch {
+                    try {
+                        val storageDir =
+                            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                        val fTemp =
+                            withContext(Dispatchers.IO) {
+                                File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir)
+                            }
+                        fTemp.deleteOnExit()
+                        mTempfilepath =
+                            fTemp.absolutePath // need to save this for when the picture comes back
+                        val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
+                        val ed = prefs.edit()
+                        ed.putString(keyTempFileInProgress, mTempfilepath)
+                        ed.apply()
+                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        val uriImage = FileProvider.getUriForFile(
+                            requireContext(),
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            fTemp
+                        )
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage)
+                        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
+                        takePictureLauncher.launch(intent)
+                    } catch (e: IOException) {
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+                        MFBUtil.alert(
+                            requireActivity(),
+                            getString(R.string.txtError),
+                            getString(R.string.errNoCamera)
+                        )
+                    }
                 }
             }
         }
@@ -295,34 +299,38 @@ import java.util.*
             RequestMultiplePermissions()
         ) { result: Map<String, Boolean>? ->
             if (checkAllTrue(result)) {
-                val fTemp: File
-                val storageDir =
-                    requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                try {
-                    fTemp = File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", storageDir)
-                    fTemp.deleteOnExit()
-                    mTempfilepath =
-                        fTemp.absolutePath // need to save this for when the picture comes back
-                    val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
-                    val ed = prefs.edit()
-                    ed.putString(keyTempFileInProgress, mTempfilepath)
-                    ed.apply()
-                    val uriImage = FileProvider.getUriForFile(
-                        requireContext(),
-                        BuildConfig.APPLICATION_ID + ".provider",
-                        fTemp
-                    )
-                    val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage)
-                    intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
-                    takeVideoLauncher.launch(intent)
-                } catch (e: IOException) {
-                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-                    MFBUtil.alert(
-                        requireActivity(),
-                        getString(R.string.txtError),
-                        getString(R.string.errNoCamera)
-                    )
+                lifecycleScope.launch {
+                    try {
+                        val storageDir =
+                            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                        val fTemp =
+                            withContext(Dispatchers.IO) {
+                                File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", storageDir)
+                            }
+                        fTemp.deleteOnExit()
+                        mTempfilepath =
+                            fTemp.absolutePath // need to save this for when the picture comes back
+                        val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
+                        val ed = prefs.edit()
+                        ed.putString(keyTempFileInProgress, mTempfilepath)
+                        ed.apply()
+                        val uriImage = FileProvider.getUriForFile(
+                            requireContext(),
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            fTemp
+                        )
+                        val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage)
+                        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
+                        takeVideoLauncher.launch(intent)
+                    } catch (e: IOException) {
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+                        MFBUtil.alert(
+                            requireActivity(),
+                            getString(R.string.txtError),
+                            getString(R.string.errNoCamera)
+                        )
+                    }
                 }
             }
         }
