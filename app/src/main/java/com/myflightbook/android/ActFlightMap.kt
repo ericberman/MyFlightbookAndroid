@@ -26,6 +26,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -33,10 +34,12 @@ import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.*
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener
@@ -50,6 +53,7 @@ import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.getCached
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import model.*
 import java.io.*
 import java.util.*
@@ -124,7 +128,9 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             val i = v.findViewById<ImageView>(R.id.imgMFBIIImage)
             val t = v.findViewById<TextView>(R.id.txtMFBIIComment)
             i.setOnClickListener { mfbii.viewFullImageInWebView(this@ActFlightMap) }
-            mfbii.loadImageForImageView(true, i)
+            lifecycleScope.launch {
+                mfbii.loadImageForImageView(true, i)
+            }
             t.text = mfbii.comment
             t.setTextColor(Color.WHITE)
             v.setBackgroundColor(Color.DKGRAY)
@@ -201,7 +207,6 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             } else mRgaproute = arrayOf()
         } else mRgaproute =
             Airport.airportsInRouteOrder(t.text.toString(), MFBLocation.lastSeenLoc())
-        if (mRgaproute == null) mRgaproute = arrayOf()
         if (!mFshowallairports) {
             // Add the airport route; we'll draw the airports on top of them.
             // Note that we don't do this if m_le is null because then we would connect the dots.
@@ -264,7 +269,10 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
                     if (mfbii.thumbnail != null) {
                         addImageMarker(mfbii, llb)
                     } else {
-                        mfbii.loadImageAsync(true, this)
+                        val delegate = this
+                        lifecycleScope.launch {
+                            mfbii.loadImageAsync(true, delegate)
+                        }
                     }
                 }
             }
@@ -392,6 +400,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         if (idPending > 0) {
             mLe = LogbookEntry(idPending)
             if (mLe!!.isAwaitingUpload()) {
+                @Suppress("UNCHECKED_CAST")
                 mRgflightroute = LocSample.samplesFromDataString(mLe!!.szFlightData) as Array<LatLong>
                 mGpxpath = GPX.getFlightDataStringAsGPX(mRgflightroute) // initialize the GPX path
             }
@@ -401,12 +410,23 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
                 fetchFlightPath(idExisting, this)
         } else if (idNew != 0L) {
             mLe = MFBMain.newFlightListener!!.getInProgressFlight(this)
+            @Suppress("UNCHECKED_CAST")
             mRgflightroute = LocSample.flightPathFromDB() as Array<LatLong>
             mGpxpath = GPX.getFlightDataStringAsGPX(mRgflightroute) // initialize the GPX path.
         } else  // all airports
         {
             t.visibility = View.GONE
             b.visibility = View.GONE
+        }
+
+        onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            setResult(RESULT_OK, intent)
+            val newRoute =
+                t.text.toString().uppercase(
+                    Locale.getDefault()
+                )
+            intent.putExtra(ROUTEFORFLIGHT, newRoute)
+            finish()
         }
     }
 
@@ -437,16 +457,6 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         if (v.id == R.id.ckShowAllAirports) {
             setShowAllAirports(v.isChecked)
         }
-    }
-
-    override fun onBackPressed() {
-        setResult(RESULT_OK, intent)
-        val newRoute =
-            (findViewById<View>(R.id.txtMapRoute) as EditText).text.toString().uppercase(
-                Locale.getDefault()
-            )
-        intent.putExtra(ROUTEFORFLIGHT, newRoute)
-        super.onBackPressed()
     }
 
     // region GPX export
@@ -489,7 +499,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             fos.close()
             val uriFile =
                 FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", f)
-            sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uriFile))
+            MediaScannerConnection.scanFile(this, arrayOf(f.toString()), null, null)
             val sendIntent = Intent()
             sendIntent.action = Intent.ACTION_SEND
             sendIntent.putExtra(Intent.EXTRA_STREAM, uriFile)

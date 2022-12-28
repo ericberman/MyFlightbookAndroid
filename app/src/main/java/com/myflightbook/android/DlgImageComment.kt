@@ -25,14 +25,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.ImagesSvc
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import model.MFBImageInfo
 
 internal class DlgImageComment(
     private val m_Context: Context,
     private val m_mfbii: MFBImageInfo?,
-    private val m_delegate: AnnotationUpdate?
+    private val m_delegate: AnnotationUpdate?,
+    private val scope : LifecycleCoroutineScope
 ) : Dialog(
     m_Context, R.style.MFBDialog
 ), View.OnClickListener {
@@ -49,7 +53,9 @@ internal class DlgImageComment(
         b.setOnClickListener(this)
         if (m_mfbii != null) {
             val imgview = findViewById<ImageView>(R.id.imgPreview)
-            m_mfbii.loadImageForImageView(true, imgview)
+            scope.launch(Dispatchers.IO) {
+                m_mfbii.loadImageForImageView(true, imgview)
+            }
             val e = findViewById<EditText>(R.id.txtComment)
             e.setText(m_mfbii.comment)
         }

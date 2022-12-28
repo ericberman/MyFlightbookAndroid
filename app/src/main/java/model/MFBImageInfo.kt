@@ -28,10 +28,12 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.media.ThumbnailUtils
+import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Size
 import android.util.TypedValue
 import android.widget.ImageView
 import androidx.exifinterface.media.ExifInterface
@@ -39,10 +41,7 @@ import com.myflightbook.android.ActWebView
 import com.myflightbook.android.MFBMain
 import com.myflightbook.android.R
 import com.myflightbook.android.webservices.AuthToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.ksoap2.serialization.KvmSerializable
 import org.ksoap2.serialization.PropertyInfo
 import org.ksoap2.serialization.SoapObject
@@ -94,7 +93,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         fun imgCompleted(sender: MFBImageInfo?)
     }
 
-    private fun loadURLAsync(iv : ImageView?, urlAsString : String, fIsThumbnail : Boolean, icc : ImageCacheCompleted?) {
+    private suspend fun loadURLAsync(iv : ImageView?, urlAsString : String, fIsThumbnail : Boolean, icc : ImageCacheCompleted?) {
         if (urlAsString.isEmpty())
             return
 
@@ -102,32 +101,31 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         var d: Drawable? = null
         val image = this
 
-        GlobalScope.launch(Dispatchers.Main) {
-            withContext(Dispatchers.IO) {
-                try {
-                    val inputStream = uri.content as InputStream
-                    d = Drawable.createFromStream(inputStream, "src name")
-                    if (d != null) {
-                        val bd = d as BitmapDrawable
-                        val bmp = bd.bitmap
-                        val s = ByteArrayOutputStream()
-                        bmp.compress(
-                            if (imageType == ImageFileType.PDF || imageType == ImageFileType.S3PDF) CompressFormat.PNG else CompressFormat.JPEG,
-                            100,
-                            s
-                        )
-                        if (fIsThumbnail) thumbnail = s.toByteArray() else mImgdata = s.toByteArray()
-                    }
-                } catch (e: Exception) {
-                    Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-                }
+        withContext(Dispatchers.IO) {
+            try {
+                val inputStream = uri.content as InputStream
+                d = Drawable.createFromStream(inputStream, "src name")
 
-                withContext(Dispatchers.Main) {
-                    if (d != null) {
-                        iv?.setImageDrawable(d)
-                        icc?.imgCompleted(image)
-                    }
-                }
+                if (d != null) {
+                    val bd = d as BitmapDrawable
+                    val bmp = bd.bitmap
+                    val s = ByteArrayOutputStream()
+                    bmp.compress(
+                        if (imageType == ImageFileType.PDF || imageType == ImageFileType.S3PDF) CompressFormat.PNG else CompressFormat.JPEG,
+                        100,
+                        s
+                    )
+                    if (fIsThumbnail) thumbnail = s.toByteArray() else mImgdata = s.toByteArray()
+                } else null
+            } catch (e: Exception) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+            }
+        }
+
+        withContext(Dispatchers.Main) {
+            if (d != null) {
+                iv?.setImageDrawable(d)
+                icc?.imgCompleted(image)
             }
         }
     }
@@ -398,7 +396,11 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         if (fVideo) {
             imageType = ImageFileType.S3VideoMP4
             val b =
-                ThumbnailUtils.createVideoThumbnail(szFile, MediaStore.Images.Thumbnails.MINI_KIND)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ThumbnailUtils.createVideoThumbnail(fTemp, Size(TH_WIDTH, TH_HEIGHT), null)
+                } else {
+                    ThumbnailUtils.createVideoThumbnail(szFile, MediaStore.Images.Thumbnails.MINI_KIND)
+                }
             if (b != null) {
                 val bos = ByteArrayOutputStream()
                 b.compress(CompressFormat.JPEG, 100, bos)
@@ -779,7 +781,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         ) else mURLThumbnail
     }
 
-    fun loadImageAsync(fThumbnail: Boolean, delegate: ImageCacheCompleted?) {
+    suspend fun loadImageAsync(fThumbnail: Boolean, delegate: ImageCacheCompleted?) {
         // return if we already have everything cached.
         if (fThumbnail && thumbnail != null && thumbnail!!.isNotEmpty()) return
         if (!fThumbnail && mImgdata != null && mImgdata!!.isNotEmpty()) return
@@ -790,15 +792,19 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
      * Asynchronously fill an imageview with thumbnail or full image
      * Uses from the database, if necessary.
      */
-    fun loadImageForImageView(fThumbnail: Boolean, i: ImageView) {
+    suspend fun loadImageForImageView(fThumbnail: Boolean, i: ImageView) {
         // if it's local, try to pull the image from the db first.  Note that his could fail.
         if (isLocal()) fromDB(fThumbnail, !fThumbnail)
         if (fThumbnail && thumbnail != null && thumbnail!!.isNotEmpty()) {
-            i.setImageBitmap(bitmapFromThumb())
+            withContext(Dispatchers.Main) {
+                i.setImageBitmap(bitmapFromThumb())
+            }
             return
         }
         if (!fThumbnail && mImgdata != null && mImgdata!!.isNotEmpty()) {
-            i.setImageBitmap(bitmapFromImage())
+            withContext(Dispatchers.Main) {
+                i.setImageBitmap(bitmapFromImage())
+            }
             return
         }
         loadURLAsync(i, if (fThumbnail) getURLThumbnail() else getURLFullImage(), fThumbnail, null)

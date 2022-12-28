@@ -24,6 +24,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.webservices.AircraftSvc
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc
@@ -33,7 +35,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import model.AuthResult
 
-internal class DlgSignIn(private val mCallingActivity: Activity) : Dialog(
+internal class DlgSignIn(private val mCallingActivity: FragmentActivity) : Dialog(
     mCallingActivity, R.style.MFBDialog
 ), View.OnClickListener {
 
@@ -41,7 +43,7 @@ internal class DlgSignIn(private val mCallingActivity: Activity) : Dialog(
         val act = mCallingActivity // should never be null
         val c = context
 
-        GlobalScope.launch(Dispatchers.Main) {
+        act.lifecycleScope.launch(Dispatchers.Main) {
             ActMFBForm.doAsync<MFBSoap, Any?>(
                 act,
                 MFBSoap(),
@@ -69,7 +71,7 @@ internal class DlgSignIn(private val mCallingActivity: Activity) : Dialog(
         // Also flush any cached aircraft when we change users
         AircraftSvc().flushCache()
 
-        GlobalScope.launch(Dispatchers.Main) {
+        act.lifecycleScope.launch(Dispatchers.Main) {
             ActMFBForm.doAsync<AuthToken, AuthResult?>(
                 act,
                 at,

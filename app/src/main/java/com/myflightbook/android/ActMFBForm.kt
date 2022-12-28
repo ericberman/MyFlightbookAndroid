@@ -425,7 +425,9 @@ import java.util.*
                 tr.id = MFBImageInfo.idImageGalleryIdBase + i++
                 val iv = tr.findViewById<ImageView>(R.id.imageItemView)
                 (tr.findViewById<View>(R.id.imageItemComment) as TextView).text = mfbii.comment
-                mfbii.loadImageForImageView(true, iv)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    mfbii.loadImageForImageView(true, iv)
+                }
                 registerForContextMenu(tr)
                 tr.setOnClickListener {
                     mfbii.viewFullImageInWebView(
@@ -471,7 +473,8 @@ import java.util.*
                                 src.getImages(),
                                 src.getGalleryHeader())
                         }
-                    }
+                    },
+                    lifecycleScope
                 )
                 dlgComment.show()
             }

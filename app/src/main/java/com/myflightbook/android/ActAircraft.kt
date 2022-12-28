@@ -32,7 +32,10 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.text.HtmlCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.ListFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
@@ -41,11 +44,8 @@ import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
 import kotlinx.coroutines.launch
-import model.Aircraft
-import model.LazyThumbnailLoader
+import model.*
 import model.LazyThumbnailLoader.ThumbnailedItem
-import model.MFBImageInfo
-import model.MFBUtil
 import java.util.*
 
 class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
@@ -182,12 +182,12 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.aircraftlist, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         MFBMain.registerNotifyResetAll(this)
         val srl: SwipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
         srl.setOnRefreshListener {
@@ -201,6 +201,31 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
                 invalidate()
             }
         }
+
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.aircraftmenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                if (!isOnline(context)) {
+                    MFBUtil.alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
+                    return true
+                }
+                when (item.itemId) {
+                    R.id.menuRefreshAircraft -> refreshAircraft()
+                    R.id.menuNewAircraft -> addAircraft()
+                    else -> return false
+                }
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onDestroy() {
@@ -229,7 +254,12 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
         for (row in mrows!!) {
             rgthumbs.add(row)
         }
-        Thread(LazyThumbnailLoader(rgthumbs.toTypedArray(), aa)).start()
+
+        LazyThumbnailLoader(
+            rgthumbs.toTypedArray(),
+            aa,
+            lifecycleScope
+        ).start()
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
@@ -244,31 +274,12 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
         mNewAircraftLauncher!!.launch(Intent(activity, NewAircraftActivity::class.java))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.aircraftmenu, menu)
-    }
-
     private fun refreshAircraft() {
         val ac = AircraftSvc()
         ac.flushCache()
         lifecycleScope.launch {
             refreshAircraftInBackground()
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (!isOnline(context)) {
-            MFBUtil.alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
-            return true
-        }
-        when (item.itemId) {
-            R.id.menuRefreshAircraft -> refreshAircraft()
-            R.id.menuNewAircraft -> addAircraft()
-            else -> return super.onOptionsItemSelected(
-                item
-            )
-        }
-        return true
     }
 
     override fun invalidate() {

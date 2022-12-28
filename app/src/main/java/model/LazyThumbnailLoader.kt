@@ -19,37 +19,39 @@
 package model
 
 import android.widget.BaseAdapter
+import androidx.lifecycle.LifecycleCoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import model.MFBImageInfo.ImageCacheCompleted
 
 class LazyThumbnailLoader(
     private val m_rgItems: Array<ThumbnailedItem>?,
-    private val m_li: BaseAdapter
-) : Runnable, ImageCacheCompleted {
+    private val m_li: BaseAdapter,
+    private val scope : LifecycleCoroutineScope
+) : ImageCacheCompleted {
     interface ThumbnailedItem {
         val defaultImage: MFBImageInfo?
     }
 
-    private val nextThumb: Unit
-        get() {
-            if (m_rgItems == null) return
-            for (ti in m_rgItems) {
+    fun start() {
+        if (m_rgItems == null)
+            return
+
+        for (ti in m_rgItems) {
+            val delegate = this
+            scope.launch(Dispatchers.IO) {
                 val mfbii = ti.defaultImage
                 if (mfbii != null) {
                     val b = mfbii.bitmapFromThumb()
                     if (b == null) {
-                        mfbii.loadImageAsync(true, this)
-                        return
+                        mfbii.loadImageAsync(true, delegate)
                     }
                 }
             }
         }
-
-    override fun run() {
-        nextThumb
     }
 
     override fun imgCompleted(sender: MFBImageInfo?) {
         m_li.notifyDataSetChanged()
-        nextThumb
     }
 }

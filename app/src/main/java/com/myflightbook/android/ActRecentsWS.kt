@@ -22,6 +22,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.text.format.DateFormat
@@ -37,7 +38,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.ListFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
@@ -283,7 +287,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
 
         val act = requireActivity()
         var mFflightsposted = false
-        var mFerrorsfound = mFflightsposted
+        var mFerrorsfound = false
 
         lifecycleScope.launch {
             ActMFBForm.doAsync<MFBSoap, Boolean?>(
@@ -321,6 +325,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                         mRgle = mergeFlightLists(
                             mergeFlightLists(
                                 queuedAndUnsubmittedFlights,
+                                @Suppress("UNCHECKED_CAST")
                                 if (currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
                             ), mRgexistingflights.toTypedArray()
                         )
@@ -404,6 +409,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     mergeFlightLists(
                         mergeFlightLists(
                             rgleQueuedAndUnsubmitted,
+                            @Suppress("UNCHECKED_CAST")
                             if (currentQuery!!.hasCriteria()) null else cachedPendingFlights as Array<LogbookEntry>
                         ), mRgexistingflights.toTypedArray()
                     )
@@ -434,17 +440,44 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.recentsws, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.recentswsmenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                val id = item.itemId
+                if (id == R.id.refreshRecents) refreshRecentFlights(true) else if (id == R.id.findFlights) {
+                    if (isOnline(context)) {
+                        val i = Intent(activity, FlightQueryActivity::class.java)
+                        i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery)
+                        mQueryLauncher!!.launch(i)
+                    } else alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
+                } else return false
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         MFBMain.registerNotifyDataChange(this)
         MFBMain.registerNotifyResetAll(this)
         val i = requireActivity().intent
         if (i != null) {
-            val o: Any? = i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT)
+            val o: Any? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
+            else
+                i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT)
             if (o != null) currentQuery = o as FlightQuery?
         }
         fCouldBeMore = true
@@ -452,7 +485,11 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             StartActivityForResult()
         ) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
-                currentQuery = result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
+                currentQuery =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                        result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
+                    else
+                        result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
             }
         }
         val srl: SwipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
@@ -518,49 +555,31 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
         var top = v?.top ?: 0
         if (index >= mRgle!!.size) {
             top = 0
-            index = top
+            index = 0
         }
         val fa = FlightAdapter(activity, mRgle)
         listAdapter = fa
         listView.setSelectionFromTop(index, top)
         listView.onItemClickListener =
             OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-                if (position >= 0 || position < mRgle!!.size) {
-                    // Entry could be larger than can be passed directly in intent, so put it
-                    // into the MFBUtil cache and retrieve it on the other end
-                    val key = UUID.randomUUID().toString()
-                    putCacheForKey(key, mRgle!![position])
-                    val i = Intent(activity, EditFlightActivity::class.java)
-                    i.putExtra(VIEWEXISTINGFLIGHT, key)
-                    startActivity(i)
-                }
+                // Entry could be larger than can be passed directly in intent, so put it
+                // into the MFBUtil cache and retrieve it on the other end
+                val key = UUID.randomUUID().toString()
+                putCacheForKey(key, mRgle!![position])
+                val i = Intent(activity, EditFlightActivity::class.java)
+                i.putExtra(VIEWEXISTINGFLIGHT, key)
+                startActivity(i)
             }
-        if (fShowFlightImages) Thread(
+        if (fShowFlightImages)
             LazyThumbnailLoader(
+                @Suppress("UNCHECKED_CAST")
                 mRgle as Array<LazyThumbnailLoader.ThumbnailedItem>,
-                (this.listAdapter as FlightAdapter?)!!
-            )
-        ).start()
+                listAdapter as FlightAdapter,
+                lifecycleScope
+            ).start()
         val rgUnsubmitted = unsubmittedFlights
         if (rgUnsubmitted.isNotEmpty() && isOnline(context))
             submitQueuedFlights(rgUnsubmitted)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.recentswsmenu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        val id = item.itemId
-        if (id == R.id.refreshRecents) refreshRecentFlights(true) else if (id == R.id.findFlights) {
-            if (isOnline(context)) {
-                val i = Intent(activity, FlightQueryActivity::class.java)
-                i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery)
-                mQueryLauncher!!.launch(i)
-            } else alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
-        } else return super.onOptionsItemSelected(item)
-        return true
     }
 
     override fun imgCompleted(sender: MFBImageInfo?) {
