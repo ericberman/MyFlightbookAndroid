@@ -25,7 +25,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
-import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -322,8 +321,6 @@ class MFBLocation : LocationListener {
     override fun onProviderEnabled(provider: String) {
         mFisenabled = true
     }
-
-    override fun onStatusChanged(provider: String, status: Int, extras: Bundle?) {}
 
     companion object {
         private var m_lastSeenLoc: Location? = null // last location we've seen
