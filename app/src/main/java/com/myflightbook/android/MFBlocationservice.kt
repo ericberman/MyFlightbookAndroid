@@ -8,7 +8,6 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
@@ -51,7 +50,11 @@ class MFBlocationservice : Service(), LocationListener {
         }
     }
 
-    private val mLocationRequest = LocationRequest.create()
+    private val mLocationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 500)
+        .setWaitForAccurateLocation(false)
+        .setMinUpdateIntervalMillis(1000)
+        .setMaxUpdateDelayMillis(2000)
+        .build()
     private val mLocationCallback: LocationCallback = MFBLocationCallback()
     private var mFusedLocationProvider: FusedLocationProviderClient? = null
     private fun startInForeground() {
@@ -84,9 +87,6 @@ class MFBlocationservice : Service(), LocationListener {
         ) {
             return
         }
-        mLocationRequest.setInterval(500)
-            .setFastestInterval(250)
-            .setMaxWaitTime(10000).priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         mFusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
         mFusedLocationProvider!!.requestLocationUpdates(
             mLocationRequest,
