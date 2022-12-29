@@ -4,6 +4,7 @@ package com.myflightbook.android
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.View.OnCreateContextMenuListener
@@ -16,7 +17,7 @@ import androidx.fragment.app.Fragment
 
 open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnChildClickListener,
     OnGroupCollapseListener, OnGroupExpandListener {
-    private val mHandler = Handler()
+    private val mHandler = Handler(Looper.getMainLooper())
     private val mRequestFocus =
         Runnable { mExpandableList!!.focusableViewAvailable(mExpandableList) }
     private val mOnClickListener =
@@ -134,8 +135,8 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
         mExpandableList = null
         mExpandableListShown = false
         mExpandableListContainer = null
-        mProgressContainer = mExpandableListContainer
-        mEmptyView = mProgressContainer
+        mProgressContainer = null
+        mEmptyView = null
         mStandardEmptyView = null
         super.onDestroyView()
     }
@@ -151,7 +152,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * @param position The position of the view in the list
      * @param id The row id of the item that was clicked
      */
-    @Suppress("EmptyMethod")
+    @Suppress("EmptyMethod", "UNUSED_PARAMETER")
     private fun onListItemClick(l: ExpandableListView?, v: View, position: Int, id: Long) {}
 
     /**
@@ -433,7 +434,8 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
     @Suppress("UNUSED")
     fun onContentChanged() {
 // super.onContentChanged();
-        val v = view ?: return
+        if (view == null)
+            return
         val emptyView = requireView().findViewById<View>(android.R.id.empty)
         mExpandableList = requireView().findViewById(android.R.id.list)
         if (mExpandableList == null) {

@@ -33,6 +33,9 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActMFBForm.GallerySource
 import com.myflightbook.android.webservices.AircraftSvc
@@ -121,22 +124,6 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         }
     }
 
-    private fun saveAircraft(ac : Aircraft) {
-        lifecycleScope.launch {
-            doAsync<AircraftSvc, Array<Aircraft>?>(
-                requireActivity(),
-                AircraftSvc(),
-                getString(R.string.prgNewAircraft),
-                {
-                    s -> s.addAircraft(AuthToken.m_szAuthToken!!, ac, requireContext())
-                },
-                {
-                    _, _ -> dismiss()
-                }
-            )
-        }
-    }
-
     private fun getMakes() {
         lifecycleScope.launch {
             doAsync<MakesandModelsSvc, Array<MakesandModels>?>(
@@ -154,7 +141,6 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.newaircraft, container, false)
     }
 
@@ -169,6 +155,51 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
             cancel()
             return
         }
+
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.newaircraft, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                // Handle item selection
+                val id = item.itemId
+                if (id == R.id.menuChoosePicture) choosePicture() else if (id == R.id.menuTakePicture) takePicture() else if (id == R.id.menuAddAircraft) {
+                    fromView()
+                    val ac = mAc1!!
+
+                    ac.errorString = ""
+                    if (!ac.isValid(requireContext()))
+                        alert(requireContext(), getString(R.string.txtError), ac.errorString)
+                    else {
+                        lifecycleScope.launch {
+                            doAsync<AircraftSvc, Array<Aircraft>?>(
+                                requireActivity(),
+                                AircraftSvc(),
+                                getString(R.string.prgNewAircraft),
+                                { s ->
+                                    s.addAircraft(AuthToken.m_szAuthToken!!, ac, requireContext())
+                                },
+                                { svc, _ ->
+                                    if (svc.lastError.isNotEmpty())
+                                        alert(requireContext(), getString(R.string.txtError), svc.lastError)
+                                    else
+                                        dismiss()
+                                }
+                            )
+                        }
+                    }
+                } else return false
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         mSelectMakeLauncher = registerForActivityResult(
             StartActivityForResult()
         ) { result: ActivityResult ->
@@ -335,24 +366,6 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
     }
 
     override fun onNothingSelected(arg0: AdapterView<*>?) {}
-
-    // @Override
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.newaircraft, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        val id = item.itemId
-        if (id == R.id.menuChoosePicture) choosePicture() else if (id == R.id.menuTakePicture) takePicture() else if (id == R.id.menuAddAircraft) {
-            fromView()
-            if (mAc1!!.isValid(requireContext()))
-                saveAircraft(mAc1!!)
-            else
-                alert(this, getString(R.string.txtError), mAc1!!.errorString)
-        } else return super.onOptionsItemSelected(item)
-        return true
-    }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)

@@ -399,6 +399,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     ThumbnailUtils.createVideoThumbnail(fTemp, Size(TH_WIDTH, TH_HEIGHT), null)
                 } else {
+                    @Suppress("DEPRECATION")
                     ThumbnailUtils.createVideoThumbnail(szFile, MediaStore.Images.Thumbnails.MINI_KIND)
                 }
             if (b != null) {

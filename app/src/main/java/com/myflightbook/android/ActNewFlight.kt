@@ -355,7 +355,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     val o = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         b!!.getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
                     else
-                        @Suppress("UNCHECKED_CAST")
+                        @Suppress("UNCHECKED_CAST", "DEPRECATION")
                         b!!.getSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES) as? HashSet<PropertyTemplate?>?
                     mActivetemplates = o
                     updateTemplatesForAircraft(true)

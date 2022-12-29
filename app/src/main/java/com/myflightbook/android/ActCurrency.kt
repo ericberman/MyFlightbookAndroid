@@ -27,6 +27,9 @@ import android.view.*
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.MFBMain.Invalidatable
@@ -49,12 +52,34 @@ class ActCurrency : ActMFBForm(), Invalidatable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.currency, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.currencymenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                // Handle item selection
+                if (item.itemId == R.id.menuRefresh) {
+                    refresh(true)
+                }
+
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         val tvDisclaimer = findViewById(R.id.lnkCurrencyDisclaimer) as TextView
         tvDisclaimer.setOnClickListener {
             ActWebView.viewURL(
@@ -207,19 +232,6 @@ class ActCurrency : ActMFBForm(), Invalidatable {
                 )
             }
         } else bindTable()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.currencymenu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        if (item.itemId == R.id.menuRefresh) {
-            refresh(true)
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {

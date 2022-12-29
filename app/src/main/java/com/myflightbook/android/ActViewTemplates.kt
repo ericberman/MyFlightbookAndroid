@@ -140,7 +140,7 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     b.getSerializable(ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
                 else
-                    @Suppress("UNCHECKED_CAST")
+                    @Suppress("UNCHECKED_CAST", "DEPRECATION")
                     b.getSerializable(ACTIVE_PROPERTYTEMPLATES) as HashSet<PropertyTemplate?>?
         } catch (ex: ClassCastException) {
             Log.e(MFBConstants.LOG_TAG, ex.message!!)

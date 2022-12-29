@@ -25,6 +25,9 @@ import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.TextView
 import androidx.activity.result.ActivityResult
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActMFBForm.GallerySource
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
@@ -86,12 +89,62 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.editaircraft, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.editaircraftmenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                val id = item.itemId
+                if (id == R.id.menuChoosePicture) choosePicture() else if (id == R.id.menuTakePicture) takePicture() else if (id == R.id.menuUpdateAircraft) {
+                    if (isOnline(context)) updateAircraft() else MFBUtil.alert(
+                        context,
+                        getString(R.string.txtError),
+                        getString(R.string.errNoInternet)
+                    )
+                } else if (id == R.id.menuDeleteAircraft)
+                    lifecycleScope.launch {
+                        deleteAircraft()
+                    }
+                else if (id == R.id.menuViewSchedule) {
+                    if (isOnline(context)) ActWebView.viewURL(
+                        requireActivity(), MFBConstants.authRedirWithParams(
+                            String.format(Locale.US, "d=aircraftschedule&ac=%d", mAc!!.aircraftID), context
+                        )
+                    ) else MFBUtil.alert(
+                        context, getString(R.string.txtError), getString(R.string.errNoInternet)
+                    )
+                } else if (id == R.id.findFlights) {
+                    if (isOnline(context)) {
+                        val fq = FlightQuery()
+                        fq.init()
+                        fq.aircraftList = if (mAc == null) arrayOf() else arrayOf(mAc!!)
+                        val i = Intent(activity, RecentFlightsActivity::class.java)
+                        val b = Bundle()
+                        b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq)
+                        i.putExtras(b)
+                        startActivity(i)
+                    } else MFBUtil.alert(
+                        context,
+                        getString(R.string.txtError),
+                        getString(R.string.errNoInternet)
+                    )
+                } else return false
+                return true            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         addListener(R.id.btnVORCheck)
         addListener(R.id.btnTransponder)
         addListener(R.id.btnPitotStatic)
@@ -376,49 +429,6 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
         lifecycleScope.launch {
             submitAircraftUpdate()
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.editaircraftmenu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.menuChoosePicture) choosePicture() else if (id == R.id.menuTakePicture) takePicture() else if (id == R.id.menuUpdateAircraft) {
-            if (isOnline(context)) updateAircraft() else MFBUtil.alert(
-                context,
-                getString(R.string.txtError),
-                getString(R.string.errNoInternet)
-            )
-        } else if (id == R.id.menuDeleteAircraft)
-            lifecycleScope.launch {
-                deleteAircraft()
-            }
-        else if (id == R.id.menuViewSchedule) {
-            if (isOnline(context)) ActWebView.viewURL(
-                requireActivity(), MFBConstants.authRedirWithParams(
-                    String.format(Locale.US, "d=aircraftschedule&ac=%d", mAc!!.aircraftID), context
-                )
-            ) else MFBUtil.alert(
-                context, getString(R.string.txtError), getString(R.string.errNoInternet)
-            )
-        } else if (id == R.id.findFlights) {
-            if (isOnline(context)) {
-                val fq = FlightQuery()
-                fq.init()
-                fq.aircraftList = if (mAc == null) arrayOf() else arrayOf(mAc!!)
-                val i = Intent(activity, RecentFlightsActivity::class.java)
-                val b = Bundle()
-                b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq)
-                i.putExtras(b)
-                startActivity(i)
-            } else MFBUtil.alert(
-                context,
-                getString(R.string.txtError),
-                getString(R.string.errNoInternet)
-            )
-        } else return super.onOptionsItemSelected(item)
-        return true
     }
 
     /*

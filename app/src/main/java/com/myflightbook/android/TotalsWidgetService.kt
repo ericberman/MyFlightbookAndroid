@@ -45,7 +45,7 @@ class TotalsWidgetService : RemoteViewsService() {
     }
 }
 
-internal class TotalsRemoteViewsFactory(private val mContext: Context, intent: Intent?) :
+internal class TotalsRemoteViewsFactory(private val mContext: Context, @Suppress("UNUSED_PARAMETER") intent: Intent?) :
     RemoteViewsFactory {
     private var mTotalsItmes: List<Totals> = ArrayList()
     override fun onCreate() {

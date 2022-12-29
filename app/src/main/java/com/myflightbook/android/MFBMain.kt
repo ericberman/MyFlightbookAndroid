@@ -215,12 +215,19 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
 
         // Get the version name/code for crash reports
         try {
-            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
-            else
-                packageManager.getPackageInfo(packageName, 0)
+            val packageInfo =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                    packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+                else
+                    @Suppress("DEPRECATION")
+                    packageManager.getPackageInfo(packageName, 0)
             versionName = packageInfo.versionName
-            versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode.toLong()
+            versionCode =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                    packageInfo.longVersionCode
+                else
+                    @Suppress("DEPRECATION")
+                    packageInfo.versionCode.toLong()
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
         }

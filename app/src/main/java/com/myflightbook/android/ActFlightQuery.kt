@@ -22,10 +22,14 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
 import android.widget.*
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.DlgDatePicker.DateTimeUpdate
 import com.myflightbook.android.webservices.AircraftSvc
@@ -160,14 +164,17 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.flightquery, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val i = requireActivity().intent
-        currentQuery = i.getSerializableExtra(QUERY_TO_EDIT) as FlightQuery?
+        currentQuery = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                i.getSerializableExtra(QUERY_TO_EDIT, FlightQuery::class.java)
+            else
+                @Suppress("DEPRECATION")
+                i.getSerializableExtra(QUERY_TO_EDIT) as FlightQuery?
         if (currentQuery == null) currentQuery = FlightQuery()
         if (CannedQuery.cannedQueries == null)
             lifecycleScope.launch { getCannedQueries() }
@@ -220,6 +227,26 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         addListener(R.id.txtFQNamedQueryHeader)
         setUpChecklists()
         setExpandCollapseState()
+
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+                inflater.inflate(R.menu.flightquerymenu, menu)
+            }
+
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                // Handle item selection
+                if (item.itemId == R.id.menuResetFlight) {
+                    reset()
+                }
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun setExpandCollapseState() {
@@ -589,19 +616,6 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         currentQuery!!.isTailwheel = checkState(R.id.ckIsTailwheel)
         currentQuery!!.isMotorglider = checkState(R.id.ckIsMotorGlider)
         currentQuery!!.isMultiEngineHeli = checkState(R.id.ckIsMultiEngineHeli)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.flightquerymenu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        if (item.itemId == R.id.menuResetFlight) {
-            reset()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun updateDate(id: Int, dt: Date?) {

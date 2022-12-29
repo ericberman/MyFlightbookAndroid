@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import model.DecimalEdit
 import model.DecimalEdit.Companion.stringForMode
@@ -55,6 +56,11 @@ class ActTimeCalc : AppCompatActivity(), View.OnClickListener {
             mValues.add(dInit)
             updateEquationString()
         }
+
+        onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            returnValue(initialTime)
+            finish()
+        }
     }
 
     override fun onClick(v: View) {
@@ -74,7 +80,7 @@ class ActTimeCalc : AppCompatActivity(), View.OnClickListener {
             R.id.btnAddAndUpdate -> {
                 addSpecifiedTime()
                 returnValue(computedTotal())
-                super.onBackPressed()
+                finish()
             }
         }
     }
@@ -86,11 +92,6 @@ class ActTimeCalc : AppCompatActivity(), View.OnClickListener {
         val mIntent = Intent()
         mIntent.putExtras(bundle)
         setResult(RESULT_OK, mIntent)
-    }
-
-    override fun onBackPressed() {
-        returnValue(initialTime)
-        super.onBackPressed()
     }
 
     //region Time calculation math

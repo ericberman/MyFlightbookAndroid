@@ -28,7 +28,6 @@ import android.widget.RemoteViews
 
 class TotalsWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
-        val mgr = AppWidgetManager.getInstance(context)
         if (intent.action == MFBMain.ACTION_VIEW_TOTALS) {
             context.startActivity(
                 Intent(context, MFBMain::class.java).setAction(intent.action)

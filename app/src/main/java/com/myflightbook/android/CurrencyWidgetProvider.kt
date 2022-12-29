@@ -28,7 +28,6 @@ import android.widget.RemoteViews
 
 class CurrencyWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
-        val mgr = AppWidgetManager.getInstance(context)
         if (intent.action == MFBMain.ACTION_VIEW_CURRENCY) context.startActivity(
             Intent(
                 context,

@@ -83,7 +83,11 @@ class MFBLocation : LocationListener {
         if (c != null) {
             if (mReceiver == null) mReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context, intent: Intent) {
-                    val l = intent.getParcelableExtra<Parcelable>(MFBlocationservice.EXTRA_LOCATION)
+                    val l = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                        intent.getParcelableExtra(MFBlocationservice.EXTRA_LOCATION, Location::class.java)
+                    else
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra<Parcelable>(MFBlocationservice.EXTRA_LOCATION)
                     if (l is Location) onLocationChanged(l)
                 }
             }

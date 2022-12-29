@@ -42,6 +42,7 @@ class CurrencyWidgetService : RemoteViewsService() {
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 internal class CurrencyRemoteViewsFactory(private val mContext: Context, intent: Intent?) :
     RemoteViewsFactory {
     private var mCurrencyItems: List<CurrencyStatusItem> = ArrayList()

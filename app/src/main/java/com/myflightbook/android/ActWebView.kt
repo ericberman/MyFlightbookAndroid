@@ -71,7 +71,7 @@ class ActWebView : AppCompatActivity() {
         wv.webChromeClient = object : WebChromeClient() {
             // For 3.0+ Devices (Start)
             // onActivityResult attached before constructor
-            @Suppress("UNUSED")
+            @Suppress("UNUSED_PARAMETER", "UNUSED")
             private fun openFileChooser(uploadMsg: ValueCallback<Uri>?, acceptType: String?) {
                 mUploadMessage = uploadMsg
                 val i = Intent(Intent.ACTION_GET_CONTENT)
@@ -107,7 +107,7 @@ class ActWebView : AppCompatActivity() {
             }
 
             //For Android 4.1 only
-            @Suppress("UNUSED")
+            @Suppress("UNUSED_PARAMETER", "UNUSED")
             private fun openFileChooser(
                 uploadMsg: ValueCallback<Uri>?,
                 acceptType: String?,
@@ -120,7 +120,7 @@ class ActWebView : AppCompatActivity() {
                 mFileChooser!!.launch(Intent.createChooser(intent, "File Browser"))
             }
 
-            @Suppress("UNUSED")
+            @Suppress("UNUSED_PARAMETER", "UNUSED")
             private fun openFileChooser(uploadMsg: ValueCallback<Uri>?) {
                 mUploadMessage = uploadMsg
                 val i = Intent(Intent.ACTION_GET_CONTENT)

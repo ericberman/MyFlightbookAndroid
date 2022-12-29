@@ -150,6 +150,7 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
                 currentQuery = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
                     else
+                        @Suppress("DEPRECATION")
                         result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
             }
         }
@@ -158,6 +159,7 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
             val o = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                 i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
             else
+                @Suppress("DEPRECATION")
                 i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
             if (o != null) currentQuery = o
         }

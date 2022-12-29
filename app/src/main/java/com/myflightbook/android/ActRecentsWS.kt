@@ -477,6 +477,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             val o: Any? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                 i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
             else
+                @Suppress("DEPRECATION")
                 i.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT)
             if (o != null) currentQuery = o as FlightQuery?
         }
@@ -489,6 +490,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT, FlightQuery::class.java)
                     else
+                        @Suppress("DEPRECATION")
                         result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
             }
         }
@@ -570,9 +572,9 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                 i.putExtra(VIEWEXISTINGFLIGHT, key)
                 startActivity(i)
             }
+        @Suppress("UNCHECKED_CAST")
         if (fShowFlightImages)
             LazyThumbnailLoader(
-                @Suppress("UNCHECKED_CAST")
                 mRgle as Array<LazyThumbnailLoader.ThumbnailedItem>,
                 listAdapter as FlightAdapter,
                 lifecycleScope

@@ -166,6 +166,7 @@ object MFBUtil {
             val rgb = Base64.decode(s, Base64.DEFAULT)
             val bis = ByteArrayInputStream(rgb)
             val ois = ObjectInputStream(bis)
+            @Suppress("UNCHECKED_CAST")
             return ois.readObject() as T
         } catch (ex: Exception) {
             ex.printStackTrace()
