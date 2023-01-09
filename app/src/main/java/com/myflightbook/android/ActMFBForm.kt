@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.text.format.DateFormat
 import android.util.Log
@@ -163,7 +162,7 @@ import java.util.*
                     val fTemp = File.createTempFile(
                         "img",
                         null,
-                        requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                        requireActivity().cacheDir
                     )
                     fTemp.deleteOnExit()
                     inputStream = cr.openInputStream(selectedImage)
@@ -255,11 +254,9 @@ import java.util.*
             if (checkAllTrue(result)) {
                 lifecycleScope.launch {
                     try {
-                        val storageDir =
-                            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                         val fTemp =
                             withContext(Dispatchers.IO) {
-                                File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", storageDir)
+                                File.createTempFile(TEMP_IMG_FILE_NAME, ".jpg", requireActivity().cacheDir)
                             }
                         fTemp.deleteOnExit()
                         mTempfilepath =
@@ -301,11 +298,9 @@ import java.util.*
             if (checkAllTrue(result)) {
                 lifecycleScope.launch {
                     try {
-                        val storageDir =
-                            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                         val fTemp =
                             withContext(Dispatchers.IO) {
-                                File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", storageDir)
+                                File.createTempFile(TEMP_IMG_FILE_NAME, ".mp4", requireActivity().cacheDir)
                             }
                         fTemp.deleteOnExit()
                         mTempfilepath =

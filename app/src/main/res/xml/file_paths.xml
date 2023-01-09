@@ -2,4 +2,7 @@
 <paths>
     <external-path name="my_images" path="Android/data/com.myflightbook.android/files/Pictures" />
     <external-path name="my_docs" path="Android/data/com.myflightbook.android/files/Documents" />
+    <cache-path
+        name="cache"
+        path="." />
 </paths>

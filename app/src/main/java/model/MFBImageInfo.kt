@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ import android.graphics.drawable.Drawable
 import android.location.Location
 import android.media.ThumbnailUtils
 import android.os.Build
-import android.os.Environment
 import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
@@ -829,7 +828,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                 val fTemp = File.createTempFile(
                     "tempView",
                     imageSuffix,
-                    a.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                    a.cacheDir
                 )
                 fTemp.deleteOnExit()
                 val fos = FileOutputStream(fTemp)
