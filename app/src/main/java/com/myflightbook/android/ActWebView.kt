@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -140,8 +140,14 @@ class ActWebView : AppCompatActivity() {
                 return false
             }
         }
-        assert(szURL != null)
-        wv.loadUrl(szURL!!)
+        val u = szURL!!
+        val fn = szTempFile
+        if (u.endsWith(".JPEG", true) || u.endsWith(".JPG", true) && (fn == null || fn.isEmpty())) {
+            val html =
+                "<html><body><img src=\"${u}\" width=\"100%\" /></body></html>"
+            wv.loadData(html, "text/html", null)
+        } else
+            wv.loadUrl(u)
         wv.setDownloadListener { url: String?, _: String?, _: String?, mimetype: String, _: Long ->
             if (mimetype.compareTo(
                     "text/calendar",
