@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ import model.CustomPropertyType.Companion.setPinnedProperty
 import model.DecimalEdit
 import model.DecimalEdit.CrossFillDelegate
 import model.FlightProperty
+import model.LogbookEntry
 import java.util.*
 
 class PropertyEdit : LinearLayout, DateTimeUpdate {
@@ -233,9 +234,9 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
 
     private fun updateForProperty() {
         updateLabelTypefaceForProperty()
-        val cptType = flightProperty!!.getType()!!
-        val fIsBasicDecimal =
-            cptType === CFPPropertyType.cfpDecimal && flightProperty!!.getCustomPropertyType()!!.cptFlag and 0x00200000 != 0
+        val cpt = flightProperty!!.getCustomPropertyType()!!
+        val cptType = cpt.cptType
+        val fIsTime = cpt.isTime()
         mTvlabel!!.visibility = VISIBLE
         mTxtstringval!!.visibility = GONE
         mTxtnumericfield!!.visibility = GONE
@@ -246,10 +247,11 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
                 mTxtnumericfield!!.visibility = VISIBLE
                 mTxtnumericfield!!.setMode(DecimalEdit.EditMode.INTEGER)
                 mTxtnumericfield!!.intValue = flightProperty!!.intValue
+                if (mCfd != null) mTxtnumericfield!!.setDelegate(mCfd)
             }
             CFPPropertyType.cfpDecimal -> {
                 mTxtnumericfield!!.visibility = VISIBLE
-                mTxtnumericfield!!.setMode(if (DecimalEdit.DefaultHHMM && !fIsBasicDecimal) DecimalEdit.EditMode.HHMM else DecimalEdit.EditMode.DECIMAL)
+                mTxtnumericfield!!.setMode(if (fIsTime && DecimalEdit.DefaultHHMM) DecimalEdit.EditMode.HHMM else DecimalEdit.EditMode.DECIMAL)
                 mTxtnumericfield!!.doubleValue = flightProperty!!.decValue
                 if (mCfd != null) mTxtnumericfield!!.setDelegate(mCfd)
             }
@@ -319,4 +321,18 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
                 mPl!!.updateProperty(mId, flightProperty!!)
             return flightProperty
         }
+
+    companion object {
+        fun crossFillProperty(cpt: CustomPropertyType?, le : LogbookEntry?, decEdit : DecimalEdit?) {
+            if (cpt == null || le == null || decEdit == null)
+                return
+            val xfillVal = le.xfillValueForProperty(cpt)
+            if (xfillVal > 0) {
+                if (cpt.cptType == CFPPropertyType.cfpInteger)
+                    decEdit.intValue = xfillVal.toInt()
+                else
+                    decEdit.doubleValue = xfillVal
+            }
+        }
+    }
 }

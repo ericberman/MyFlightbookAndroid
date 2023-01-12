@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -548,6 +548,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         enableCrossFill(R.id.txtPIC)
         enableCrossFill(R.id.txtHobbsStart)
         enableCrossFill(R.id.txtTachStart)
+        enableCrossFill(R.id.txtFSNightLandings)
+        enableCrossFill(R.id.txtDayLandings)
         findViewById(R.id.txtTotal)!!.setOnLongClickListener {
             val i = Intent(requireActivity(), ActTimeCalc::class.java)
             i.putExtra(ActTimeCalc.INITIAL_TIME, doubleFromField(R.id.txtTotal))
@@ -662,6 +664,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         } else if (sender.id == R.id.txtTachStart) {
             val d = getHighWaterTachForAircraft(mle!!.idAircraft)
             if (d > 0) sender.doubleValue = d
+        } else if (sender.id == R.id.txtDayLandings || sender.id == R.id.txtFSNightLandings) {
+            if (mle!!.cLandings > 0)
+                sender.intValue = mle!!.cLandings
         } else if (mle!!.decTotal > 0) sender.doubleValue = mle!!.decTotal
         fromView()
     }
@@ -1057,12 +1062,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         val i = Intent(requireActivity(), ActViewProperties::class.java)
         i.putExtra(PROPSFORFLIGHTID, mle!!.idLocalDB)
         i.putExtra(PROPSFORFLIGHTEXISTINGID, mle!!.idFlight)
-        i.putExtra(PROPSFORFLIGHTCROSSFILLVALUE, mle!!.decTotal)
-        i.putExtra(
-            TACHFORCROSSFILLVALUE, getHighWaterTachForAircraft(
-                mle!!.idAircraft
-            )
-        )
+        i.putExtra(PROPSFORFLIGHTXFILLSOURCE, mle!!)
         mPropertiesLauncher!!.launch(i)
     }
 
@@ -1859,17 +1859,17 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             val tr = l.inflate(R.layout.cpttableitem, tl, false) as TableRow
             tr.id = View.generateViewId()
             val pe: PropertyEdit = tr.findViewById(R.id.propEdit)
-            val onCrossFill = object : CrossFillDelegate {
-                override fun crossFillRequested(sender: DecimalEdit?) {
-                    val d = getHighWaterTachForAircraft(selectedAircraftID())
-                    if (d > 0 && sender != null) sender.doubleValue = d
-                }
-            }
+            val cpt = fp.getCustomPropertyType()!!
             pe.initForProperty(
                 fp,
                 tr.id,
                 this,
-                if (fp.getCustomPropertyType()!!.idPropType == idPropTypeTachStart) onCrossFill else this)
+                (
+                    object: CrossFillDelegate {
+                        override fun crossFillRequested(sender: DecimalEdit?) {
+                            PropertyEdit.crossFillProperty(cpt, mle, sender)
+                        }
+                    }))
             tr.findViewById<View>(R.id.imgFavorite).visibility =
                 if (fIsPinned) View.VISIBLE else View.INVISIBLE
             tl.addView(
@@ -1979,8 +1979,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     companion object {
         const val PROPSFORFLIGHTID = "com.myflightbook.android.FlightPropsID"
         const val PROPSFORFLIGHTEXISTINGID = "com.myflightbook.android.FlightPropsIDExisting"
-        const val PROPSFORFLIGHTCROSSFILLVALUE = "com.myflightbook.android.FlightPropsXFill"
-        const val TACHFORCROSSFILLVALUE = "com.myflightbook.android.TachStartXFill"
+        const val PROPSFORFLIGHTXFILLSOURCE = "com.myflightbook.android.xfillsource"
 
         // current state of pause/play and accumulated night
         var fPaused = false

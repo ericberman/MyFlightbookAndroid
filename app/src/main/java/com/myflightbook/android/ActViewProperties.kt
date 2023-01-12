@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package com.myflightbook.android
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -35,11 +36,8 @@ import com.myflightbook.android.webservices.CustomPropertyTypesSvc
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.cachedPropertyTypes
 import com.myflightbook.android.webservices.FlightPropertiesSvc
 import kotlinx.coroutines.launch
-import model.CustomPropertyType
-import model.DBCache
-import model.DecimalEdit
+import model.*
 import model.DecimalEdit.CrossFillDelegate
-import model.FlightProperty
 import model.FlightProperty.Companion.crossProduct
 import model.FlightProperty.Companion.distillList
 import model.FlightProperty.Companion.fromDB
@@ -47,16 +45,14 @@ import model.FlightProperty.Companion.refreshPropCache
 import model.FlightProperty.Companion.rewritePropertiesForFlight
 import java.util.*
 
-class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyListener,
-    CrossFillDelegate {
+class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyListener {
     private var mrgfpIn = arrayOf<FlightProperty>()
     private var mRgfpall: Array<FlightProperty>? = null
     private var mRgcpt: Array<CustomPropertyType>? = null
     private var mRgexpandedgroups: BooleanArray? = null
     private var mIdflight: Long = -1
     private var mIdexistingid = 0
-    private var mXfillvalue = 0.0
-    private var mXfilltachstart = 0.0
+    private var mxfillSrc : LogbookEntry? = null
 
     private fun refreshPropertyTypes(fAllowCache : Boolean = true) {
         val act = this as Activity
@@ -165,14 +161,16 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
         ): View {
             val fp = getChild(groupPosition, childPosition) as FlightProperty
 
+            val cpt = fp.getCustomPropertyType()!!
+
             // ignore passed-in value of convert view; keep these all around all the time.
-            var convertView = mCachedviews[fp.getCustomPropertyType()!!.idPropType]
+            var convertView = mCachedviews[cpt.idPropType]
             if (convertView == null) {
                 assert(mContext != null)
                 val infalInflater =
                     (mContext!!.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater)
                 convertView = infalInflater.inflate(R.layout.cptitem, parent, false)
-                mCachedviews.put(fp.getCustomPropertyType()!!.idPropType, convertView)
+                mCachedviews.put(cpt.idPropType, convertView)
             }
             val pe: PropertyEdit = convertView.findViewById(R.id.propEdit)
 
@@ -182,12 +180,13 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
                 fp,
                 fp.idPropType,
                 this@ActViewProperties,
-                if (fp.idPropType == CustomPropertyType.idPropTypeTachStart) (
-                        object: CrossFillDelegate {
-                            override fun crossFillRequested(sender: DecimalEdit?) {
-                                if (mXfilltachstart > 0 && sender != null) sender.doubleValue = mXfilltachstart
-                            }
-                        }) else this@ActViewProperties)
+                (
+                    object: CrossFillDelegate {
+                        override fun crossFillRequested(sender: DecimalEdit?) {
+                            PropertyEdit.crossFillProperty(cpt, mxfillSrc, sender)
+                        }
+                })
+                )
             return convertView
         }
 
@@ -227,8 +226,12 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
             mrgfpIn = fromDB(mIdflight)
         }
         mIdexistingid = i.getIntExtra(ActNewFlight.PROPSFORFLIGHTEXISTINGID, 0)
-        mXfillvalue = i.getDoubleExtra(ActNewFlight.PROPSFORFLIGHTCROSSFILLVALUE, 0.0)
-        mXfilltachstart = i.getDoubleExtra(ActNewFlight.TACHFORCROSSFILLVALUE, 0.0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mxfillSrc = i.getSerializableExtra(ActNewFlight.PROPSFORFLIGHTXFILLSOURCE, LogbookEntry::class.java)
+        } else
+            @Suppress("DEPRECATION")
+            mxfillSrc = i.getSerializableExtra(ActNewFlight.PROPSFORFLIGHTXFILLSOURCE) as LogbookEntry?
+
         val cptSvc = CustomPropertyTypesSvc()
         if (cptSvc.getCacheStatus() === DBCache.DBCacheStatus.VALID) {
             mRgcpt = cachedPropertyTypes
@@ -358,9 +361,4 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
     }
 
     override fun dateOfFlightShouldReset(dt: Date) {}
-
-    //region DecimalEdit cross-fill
-    override fun crossFillRequested(sender: DecimalEdit?) {
-        sender!!.doubleValue = mXfillvalue
-    } //endregion
 }

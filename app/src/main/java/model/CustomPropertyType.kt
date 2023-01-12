@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -210,6 +210,18 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
             CPTPropID.PIDIDPropType -> idPropType = sz.toInt()
             CPTPropID.PIDPreviousValues -> previousValues = arg1 as Array<String>
         }
+    }
+
+    fun isLanding() : Boolean {
+        return cptType == CFPPropertyType.cfpInteger && (cptFlag and 0x08000000) == 0x08000000
+    }
+
+    fun isApproach() : Boolean {
+        return cptType == CFPPropertyType.cfpInteger && (cptFlag and 0x00001000) == 0x00001000
+    }
+
+    fun isTime() : Boolean {
+        return cptType == CFPPropertyType.cfpDecimal && (cptFlag and 0x00200000) == 0
     }
 
     companion object {

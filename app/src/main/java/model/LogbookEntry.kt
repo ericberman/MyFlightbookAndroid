@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1166,6 +1166,18 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         autoFillCostOfFlight()
         autoFillFuel()
         autoFillInstruction()
+    }
+
+    fun xfillValueForProperty(cpt : CustomPropertyType) :Double {
+        if (cpt.idPropType == CustomPropertyType.idPropTypeTachStart)
+            return Aircraft.getHighWaterTachForAircraft(idAircraft)
+        if (cpt.isTime())
+            return decTotal
+        if (cpt.isLanding())
+            return cLandings.toDouble()
+        if (cpt.isApproach())
+            return cApproaches.toDouble()
+        return 0.0
     }
 
     companion object {
