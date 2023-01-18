@@ -59,7 +59,7 @@ class TotalsWidgetProvider : AppWidgetProvider() {
             val startActivityIntent = Intent(
                 context,
                 TotalsWidgetProvider::class.java
-            ).setAction(MFBMain.ACTION_VIEW_TOTALS)
+            ).setAction(MFBMain.ACTION_VIEW_TOTALS).setClassName("com.myflightbook.android", MFBMain::class.java.toString())
             intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
             val startActivityPendingIntent = PendingIntent.getBroadcast(
                 context,

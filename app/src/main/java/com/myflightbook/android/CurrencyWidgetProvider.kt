@@ -59,7 +59,7 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
             val startActivityIntent = Intent(
                 context,
                 CurrencyWidgetProvider::class.java
-            ).setAction(MFBMain.ACTION_VIEW_CURRENCY)
+            ).setAction(MFBMain.ACTION_VIEW_CURRENCY).setClassName("com.myflightbook.android", MFBMain::class.java.toString())
             intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
             val startActivityPendingIntent = PendingIntent.getBroadcast(
                 context,
