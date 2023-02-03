@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="lblOK">OK</string>
     <string name="lblCancel">Abbrechen</string>
     <string name="lblConfirm">Bestätigen</string>
@@ -24,10 +24,10 @@
     <string name="signInPrompt">Du benötigst einen Account bei MyFlightbook.com, um MyFlightbook für Android zu nutzen.</string>
     <string name="statusNotSignedIn">Du bist nicht angemeldet. Bitte melde dich an oder erstelle einen Account.</string>
     <string name="statusSignedIn">Du bist als %s angemeldet.</string>
-    <string name="szSignIn">Anmelden...</string>
+    <string name="szSignIn">Anmelden…</string>
     <string name="szSignOut">Abmelden</string>
     <string name="lblForgotPassword">Passwort vergessen? Du kannst es auf MyFlighbook.com zurücksetzen</string>
-    <string name="createuser">Account erstellen...</string>
+    <string name="createuser">Account erstellen…</string>
     <string name="lblOptAutoDetect">Automatisch Start und Landung erkennen</string>
     <string name="lblOptRecord">Flugweg aufzeichnen</string>
     <string name="lblOptRecordHiRes">Aufzeichnen in hoher Auflösung</string>
@@ -102,7 +102,7 @@
     <string name="lblTachEnd">Ende Tacho</string>
     <string name="lblBlockOut">Block Out</string>
     <string name="lblBlockIn">Block In</string>
-    <string name="lblProperties">Bearbeite Flug Daten...</string>
+    <string name="lblProperties">Bearbeite Flug Daten…</string>
     <string name="lblCatApproachesAndLandings">Landungen und Approaches</string>
     <string name="lblCatTimes">Flugzeiten</string>
     <string name="lblCatOverall">Allgemeine Flug Informationen</string>
@@ -136,7 +136,7 @@
     <string name="lblOptional">(Optional)</string>
     <string name="lblPrivacy">Datenschutzerklärung</string>
     <string name="lblTandC">Nutzungsbedingungen</string>
-    <string name="lblViewWebContent">Zeige...</string>
+    <string name="lblViewWebContent">Zeige…</string>
     <string name="lblDisclaimer">Durch das erstellen eines Accounts, stimmst du den Nutzungsbedingungen zu.</string>
     <string name="lblCreateAccount">Account erstellen</string>
     <string name="lblQuestionDescription">Für den Fall, dass du dein Passwort vergisst, gib bitte eine Sicherheitsfragen und Antwort an. \n\nEine gute Sicherheitsfrage ist eine, die:\n\n - nur du weißt - und nicht vergisst\n - sich nicht mit der Zeit ändert\n - Hat eine kurze, eindeutige Schreibweise und Großschreibung.\n\nDu kannst eine aus der vorgegebenen Liste auswählen, sie bearbeiten oder eine eigene erstellen.</string>
@@ -261,7 +261,7 @@
     <string name="prgDeleteProp">Lösche Eigenschaft…</string>
     <string name="prgUploadingImages">Bild %1$d vom %2$d hochladen</string>
     <string name="prgUpdatingAircraft">Flugzeug aktualisieren…</string>
-    <string name="prgDeletingAircraft">Löschen...</string>
+    <string name="prgDeletingAircraft">Löschen…</string>
     <string name="emptyWaterMarkInt">0</string>
     <string name="emptyWaterMarkHHMM">HH:MM</string>
     <string name="emptyWaterMarkRoute">Route des Flugs</string>
@@ -325,7 +325,7 @@
     <string name="sendFlightBody">Ich sende Ihnen diesen Flug aus meinem Logbuch, damit Sie ihn Ihrem Logbuch hinzufügen können.\n\nBitte gehen Sie zu %s, um ihn hinzuzufügen.\n\nSie werden die Möglichkeit haben, den Flug zu überprüfen und Änderungen vorzunehmen, bevor der Flug gespeichert wird.</string>
 
     <string name="txtUpdateRouteOnMap">Update</string>
-    <string name="txtShareGPX">Sende GPX zu...</string>
+    <string name="txtShareGPX">Sende GPX zu…</string>
     <string name="txtFileNameExisting">Flug </string>
     <string name="txtFileNameNew">Neuer Flug</string>
     <string name="txtFileNamePending">Schwebender Flug</string>
