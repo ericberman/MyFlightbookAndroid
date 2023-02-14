@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -211,7 +211,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             // Add the airport route; we'll draw the airports on top of them.
             // Note that we don't do this if m_le is null because then we would connect the dots.
             if (mLe != null) {
-                val po = PolylineOptions().geodesic(true).color(Color.BLUE).width(4f)
+                val po = PolylineOptions().geodesic(true).color(RouteColor).width(8f)
                 for (ap in mRgaproute!!) {
                     val ll = ap.latLong
                     llb.include(ll.latLng)
@@ -221,7 +221,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             }
 
             // Then add the flight path, if available
-            val po = PolylineOptions().geodesic(true).color(Color.RED).width(2f)
+            val po = PolylineOptions().geodesic(true).color(PathColor).width(8f)
             for (ll in mRgflightroute) {
                 llb.include(ll.latLng)
                 po.add(ll.latLng)
@@ -315,7 +315,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             return
         }
         map.isIndoorEnabled = false
-        map.mapType = GoogleMap.MAP_TYPE_HYBRID
+        map.mapType = GoogleMap.MAP_TYPE_HYBRID // TODO: make this an option
         val settings = map.uiSettings
         settings.isCompassEnabled = false
         settings.isRotateGesturesEnabled = true
@@ -563,5 +563,8 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         const val EXISTINGFLIGHTID = "com.myflightbook.android.existingflightid"
         const val NEWFLIGHTID = "com.myflightbook.android.newflightid"
         const val ALIASES = "com.myflightbook.android.aliases"
+
+        var RouteColor = Color.BLUE
+        var PathColor = Color.RED
     }
 }

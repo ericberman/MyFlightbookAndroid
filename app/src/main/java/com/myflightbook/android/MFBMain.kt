@@ -31,6 +31,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteReadOnlyDatabaseException
+import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
@@ -587,6 +588,9 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
                 m_KeysAltUnits, 0
             )]
 
+            ActFlightMap.RouteColor = mPrefs!!.getInt(m_KeysRouteColor, Color.BLUE)
+            ActFlightMap.PathColor = mPrefs!!.getInt(m_KeysPathColor, Color.RED)
+
             ActNewFlight.fShowTach = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowTach, false)
             ActNewFlight.fShowHobbs = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowHobbs, true)
             ActNewFlight.fShowEngine = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowEngine, true)
@@ -631,6 +635,9 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         ed.putInt(m_KeysLastTab, mViewPager!!.currentItem.also { mLastTabIndex = it })
         ed.putLong(m_TimeOfLastVacuum, mLastVacuum)
         ed.putInt(m_KeysTOSpeed, takeOffSpeedIndex)
+
+        ed.putInt(m_KeysRouteColor, ActFlightMap.RouteColor)
+        ed.putInt(m_KeysPathColor, ActFlightMap.PathColor)
 
         ed.putBoolean(ActNewFlight.prefKeyShowTach, ActNewFlight.fShowTach)
         ed.putBoolean(ActNewFlight.prefKeyShowHobbs, ActNewFlight.fShowHobbs)
@@ -680,6 +687,8 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         private const val m_KeysNightFlightOption = "nightFlightOption"
         private const val m_KeysNightLandingOption = "nightLandingOption"
         private const val m_KeysNightMode = "nightModeOption"
+        private const val m_KeysRouteColor = "routeColor"
+        private const val m_KeysPathColor = "pathColor"
         var NightModePref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         private const val m_TimeOfLastVacuum = "LastVacuum"
         var mDBHelper: DataBaseHelper? = null

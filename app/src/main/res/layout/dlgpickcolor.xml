@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pikolo="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp">
+    <com.madrapps.pikolo.RGBColorPicker
+        android:id="@+id/pikoColorPicker"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        android:padding="10dp"
+        pikolo:blue_indicator_stroke_width="0dp"
+        pikolo:arc_length="110"
+        pikolo:red_start_angle="30"
+        pikolo:blue_start_angle="270"
+        pikolo:radius_offset="15dp"
+        pikolo:green_indicator_stroke_color="@color/colorPrimary"
+        pikolo:green_start_angle="150"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/btnOK"
+        android:text="@string/lblOK" />
+</LinearLayout>

@@ -382,6 +382,36 @@
                     android:padding="5sp"
                     android:layout_height="wrap_content" />
             </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5sp"
+                    android:id="@+id/lblRouteColor"
+                    android:text="@string/lblRouteColor" />
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="5dp" android:orientation="horizontal">
+                    <View android:layout_width="50dp" android:layout_height="50dp" android:id="@+id/vwSampleRouteColor" />
+                    <View android:layout_height="wrap_content" android:layout_width="wrap_content" />
+                </LinearLayout>
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5sp"
+                    android:id="@+id/lblPathColor"
+                    android:text="@string/lblPathColor" />
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="5dp" android:orientation="horizontal">
+                    <View android:layout_width="50dp" android:layout_height="50dp" android:id="@+id/vwSamplePathColor" />
+                    <View android:layout_height="wrap_content" android:layout_width="wrap_content" />
+                </LinearLayout>
+            </TableRow>
         </TableLayout>
 
         <TextView

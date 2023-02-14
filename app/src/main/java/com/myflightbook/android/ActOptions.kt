@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android
 
+import DlgPickColor
 import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
@@ -27,6 +28,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.View.OnClickListener
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
@@ -58,7 +60,8 @@ import model.MFBUtil.alert
 import java.text.DateFormat
 import java.util.*
 
-class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelectedListener {
+
+class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedListener {
     enum class AltitudeUnits {
         Feet, Meters
     }
@@ -210,6 +213,33 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
         ck.isEnabled = enabled
     }
 
+    private fun updateMapColors() {
+
+        val vwRoute = findViewById(R.id.vwSampleRouteColor)
+        with (vwRoute!!) {
+            setBackgroundColor(ActFlightMap.RouteColor)
+            setOnClickListener {
+                val dlgPicker = DlgPickColor(requireActivity(), ActFlightMap.RouteColor) { c: Int ->
+                    ActFlightMap.RouteColor = c
+                    setBackgroundColor(c)
+                }
+                dlgPicker.show()
+            }
+        }
+
+        val vwPath = findViewById(R.id.vwSamplePathColor)
+        with(vwPath!!) {
+            setBackgroundColor(ActFlightMap.PathColor)
+            setOnClickListener {
+                val dlgPicker = DlgPickColor(requireActivity(), ActFlightMap.PathColor) { c: Int ->
+                    ActFlightMap.PathColor = c
+                    setBackgroundColor(c)
+                }
+                dlgPicker.show()
+            }
+        }
+    }
+
     private fun updateStatus() {
         // refresh sign-in status
         var t = findViewById(R.id.txtSignInStatus) as TextView?
@@ -255,6 +285,7 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
         addListener(R.id.btnSupport)
         addListener(R.id.btnAdditionalOptions)
         addListener(R.id.btnPackAndGo)
+
         val fHasGPS = hasGPS(requireContext())
         if (!fHasGPS) {
             MFBLocation.fPrefRecordFlightHighRes = false
@@ -383,6 +414,8 @@ class ActOptions : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSelecte
         t = findViewById(R.id.txtCopyright) as TextView
         t.text = String.format(Locale.getDefault(), "%s %s %s", getString(R.string.lblCopyright), MFBMain.versionName,
         if (MFBConstants.fIsDebug) " - DEBUG (" + MFBConstants.szIP + ")" else "")
+
+        updateMapColors()
     }
 
     override fun onResume() {

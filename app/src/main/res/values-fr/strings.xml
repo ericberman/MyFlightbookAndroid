@@ -60,6 +60,8 @@
     <string name="lblFlightDetailLow">Bas</string>
     <string name="lblFlightDetailMed">Moyen</string>
     <string name="lblFlightDetailHigh">Élevé</string>
+    <string name="lblRouteColor">Couleur de l\'itinéraire</string>
+    <string name="lblPathColor">Couleur du chemin</string>
     <string name="lblNightMode">Mode Nuit</string>
     <string name="lblNightModeOff">Désactivé</string>
     <string name="lblNightModeOn">Activé</string>
