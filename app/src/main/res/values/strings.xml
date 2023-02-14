@@ -62,6 +62,11 @@
     <string name="lblFlightDetailHigh">High</string>
     <string name="lblRouteColor">Route Color</string>
     <string name="lblPathColor">Path Color</string>
+    <string name="lblMapStyle">Map Style</string>
+    <string name="lblMapStyleStandard">Standard</string>
+    <string name="lblMapStyleHybrid">Hybrid</string>
+    <string name="lblMapStyleTerrain">Terrain</string>
+    <string name="lblMapStyleSatellite">Satellite</string>
     <string name="lblNightMode">Night Mode</string>
     <string name="lblNightModeOff">Off</string>
     <string name="lblNightModeOn">On</string>

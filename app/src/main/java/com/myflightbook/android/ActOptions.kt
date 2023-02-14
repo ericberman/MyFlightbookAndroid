@@ -321,6 +321,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             getString(R.string.autoBlock),
             getString(R.string.autoFlightStartEngineEnd)
         )
+
         var sp = findViewById(R.id.spnAutoHobbs) as Spinner?
         var adapter = ArrayAdapter(requireActivity(), R.layout.mfbsimpletextitem, rgAutoHobbs)
         sp!!.adapter = adapter
@@ -411,6 +412,20 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         sp!!.adapter = adapter
         sp.setSelection(speedUnits.ordinal)
         sp.onItemSelectedListener = this
+
+        // These are in the same order of GoogleMap.MAP_TYPE_xx to make easy mapping because I'm lazy.
+        val rgMapTypes = arrayOf(
+            getString(R.string.lblMapStyleStandard),
+            getString(R.string.lblMapStyleSatellite),
+            getString(R.string.lblMapStyleTerrain),
+            getString(R.string.lblMapStyleHybrid),
+        )
+        sp = findViewById(R.id.spnMapStyle) as Spinner?
+        adapter = ArrayAdapter(requireActivity(), R.layout.mfbsimpletextitem, rgMapTypes)
+        sp!!.adapter = adapter
+        sp.onItemSelectedListener = this
+        sp.setSelection(ActFlightMap.MapType - 1)
+
         t = findViewById(R.id.txtCopyright) as TextView
         t.text = String.format(Locale.getDefault(), "%s %s %s", getString(R.string.lblCopyright), MFBMain.versionName,
         if (MFBConstants.fIsDebug) " - DEBUG (" + MFBConstants.szIP + ")" else "")
@@ -444,6 +459,9 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         } else if (spid == R.id.spnAltUnits) altitudeUnits =
             AltitudeUnits.values()[i] else if (spid == R.id.spnSpeedUnits) speedUnits =
             SpeedUnits.values()[i]
+        else if (spid == R.id.spnMapStyle) {
+            ActFlightMap.MapType = pos + 1
+        }
     }
 
     private fun contactUs() {

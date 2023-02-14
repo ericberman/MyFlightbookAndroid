@@ -412,6 +412,21 @@
                     <View android:layout_height="wrap_content" android:layout_width="wrap_content" />
                 </LinearLayout>
             </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5sp"
+                    android:id="@+id/lblMapStyle"
+                    android:text="@string/lblMapStyle" />
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spnMapStyle" />
+            </TableRow>
         </TableLayout>
 
         <TextView

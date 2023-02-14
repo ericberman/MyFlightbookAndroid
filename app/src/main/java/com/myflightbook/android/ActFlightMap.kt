@@ -315,7 +315,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
             return
         }
         map.isIndoorEnabled = false
-        map.mapType = GoogleMap.MAP_TYPE_HYBRID // TODO: make this an option
+        map.mapType = MapType
         val settings = map.uiSettings
         settings.isCompassEnabled = false
         settings.isRotateGesturesEnabled = true
@@ -566,5 +566,6 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
 
         var RouteColor = Color.BLUE
         var PathColor = Color.RED
+        var MapType = GoogleMap.MAP_TYPE_SATELLITE
     }
 }

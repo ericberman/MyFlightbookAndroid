@@ -48,6 +48,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback
@@ -590,6 +591,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
 
             ActFlightMap.RouteColor = mPrefs!!.getInt(m_KeysRouteColor, Color.BLUE)
             ActFlightMap.PathColor = mPrefs!!.getInt(m_KeysPathColor, Color.RED)
+            ActFlightMap.MapType = mPrefs!!.getInt(m_KeysMapType, GoogleMap.MAP_TYPE_SATELLITE)
 
             ActNewFlight.fShowTach = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowTach, false)
             ActNewFlight.fShowHobbs = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowHobbs, true)
@@ -638,6 +640,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
 
         ed.putInt(m_KeysRouteColor, ActFlightMap.RouteColor)
         ed.putInt(m_KeysPathColor, ActFlightMap.PathColor)
+        ed.putInt(m_KeysMapType, ActFlightMap.MapType)
 
         ed.putBoolean(ActNewFlight.prefKeyShowTach, ActNewFlight.fShowTach)
         ed.putBoolean(ActNewFlight.prefKeyShowHobbs, ActNewFlight.fShowHobbs)
@@ -689,6 +692,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         private const val m_KeysNightMode = "nightModeOption"
         private const val m_KeysRouteColor = "routeColor"
         private const val m_KeysPathColor = "pathColor"
+        private const val m_KeysMapType = "mapType"
         var NightModePref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         private const val m_TimeOfLastVacuum = "LastVacuum"
         var mDBHelper: DataBaseHelper? = null
