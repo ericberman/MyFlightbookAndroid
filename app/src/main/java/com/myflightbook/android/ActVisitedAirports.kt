@@ -174,11 +174,9 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
         // slice and dice into headers/first names
         for (i in visitedAirports!!.indices) {
             val va = visitedAirports!![i]
-            if (szRestrict.isNotEmpty() && !va.airport!!.facilityName.uppercase(Locale.getDefault())
-                    .contains(szRestrict) && !va.airport!!.airportID.uppercase(
-                    Locale.getDefault()
-                ).contains(szRestrict)
-            ) continue
+            val szSearch = String.format(Locale.getDefault(), "%s %s %s %s", va.airport!!.facilityName, va.airport!!.airportID, va.airport!!.country ?: "", va.airport!!.admin1 ?: "").uppercase(Locale.getDefault()).trim()
+            if (szRestrict.isNotEmpty() && !szSearch.contains(szRestrict))
+                continue
 
             // get the first letter for this property as the grouping key
             val szKey = va.airport!!.facilityName.substring(0, 1).uppercase(Locale.getDefault())
