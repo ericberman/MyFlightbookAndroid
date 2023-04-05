@@ -284,6 +284,8 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         addListener(R.id.btnCleanUp)
         addListener(R.id.btnSupport)
         addListener(R.id.btnAdditionalOptions)
+        addListener(R.id.btnManageAccount)
+        addListener(R.id.btnDeleteAccount)
         addListener(R.id.btnPackAndGo)
 
         val fHasGPS = hasGPS(requireContext())
@@ -600,6 +602,8 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
                     context
                 )
             )
+            R.id.btnManageAccount -> viewPreferences(authRedirWithParams("d=account", context))
+            R.id.btnDeleteAccount -> viewPreferences(authRedirWithParams("d=bigredbuttons", context))
             R.id.btnFAQ -> ActWebView.viewURL(
                 requireActivity(), MFBConstants.urlFAQ
             )

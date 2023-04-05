@@ -172,6 +172,8 @@
     <string name="lblAdditionalOptions">Additional Options</string>
     <string name="lblAdditionalOptionsText">Additional functionality and settings for your account are on MyFlightbook.com</string>
     <string name="lblGoToMyFlightbookOptions">Go to MyFlightbook.com</string>
+    <string name="lblManageAccount">Manage account</string>
+    <string name="lblDeleteAccount">Delete account</string>
     <string name="lblOptionsOther">About MyFlightbook</string>
     <string name="lblFollowFacebook">Facebook</string>
     <string name="lblFollowTwitter">Twitter</string>

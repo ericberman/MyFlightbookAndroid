@@ -172,6 +172,8 @@
     <string name="lblAdditionalOptions">Weitere Einstellungen</string>
     <string name="lblAdditionalOptionsText">Zusätzliche Funktionen und Einstellungen für Dein Konto findest Du auf MyFlightbook.com</string>
     <string name="lblGoToMyFlightbookOptions">Gehe zu MyFlightbook.com</string>
+    <string name="lblManageAccount">Mein Konto verwalten</string>
+    <string name="lblDeleteAccount">Mein Konto löschen</string>
     <string name="lblOptionsOther">Über MyFlightbook</string>
     <string name="lblFollowFacebook">Facebook</string>
     <string name="lblFollowTwitter">Twitter</string>

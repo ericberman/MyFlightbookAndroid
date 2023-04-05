@@ -499,6 +499,21 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/buttonBarStyle"
                 android:text="@string/lblGoToMyFlightbookOptions" />
+
+            <Button
+                android:id="@+id/btnManageAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/lblManageAccount" />
+
+            <Button
+                android:id="@+id/btnDeleteAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarStyle"
+                android:text="@string/lblDeleteAccount" />
+
         </LinearLayout>
 
         <TextView
