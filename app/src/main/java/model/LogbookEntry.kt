@@ -21,7 +21,6 @@ package model
 import android.content.ContentValues
 import android.database.Cursor
 import android.util.Log
-import androidx.core.text.HtmlCompat
 import com.myflightbook.android.ActRecentsWS
 import com.myflightbook.android.MFBMain
 import com.myflightbook.android.webservices.AircraftSvc
@@ -809,12 +808,8 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             so.getProperty("fHoldingProcedures")
                 .toString()
         )
-        szRoute =
-            HtmlCompat.fromHtml(readNullableString(so, "Route"), HtmlCompat.FROM_HTML_MODE_LEGACY)
-                .toString()
-        szComments =
-            HtmlCompat.fromHtml(readNullableString(so, "Comment"), HtmlCompat.FROM_HTML_MODE_LEGACY)
-                .toString()
+        szRoute = readNullableString(so, "Route")
+        szComments = readNullableString(so, "Comment")
         fPublic = java.lang.Boolean.parseBoolean(so.getProperty("fIsPublic").toString())
         dtFlight = IsoDate.stringToDate(so.getProperty("Date").toString(), IsoDate.DATE)
         dtFlightStart = readNullableDate(so, "FlightStart")!!
