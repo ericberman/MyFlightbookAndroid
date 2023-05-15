@@ -12,7 +12,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 155
-        versionName "2023.04.05.1"
+        versionName "2023.05.13.1"
     }
 
     buildTypes {
