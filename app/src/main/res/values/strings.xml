@@ -123,9 +123,10 @@
     <string name="lblSignatureTemplate2NoExp">(Certificate# %1$s)</string>
 
     <string name="lblNow">Now</string>
-    <string name="lblNone">None</string>
+    <string name="lblDeleteDate">Delete</string>
     <string name="lblTouchForNow">(Tap for now)</string>
     <string name="lblTouchForToday">(Tap for today)</string>
+    <string name="lblToday">(Today)</string>
 
     <string name="lblNewUser">Create New Account</string>
     <string name="lblEmail">Email Address</string>

@@ -30,7 +30,7 @@
             android:layout_weight="0.3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/lblNone" />
+            android:text="@string/lblDeleteDate" />
 
         <Button
             android:id="@+id/btnDateNow"

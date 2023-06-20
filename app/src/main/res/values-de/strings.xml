@@ -123,10 +123,11 @@
     <string name="lblSignatureTemplate2NoExp">(Lizenz# %1$s)</string>
    
    <string name="lblNow">Jetzt</string>
-    <string name="lblNone">Keine</string>
+    <string name="lblDeleteDate">Löschen</string>
     <string name="lblTouchForNow">(Tippen für jetzt)</string>
     <string name="lblTouchForToday">(Tippen für heute)</string>
-    
+    <string name="lblToday">(Heute)</string>
+
     <string name="lblNewUser">Neuen Account erstellen</string>
     <string name="lblEmail">E-Mail Adresse</string>
     <string name="lblEmail2">E-Mail bestätigen</string>

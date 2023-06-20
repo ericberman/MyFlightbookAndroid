@@ -56,6 +56,7 @@ import com.myflightbook.android.webservices.AuthToken.Companion.isValid
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.cachedPropertyTypes
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
+import com.myflightbook.android.webservices.UTCDate.getNullDate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
 import kotlinx.coroutines.launch
 import model.*
@@ -614,8 +615,6 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        // set for no focus.
-        findViewById(R.id.btnFlightSet)!!.requestFocus()
         if (fIsNewFlight) {
             // re-use the existing in-progress flight
             mle = MFBMain.newFlightListener?.getInProgressFlight(requireActivity())
@@ -924,6 +923,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         choosePicture()
     }
 
+    private fun setDateOfFlight() {
+        val b = findViewById(R.id.btnFlightSet) as TextView?
+        if (isNullDate(mle?.dtFlight)) b!!.text = getString(R.string.lblToday) else b!!.text =
+            DateFormat.getDateFormat(requireActivity()).format(mle!!.dtFlight)
+    }
+
     override fun onClick(v: View) {
         fromView()
         when (val id = v.id) {
@@ -978,14 +983,20 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 } else setDateTime(id, mle!!.dtFlightEnd, this, DlgDatePicker.DatePickMode.UTCDATETIME)
             }
             R.id.btnFlightSet -> {
-                val dlg = DlgDatePicker(
-                    requireActivity(),
-                    DlgDatePicker.DatePickMode.LOCALDATEONLY,
-                    mle!!.dtFlight
-                )
-                dlg.mDelegate = this
-                dlg.mId = id
-                dlg.show()
+                if (isNullDate(mle!!.dtFlight)) {
+                    mle!!.dtFlight = Date()
+                    setDateOfFlight()
+                } else {
+                    val dlg = DlgDatePicker(
+                        requireActivity(),
+                        DlgDatePicker.DatePickMode.LOCALDATEONLY,
+                        mle!!.dtFlight
+                    )
+                    dlg.mDelegate = this
+                    dlg.setNullableDate()
+                    dlg.mId = id
+                    dlg.show()
+                }
             }
             R.id.btnProps -> viewPropsForFlight()
             R.id.btnAppendNearest -> appendNearest()
@@ -1116,6 +1127,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             }
             R.id.btnFlightSet -> {
                 mle!!.dtFlight = dt2
+                setDateOfFlight()
             }
         }
         toView()
@@ -1151,6 +1163,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         val hobbsEnd = mle!!.hobbsEnd
         val cfpTachEnd = mle!!.propertyWithID((idPropTypeTachEnd))
         val leNew = LogbookEntry(validateAircraftID(mle!!.idAircraft), mle!!.fPublic)
+        leNew.dtFlight = getNullDate() // When *resetting* a flight, use a null date per issue #294
         if (fCarryHobbs) leNew.hobbsStart = hobbsEnd
         mActivetemplates!!.clear()
         mle!!.idAircraft = leNew.idAircraft // so that updateTemplatesForAircraft works
@@ -1203,6 +1216,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (fIsNew) {
             getMainLocation()?.isRecording = false
             showRecordingIndicator()
+            if (isNullDate(mle!!.dtFlight)) {
+                // Null date becomes whatever today is locally
+                mle!!.dtFlight = Date()
+            }
         }
 
         // load any pending properties from the DB into the logbookentry object itself.
@@ -1288,7 +1305,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         setIntForField(R.id.txtDayLandings, mle!!.cFullStopLandings)
         setCheckState(R.id.ckMyFlightbook, mle!!.fPublic)
         setCheckState(R.id.ckHold, mle!!.fHold)
-        setLocalDateForField(R.id.btnFlightSet, mle!!.dtFlight)
+        setDateOfFlight()
 
         // Engine/Flight dates
         val tachStart = mle!!.propDoubleForID(idPropTypeTachStart)
@@ -1507,7 +1524,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             if (dtBlockOut != null && !isNullDate(dtBlockOut) && dtBlockOut < dt)
                 dt = dtBlockOut
             mle!!.dtFlight = dt
-            setLocalDateForField(R.id.btnFlightSet, mle!!.dtFlight)
+            setDateOfFlight()
         }
     }
 

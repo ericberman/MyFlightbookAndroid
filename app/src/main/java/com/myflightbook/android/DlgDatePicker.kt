@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ class DlgDatePicker(c: Context?, dpm: DatePickMode, dt: Date) : Dialog(
             = 0
     @JvmField
     var mDelegate: DateTimeUpdate? = null
+
     private var dpDate: DatePicker? = null
     private var tpTime: TimePicker? = null
     private fun init(dpm: DatePickMode, dt: Date) {
@@ -106,6 +107,10 @@ class DlgDatePicker(c: Context?, dpm: DatePickMode, dt: Date) : Dialog(
             if (dp == DatePickMode.UTCDATETIME) View.VISIBLE else View.GONE
         findViewById<View>(R.id.btnDateNone).visibility =
             if (dp == DatePickMode.LOCALDATEONLY) View.GONE else View.VISIBLE
+    }
+
+    fun setNullableDate() {
+        findViewById<View>(R.id.btnDateNone).visibility = View.VISIBLE
     }
 
     private fun notifyDelegate() {
