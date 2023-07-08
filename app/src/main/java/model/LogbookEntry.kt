@@ -330,11 +330,23 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         get() = !isNullDate(dtFlightStart)
     val isKnownFlightEnd: Boolean
         get() = !isNullDate(dtFlightEnd)
+
+    val isKnownBlockOut: Boolean
+        get() = !isNullDate(propDateForID(CustomPropertyType.idPropTypeBlockOut))
+
+    val isKnownBlockIn: Boolean
+        get() = !isNullDate(propDateForID(CustomPropertyType.idPropTypeBlockIn))
+
     private val isKnownEngineTime: Boolean
         get() = isKnownEngineStart && isKnownEngineEnd
 
     fun flightInProgress(): Boolean {
-        return (isKnownEngineStart || isKnownFlightStart) && !isKnownEngineEnd
+        // Issue #293: support block, not just engine
+        // Flight could be in progress if ANY OF: Engine Start, Flight Start, Block Out
+        // AND NONE of: Engine End, Block In
+        val fHasStart = isKnownEngineStart || isKnownFlightStart || isKnownBlockOut
+        val fHasEnd = isKnownEngineEnd || isKnownBlockIn
+        return fHasStart && !fHasEnd
     }
 
     private val isKnownFlightTime: Boolean

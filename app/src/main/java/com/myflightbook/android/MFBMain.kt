@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -394,8 +394,9 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
     }
 
     private fun setDynamicShortcuts() {
-        // 4 possible dynamic shortcuts:
+        // 5 possible dynamic shortcuts:
         // Start/stop engine
+        // Block In/Out
         // puase/play.
         // If engine is not started, only show start.
         // if engine is started, show stop and pause/play
@@ -404,19 +405,34 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         )
         if (shortcutManager != null && getMainLocation() != null) {
             val lst = ArrayList<ShortcutInfo>()
-            val fFlightStarted = newFlightListener!!.shouldKeepListening()
             val fPaused: Boolean = ActNewFlight.fPaused
             val le = newFlightListener!!.getInProgressFlight(this)
-            val fFlightEnded = le.isKnownEngineEnd
-            if (fFlightStarted) {
+            // 3 possible states:
+            // a) a flight is in progress - offer stop engine, block in, and pause/play
+            // b) a flight indicates finished - offer current flight
+            // c) a flight indicates unstarted - offer start engine, block out
+            if (newFlightListener!!.shouldKeepListening()) {
+                // Flight could be in progress - offer engine stop and block in and pause/resume
                 lst.add(
-                    ShortcutInfo.Builder(this, "startEngine")
+                    ShortcutInfo.Builder(this, "stopEngine")
                         .setShortLabel(getString(R.string.shortcutStopEngine))
                         .setLongLabel(getString(R.string.shortcutStopEngine))
                         .setIcon(Icon.createWithResource(this, R.drawable.ic_action_stop))
                         .setIntent(
                             Intent(this, MFBMain::class.java).setAction(
                                 ACTION_STOP_ENGINE
+                            )
+                        )
+                        .build()
+                )
+                lst.add(
+                    ShortcutInfo.Builder(this, "blockIn")
+                        .setShortLabel(getString(R.string.lblBlockIn))
+                        .setLongLabel(getString(R.string.lblBlockIn))
+                        .setIcon(Icon.createWithResource(this, R.drawable.ic_action_stop))
+                        .setIntent(
+                            Intent(this, MFBMain::class.java).setAction(
+                                ACTION_BLOCK_IN
                             )
                         )
                         .build()
@@ -444,23 +460,41 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
                         )
                         .build()
                 )
-            } else if (!fFlightEnded) lst.add(
+            } else if (le.isKnownEngineEnd || le.isKnownBlockIn) {
+                // Flight is ready for submission
+                lst.add(
+                    ShortcutInfo.Builder(this, "viewCurrent")
+                        .setShortLabel(getString(R.string.shortcutCurrentFlight))
+                        .setLongLabel(getString(R.string.shortcutCurrentFlight))
+                        .setIcon(Icon.createWithResource(this, R.drawable.ic_tab_newflight))
+                        .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_VIEW_CURRENT))
+                        .build()
+                )
+            } else {
+                // Flight is waiting to be started
+                lst.add(
                 ShortcutInfo.Builder(this, "startEngine")
                     .setShortLabel(getString(R.string.shortcutStartEngine))
                     .setLongLabel(getString(R.string.shortcutStartEngine))
                     .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
                     .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_START_ENGINE))
                     .build()
-            ) else lst.add(
-                ShortcutInfo.Builder(this, "viewCurrent")
-                    .setShortLabel(getString(R.string.shortcutCurrentFlight))
-                    .setLongLabel(getString(R.string.shortcutCurrentFlight))
-                    .setIcon(Icon.createWithResource(this, R.drawable.ic_tab_newflight))
-                    .setIntent(Intent(this, MFBMain::class.java).setAction(ACTION_VIEW_CURRENT))
-                    .build()
             )
+                lst.add(
+                    ShortcutInfo.Builder(this, "blockOut")
+                        .setShortLabel(getString(R.string.lblBlockOut))
+                        .setLongLabel(getString(R.string.lblBlockOut))
+                        .setIcon(Icon.createWithResource(this, R.drawable.ic_action_play))
+                        .setIntent(
+                            Intent(this, MFBMain::class.java).setAction(
+                                ACTION_BLOCK_OUT
+                            )
+                        )
+                        .build()
+                )
+            }
 
-            // Now add Currency and Totals
+            // Now add Currency and Totals regardless
             lst.add(
                 ShortcutInfo.Builder(this, "currency")
                     .setShortLabel(getString(R.string.shortcutCurrency))
@@ -705,6 +739,8 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         private const val ACTION_VIEW_CURRENT = "com.myflightbook.android.VIEWCURRENT"
         private const val ACTION_START_ENGINE = "com.myflightbook.android.STARTENGINE"
         private const val ACTION_STOP_ENGINE = "com.myflightbook.android.STOPENGINE"
+        private const val ACTION_BLOCK_OUT = "com.myflightbook.android.BLOCKOUT"
+        private const val ACTION_BLOCK_IN = "com.myflightbook.android.BLOCKIN"
         private const val ACTION_PAUSE_FLIGHT = "com.myflightbook.android.PAUSEFLIGHT"
         private const val ACTION_RESUME_FLIGHT = "com.myflightbook.android.RESUMEFLIGHT"
         private var pendingAction: String? = null
@@ -741,6 +777,8 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
                 ACTION_PAUSE_FLIGHT, ACTION_RESUME_FLIGHT -> d.togglePausePlay()
                 ACTION_START_ENGINE -> d.startEngine()
                 ACTION_STOP_ENGINE -> d.stopEngine()
+                ACTION_BLOCK_IN -> d.blockIn()
+                ACTION_BLOCK_OUT -> d.blockOut()
             }
         }
 

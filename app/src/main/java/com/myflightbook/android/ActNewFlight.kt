@@ -1707,6 +1707,22 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
     }
 
+    override fun blockIn() {
+        if (!mle!!.isKnownBlockIn) {
+            mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, nowWith0Seconds())
+            resetDateOfFlight()
+            toView()
+        }
+    }
+
+    override fun blockOut() {
+        if (!mle!!.isKnownBlockOut) {
+            mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockOut, nowWith0Seconds())
+            resetDateOfFlight()
+            toView()
+        }
+    }
+
     private fun updateElapsedTime() {            // update the button state
         val ib = findViewById(R.id.btnPausePlay) as ImageButton?
         // pause/play should only be visible on ground with engine running (or flight start known but engine end unknown)
@@ -1720,6 +1736,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             var dtTotal: Long
             var dtFlight: Long = 0
             var dtEngine: Long = 0
+            var dtBlock : Long = 0
+
             val fIsKnownFlightStart = mle!!.isKnownFlightStart
             val fIsKnownEngineStart = mle!!.isKnownEngineStart
             if (fIsKnownFlightStart) {
@@ -1730,11 +1748,19 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 dtEngine =
                     if (!mle!!.isKnownEngineEnd) Date().time - mle!!.dtEngineStart.time else mle!!.dtEngineEnd.time - mle!!.dtEngineStart.time
             }
+            if (mle!!.isKnownBlockOut) {
+                dtBlock = (if (mle!!.isKnownBlockIn) mle!!.propDateForID(CustomPropertyType.idPropTypeBlockIn)!!.time else Date().time) -
+                        mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)!!.time
+            }
 
             // if totals mode is FLIGHT TIME, then elapsed time is based on flight time if/when it is known.
             // OTHERWISE, we use engine time (if known) or else flight time.
-            dtTotal =
-                if (MFBLocation.fPrefAutoFillTime === AutoFillOptions.FlightTime) if (fIsKnownFlightStart) dtFlight else 0 else if (fIsKnownEngineStart) dtEngine else dtFlight
+            when (MFBLocation.fPrefAutoFillTime) {
+                AutoFillOptions.EngineTime -> dtTotal = dtEngine
+                AutoFillOptions.FlightTime -> dtTotal = dtFlight
+                AutoFillOptions.BlockTime -> dtTotal = dtBlock
+                else -> dtTotal = Math.max(dtEngine, Math.max(dtFlight, dtBlock))
+            }
             dtTotal -= totalTimePaused()
             if (dtTotal <= 0) dtTotal = 0 // should never happen
 
