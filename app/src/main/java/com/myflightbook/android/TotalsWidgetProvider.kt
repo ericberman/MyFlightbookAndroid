@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2022 MyFlightbook, LLC
+    Copyright (C) 2019-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 package com.myflightbook.android
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
@@ -55,6 +56,14 @@ class TotalsWidgetProvider : AppWidgetProvider() {
             // This adapter connects
             // to a RemoteViewsService  through the specified intent.
             rv.setRemoteAdapter(android.R.id.list, intent)
+
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(
+                /* context = */ context,
+                /* requestCode = */  0,
+                /* intent = */ Intent(context, MFBMain::class.java).setAction(MFBMain.ACTION_VIEW_TOTALS),
+                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+            rv.setPendingIntentTemplate(android.R.id.list, pendingIntent)
 
             // The empty view is displayed when the collection has no items.
             // It should be in the same layout used to instantiate the RemoteViews  object above.
