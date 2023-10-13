@@ -67,7 +67,7 @@
     <string name="lblMapStyleHybrid">Carte hybride</string>
     <string name="lblMapStyleTerrain">Carte du terrain</string>
     <string name="lblMapStyleSatellite">Carte satellite</string>
-    <string name="lblNightMode">Mode Nuit</string>
+    <string name="lblNightMode">Mode sombre</string>
     <string name="lblNightModeOff">Désactivé</string>
     <string name="lblNightModeOn">Activé</string>
     <string name="lblNightModeAuto">Automatique</string>
@@ -181,7 +181,7 @@
     <string name="lblWarning2">L\'utilisation en vol pourrait constituer une infraction et causer une distraction. Vous êtes responsable des conséquences de vos actions. vérifiez la réglementation applicable</string>
     <string name="lblGPSDisclaimer">Si vous disposez d\'un GPS, MyFlightbook peut utiliser votre position pour détecter les événements de vol tels que les décollages et les atterrissages, et enregistrer votre trajectoire de vol pour la sauvegarder avec votre vol. Il ne le fait que lorsque l\'application est active, ou en arrière-plan pendant qu\'un vol est "en cours" (c\'est à dire que l\'heure de démarrage moteur ou de debut de vol est définie mais pas celle de l\'arrêt moteur). Aucune donnée n\'est enregistrée sauf si vous enregistrez votre trace, et cela n\'est disponible que pour vous, sauf si vous partagez explicitement vos données de vol. Notez qu\'Android n\'est pas un GPS aéronautique certifié, vous ne devez donc pas vous y fier en vol.</string>
     <string name="lblGPSRationale">La détection automatique et l\'enregistrement nécessitent un accès en arrière-plan à votre position lorsqu\'un vol pourrait être en cours. Activer dans l\'application Paramètres?</string>
-    <string name="lblAutoHobbs">Saisie automatique de la valeur de l\'horamètre à l\'arrivée</string>
+    <string name="lblAutoHobbs">Saisie automatique de l\'horamètre</string>
     <string name="lblAutoTime">Saisie automatique du Temps Total</string>
     <string name="lblCopyright">© 2012&#8211;2023 MyFlightbook LLC (Kotlin)</string>
     <string name="lblCodeCredit">Une partie du code utilise la bibliothèque KSoap2 disponible à http://code.google.com/p/ksoap2-android/, publiée sous licence MIT à http://www.opensource.org/licenses/mit-license.php. Un grand merci !</string>
