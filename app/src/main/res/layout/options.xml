@@ -541,15 +541,6 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFAQ" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom|center_horizontal"
-            android:orientation="horizontal"
-            style="?android:attr/buttonBarStyle"
-            android:padding="5dp">
 
             <Button
                 android:id="@+id/btnFacebook"
@@ -560,17 +551,6 @@
                 android:drawableStart="@drawable/fb_f_logo"
                 style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFollowFacebook" />
-
-            <Button
-                android:id="@+id/btnTwitter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dip"
-                android:layout_marginStart="10dp"
-                android:drawablePadding="3dip"
-                android:drawableStart="@drawable/twitter_logo_blue"
-                style="?android:attr/buttonBarStyle"
-                android:text="@string/lblFollowTwitter" />
         </LinearLayout>
 
         <LinearLayout

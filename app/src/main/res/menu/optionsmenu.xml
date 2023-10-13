@@ -10,8 +10,4 @@
         android:id="@+id/menuFacebook"
         android:title="@string/menuFollowFB"
         android:titleCondensed="@string/menuFollowFBShort" />
-    <item
-        android:id="@+id/menuTwitter"
-        android:title="@string/menuFollowTW"
-        android:titleCondensed="@string/menuFollowTWShort" />
 </menu>

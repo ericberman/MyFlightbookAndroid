@@ -554,16 +554,6 @@
                 android:padding="5dip"
                 style="?android:attr/buttonBarStyle"
                 android:text="@string/lblFollowFacebook" />
-
-            <Button
-                android:id="@+id/btnTwitter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dip"
-                style="?android:attr/buttonBarStyle"
-                android:drawableStart="@drawable/twitter_logo_blue"
-                android:drawablePadding="3dip"
-                android:text="@string/lblFollowTwitter" />
         </LinearLayout>
 
         <LinearLayout

@@ -129,7 +129,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
                     }
                 },
                 { _, lastErr ->
-                    if (lastErr == null || lastErr.isEmpty())
+                    if (lastErr.isNullOrEmpty())
                         updateStatus()
                 },
                 progBar,
@@ -157,7 +157,6 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
                 when (item.itemId) {
                     R.id.menuContact -> contactUs()
                     R.id.menuFacebook -> viewFacebook()
-                    R.id.menuTwitter -> viewTwitter()
                     else -> return false
                 }
                 return true
@@ -279,7 +278,6 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         addListener(R.id.btnCreateNewAccount)
         addListener(R.id.btnContact)
         addListener(R.id.btnFacebook)
-        addListener(R.id.btnTwitter)
         addListener(R.id.btnFAQ)
         addListener(R.id.btnCleanUp)
         addListener(R.id.btnSupport)
@@ -485,11 +483,6 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         startActivity(i)
     }
 
-    private fun viewTwitter() {
-        val i = Intent(Intent.ACTION_VIEW, Uri.parse(MFBConstants.urlTwitter))
-        startActivity(i)
-    }
-
     private fun cleanUp() {
         var fOrphansFound = false
 
@@ -591,7 +584,6 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
                 (v as CheckBox).isChecked
             R.id.btnContact -> contactUs()
             R.id.btnFacebook -> viewFacebook()
-            R.id.btnTwitter -> viewTwitter()
             R.id.btnCleanUp -> cleanUp()
             R.id.btnSupport -> viewPreferences(
                 authRedirWithParams("d=donate", context, false)

@@ -177,7 +177,6 @@
     <string name="lblDeleteAccount">Mein Konto löschen</string>
     <string name="lblOptionsOther">Über MyFlightbook</string>
     <string name="lblFollowFacebook">Facebook</string>
-    <string name="lblFollowTwitter">Twitter</string>
     <string name="lblWarning1">"DIE VERWENDUNG IM FLUG KANN GEGEN DIE VORSCHRIFTEN VERSTOSSEN UND EINE ABLENKUNG DARSTELLEN.  SIE TRAGEN DIE VERANTWORTUNG FÜR DIE KONSEQUENZEN EINER SOLCHEN VERWENDUNG!  "</string>
     <string name="lblWarning2">Die Verwendung dieser Software während des Fluges könnte eine Ablenkung darstellen und gegen Vorschriften verstoßen. Sie tragen die Verantwortung für die Folgen der Nutzung dieser Software.</string>
     <string name="lblGPSDisclaimer">Wenn Du über GPS verfügst, kann MyFlightbook Deinen Standort verwenden, um Flugereignisse wie Starts und Landungen zu erkennen und die Flugroute aufzuzeichnen und mit Deinem Flug zu speichern.  Dies geschieht nur, wenn die App aktiv ist, oder im Hintergrund, während ein Flug läuft (mit einem definierten Motor- oder Flugstart, aber ohne definierten Motorstopp).  Es werden keine Daten gespeichert, es sei denn, du zeichnest deinen Track auf. Dieser ist nur für dich freigegeben, sofern du diesen nicht ausdrücklich für weitere freigibst. Beachte, dass Android kein zertifiziertes Luftfahrt-GPS ist, so dass Du dich sich im Flug nicht darauf verlassen solltest.</string>
@@ -397,8 +396,6 @@
     <string name="menuContactShort">Kontakt</string>
     <string name="menuFollowFB">Auf Facebook folgen</string>
     <string name="menuFollowFBShort">Facebook</string>
-    <string name="menuFollowTW">Auf Twitter folgen</string>
-    <string name="menuFollowTWShort">Twitter</string>
     <string name="menuReturnToFlightShort">Zurückkehren</string>
     <string name="menuReturnToFlight">Zum Flug zurückkehren</string>
     <string name="menuRecentsRefresh">Aktualisieren</string>
