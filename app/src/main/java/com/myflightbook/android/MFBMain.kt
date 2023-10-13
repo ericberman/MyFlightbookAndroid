@@ -20,6 +20,8 @@ package com.myflightbook.android
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -221,7 +223,6 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
                 else
-                    @Suppress("DEPRECATION")
                     packageManager.getPackageInfo(packageName, 0)
             versionName = packageInfo.versionName
             versionCode =
@@ -532,6 +533,27 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         // close the writeable DB, in case it is opened.
         mDBHelper!!.writableDatabase.close()
         setDynamicShortcuts()
+
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val currencyAppWidget = ComponentName(this, CurrencyWidgetProvider::class.java)
+        val totalsAppWidget = ComponentName(this, TotalsWidgetProvider::class.java)
+        val currAppWidgetIds = appWidgetManager.getAppWidgetIds(currencyAppWidget)
+        val totalsAppWidgetIds = appWidgetManager.getAppWidgetIds(totalsAppWidget)
+
+        if (currAppWidgetIds.any()) {
+            val updateIntent = Intent()
+            updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            updateIntent.putExtra(CurrencyWidgetProvider.WIDGET_IDS_KEY, currAppWidgetIds)
+            sendBroadcast(updateIntent)
+        }
+
+        if (totalsAppWidgetIds.any()) {
+            val updateIntent = Intent()
+            updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            updateIntent.putExtra(TotalsWidgetProvider.WIDGET_IDS_KEY, totalsAppWidgetIds)
+            sendBroadcast(updateIntent)
+        }
+
         super.onPause()
     }
 

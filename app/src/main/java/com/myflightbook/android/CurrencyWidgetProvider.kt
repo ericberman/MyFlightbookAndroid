@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2022 MyFlightbook, LLC
+    Copyright (C) 2019-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,23 +18,24 @@
  */
 package com.myflightbook.android
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.widget.RemoteViews
 
 class CurrencyWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == MFBMain.ACTION_VIEW_CURRENCY) context.startActivity(
-            Intent(
-                context,
-                MFBMain::class.java
-            ).setAction(intent.action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
-        super.onReceive(context, intent)
+        if (intent.action == MFBMain.ACTION_VIEW_CURRENCY)
+            context.startActivity(
+            Intent(context, MFBMain::class.java).setAction(intent.action)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        ) else if (intent.hasExtra(WIDGET_IDS_KEY)) {
+            val ids = intent.extras!!.getIntArray(WIDGET_IDS_KEY)
+            onUpdate(context, AppWidgetManager.getInstance(context), ids!!)
+        }
+
+    super.onReceive(context, intent)
     }
 
     override fun onUpdate(
@@ -55,25 +56,15 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
             // to a RemoteViewsService  through the specified intent.
             rv.setRemoteAdapter(android.R.id.list, intent)
 
-            // Trigger listview item click
-            val startActivityIntent = Intent(
-                context,
-                CurrencyWidgetProvider::class.java
-            ).setAction(MFBMain.ACTION_VIEW_CURRENCY).setClassName("com.myflightbook.android", MFBMain::class.java.toString())
-            intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            val startActivityPendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                startActivityIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent)
-
             // The empty view is displayed when the collection has no items.
             // It should be in the same layout used to instantiate the RemoteViews  object above.
             rv.setEmptyView(android.R.id.list, R.id.empty_currency)
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, android.R.id.list)
             appWidgetManager.updateAppWidget(appWidgetId, rv)
         }
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+    }
+    companion object {
+        val WIDGET_IDS_KEY = "currencyproviderwidgetids"
     }
 }

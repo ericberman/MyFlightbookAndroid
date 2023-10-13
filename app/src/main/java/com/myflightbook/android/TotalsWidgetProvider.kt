@@ -18,22 +18,23 @@
  */
 package com.myflightbook.android
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.widget.RemoteViews
 
 class TotalsWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == MFBMain.ACTION_VIEW_TOTALS) {
+        if (intent.action == MFBMain.ACTION_VIEW_TOTALS)
             context.startActivity(
-                Intent(context, MFBMain::class.java).setAction(intent.action)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
+            Intent(context, MFBMain::class.java).setAction(intent.action)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        ) else if (intent.hasExtra(WIDGET_IDS_KEY)) {
+            val ids = intent.extras!!.getIntArray(WIDGET_IDS_KEY)
+            onUpdate(context, AppWidgetManager.getInstance(context), ids!!)
         }
+
         super.onReceive(context, intent)
     }
 
@@ -55,20 +56,6 @@ class TotalsWidgetProvider : AppWidgetProvider() {
             // to a RemoteViewsService  through the specified intent.
             rv.setRemoteAdapter(android.R.id.list, intent)
 
-            // Trigger listview item click
-            val startActivityIntent = Intent(
-                context,
-                TotalsWidgetProvider::class.java
-            ).setAction(MFBMain.ACTION_VIEW_TOTALS).setClassName("com.myflightbook.android", MFBMain::class.java.toString())
-            intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            val startActivityPendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                startActivityIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent)
-
             // The empty view is displayed when the collection has no items.
             // It should be in the same layout used to instantiate the RemoteViews  object above.
             rv.setEmptyView(android.R.id.list, R.id.empty_totals)
@@ -76,5 +63,8 @@ class TotalsWidgetProvider : AppWidgetProvider() {
             appWidgetManager.updateAppWidget(appWidgetId, rv)
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds)
+    }
+    companion object {
+        val WIDGET_IDS_KEY = "totalsproviderwidgetids"
     }
 }
