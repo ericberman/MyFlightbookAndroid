@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1230,6 +1230,10 @@ class GPSSim(private val m_ll: LocationListener) {
         @JvmStatic
         fun autoFill(c: Context, le: LogbookEntry?) {
             if (le == null) return
+
+            // Issue #297: Ensure autodetect on for autofill
+            val fAutodetectSave = MFBLocation.fPrefAutoDetect
+            MFBLocation.fPrefAutoDetect = true
             var rgcoords: Array<LocSample>? = null
             val cfpBlockOut = le.propertyWithID(CustomPropertyType.idPropTypeBlockOut)
             val cfpBlockIn = le.propertyWithID(CustomPropertyType.idPropTypeBlockIn)
@@ -1316,6 +1320,7 @@ class GPSSim(private val m_ll: LocationListener) {
             le.autoFillHobbs(0)
             if (fSetXC) le.decXC = le.decTotal
             le.autoFillFinish()
+            MFBLocation.fPrefAutoDetect = fAutodetectSave
         }
 
         @JvmStatic

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2023 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ abstract class Telemetry internal constructor(uri: Uri?, c: Context?) {
     }
 
     fun computeSpeed(rgSamples: Array<LocSample>?): Array<LocSample>? {
-        if (rgSamples == null || rgSamples.isEmpty()) return rgSamples
+        if (rgSamples.isNullOrEmpty()) return rgSamples
         var refSample = rgSamples[0]
         refSample.speed = 0.0
         for (i in 1 until rgSamples.size) {
@@ -240,6 +240,10 @@ abstract class Telemetry internal constructor(uri: Uri?, c: Context?) {
 
             // low distance (< 1nm) is probably pattern work - just pick a decent speed.  If you actually go somewhere, then derive a speed.
             val speedKts = if (distanceNM < 1.0) 150.0 else speedMS * MFBConstants.MPS_TO_KNOTS
+
+            // Add a few stopped fields at the start to trigger the takeoff at the correct location
+            lst.add(LocSample(llStart, 0, speedKts, Date(dtStart.time - 22000)))
+            lst.add(LocSample(llStart, 0, speedKts, Date(dtStart.time - 11000)))
             lst.add(LocSample(llStart, 0, speedKts, dtStart))
             var minute: Long = 0
             while (minute <= minutes) {
