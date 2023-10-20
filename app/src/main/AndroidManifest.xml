@@ -190,7 +190,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name=".MFBlocationservice" />
+        <service android:name=".MFBlocationservice" android:foregroundServiceType="location" />
         <service android:name=".CurrencyWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service android:name=".TotalsWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
 
