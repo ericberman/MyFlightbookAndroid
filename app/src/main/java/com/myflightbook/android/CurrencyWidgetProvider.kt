@@ -61,7 +61,7 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
                 /* context = */ context,
                 /* requestCode = */  0,
                 /* intent = */ Intent(context, MFBMain::class.java).setAction(MFBMain.ACTION_VIEW_CURRENCY),
-                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             rv.setPendingIntentTemplate(android.R.id.list, pendingIntent)
 
