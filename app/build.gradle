@@ -10,8 +10,8 @@ android {
         applicationId "com.myflightbook.android"
         minSdk 26
         targetSdk 34
-        versionCode 160
-        versionName "2023.10.20.1"
+        versionCode 161
+        versionName "2023.10.21.1"
     }
 
     buildTypes {
@@ -72,7 +72,7 @@ dependencies {
 
     // Play services
     implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
 
     // color picker
     implementation 'com.github.madrapps:pikolo:2.0.2'
