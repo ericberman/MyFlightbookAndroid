@@ -1056,8 +1056,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     //region Image support
-    override fun chooseImageCompleted(result: ActivityResult?) {
-        addGalleryImage(result!!.data!!)
+    override fun chooseImageCompleted(data : android.net.Uri?) {
+        addGalleryImage(data)
     }
 
     override fun takePictureCompleted(result: ActivityResult?) {

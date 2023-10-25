@@ -22,6 +22,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -288,8 +289,8 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
     }
 
     //region Image support
-    override fun chooseImageCompleted(result: ActivityResult?) {
-        addGalleryImage(result!!.data!!)
+    override fun chooseImageCompleted(data : Uri?) {
+        addGalleryImage(data)
     }
 
     override fun takePictureCompleted(result: ActivityResult?) {

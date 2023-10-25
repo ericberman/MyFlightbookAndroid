@@ -25,6 +25,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -37,6 +38,8 @@ import android.view.animation.Transformation
 import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatDelegate
@@ -72,7 +75,9 @@ import java.util.*
         fun refreshGallery()
     }
 
+    private var mChooseImagesPhotoPicker : ActivityResultLauncher<PickVisualMediaRequest>? = null
     private var mChooseImageLauncher: ActivityResultLauncher<Array<String>?>? = null
+    private var mChooseImagesWithPermissions : ActivityResultLauncher<String>? = null
     private var mTakePictureLauncher: ActivityResultLauncher<Array<String>?>? = null
     private var mTakeVideoLauncher: ActivityResultLauncher<Array<String>?>? = null
     @JvmField
@@ -83,7 +88,7 @@ import java.util.*
                           fVideo: Boolean,
                           addToGallery: Boolean,
                           geoTag: Boolean) {
-        if (szFileName == null || szFileName.isEmpty()) {
+        if (szFileName.isNullOrEmpty()) {
             Log.e(MFBConstants.LOG_TAG, "No filename passed back!!!")
             return
         }
@@ -140,8 +145,7 @@ import java.util.*
         cancel()
     }
 
-    fun addGalleryImage(i: Intent) {
-        val selectedImage = i.data
+    fun addGalleryImage(selectedImage : Uri?) {
         val filePathColumn =
             arrayOf(MediaStore.Images.Media.DATA, MediaStore.Images.Media.MIME_TYPE)
         val cr = requireActivity().contentResolver
@@ -155,7 +159,7 @@ import java.util.*
             val szMimeType = cursor.getString(cursor.getColumnIndexOrThrow(filePathColumn[1]))
             val fIsVideo = szMimeType.lowercase(Locale.getDefault()).startsWith("video")
             cursor.close()
-            if (szFilename == null || szFilename.isEmpty()) { // try reading it into a temp file
+            if (szFilename.isNullOrEmpty()) { // try reading it into a temp file
                 var inputStream: InputStream? = null
                 var o: OutputStream? = null
                 try {
@@ -202,7 +206,8 @@ import java.util.*
                         }
                     }
                 }
-                if (szFilename == null || szFilename.isEmpty()) return
+            } else {
+                addCamera(szFilename, this as GallerySource, fIsVideo, addToGallery =  false, geoTag = false)
             }
         }
     }
@@ -225,20 +230,32 @@ import java.util.*
         mTempfilepath = mPrefs.getString(keyTempFileInProgress, "")
 
         // Set up launchers for camera and gallery
-        val chooseImageLauncher = registerForActivityResult(
-            StartActivityForResult()
-        ) { result: ActivityResult? ->
-            if (result != null && result.resultCode == Activity.RESULT_OK) chooseImageCompleted(
-                result
-            )
+//        val chooseImageLauncher = registerForActivityResult(
+//            StartActivityForResult()
+//        ) { result: ActivityResult? ->
+//            if (result != null && result.resultCode == Activity.RESULT_OK) chooseImageCompleted(
+//                result?.data
+//            )
+//        }
+
+        mChooseImagesWithPermissions = registerForActivityResult(ActivityResultContracts.GetContent()) {
+            if (it != null)
+                chooseImageCompleted(it)
         }
+
+        mChooseImagesPhotoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+            if (it != null)
+                chooseImageCompleted(it)
+        }
+
         mChooseImageLauncher = registerForActivityResult(
             RequestMultiplePermissions()
         ) { result: Map<String, Boolean>? ->
             if (checkAllTrue(result)) {
-                val i = Intent(Intent.ACTION_GET_CONTENT)
-                i.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/* video/*")
-                chooseImageLauncher.launch(i)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                    mChooseImagesPhotoPicker!!.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                else
+                    mChooseImagesWithPermissions!!.launch("image/*")
             }
         }
         val takePictureLauncher = registerForActivityResult(
@@ -517,8 +534,14 @@ import java.util.*
                 Manifest.permission.CAMERA,
             )
             GALLERY_PERMISSION -> if (fNeedWritePerm) arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) else arrayOf()
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            ) else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arrayOf(
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                )
+            } else
+                arrayOf()
             else -> null //should never happen.
         }
     }
@@ -537,7 +560,7 @@ import java.util.*
         mTakeVideoLauncher!!.launch(getRequiredPermissions(CAMERA_PERMISSION_VIDEO))
     }
 
-    protected open fun chooseImageCompleted(result: ActivityResult?) {
+    protected open fun chooseImageCompleted(data: Uri?) {
         // Override in calling subclass
     }
 

@@ -378,8 +378,8 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
     }
 
     //region Image support
-    override fun chooseImageCompleted(result: ActivityResult?) {
-        addGalleryImage(Objects.requireNonNull(result!!.data!!))
+    override fun chooseImageCompleted(data: android.net.Uri?) {
+        addGalleryImage(Objects.requireNonNull(data))
     }
 
     override fun takePictureCompleted(result: ActivityResult?) {
