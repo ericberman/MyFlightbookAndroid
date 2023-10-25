@@ -21,6 +21,7 @@ package com.myflightbook.android
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
@@ -57,10 +58,14 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
             // to a RemoteViewsService  through the specified intent.
             rv.setRemoteAdapter(android.R.id.list, intent)
 
+            val baseIntent = Intent(context, MFBMain::class.java).setAction(MFBMain.ACTION_VIEW_CURRENCY)
+            baseIntent.setPackage(context.packageName).setComponent(
+                ComponentName(context, MFBMain::class.java))
+
             val pendingIntent: PendingIntent = PendingIntent.getActivity(
                 /* context = */ context,
                 /* requestCode = */  0,
-                /* intent = */ Intent(context, MFBMain::class.java).setAction(MFBMain.ACTION_VIEW_CURRENCY),
+                /* intent = */ baseIntent,
                 /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             rv.setPendingIntentTemplate(android.R.id.list, pendingIntent)
