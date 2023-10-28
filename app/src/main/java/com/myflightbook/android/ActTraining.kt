@@ -122,21 +122,25 @@ class ActTraining : ListFragment(), OnItemClickListener {
             return
         }
         lastPositionClicked = position
-        val fNeedsWritePerm =
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q // no need to request WRITE_EXTERNAL_STORAGE in 29 and later.
 
         // check for permissions and handle click there.
+        // See https://developer.android.com/reference/android/Manifest.permission#READ_EXTERNAL_STORAGE
+        // If I understand the ever-changing Android requirements:
+        // - Until Q (29), you need to request READ_EXTERNAL_STORAGE
+        // - From Q (29) until Tiramasu (33), you don't need any permissions to read the user's media
+        // From Tiramasu (33) onward, use READ_MEDIA_IMAGES/READ_MEDIA_VIDEO, not READ_EXTERNAL_STORAGE
         mPermissionLauncher!!.launch(
-            if (fNeedsWritePerm) arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 arrayOf(
                     Manifest.permission.READ_MEDIA_IMAGES,
                     Manifest.permission.READ_MEDIA_VIDEO
                 )
-            } else {
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) }
+            else {
+                arrayOf()
             }
         )
     }
