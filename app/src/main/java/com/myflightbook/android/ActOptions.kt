@@ -466,15 +466,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
 
     private fun contactUs() {
         ActWebView.viewURL(
-            requireActivity(), String.format(
-                MFBConstants.urlContact,
-                MFBConstants.szIP,
-                AuthToken.m_szEmail,
-                "Comment from Android user",
-                nightParam(
-                    context
-                )
-            )
+            requireActivity(), authRedirWithParams(String.format("d=Contact&email=%s&subj=%s&noCap=1", AuthToken.m_szEmail, "Comment from Android user"), context)
         )
     }
 
@@ -573,7 +565,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             R.id.ckRecordHighRes -> MFBLocation.fPrefRecordFlightHighRes =
                 (v as CheckBox).isChecked
             R.id.ckHeliports -> Airport.fPrefIncludeHeliports =
-                (v as CheckBox).isChecked
+                (v as CheckBox).isChecked   
             R.id.ckUseHHMM -> DecimalEdit.DefaultHHMM =
                 (v as CheckBox).isChecked
             R.id.ckUseLocalTime -> DlgDatePicker.fUseLocalTime =
@@ -597,7 +589,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             R.id.btnManageAccount -> viewPreferences(authRedirWithParams("d=account", context))
             R.id.btnDeleteAccount -> viewPreferences(authRedirWithParams("d=bigredbuttons", context))
             R.id.btnFAQ -> ActWebView.viewURL(
-                requireActivity(), MFBConstants.urlFAQ
+                requireActivity(), authRedirWithParams("d=faq", context)
             )
             R.id.btnPackAndGo -> packData()
             R.id.ckCockpitTach -> ActNewFlight.fShowTach = (v as CheckBox).isChecked

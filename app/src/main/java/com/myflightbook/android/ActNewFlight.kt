@@ -75,6 +75,7 @@ import model.FlightProperty.Companion.distillList
 import model.FlightProperty.Companion.rewritePropertiesForFlight
 import model.GPSSim.Companion.autoFill
 import model.LogbookEntry.SigStatus
+import model.MFBConstants.authRedirWithParams
 import model.MFBConstants.nightParam
 import model.MFBFlightListener.ListenerFragmentDelegate
 import model.MFBImageInfo.PictureDestination
@@ -438,13 +439,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     R.id.menuSignFlight -> {
                         try {
                             ActWebView.viewURL(
-                                requireActivity(), String.format(
-                                    Locale.US, MFBConstants.urlSign,
-                                    MFBConstants.szIP,
-                                    mle!!.idFlight,
-                                    URLEncoder.encode(AuthToken.m_szAuthToken, "UTF-8"),
-                                    nightParam(context)
-                                )
+                                requireActivity(),
+                                authRedirWithParams(String.format("d=SignEntry&idFlight=%d", mle!!.idFlight), context)
                             )
                         } catch (ignored: UnsupportedEncodingException) {
                         }
@@ -1399,7 +1395,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 if (ivDigitizedSig!!.drawable == null) {
                     val szURL = String.format(
                         Locale.US,
-                        "https://%s/Logbook/Public/ViewSig.aspx?id=%d",
+                        "https://%s/Logbook/mvc/Image/FlightSig/%d",
                         MFBConstants.szIP,
                         mle!!.idFlight
                     )

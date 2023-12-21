@@ -89,16 +89,12 @@ object MFBConstants {
     // TODO: These need to be branded and, in some cases, URLencoded.
     const val urlPrivacy = "https://%s/logbook/mvc/pub/Privacy?naked=1&%s"
     const val urlTandC = "https://%s/logbook/mvc/pub/TandC?naked=1&%s"
-    const val urlContact =
-        "https://%s/logbook/public/ContactMe.aspx?email=%s&subj=%s&noCap=1&naked=1&%s"
-    const val urlSign = "https://%s/logbook/public/SignEntry.aspx?idFlight=%d&auth=%s&naked=1&%s"
     const val urlFacebook = "https://www.facebook.com/pages/MyFlightbook/145794653106"
     const val urlCrashReport = "https://%s/logbook/public/CrashReport.aspx"
     private const val urlNoNight = "night=no"
     private const val urlNight = "night=yes"
     private const val urlAuthRedirBase =
         "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&naked=1&%s"
-    const val urlFAQ = "https://myflightbook.com/logbook/public/FAQ.aspx?naked=1"
 
     // Formatting strings
     const val TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss'Z'"
