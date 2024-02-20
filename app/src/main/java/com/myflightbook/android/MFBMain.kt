@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
     //  Called when the activity is first created. */
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapsInitializer.initialize(applicationContext, Renderer.LEGACY, this)
+        MapsInitializer.initialize(applicationContext, Renderer.LATEST, this)
         Log.v(MFBConstants.LOG_TAG, "onCreate: about to install splash screen")
 
         installSplashScreen()
