@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2021-2022 MyFlightbook, LLC
+    Copyright (C) 2021-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import model.CannedQuery
 import com.myflightbook.android.marshal.MarshalDouble
 import org.ksoap2.serialization.SoapObject
 import com.myflightbook.android.marshal.MarshalDate
+import model.MFBUtil
 import java.lang.Exception
 
 class PendingFlightSvc : MFBSoap() {
@@ -69,13 +70,22 @@ class PendingFlightSvc : MFBSoap() {
 
     fun createPendingFlight(
         szAuthToken: String?,
-        le: LogbookEntry?,
+        le: LogbookEntry,
         c: Context?
     ): Array<PendingFlight> {
+
+        // Issue #308: As with committing non-pending flights, save the date, since we're making a live copy
+        // Since date is always local, we always pass up a UTC date that looks
+        // like the date/time we want.
+        val dtSave = le.dtFlight
+        le.dtFlight = MFBUtil.getUTCDateFromLocalDate(le.dtFlight)
+
         val request = setMethod("CreatePendingFlight")
         request.addProperty("szAuthUserToken", szAuthToken)
         request.addProperty("le", le)
-        return readResults(invoke(c) as SoapObject?)
+        val result = readResults(invoke(c) as SoapObject?)
+        le.dtFlight = dtSave
+        return result
     }
 
     fun getPendingFlightsForUser(szAuthToken: String?, c: Context?): Array<PendingFlight> {
