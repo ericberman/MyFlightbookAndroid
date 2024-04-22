@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ object MFBConstants {
     private const val fDebugLocal =
         false // If debug, this specifies a local (IP-based or LocalHost based) debug server, thus suppressing https
     private const val szIPDebug = "developer.myflightbook.com"
-    private const val szIPDebugRoam = "developer.myflightbook.com"
+    private const val szIPDebugRoam = "staging.myflightbook.com"    // Note that you can use 10.0.2.2 to reference the host's localhost.
     private const val szIPRelease = "myflightbook.com"
 
     // Configuration constants
