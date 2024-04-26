@@ -36,6 +36,7 @@ import org.ksoap2.serialization.SoapObject
 import com.myflightbook.android.marshal.MarshalDate
 import model.MFBUtil
 import java.lang.Exception
+import java.util.Date
 
 class PendingFlightSvc : MFBSoap() {
     override fun addMappings(e: SoapSerializationEnvelope) {
@@ -99,10 +100,22 @@ class PendingFlightSvc : MFBSoap() {
         pf: PendingFlight?,
         c: Context?
     ): Array<PendingFlight> {
+        // Issue #309: As with committing non-pending flights, save the date, since we're making a live copy
+        // Since date is always local, we always pass up a UTC date that looks
+        // like the date/time we want.
+        var dtSave : Date? = null
+        if (pf != null) {
+            dtSave = pf.dtFlight
+            pf.dtFlight = MFBUtil.getUTCDateFromLocalDate(pf.dtFlight)
+        }
         val request = setMethod("UpdatePendingFlight")
         request.addProperty("szAuthUserToken", szAuthToken)
         request.addProperty("pf", pf)
-        return readResults(invoke(c) as SoapObject?)
+        val result = readResults(invoke(c) as SoapObject?)
+        if (dtSave != null) {
+            pf?.dtFlight = dtSave
+        }
+        return result
     }
 
     fun deletePendingFlight(
@@ -124,6 +137,11 @@ class PendingFlightSvc : MFBSoap() {
         val request = setMethod("CommitPendingFlight")
         request.addProperty("szAuthUserToken", szAuthToken)
         request.addProperty("pf", pf)
+        // Issue #309: As with committing non-pending flights, save the date, since we're making a live copy
+        // Since date is always local, we always pass up a UTC date that looks
+        // like the date/time we want.
+        val dtSave = pf.dtFlight
+        pf.dtFlight = MFBUtil.getUTCDateFromLocalDate(pf.dtFlight)
         val szPendingID = pf.getPendingID()
         val rgpf = readResults(invoke(c) as SoapObject?)
         for (pfresult in rgpf) {
@@ -133,6 +151,7 @@ class PendingFlightSvc : MFBSoap() {
                 ) == 0 && pfresult.szError.isNotEmpty()
             ) lastError = pfresult.szError
         }
+        pf.dtFlight = dtSave
         return rgpf
     }
 }
