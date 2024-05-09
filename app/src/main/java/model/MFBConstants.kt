@@ -94,7 +94,7 @@ object MFBConstants {
     private const val urlNoNight = "night=no"
     private const val urlNight = "night=yes"
     private const val urlAuthRedirBase =
-        "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&naked=1&%s"
+        "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&naked=%s&%s"
 
     // Formatting strings
     const val TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss'Z'"
@@ -110,7 +110,7 @@ object MFBConstants {
 
     @JvmStatic
     @JvmOverloads
-    fun authRedirWithParams(szParams: String?, c: Context?, fUseNight: Boolean = true): String {
+    fun authRedirWithParams(szParams: String?, c: Context?, fUseNight: Boolean = true, fNaked : Boolean = true): String {
         return if (szParams == null) "" else try {
             String.format(
                 Locale.US,
@@ -118,6 +118,7 @@ object MFBConstants {
                 szIP,
                 URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"),
                 URLEncoder.encode(AuthToken.m_szPass, "UTF-8"),
+                if (fNaked) "1" else "-1",
                 if (fUseNight) nightParam(c) else urlNoNight
             ) + if (szParams.isEmpty()) "" else "&$szParams"
         } catch (e: UnsupportedEncodingException) {

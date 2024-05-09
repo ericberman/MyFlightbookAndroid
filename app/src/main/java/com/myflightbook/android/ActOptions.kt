@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,7 +49,6 @@ import model.LogbookEntry.Companion.mergeFlightLists
 import model.LogbookEntry.Companion.newFlights
 import model.LogbookEntry.Companion.queuedAndUnsubmittedFlights
 import model.MFBConstants.authRedirWithParams
-import model.MFBConstants.nightParam
 import model.MFBImageInfo.Companion.allAircraftImages
 import model.MFBImageInfo.Companion.deleteOrphansNotInList
 import model.MFBImageInfo.PictureDestination
@@ -577,9 +576,12 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             R.id.btnContact -> contactUs()
             R.id.btnFacebook -> viewFacebook()
             R.id.btnCleanUp -> cleanUp()
-            R.id.btnSupport -> viewPreferences(
-                authRedirWithParams("d=donate", context, false)
-            )
+            R.id.btnSupport -> {
+                val url = Uri.parse(authRedirWithParams("d=donate", context, fNaked = false))
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(url)
+                startActivity(i)
+            }
             R.id.btnAdditionalOptions -> viewPreferences(
                 authRedirWithParams(
                     "d=profile",
