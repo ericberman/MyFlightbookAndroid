@@ -571,6 +571,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 style="?android:attr/buttonBarStyle"
+                android:visibility="gone"
                 android:text="@string/btnSupport" />
         </LinearLayout>
 
