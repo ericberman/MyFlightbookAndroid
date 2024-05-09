@@ -576,12 +576,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             R.id.btnContact -> contactUs()
             R.id.btnFacebook -> viewFacebook()
             R.id.btnCleanUp -> cleanUp()
-            R.id.btnSupport -> {
-                val url = Uri.parse(authRedirWithParams("d=donate", context, fNaked = false))
-                val i = Intent(Intent.ACTION_VIEW)
-                i.setData(url)
-                startActivity(i)
-            }
+            R.id.btnSupport -> MFBUtil.alert(this, getString(R.string.btnSupport), getString(R.string.lblDonateOnMFB))
             R.id.btnAdditionalOptions -> viewPreferences(
                 authRedirWithParams(
                     "d=profile",

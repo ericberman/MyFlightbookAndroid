@@ -170,6 +170,7 @@
     <string name="lblFAQ">FAQ</string>
     <string name="lblSupportDescript">MyFlightbook is and will remain free.  But if you find it valuable, we are happy to accept your support.</string>
     <string name="btnSupport">Support MyFlightbook</string>
+    <string name="lblDonateOnMFB">Due to Google Play policies, I can\'t provide a direct link here.  Please open a browser and go to MyFlightbook.com and choose "Donate" from the "Profile" tab.</string>
     <string name="lblAdditionalOptions">Additional Options</string>
     <string name="lblAdditionalOptionsText">Additional functionality and settings for your account are on MyFlightbook.com</string>
     <string name="lblGoToMyFlightbookOptions">Go to MyFlightbook.com</string>

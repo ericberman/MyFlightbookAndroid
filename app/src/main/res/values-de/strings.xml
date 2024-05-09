@@ -170,7 +170,7 @@
     <string name="lblFAQ">FAQ</string>
     <string name="lblSupportDescript">MyFlightbook ist und bleibt kostenlos.  Aber wenn Du es wertvoll findest, freuen wir uns über Deine Unterstützung.</string>
     <string name="btnSupport">Unterstütze MyFlightbook</string>
-    <string name="lblAdditionalOptions">Weitere Einstellungen</string>
+    <string name="lblDonateOnMFB">Aufgrund der Google Play-Richtlinien kann ich hier keinen direkten Link bereitstellen. Bitte öffnen Sie einen Browser, gehen Sie zu MyFlightbook.com und wählen Sie „Spenden“ auf der Registerkarte „Profil“.</string>    <string name="lblAdditionalOptions">Weitere Einstellungen</string>
     <string name="lblAdditionalOptionsText">Zusätzliche Funktionen und Einstellungen für Dein Konto findest Du auf MyFlightbook.com</string>
     <string name="lblGoToMyFlightbookOptions">Gehe zu MyFlightbook.com</string>
     <string name="lblManageAccount">Mein Konto verwalten</string>
