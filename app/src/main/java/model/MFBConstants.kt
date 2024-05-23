@@ -118,7 +118,7 @@ object MFBConstants {
                 szIP,
                 URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"),
                 URLEncoder.encode(AuthToken.m_szPass, "UTF-8"),
-                if (fNaked) "1" else "-1",
+                if (fNaked) "1" else "0",
                 if (fUseNight) nightParam(c) else urlNoNight
             ) + if (szParams.isEmpty()) "" else "&$szParams"
         } catch (e: UnsupportedEncodingException) {

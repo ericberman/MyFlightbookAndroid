@@ -577,12 +577,14 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             R.id.btnFacebook -> viewFacebook()
             R.id.btnCleanUp -> cleanUp()
             R.id.btnSupport -> MFBUtil.alert(this, getString(R.string.btnSupport), getString(R.string.lblDonateOnMFB))
-            R.id.btnAdditionalOptions -> viewPreferences(
-                authRedirWithParams(
+            R.id.btnAdditionalOptions -> {
+                val i = Intent(Intent.ACTION_VIEW)
+                i.setData(Uri.parse(authRedirWithParams(
                     "d=profile",
-                    context
-                )
-            )
+                    context, fNaked = false
+                )))
+                startActivity(i)
+            }
             R.id.btnManageAccount -> viewPreferences(authRedirWithParams("d=account", context))
             R.id.btnDeleteAccount -> viewPreferences(authRedirWithParams("d=bigredbuttons", context))
             R.id.btnFAQ -> ActWebView.viewURL(
