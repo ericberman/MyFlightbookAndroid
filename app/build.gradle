@@ -10,8 +10,8 @@ android {
         applicationId "com.myflightbook.android"
         minSdk 26
         targetSdk 34
-        versionCode 168
-        versionName "2024.05.09.2"
+        versionCode 169
+        versionName "2024.06.17.1"
     }
 
     buildTypes {
@@ -62,18 +62,18 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
     // AndroidX
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.exifinterface:exifinterface:1.3.7'
-    implementation 'androidx.fragment:fragment-ktx:1.7.0'
+    implementation 'androidx.fragment:fragment-ktx:1.8.0'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
     implementation 'com.google.android.material:material:1.12.0'
 
     // Play services
-    implementation 'com.google.android.gms:play-services-location:21.2.0'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
 
     // color picker
