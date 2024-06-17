@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -174,9 +174,10 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             val szTailNumber =
                 (if (le.szTailNumDisplay.isEmpty() && ac != null) ac.displayTailNumber() else le.szTailNumDisplay)
             val txtHeader = v.findViewById<TextView>(R.id.txtFlightHeader)
+            val flightNum = le.propertyWithID(CustomPropertyType.idPropFlightNum)
             val szHeaderHTML = String.format(
                 Locale.getDefault(),
-                "<strong><big>%s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>",
+                "<strong><big>%s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>%s",
                 TextUtils.htmlEncode(
                     DateFormat.getDateFormat(this.context).format(
                         le.dtFlight
@@ -197,7 +198,8 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                         ac.modelDescription
                     )
                 ),
-                TextUtils.htmlEncode(le.szRoute.trim { it <= ' ' })
+                TextUtils.htmlEncode(le.szRoute.trim { it <= ' ' }),
+                if (flightNum == null) "" else String.format(Locale.getDefault(), " <strong>%s</strong>", flightNum.stringValue)
             )
             txtHeader.text = HtmlCompat.fromHtml(szHeaderHTML, HtmlCompat.FROM_HTML_MODE_LEGACY)
             val pBold = Pattern.compile("(\\*)([^*_\\r\\n]*)(\\*)", Pattern.CASE_INSENSITIVE)

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -231,6 +231,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         const val idPropTypeNightTakeOff = 73
         const val idPropTypeTachStart = 95
         const val idPropTypeTachEnd = 96
+        const val idPropFlightNum = 156
         const val idPropTypeBlockOut = 187
         const val idPropTypeBlockIn = 186
         const val idPropTypeApproachDesc = 267
