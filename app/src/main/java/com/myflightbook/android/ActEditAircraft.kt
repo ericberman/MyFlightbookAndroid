@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -208,7 +208,7 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val inflater = requireActivity().menuInflater
-        inflater.inflate(R.menu.imagemenu, menu)
+        inflater.inflate(R.menu.imagemenuaircraft, menu)
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
