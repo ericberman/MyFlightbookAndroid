@@ -168,7 +168,7 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
             val szAircraftDetails = String.format(
                 Locale.getDefault(),
                 "<big><b>%s</b></big> <i>%s</i><br />%s %s",
-                ac.displayTailNumber(),
+                if (ac.isAnonymous()) "" else ac.displayTailNumber(),
                 (ac.modelDescription + " " + ac.modelCommonName).trim { it <= ' ' } + szInstanceType,
                 ac.privateNotes,
                 ac.publicNotes)

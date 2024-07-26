@@ -171,18 +171,22 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             txtError.text = le.szError
             txtError.visibility =
                 if (le.szError.isNotEmpty()) View.VISIBLE else View.GONE
-            val szTailNumber =
-                (if (le.szTailNumDisplay.isEmpty() && ac != null) ac.displayTailNumber() else le.szTailNumDisplay)
+            val szTailNumber = if (ac == null) le.szTailNumDisplay else {
+                val modelDesc = String.format(Locale.getDefault(), "(%s)", ac.modelDescription)
+                if (ac.isAnonymous() && modelDesc.compareTo(le.szTailNumDisplay) == 0) "" else le.szTailNumDisplay
+            }
+
             val txtHeader = v.findViewById<TextView>(R.id.txtFlightHeader)
             val flightNum = le.propertyWithID(CustomPropertyType.idPropFlightNum)
             val szHeaderHTML = String.format(
                 Locale.getDefault(),
-                "<strong><big>%s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>%s",
+                "<strong><big>%s %s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>",
                 TextUtils.htmlEncode(
                     DateFormat.getDateFormat(this.context).format(
                         le.dtFlight
                     )
                 ),
+                if (flightNum == null) "" else String.format(Locale.getDefault(), " <strong>%s</strong>", flightNum.stringValue),
                 when {
                     fIsAwaitingUpload -> getString(R.string.txtAwaitingUpload)
                     fIsPendingFlight -> getString(
@@ -198,8 +202,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                         ac.modelDescription
                     )
                 ),
-                TextUtils.htmlEncode(le.szRoute.trim { it <= ' ' }),
-                if (flightNum == null) "" else String.format(Locale.getDefault(), " <strong>%s</strong>", flightNum.stringValue)
+                TextUtils.htmlEncode(le.szRoute.trim { it <= ' ' })
             )
             txtHeader.text = HtmlCompat.fromHtml(szHeaderHTML, HtmlCompat.FROM_HTML_MODE_LEGACY)
             val pBold = Pattern.compile("(\\*)([^*_\\r\\n]*)(\\*)", Pattern.CASE_INSENSITIVE)
@@ -251,7 +254,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     )
 
                     for (fp in le.rgCustomProperties) {
-                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn)
+                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn || fp.idPropType == CustomPropertyType.idPropFlightNum)
                             continue
                         sb.append(fp.format(DlgDatePicker.fUseLocalTime, true, this.context) + " ")
                     }
