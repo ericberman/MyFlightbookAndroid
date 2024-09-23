@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ import kotlin.math.roundToInt
 
 open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem {
     private enum class FlightProp {
-        PIDFlightId, PIDUser, PIDFlightDate, PIDCatClassOverride, PIDAircraft, PIDcApproaches, PIDcAppPrecision, PIDcAppNP, PIDcLandings, PIDcFSNight, PIDcFSDay, PIDdXC, PIDdNight, PIDdIMC, PIDdSimulatedIFR, PIDdGrnd, PIDdDual, PIDdPIC, PIDdCFI, PIDdSIC, PIDdTotal, PIDfHold, PIDszCommets, PIDszRoute, PIDfPublic, PIDszErr, PIDdtFStart, PIDdtFEnd, PIDdtEStart, PIDdtEEnd, PIDdHobbsStart, PIDdHobbsEnd, PIDszModelDisplay, PIDszTailDisplay, PIDszCatClassDisplay, PIDfHasData, PIDszData, PIDProperties, PIDExistingImages, PIDSend, PIDShare, PIDPendingID
+        PIDFlightId, PIDUser, PIDFlightDate, PIDCatClassOverride, PIDAircraft, PIDcApproaches, PIDcAppPrecision, PIDcAppNP, PIDcLandings, PIDcFSNight, PIDcFSDay, PIDdXC, PIDdNight, PIDdIMC, PIDdSimulatedIFR, PIDdGrnd, PIDdDual, PIDdPIC, PIDdCFI, PIDdSIC, PIDdTotal, PIDfHold, PIDszCommets, PIDszRoute, PIDfPublic, PIDszErr, PIDdtFStart, PIDdtFEnd, PIDdtEStart, PIDdtEEnd, PIDdHobbsStart, PIDdHobbsEnd, PIDszModelDisplay, PIDszTailDisplay, PIDszCatClassDisplay, PIDfHasData, PIDszData, PIDProperties, PIDExistingImages, PIDSend, PIDShare, PIDPendingID, PIDFlightColor
     }
 
     enum class SigStatus {
@@ -157,6 +157,8 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     var fForcePending = false // Indicate if any save operation should force to be a pending flight.
     @JvmField
     protected var mPendingID = "" // error to use in LogbookEntry; used for PendingFlight serialization
+    @JvmField
+    var mFlightColorHex: String? = null
 
     private fun init() {
         szUser = AuthToken.m_szEmail
@@ -507,6 +509,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             FlightProp.PIDszRoute -> szRoute
             FlightProp.PIDszTailDisplay -> szTailNumDisplay
             FlightProp.PIDUser -> szUser
+            FlightProp.PIDFlightColor -> mFlightColorHex ?: ""
             FlightProp.PIDProperties ->                 // return this.rgCustomProperties;
                 Vector(listOf(*rgCustomProperties))
             FlightProp.PIDExistingImages -> if (rgFlightImages == null) Vector() else Vector(rgFlightImages!!.asList())
@@ -559,6 +562,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             FlightProp.PIDUser -> szUser = sz
             FlightProp.PIDSend -> sendLink = sz
             FlightProp.PIDShare -> shareLink = sz
+            FlightProp.PIDFlightColor -> mFlightColorHex = sz
             FlightProp.PIDProperties, FlightProp.PIDExistingImages -> {}
             else -> {}
         }
@@ -714,6 +718,10 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "User"
             }
+            FlightProp.PIDFlightColor -> {
+                pi.type = PropertyInfo.STRING_CLASS
+                pi.name = "FlightColorHex"
+            }
             FlightProp.PIDProperties -> {
                 pi.type = PropertyInfo.VECTOR_CLASS
                 pi.name = "CustomProperties"
@@ -835,6 +843,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         szCatClassDisplay = readNullableString(so, "CatClassDisplay")
         sendLink = so.getPropertySafelyAsString("SendFlightLink")
         shareLink = so.getPropertySafelyAsString("SocialMediaLink")
+        mFlightColorHex = so.getPropertySafelyAsString(("FlightColorHex"))
 
         // FlightData is not always present.
         try {

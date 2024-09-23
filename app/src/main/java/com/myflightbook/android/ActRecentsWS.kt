@@ -21,6 +21,7 @@ package com.myflightbook.android
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -137,6 +138,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             // Trigger the next batch of flights
             if (fCouldBeMore && position + 1 >= mRgle!!.size) refreshRecentFlights(false)
             val le = getItem(position)!!
+
             val fIsAwaitingUpload = le.isAwaitingUpload()
             val fIsPendingFlight = le is PendingFlight
             val txtError = v!!.findViewById<TextView>(R.id.txtError)
@@ -271,10 +273,13 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             txtComments.setTypeface(tf, tfNew)
             txtHeader.setTypeface(tf, tfNew)
             txtFlightTimes.setTypeface(tf, tfNew)
-            val backColor = ContextCompat.getColor(
+            val backColor = if ((le.mFlightColorHex ?: "").isNotEmpty())
+                Color.parseColor("#" + le.mFlightColorHex)
+            else ContextCompat.getColor(
                 context,
                 if (fIsAwaitingUpload || fIsPendingFlight) R.color.pendingBackground else R.color.colorBackground
             )
+
             v.setBackgroundColor(backColor)
             ivCamera.setBackgroundColor(backColor)
             ivSigState.setBackgroundColor(backColor)
@@ -287,7 +292,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
     }
 
     private fun submitQueuedFlights(rgle: Array<LogbookEntry>?) {
-        if (rgle == null || rgle.isEmpty())
+        if (rgle.isNullOrEmpty())
             return
 
         val act = requireActivity()
