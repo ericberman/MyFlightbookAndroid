@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -252,10 +252,7 @@ import java.util.*
             RequestMultiplePermissions()
         ) { result: Map<String, Boolean>? ->
             if (checkAllTrue(result)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                    mChooseImagesPhotoPicker!!.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
-                else
-                    mChooseImagesWithPermissions!!.launch("image/*")
+                mChooseImagesPhotoPicker!!.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
             }
         }
         val takePictureLauncher = registerForActivityResult(
@@ -549,7 +546,7 @@ import java.util.*
     //endregion
     //region image/video selection
     fun choosePicture() {
-        mChooseImageLauncher!!.launch(getRequiredPermissions(GALLERY_PERMISSION))
+        mChooseImageLauncher!!.launch(emptyArray())
     }
 
     fun takePicture() {
