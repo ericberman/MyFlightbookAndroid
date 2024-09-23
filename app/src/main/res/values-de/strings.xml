@@ -183,7 +183,7 @@
     <string name="lblGPSRationale">Automatische Erkennung und Aufzeichnung erfordern den Zugriff auf deinen Standort im Hintergrund, während ein Flug stattfinden könnte.  In der App "Einstellungen" einschalten?</string>
     <string name="lblAutoHobbs">Hobbs automatisch ausfüllen</string>
     <string name="lblAutoTime">Gesamt-Zeit automatisch ausfüllen</string>
-    <string name="lblCopyright">© 2012&#8211;2023 MyFlightbook LLC (Kotlin)</string>
+    <string name="lblCopyright">© 2012&#8211;2024 MyFlightbook LLC (Kotlin)</string>
     <string name="lblCodeCredit">Teile dieses Codes verwenden die KSoap2-Bibliothek unter http://code.google.com/p/ksoap2-android/, lizenziert unter der MIT-Lizenz unter http://www.opensource.org/licenses/mit-license.php.  Vielen Dank, Leute!</string>
     <string name="lblContactMe">Kontaktiere uns</string>
     <string name="lblCleanup">Aufräumen</string>
