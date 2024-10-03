@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -168,8 +168,8 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
             val szAircraftDetails = String.format(
                 Locale.getDefault(),
                 "<big><b>%s</b></big> <i>%s</i><br />%s %s",
-                if (ac.isAnonymous()) "" else ac.displayTailNumber(),
-                (ac.modelDescription + " " + ac.modelCommonName).trim { it <= ' ' } + szInstanceType,
+                ac.displayTailNumber(),
+                if (ac.isAnonymous()) ac.modelCommonName else (ac.modelDescription + " " + ac.modelCommonName).trim { it <= ' ' } + szInstanceType,
                 ac.privateNotes,
                 ac.publicNotes)
             tvTail.text = HtmlCompat.fromHtml(szAircraftDetails, HtmlCompat.FROM_HTML_MODE_LEGACY)
