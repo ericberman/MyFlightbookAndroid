@@ -543,6 +543,9 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         if (currAppWidgetIds.any()) {
             val updateIntent = Intent()
             updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                .setClassName(/* TODO: provide the application ID. For example: */ packageName,
+                    "com.myflightbook.android.CurrencyWidgetProvider"
+                )
             updateIntent.putExtra(CurrencyWidgetProvider.WIDGET_IDS_KEY, currAppWidgetIds)
             sendBroadcast(updateIntent)
         }
@@ -550,6 +553,9 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         if (totalsAppWidgetIds.any()) {
             val updateIntent = Intent()
             updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                .setClassName(/* TODO: provide the application ID. For example: */ packageName,
+                    "com.myflightbook.android.CurrencyWidgetProvider"
+                )
             updateIntent.putExtra(TotalsWidgetProvider.WIDGET_IDS_KEY, totalsAppWidgetIds)
             sendBroadcast(updateIntent)
         }
@@ -707,8 +713,8 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         ed.apply()
     }
 
-    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        super.onSaveInstanceState(savedInstanceState)
+    public override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         saveState()
     }
 
