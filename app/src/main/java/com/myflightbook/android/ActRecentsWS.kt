@@ -273,12 +273,21 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             txtComments.setTypeface(tf, tfNew)
             txtHeader.setTypeface(tf, tfNew)
             txtFlightTimes.setTypeface(tf, tfNew)
-            val backColor = if ((le.mFlightColorHex ?: "").isNotEmpty())
+
+            val isColored = ((le.mFlightColorHex ?: "").isNotEmpty())
+
+            val backColor = if (isColored)
                 Color.parseColor("#" + le.mFlightColorHex)
             else ContextCompat.getColor(
                 context,
                 if (fIsAwaitingUpload || fIsPendingFlight) R.color.pendingBackground else R.color.colorBackground
             )
+
+            // Issue #315 - flight coloring needs to use daytime colors for those flights
+            val textForeColor = ContextCompat.getColor(if (isColored) (activity?.applicationContext ?: context) else context, R.color.textColorPrimary)
+            txtComments.setTextColor(textForeColor)
+            txtFlightTimes.setTextColor(textForeColor)
+            txtHeader.setTextColor((textForeColor))
 
             v.setBackgroundColor(backColor)
             ivCamera.setBackgroundColor(backColor)
