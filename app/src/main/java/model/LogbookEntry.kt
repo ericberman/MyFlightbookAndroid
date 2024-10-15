@@ -1187,6 +1187,8 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     fun xfillValueForProperty(cpt : CustomPropertyType) :Double {
         if (cpt.idPropType == CustomPropertyType.idPropTypeTachStart)
             return Aircraft.getHighWaterTachForAircraft(idAircraft)
+        if (cpt.idPropType == CustomPropertyType.idPropTypeFlightMeterStart)
+            return Aircraft.getHighWaterMeterForAircraft(idAircraft)
         if (cpt.isTime())
             return decTotal
         if (cpt.isLanding())

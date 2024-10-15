@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -539,6 +539,7 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
 
         private val hashHighWaterHobbs = Hashtable<Int, Double>()
         private val hashHighWaterTach = Hashtable<Int, Double>()
+        private val hashHighWaterFlightMeter = Hashtable<Int, Double>()
         fun updateHobbsForAircraft(hobbs: Double, idAircraft: Int) {
             if (!hashHighWaterHobbs.containsKey(idAircraft)) hashHighWaterHobbs[idAircraft] = hobbs
             val d = hashHighWaterHobbs[idAircraft]
@@ -551,6 +552,12 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
             if (d != null) hashHighWaterTach[idAircraft] = max(d, tach)
         }
 
+        fun updateFlightMeterForAircraft(meter: Double, idAircraft: Int) {
+            if (!hashHighWaterFlightMeter.containsKey(idAircraft)) hashHighWaterFlightMeter[idAircraft] = meter
+            val d = hashHighWaterFlightMeter[idAircraft]
+            if (d != null) hashHighWaterFlightMeter[idAircraft] = max(d, meter)
+        }
+
         @JvmStatic
         fun getHighWaterHobbsForAircraft(idAircraft: Int): Double {
             return hashHighWaterHobbs.getOrDefault(idAircraft, 0.0)
@@ -559,6 +566,11 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
         @JvmStatic
         fun getHighWaterTachForAircraft(idAircraft: Int): Double {
             return hashHighWaterTach.getOrDefault(idAircraft, 0.0)
+        }
+
+        @JvmStatic
+        fun getHighWaterMeterForAircraft(idAircraft: Int) : Double {
+            return hashHighWaterFlightMeter.getOrDefault(idAircraft, 0.0)
         }
     }
 }

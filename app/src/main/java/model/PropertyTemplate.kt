@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
     override fun fromProperties(so: SoapObject) {
         id = so.getProperty("ID").toString().toInt()
         name = so.getProperty("Name").toString()
-        description = so.getProperty("Description").toString()
+        description = so.getPrimitivePropertyAsString("Description").toString()
         groupAsInt = so.getProperty("GroupAsInt").toString().toInt()
         groupDisplayName = so.getProperty("GroupDisplayName").toString()
         propTypes!!.clear()

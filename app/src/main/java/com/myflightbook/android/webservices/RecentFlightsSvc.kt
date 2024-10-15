@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -96,6 +96,10 @@ class RecentFlightsSvc : MFBSoap() {
                 for (fp in le.rgCustomProperties) {
                     if (fp.idPropType == CustomPropertyType.idPropTypeTachEnd) {
                         Aircraft.updateTachForAircraft(fp.decValue, le.idAircraft)
+                        break
+                    }
+                    if (fp.idPropType == CustomPropertyType.idPropTypeFlightMeterEnd) {
+                        Aircraft.updateFlightMeterForAircraft(fp.decValue, le.idAircraft)
                         break
                     }
                 }

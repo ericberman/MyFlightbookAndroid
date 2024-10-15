@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2024 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -66,6 +66,10 @@ import model.Aircraft.Companion.getHighWaterTachForAircraft
 import model.Airport.Companion.appendCodeToRoute
 import model.Airport.Companion.appendNearestToRoute
 import model.CustomPropertyType.Companion.getPinnedProperties
+import model.CustomPropertyType.Companion.idPropTypeFlightMeterEnd
+import model.CustomPropertyType.Companion.idPropTypeFlightMeterStart
+import model.CustomPropertyType.Companion.idPropTypeFuelAtEnd
+import model.CustomPropertyType.Companion.idPropTypeFuelAtStart
 import model.CustomPropertyType.Companion.idPropTypeTachEnd
 import model.CustomPropertyType.Companion.idPropTypeTachStart
 import model.CustomPropertyType.Companion.isPinnedProperty
@@ -76,7 +80,6 @@ import model.FlightProperty.Companion.rewritePropertiesForFlight
 import model.GPSSim.Companion.autoFill
 import model.LogbookEntry.SigStatus
 import model.MFBConstants.authRedirWithParams
-import model.MFBConstants.nightParam
 import model.MFBFlightListener.ListenerFragmentDelegate
 import model.MFBImageInfo.PictureDestination
 import model.MFBLocation.AutoFillOptions
@@ -96,7 +99,6 @@ import model.PropertyTemplate.Companion.simTemplate
 import model.PropertyTemplate.Companion.templatesWithIDs
 import java.io.UnsupportedEncodingException
 import java.net.URL
-import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -440,7 +442,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                         try {
                             ActWebView.viewURL(
                                 requireActivity(),
-                                authRedirWithParams(String.format("d=SignEntry&idFlight=%d", mle!!.idFlight), context)
+                                authRedirWithParams(String.format(Locale.US, "d=SignEntry&idFlight=%d", mle!!.idFlight), context)
                             )
                         } catch (ignored: UnsupportedEncodingException) {
                         }
@@ -1158,6 +1160,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // first, validate that the aircraft is still OK for the user
         val hobbsEnd = mle!!.hobbsEnd
         val cfpTachEnd = mle!!.propertyWithID((idPropTypeTachEnd))
+        val cfpMeterEnd = mle!!.propertyWithID(idPropTypeFlightMeterEnd)
+        val cfpFuelEnd = mle!!.propertyWithID(idPropTypeFuelAtEnd)
         val leNew = LogbookEntry(validateAircraftID(mle!!.idAircraft), mle!!.fPublic)
         leNew.dtFlight = getNullDate() // When *resetting* a flight, use a null date per issue #294
         if (fCarryHobbs) leNew.hobbsStart = hobbsEnd
@@ -1169,8 +1173,16 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         saveCurrentFlight()
 
         // Add the property here, after savecurrentflight, so that we have a local db id for the flight.
-        if (fCarryHobbs && cfpTachEnd != null) {
-            leNew.addOrSetPropertyDouble(idPropTypeTachStart, cfpTachEnd.decValue)
+        if (fCarryHobbs) {
+            if (cfpTachEnd != null) {
+                leNew.addOrSetPropertyDouble(idPropTypeTachStart, cfpTachEnd.decValue)
+            }
+            if (cfpMeterEnd != null) {
+                leNew.addOrSetPropertyDouble(idPropTypeFlightMeterStart, cfpMeterEnd.decValue)
+            }
+            if (cfpFuelEnd != null) {
+                leNew.addOrSetPropertyDouble(idPropTypeFuelAtStart, cfpFuelEnd.decValue)
+            }
             toView()
         }
 

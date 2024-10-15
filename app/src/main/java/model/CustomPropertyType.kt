@@ -236,6 +236,8 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         const val idPropTypeBlockIn = 186
         const val idPropTypeApproachDesc = 267
         const val idPropTypeFlightCost = 415
+        const val idPropTypeFlightMeterStart = 666
+        const val idPropTypeFlightMeterEnd = 667
         const val idPropTypeLessonStart = 668
         const val idPropTypeLessonEnd = 669
         const val idPropTypeGroundInstructionGiven = 198
