@@ -843,7 +843,11 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         szCatClassDisplay = readNullableString(so, "CatClassDisplay")
         sendLink = so.getPropertySafelyAsString("SendFlightLink")
         shareLink = so.getPropertySafelyAsString("SocialMediaLink")
-        mFlightColorHex = so.getPropertySafelyAsString(("FlightColorHex"))
+        try {
+            mFlightColorHex = readNullableString(so, "FlightColorHex")
+        } catch (ignored: Exception) {
+            mFlightColorHex = ""
+        }
 
         // FlightData is not always present.
         try {
