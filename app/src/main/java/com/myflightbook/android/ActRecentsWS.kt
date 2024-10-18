@@ -284,7 +284,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             )
 
             // Issue #315 - flight coloring needs to use daytime colors for those flights
-            val textForeColor = ContextCompat.getColor(if (isColored) (activity?.applicationContext ?: context) else context, R.color.textColorPrimary)
+            val textForeColor = ContextCompat.getColor(context, if (isColored) R.color.textColorPrimaryColoredFlights else R.color.textColorPrimary)
             txtComments.setTextColor(textForeColor)
             txtFlightTimes.setTextColor(textForeColor)
             txtHeader.setTextColor((textForeColor))
