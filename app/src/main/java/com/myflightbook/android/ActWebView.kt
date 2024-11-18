@@ -131,7 +131,7 @@ class ActWebView : AppCompatActivity() {
         }
         val ws = wv.settings
         ws.javaScriptEnabled = true
-        ws.builtInZoomControls = true
+        ws.builtInZoomControls = false
         ws.setSupportZoom(true)
         ws.allowFileAccess = true
         ws.allowContentAccess = true
