@@ -1287,6 +1287,9 @@ class GPSSim(private val m_ll: LocationListener) {
                 // Clear all of the things that can be computed
                 var dtEngineSaved =
                     le.dtEngineEnd // clear this so that flight will appear to be in progress
+                val dtBlockIn = cfpBlockIn?.dateValue;
+                if (cfpBlockIn != null) // issue #317 - same thing as with engine above.
+                    cfpBlockIn.dateValue = null;
                 le.dtEngineEnd = getNullDate()
                 le.szRoute = ""
                 le.decNight = 0.0
@@ -1302,6 +1305,9 @@ class GPSSim(private val m_ll: LocationListener) {
                 if (!le.isKnownEngineEnd) dtEngineSaved = rgcoords[rgcoords.size - 1].timeStamp
                 le.dtEngineEnd =
                     dtEngineSaved // restore engine end.  If synthetic path, this will be overwritten below anyhow.
+                // Issue #317 - restore any block-in as well.
+                if (dtBlockIn != null && cfpBlockIn != null)
+                    le.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, dtBlockIn)
             }
             if (fSyntheticPath) {
                 le.szFlightData = ""
