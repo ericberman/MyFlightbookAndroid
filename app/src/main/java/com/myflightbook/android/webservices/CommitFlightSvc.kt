@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,13 +58,6 @@ class CommitFlightSvc : MFBSoap() {
         request.addProperty(piLe)
         request.addProperty(pipo)
 
-        // The date of flight is done in local time; need to convert it to
-        // a UTC time that looks like the correct local time so that it records
-        // correctly over the wire (same as in iPhone version.
-
-        // save the date, since we're making a live copy
-        val dtSave = le.dtFlight
-        le.dtFlight = MFBUtil.getUTCDateFromLocalDate(le.dtFlight)
         if (le.rgFlightImages == null) le.imagesForFlight
         val rgmfbii = le.rgFlightImages
             ?: throw NullPointerException("le.rgFlightImages is null")
@@ -97,7 +90,6 @@ class CommitFlightSvc : MFBSoap() {
         } catch (e: Exception) {
             lastError += e.message
         }
-        le.dtFlight = dtSave
         le.szError = lastError
         return lastError.isEmpty()
     }

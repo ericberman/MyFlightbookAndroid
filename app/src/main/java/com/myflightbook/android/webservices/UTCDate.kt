@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package com.myflightbook.android.webservices
 import android.content.Context
 import android.text.format.DateFormat
 import java.text.SimpleDateFormat
+import kotlinx.datetime.LocalDate
 import java.util.*
 
 object UTCDate {
@@ -41,12 +42,22 @@ object UTCDate {
     }
 
     @JvmStatic
+    fun getNullLocalDate() : LocalDate {
+        return LocalDate(1, 1, 1)
+    }
+
+    @JvmStatic
     fun isNullDate(d: Date?): Boolean {
         if (d == null)
             return true
         val c: Calendar = GregorianCalendar(getUTCTimeZone)
         c.time = d
         return c[Calendar.YEAR] < 100
+    }
+
+    @JvmStatic
+    fun isNullDate(d: LocalDate?): Boolean {
+        return (d?.year ?: 0) < 100
     }
 
     @JvmStatic

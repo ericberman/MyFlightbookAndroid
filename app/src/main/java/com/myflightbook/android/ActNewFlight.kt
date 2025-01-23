@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,9 +56,10 @@ import com.myflightbook.android.webservices.AuthToken.Companion.isValid
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.cachedPropertyTypes
 import com.myflightbook.android.webservices.MFBSoap.Companion.isOnline
 import com.myflightbook.android.webservices.RecentFlightsSvc.Companion.clearCachedFlights
-import com.myflightbook.android.webservices.UTCDate.getNullDate
+import com.myflightbook.android.webservices.UTCDate.getNullLocalDate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toJavaLocalDate
 import model.*
 import model.Aircraft.Companion.getAircraftById
 import model.Aircraft.Companion.getHighWaterHobbsForAircraft
@@ -100,8 +101,11 @@ import model.PropertyTemplate.Companion.templatesWithIDs
 import java.io.UnsupportedEncodingException
 import java.net.URL
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegate, DateTimeUpdate,
@@ -256,7 +260,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     private fun fetchDigitizedSig(url : String?, iv : ImageView) {
-        if (url == null || url.isEmpty())
+        if (url.isNullOrEmpty())
             return
         lifecycleScope.launch {
             doAsync<String, Bitmap?>(
@@ -692,7 +696,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         mRgac = rgac
         val spnAircraft = findViewById(R.id.spnAircraft) as Spinner?
         val rgFilteredAircraft = if (fShowAll) rgac else selectibleAircraft()
-        if (rgFilteredAircraft != null && rgFilteredAircraft.isNotEmpty()) {
+        if (!rgFilteredAircraft.isNullOrEmpty()) {
             var pos = 0
             for (i in rgFilteredAircraft.indices) {
                 if (mle == null || mle!!.idAircraft == rgFilteredAircraft[i].aircraftID) {
@@ -923,8 +927,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     private fun setDateOfFlight() {
         val b = findViewById(R.id.btnFlightSet) as TextView?
-        if (isNullDate(mle?.dtFlight)) b!!.text = getString(R.string.lblToday) else b!!.text =
-            DateFormat.getDateFormat(requireActivity()).format(mle!!.dtFlight)
+        b!!.text = if (isNullDate(mle?.dtFlight)) getString(R.string.lblToday) else mle!!.dtFlight.toJavaLocalDate().format(
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale.getDefault()))
     }
 
     override fun onClick(v: View) {
@@ -982,13 +986,13 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             }
             R.id.btnFlightSet -> {
                 if (isNullDate(mle!!.dtFlight)) {
-                    mle!!.dtFlight = Date()
+                    mle!!.dtFlight = MFBUtil.localToday()
                     setDateOfFlight()
                 } else {
                     val dlg = DlgDatePicker(
                         requireActivity(),
                         DlgDatePicker.DatePickMode.LOCALDATEONLY,
-                        mle!!.dtFlight
+                        MFBUtil.localDateToLocalDateTime(mle!!.dtFlight)
                     )
                     dlg.mDelegate = this
                     dlg.setNullableDate()
@@ -1124,7 +1128,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 fFlightChanged = true
             }
             R.id.btnFlightSet -> {
-                mle!!.dtFlight = dt2
+                mle!!.dtFlight = MFBUtil.localDateTimeToLocalDate(dt2)
                 setDateOfFlight()
             }
         }
@@ -1163,7 +1167,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         val cfpMeterEnd = mle!!.propertyWithID(idPropTypeFlightMeterEnd)
         val cfpFuelEnd = mle!!.propertyWithID(idPropTypeFuelAtEnd)
         val leNew = LogbookEntry(validateAircraftID(mle!!.idAircraft), mle!!.fPublic)
-        leNew.dtFlight = getNullDate() // When *resetting* a flight, use a null date per issue #294
+        leNew.dtFlight = getNullLocalDate() // When *resetting* a flight, use a null date per issue #294
         if (fCarryHobbs) leNew.hobbsStart = hobbsEnd
         mActivetemplates!!.clear()
         mle!!.idAircraft = leNew.idAircraft // so that updateTemplatesForAircraft works
@@ -1226,7 +1230,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             showRecordingIndicator()
             if (isNullDate(mle!!.dtFlight)) {
                 // Null date becomes whatever today is locally
-                mle!!.dtFlight = Date()
+                mle!!.dtFlight = MFBUtil.localToday()
             }
         }
 
@@ -1491,7 +1495,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     private fun selectedAircraftID(): Int {
         val rgSelectibleAircraft = selectibleAircraft()
-        if (rgSelectibleAircraft != null && rgSelectibleAircraft.isNotEmpty()) {
+        if (!rgSelectibleAircraft.isNullOrEmpty()) {
             val sp = findViewById(R.id.spnAircraft) as Spinner?
             val ac = sp!!.selectedItem as Aircraft
             return ac.aircraftID
@@ -1531,7 +1535,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             val dtBlockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
             if (dtBlockOut != null && !isNullDate(dtBlockOut) && dtBlockOut < dt)
                 dt = dtBlockOut
-            mle!!.dtFlight = dt
+            mle!!.dtFlight = MFBUtil.localDateTimeToLocalDate(dt)
             setDateOfFlight()
         }
     }
@@ -1763,11 +1767,11 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
             // if totals mode is FLIGHT TIME, then elapsed time is based on flight time if/when it is known.
             // OTHERWISE, we use engine time (if known) or else flight time.
-            when (MFBLocation.fPrefAutoFillTime) {
-                AutoFillOptions.EngineTime -> dtTotal = dtEngine
-                AutoFillOptions.FlightTime -> dtTotal = dtFlight
-                AutoFillOptions.BlockTime -> dtTotal = dtBlock
-                else -> dtTotal = Math.max(dtEngine, Math.max(dtFlight, dtBlock))
+            dtTotal = when (MFBLocation.fPrefAutoFillTime) {
+                AutoFillOptions.EngineTime -> dtEngine
+                AutoFillOptions.FlightTime -> dtFlight
+                AutoFillOptions.BlockTime -> dtBlock
+                else -> max(dtEngine, max(dtFlight, dtBlock))
             }
             dtTotal -= totalTimePaused()
             if (dtTotal <= 0) dtTotal = 0 // should never happen

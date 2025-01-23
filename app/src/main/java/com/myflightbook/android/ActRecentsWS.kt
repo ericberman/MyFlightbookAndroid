@@ -185,7 +185,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                 "<strong><big>%s %s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>",
                 TextUtils.htmlEncode(
                     DateFormat.getDateFormat(this.context).format(
-                        le.dtFlight
+                        MFBUtil.localDateToLocalDateTime(le.dtFlight)
                     )
                 ),
                 if (flightNum == null) "" else String.format(Locale.getDefault(), " <strong>%s</strong>", flightNum.stringValue),

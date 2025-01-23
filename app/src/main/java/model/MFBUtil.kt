@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,12 @@ import com.myflightbook.android.DlgProgress
 import com.myflightbook.android.R
 import com.myflightbook.android.webservices.UTCDate.getUTCCalendar
 import com.myflightbook.android.webservices.UTCDate.getUTCTimeZone
+import kotlinx.datetime.Clock
 import java.io.*
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.todayIn
+import kotlinx.datetime.TimeZone
+import java.time.ZoneOffset
 import java.util.*
 import kotlin.math.abs
 
@@ -98,6 +103,35 @@ object MFBUtil {
         return c.time
     }
 
+    // Parses an ISO-formatted string as a UTC time.  Basically just ignores everything after the "T"
+    fun utcDateTimeToLocalDate(sz : String) : LocalDate {
+        return LocalDate.parse(sz.substringBefore("T"))
+    }
+
+    // Creates a localdate that represents the provided date, as expressed in local time
+    // I.e., if the date is 2025-05-07T00:00Z, this produces May 6 in Seattle and May 7 in Stockholm
+    fun localDateTimeToLocalDate(dt: Date) : LocalDate {
+        val localDateTime = dt.toInstant().atZone(ZoneOffset.systemDefault()).toLocalDateTime()
+        return LocalDate(localDateTime.year, localDateTime.monthValue, localDateTime.dayOfMonth)
+    }
+
+    // creates a UTC date that "looks" like the provided local date, in UTC.
+    // I.e., if the local date is May 7 2025, this produces 2025-05-07T00:00Z
+    fun localDateToUtcDateTime(dtLocal : LocalDate) : Date {
+        val c = getUTCCalendar()
+        c[dtLocal.year, dtLocal.month.value - 1, dtLocal.dayOfMonth, 0, 0] = 0
+        return c.time
+    }
+
+    // Creates a datetime in local time for the specified date that matches the date in the current time zone
+    fun localDateToLocalDateTime(dtLocal : LocalDate) : Date {
+        return localDateFromUTCDate(localDateToUtcDateTime(dtLocal))!!
+    }
+
+    fun localToday() : LocalDate {
+        return Clock.System.todayIn(TimeZone.currentSystemDefault())
+    }
+
     fun addCalendarMonths(dt: Date, cMonths: Int): Date {
         val c = GregorianCalendar(getUTCTimeZone)
         c.time = dt
@@ -161,7 +195,7 @@ object MFBUtil {
 
     @JvmStatic
     fun <T> deserializeFromString(s: String?): T? {
-        if (s == null || s.isEmpty()) return null
+        if (s.isNullOrEmpty()) return null
         try {
             val rgb = Base64.decode(s, Base64.DEFAULT)
             val bis = ByteArrayInputStream(rgb)

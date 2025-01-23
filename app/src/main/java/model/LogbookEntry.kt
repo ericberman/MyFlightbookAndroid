@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import com.myflightbook.android.MFBMain
 import com.myflightbook.android.webservices.AircraftSvc
 import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc.Companion.cachedPropertyTypes
+import com.myflightbook.android.webservices.UTCDate
 import com.myflightbook.android.webservices.UTCDate.getNullDate
 import com.myflightbook.android.webservices.UTCDate.isNullDate
 import model.Aircraft.Companion.getAircraftById
@@ -46,6 +47,7 @@ import java.io.Serializable
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import kotlinx.datetime.LocalDate
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
@@ -65,7 +67,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     var idFlight = ID_NEW_FLIGHT
     private var szUser = ""
     @JvmField
-    var dtFlight = Date()
+    var dtFlight: LocalDate = MFBUtil.localToday()
     private var idCatClassOverride = 0
     @JvmField
     var idAircraft = -1
@@ -184,7 +186,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         dtFlightEnd = dtFlightStart
         dtEngineStart = dtFlightEnd
         dtEngineEnd = dtEngineStart
-        dtFlight = Date()
+        dtFlight = MFBUtil.localToday()
         fPublic = false
         fHold = false
         fHasDataStream = false
@@ -245,7 +247,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             fp.idProp = FlightProperty.ID_PROP_NEW
         }
         leNew.rgFlightImages = arrayOf()
-        leNew.dtFlight = Date()
+        leNew.dtFlight = MFBUtil.localToday()
         leNew.dtEngineStart = getNullDate()
         leNew.dtEngineEnd = getNullDate()
         leNew.dtFlightStart = getNullDate()
@@ -262,9 +264,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     }
 
     fun cloneAndReverse(): LogbookEntry? {
-        val leNew = clone()
-        if (leNew == null)
-            return leNew
+        val leNew = clone() ?: return null
         val airports = splitCodes(leNew.szRoute)
         val sb = StringBuilder()
         for (i in airports.indices.reversed()) {
@@ -498,7 +498,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             FlightProp.PIDdXC -> decXC
             FlightProp.PIDfHasData -> fHasDataStream
             FlightProp.PIDfHold -> fHold
-            FlightProp.PIDFlightDate -> dtFlight
+            FlightProp.PIDFlightDate -> MFBUtil.localDateToUtcDateTime(dtFlight)
             FlightProp.PIDFlightId -> idFlight
             FlightProp.PIDfPublic -> fPublic
             FlightProp.PIDszCatClassDisplay -> szCatClassDisplay
@@ -549,7 +549,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             FlightProp.PIDdXC -> decXC = sz.toDouble()
             FlightProp.PIDfHasData -> fHasDataStream = java.lang.Boolean.parseBoolean(sz)
             FlightProp.PIDfHold -> fHold = java.lang.Boolean.parseBoolean(sz)
-            FlightProp.PIDFlightDate -> dtFlight = IsoDate.stringToDate(sz, IsoDate.DATE)
+            FlightProp.PIDFlightDate -> dtFlight = MFBUtil.utcDateTimeToLocalDate(sz)
             FlightProp.PIDFlightId -> idFlight = sz.toInt()
             FlightProp.PIDfPublic -> fPublic = java.lang.Boolean.parseBoolean(sz)
             FlightProp.PIDszCatClassDisplay -> szCatClassDisplay = sz
@@ -775,7 +775,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         so.addProperty("Route", szRoute)
         so.addProperty("Comment", szComments)
         so.addProperty("fIsPublic", fPublic)
-        so.addProperty("Date", IsoDate.dateToString(dtFlight, IsoDate.DATE))
+        so.addProperty("Date", MFBUtil.localDateToUtcDateTime(dtFlight))
         so.addProperty("FlightID", idFlight)
         addDouble(so, "HobbsStart", hobbsStart)
         addDouble(so, "HobbsEnd", hobbsEnd)
@@ -831,7 +831,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         szRoute = readNullableString(so, "Route")
         szComments = readNullableString(so, "Comment")
         fPublic = java.lang.Boolean.parseBoolean(so.getProperty("fIsPublic").toString())
-        dtFlight = IsoDate.stringToDate(so.getProperty("Date").toString(), IsoDate.DATE)
+        dtFlight = MFBUtil.utcDateTimeToLocalDate(so.getProperty("Date").toString())
         dtFlightStart = readNullableDate(so, "FlightStart")!!
         dtFlightEnd = readNullableDate(so, "FlightEnd")!!
         dtEngineStart = readNullableDate(so, "EngineStart")!!
@@ -843,10 +843,10 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         szCatClassDisplay = readNullableString(so, "CatClassDisplay")
         sendLink = so.getPropertySafelyAsString("SendFlightLink")
         shareLink = so.getPropertySafelyAsString("SocialMediaLink")
-        try {
-            mFlightColorHex = readNullableString(so, "FlightColorHex")
+        mFlightColorHex = try {
+            readNullableString(so, "FlightColorHex")
         } catch (ignored: Exception) {
-            mFlightColorHex = ""
+            ""
         }
 
         // FlightData is not always present.
@@ -920,7 +920,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         val cv = ContentValues()
         cv.put("idFlight", idFlight)
         cv.put("szUser", szUser)
-        cv.put("dtFlight", df.format(dtFlight))
+        cv.put("dtFlight", df.format(MFBUtil.localDateToUtcDateTime(dtFlight)))
         cv.put("idCatClassOverride", idCatClassOverride)
         cv.put("idAircraft", idAircraft)
         cv.put("cApproaches", cApproaches)
@@ -974,7 +974,8 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         try {
             idFlight = c.getInt(c.getColumnIndexOrThrow("idFlight"))
             szUser = c.getString(c.getColumnIndexOrThrow("szUser"))
-            dtFlight = df.parse(c.getString(c.getColumnIndexOrThrow("dtFlight"))) ?: Date(0)
+            val dtFlightString = c.getString(c.getColumnIndexOrThrow("dtFlight"))
+            dtFlight = if (dtFlightString.isNullOrEmpty()) UTCDate.getNullLocalDate() else MFBUtil.utcDateTimeToLocalDate(dtFlightString)
             idCatClassOverride = c.getInt(c.getColumnIndexOrThrow("idCatClassOverride"))
             idAircraft = c.getInt(c.getColumnIndexOrThrow("idAircraft"))
             cApproaches = c.getInt(c.getColumnIndexOrThrow("cApproaches"))

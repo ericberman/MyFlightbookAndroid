@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1214,7 +1214,7 @@ class GPSSim(private val m_ll: LocationListener) {
             rgsamples: Array<LocSample>?,
             le: LogbookEntry
         ) {
-            if (rgsamples == null || rgsamples.isEmpty()) return  // nothing to do
+            if (rgsamples.isNullOrEmpty()) return  // nothing to do
             val mfbFlightListener = MFBFlightListener().setInProgressFlight(le)
             val mfbLocation = MFBLocation(null, mfbFlightListener)
             mfbLocation.fNoRecord = true // don't overwrite a potential real flight in progress.
@@ -1276,20 +1276,20 @@ class GPSSim(private val m_ll: LocationListener) {
                 } catch (ignored: IOException) {
                 } catch (ignored: XmlPullParserException) {
                 }
-                if (rgcoords != null && rgcoords.isNotEmpty()) {
+                if (!rgcoords.isNullOrEmpty()) {
                     le.dtFlightEnd = getNullDate()
                     le.dtFlightStart = le.dtFlightEnd // we will recompute these
                 }
             }
 
             // We now have telemetry (either measured or synthesized).
-            if (rgcoords != null && rgcoords.isNotEmpty()) {
+            if (!rgcoords.isNullOrEmpty()) {
                 // Clear all of the things that can be computed
                 var dtEngineSaved =
                     le.dtEngineEnd // clear this so that flight will appear to be in progress
-                val dtBlockIn = cfpBlockIn?.dateValue;
+                val dBlockIn = cfpBlockIn?.dateValue
                 if (cfpBlockIn != null) // issue #317 - same thing as with engine above.
-                    cfpBlockIn.dateValue = null;
+                    cfpBlockIn.dateValue = null
                 le.dtEngineEnd = getNullDate()
                 le.szRoute = ""
                 le.decNight = 0.0
@@ -1306,8 +1306,8 @@ class GPSSim(private val m_ll: LocationListener) {
                 le.dtEngineEnd =
                     dtEngineSaved // restore engine end.  If synthetic path, this will be overwritten below anyhow.
                 // Issue #317 - restore any block-in as well.
-                if (dtBlockIn != null && cfpBlockIn != null)
-                    le.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, dtBlockIn)
+                if (dBlockIn != null)
+                    le.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, dBlockIn)
             }
             if (fSyntheticPath) {
                 le.szFlightData = ""
@@ -1345,8 +1345,8 @@ class GPSSim(private val m_ll: LocationListener) {
             }
             val le = LogbookEntry()
             le.idFlight = LogbookEntry.ID_QUEUED_FLIGHT_UNSUBMITTED
-            le.dtFlight = rgsamples[0].timeStamp
-            le.dtEngineStart = le.dtFlight
+            le.dtEngineStart = rgsamples[0].timeStamp
+            le.dtFlight = MFBUtil.localDateTimeToLocalDate(le.dtEngineStart)
             autoFillFromTelemetry(rgsamples, le)
             if (!le.isEmptyFlight) {
                 le.dtEngineEnd = rgsamples[rgsamples.size - 1].timeStamp
@@ -1359,7 +1359,7 @@ class GPSSim(private val m_ll: LocationListener) {
                 le.szComments = c.getString(R.string.telemetryImportDefaultComment)
                 if (t.metaData != null && t.metaData!!.containsKey(Telemetry.TELEMETRY_METADATA_TAIL)) {
                     val szTail = t.metaData!![Telemetry.TELEMETRY_METADATA_TAIL] as String?
-                    if (szTail != null && szTail.isNotEmpty()) {
+                    if (!szTail.isNullOrEmpty()) {
                         val acsvc = AircraftSvc()
                         val rgac = acsvc.cachedAircraft
                         for (ac in rgac) {
