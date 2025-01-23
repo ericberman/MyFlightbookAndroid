@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -224,7 +224,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
                     packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
                 else
                     packageManager.getPackageInfo(packageName, 0)
-            versionName = packageInfo.versionName
+            versionName = packageInfo.versionName ?: "Unknown"
             versionCode =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                     packageInfo.longVersionCode
