@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -141,14 +141,12 @@ class CustomPropertyTypesSvc : MFBSoap() {
                 val db = MFBMain.mDBHelper!!.writableDatabase
                 try {
                     db.query(TABLENAME, null, null, null, null, null, null).use { c ->
-                        if (c != null) {
-                            while (c.moveToNext()) {
-                                val cpt = CustomPropertyType()
-                                cpt.fromCursor(c)
-                                rgCpt.add(cpt)
-                            }
-                            rgCpt.sort()
+                        while (c.moveToNext()) {
+                            val cpt = CustomPropertyType()
+                            cpt.fromCursor(c)
+                            rgCpt.add(cpt)
                         }
+                        rgCpt.sort()
                     }
                 } catch (ex: Exception) {
                     Log.e(

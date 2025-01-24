@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class CountryCode private constructor(c: Cursor) {
             val db = MFBMain.mDBHelper!!.readableDatabase
             try {
                 db.query("countrycodes", null, null, null, null, null, "id ASC").use { c ->
-                    if (c != null && c.count > 0) {
+                    if (c.count > 0) {
                         while (c.moveToNext()) m_allCodes!!.add(CountryCode(c))
                     }
                 }
@@ -52,7 +52,7 @@ class CountryCode private constructor(c: Cursor) {
 
         private fun bestGuessForLocale(szLocale: String?): CountryCode {
             val rgcc = getAllCountryCodes()
-            if (szLocale != null && szLocale.isNotEmpty()) {
+            if (!szLocale.isNullOrEmpty()) {
                 for (cc in rgcc!!) {
                     if (cc.localeCode!!.compareTo(szLocale, ignoreCase = true) == 0) return cc
                 }

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -157,12 +157,10 @@ class RecentFlightsSvc : MFBSoap() {
                 db.query("Flights", null, "idFlight > 0", null, null, null, null).use { c ->
 
                     // get the local ID's of the orphaned entries.
-                    if (c != null) {
-                        var i = 0
-                        rgLocalIDs = IntArray(c.count)
-                        while (c.moveToNext()) rgLocalIDs[i++] =
-                            c.getInt(c.getColumnIndexOrThrow("_id"))
-                    }
+                    var i = 0
+                    rgLocalIDs = IntArray(c.count)
+                    while (c.moveToNext()) rgLocalIDs[i++] =
+                        c.getInt(c.getColumnIndexOrThrow("_id"))
                 }
             } catch (ex: Exception) {
                 Log.e(MFBConstants.LOG_TAG, Objects.requireNonNull(ex.localizedMessage))

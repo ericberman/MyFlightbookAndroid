@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -238,7 +238,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
 
         private fun airportsFromRoute(szRoute: String?, loc: Location?): Array<Airport?> {
             val rgap = arrayOfNulls<Airport>(0)
-            if (szRoute == null || szRoute.isEmpty()) return rgap
+            if (szRoute.isNullOrEmpty()) return rgap
             val rgCodes = splitCodes(szRoute)
             val lstResults: MutableList<Airport> = ArrayList()
             val sb = StringBuilder()
@@ -294,37 +294,35 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
             val db = MFBMain.mDBHelperAirports!!.readableDatabase
             try {
                 db.query("airports", null, szQ, null, null, null, null).use { c ->
-                    if (c != null) {
-                        val colAirportId = c.getColumnIndexOrThrow("AirportID")
-                        val colFacilityName = c.getColumnIndexOrThrow("FacilityName")
-                        val colLat = c.getColumnIndexOrThrow("Latitude")
-                        val colLon = c.getColumnIndexOrThrow("Longitude")
-                        val colType = c.getColumnIndexOrThrow("Type")
-                        val colPref = c.getColumnIndexOrThrow("Preferred")
-                        val colCountry = c.getColumnIndexOrThrow("Country")
-                        val colAdmin1 = c.getColumnIndexOrThrow("Admin1")
-                        while (c.moveToNext()) {
-                            val ap = Airport()
-                            ap.airportID = c.getString(colAirportId)
-                            ap.facilityName = c.getString(colFacilityName)
-                            ap.latitude = c.getDouble(colLat)
-                            ap.longitude = c.getDouble(colLon)
-                            ap.facilityType = c.getString(colType)
-                            ap.isPreferred = c.getInt(colPref) != 0
-                            ap.country = if (c.isNull(colCountry)) "" else c.getString(colCountry)
-                            ap.admin1 = if (c.isNull(colAdmin1)) "" else c.getString(colAdmin1)
-                            if (loc != null) {
-                                val lAirport = Location(loc)
-                                lAirport.latitude = ap.latitude
-                                lAirport.longitude = ap.longitude
-                                ap.distance = lAirport.distanceTo(loc) * MFBConstants.METERS_TO_NM
-                            } else ap.distance = 0.0
-                            rgap.add(ap)
-                        }
-
-                        // sort the list by distance
-                        rgap.sort()
+                    val colAirportId = c.getColumnIndexOrThrow("AirportID")
+                    val colFacilityName = c.getColumnIndexOrThrow("FacilityName")
+                    val colLat = c.getColumnIndexOrThrow("Latitude")
+                    val colLon = c.getColumnIndexOrThrow("Longitude")
+                    val colType = c.getColumnIndexOrThrow("Type")
+                    val colPref = c.getColumnIndexOrThrow("Preferred")
+                    val colCountry = c.getColumnIndexOrThrow("Country")
+                    val colAdmin1 = c.getColumnIndexOrThrow("Admin1")
+                    while (c.moveToNext()) {
+                        val ap = Airport()
+                        ap.airportID = c.getString(colAirportId)
+                        ap.facilityName = c.getString(colFacilityName)
+                        ap.latitude = c.getDouble(colLat)
+                        ap.longitude = c.getDouble(colLon)
+                        ap.facilityType = c.getString(colType)
+                        ap.isPreferred = c.getInt(colPref) != 0
+                        ap.country = if (c.isNull(colCountry)) "" else c.getString(colCountry)
+                        ap.admin1 = if (c.isNull(colAdmin1)) "" else c.getString(colAdmin1)
+                        if (loc != null) {
+                            val lAirport = Location(loc)
+                            lAirport.latitude = ap.latitude
+                            lAirport.longitude = ap.longitude
+                            ap.distance = lAirport.distanceTo(loc) * MFBConstants.METERS_TO_NM
+                        } else ap.distance = 0.0
+                        rgap.add(ap)
                     }
+
+                    // sort the list by distance
+                    rgap.sort()
                 }
             } catch (e: Exception) {
                 Log.e(MFBConstants.LOG_TAG, "Exception querying airports:" + e.message)
@@ -337,7 +335,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
         fun maxDistanceForRoute(szRoute: String?): Double {
             var dist = 0.0
             val rgDistResults = FloatArray(1)
-            if (szRoute == null || szRoute.isEmpty()) return dist
+            if (szRoute.isNullOrEmpty()) return dist
             val rgAp = airportsFromRoute(szRoute, null)
             val cAirports = rgAp.size
             for (i in 0 until cAirports) {

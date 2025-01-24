@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -197,11 +197,9 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                 null
             ).use { c ->
                 // Get each one individually so that the associated image file gets deleted too.
-                if (c != null) {
-                    rgIds = LongArray(c.count)
-                    var i = 0
-                    while (c.moveToNext()) rgIds!![i++] = c.getLong(0)
-                }
+                rgIds = LongArray(c.count)
+                var i = 0
+                while (c.moveToNext()) rgIds!![i++] = c.getLong(0)
             }
         } catch (e: Exception) {
             Log.e(MFBConstants.LOG_TAG, "Error deleting pending images: " + e.message)
@@ -354,7 +352,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                 null,
                 null
             ).use { c ->
-                if (c != null && c.count > 0) {
+                if (c.count > 0) {
                     c.moveToNext()
                     fromCursor(c, fGetThumb, fGetFullImage)
                 }
@@ -389,7 +387,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         var orientation = ExifInterface.ORIENTATION_NORMAL
         thumbnail = null
         mImgdata = thumbnail
-        if (szFile == null || szFile.isEmpty()) return false
+        if (szFile.isNullOrEmpty()) return false
         val fTemp = File(szFile)
         if (!fTemp.exists()) return false
         if (fVideo) {
@@ -871,12 +869,14 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                     null,
                     null
                 ).use { c ->
-                    if (c != null) {
-                        while (c.moveToNext()) {
-                            val mfbii = MFBImageInfo(pd, c.getLong(c.getColumnIndexOrThrow("_id")))
-                            mfbii.fromCursor(c, fGetThumb = true, fGetFullImage = false) // initialize it with the thumbnail.
-                            rgMfbii.add(mfbii)
-                        }
+                    while (c.moveToNext()) {
+                        val mfbii = MFBImageInfo(pd, c.getLong(c.getColumnIndexOrThrow("_id")))
+                        mfbii.fromCursor(
+                            c,
+                            fGetThumb = true,
+                            fGetFullImage = false
+                        ) // initialize it with the thumbnail.
+                        rgMfbii.add(mfbii)
                     }
                 }
             } catch (e: Exception) {
@@ -893,15 +893,17 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                 val rgMfbii = ArrayList<MFBImageInfo>()
                 try {
                     db.query(TABLENAME, null, "idAircraft > 0", null, null, null, null).use { c ->
-                        if (c != null) {
-                            while (c.moveToNext()) {
-                                val mfbii = MFBImageInfo(
-                                    PictureDestination.AircraftImage,
-                                    c.getLong(c.getColumnIndexOrThrow("_id"))
-                                )
-                                mfbii.fromCursor(c, fGetThumb = false, fGetFullImage = false) // no thumbnail
-                                rgMfbii.add(mfbii)
-                            }
+                        while (c.moveToNext()) {
+                            val mfbii = MFBImageInfo(
+                                PictureDestination.AircraftImage,
+                                c.getLong(c.getColumnIndexOrThrow("_id"))
+                            )
+                            mfbii.fromCursor(
+                                c,
+                                fGetThumb = false,
+                                fGetFullImage = false
+                            ) // no thumbnail
+                            rgMfbii.add(mfbii)
                         }
                     }
                 } catch (e: Exception) {

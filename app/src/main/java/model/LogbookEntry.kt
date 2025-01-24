@@ -1029,7 +1029,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                     null,
                     null
                 ).use { c ->
-                    if (c != null && c.count == 1) {
+                    if (c.count == 1) {
                         c.moveToFirst()
                         fromCursor(c)
                     } else throw Exception("Query for flight from db failed!")
@@ -1220,21 +1220,19 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                     null,
                     null
                 ).use { c ->
-                    if (c != null) {
-                        while (c.moveToNext()) {
-                            // Check for a pending flight
-                            val szPending = c.getString(c.getColumnIndexOrThrow("PendingID"))
-                            val le =
-                                if (szPending != null && szPending.isNotEmpty()) PendingFlight() else LogbookEntry()
-                            rgleLocal.add(le)
-                            le.fromCursor(c)
-                            le.idLocalDB = c.getLong(c.getColumnIndexOrThrow("_id"))
-                            le.rgFlightImages = MFBImageInfo.getLocalImagesForId(
-                                le.idLocalDB,
-                                PictureDestination.FlightImage
-                            )
-                        }
-                    } else throw Exception("Query for flight from db failed!")
+                    while (c.moveToNext()) {
+                        // Check for a pending flight
+                        val szPending = c.getString(c.getColumnIndexOrThrow("PendingID"))
+                        val le =
+                            if (szPending != null && szPending.isNotEmpty()) PendingFlight() else LogbookEntry()
+                        rgleLocal.add(le)
+                        le.fromCursor(c)
+                        le.idLocalDB = c.getLong(c.getColumnIndexOrThrow("_id"))
+                        le.rgFlightImages = MFBImageInfo.getLocalImagesForId(
+                            le.idLocalDB,
+                            PictureDestination.FlightImage
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("LogbookEntry", "Error retrieving local flights: " + e.localizedMessage)

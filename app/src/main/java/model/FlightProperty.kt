@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -345,13 +345,11 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
                         null,
                         null
                     ).use { c ->
-                        if (c != null) {
-                            while (c.moveToNext()) {
-                                val fp = FlightProperty()
-                                fp.fromCursor(c)
-                                rgfp.add(fp)
-                            }
-                        } else throw Exception("Query for flightproperties from db failed!")
+                        while (c.moveToNext()) {
+                            val fp = FlightProperty()
+                            fp.fromCursor(c)
+                            rgfp.add(fp)
+                        }
                     }
                 } catch (e: Exception) {
                     Log.v(
