@@ -66,8 +66,17 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     @JvmField
     var idFlight = ID_NEW_FLIGHT
     private var szUser = ""
+
+    // Because LocalDate doesn't serialize properly with Java Serializable, use
+    // a backing field that is always a yyyy-mm-dd string, which does serialize
+    // properly and virtualize dtFlight with getter/setters
     @JvmField
-    var dtFlight: LocalDate = MFBUtil.localToday()
+    var dtFlightYMD = MFBUtil.localToday().toString()
+
+    var dtFlight: LocalDate
+        get() = LocalDate.parse(dtFlightYMD)
+        set(v) { dtFlightYMD = v.toString() }
+
     private var idCatClassOverride = 0
     @JvmField
     var idAircraft = -1
