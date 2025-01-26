@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -127,6 +127,12 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             )
         }
 
+        private fun formattedTimeForLabel(idLabel : Int, start : Double, end : Double) : String {
+            if (start <= 0 || end < start) return ""
+            return String.format(Locale.getDefault(),
+                "%s: <b>%s - %s (%s)</b> ", getString(idLabel), stringForMode(start, EditMode.DECIMAL), stringForMode(end, EditMode.DECIMAL), stringForMode(end - start, EditMode.DECIMAL))
+        }
+
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var v = convertView
             if (v == null) {
@@ -231,15 +237,35 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                 sb.append(formattedTimeForLabel(R.string.lblSIC, le.decSIC, em))
                 sb.append(formattedTimeForLabel(R.string.lblPIC, le.decPIC, em))
                 if (flightDetail == FlightDetail.High) {
-                    val blockOut = le.propertyWithID(CustomPropertyType.idPropTypeBlockOut)
-                    val blockIn = le.propertyWithID(CustomPropertyType.idPropTypeBlockIn)
-                    if (blockOut != null && blockIn != null) sb.append(
-                        formattedTimeForLabel(
-                            R.string.autoBlock,
-                            blockOut.dateValue,
-                            blockIn.dateValue
-                        )
+                    val szHobbs =
+                        formattedTimeForLabel(R.string.lblElapsedHobbs, le.hobbsStart, le.hobbsEnd)
+                    if (szHobbs.isNotEmpty())
+                        sb.append(szHobbs)
+
+                    val handledProps = hashSetOf(CustomPropertyType.idPropFlightNum)
+
+                    val szTach = formattedTimeForLabel(
+                        R.string.lblElapsedTach,
+                        le.propertyWithID(CustomPropertyType.idPropTypeTachStart)?.decValue ?: 0.0,
+                        le.propertyWithID(CustomPropertyType.idPropTypeTachEnd)?.decValue ?: 0.0
                     )
+                    if (szTach.isNotEmpty()) {
+                        sb.append(szTach)
+                        handledProps.add(CustomPropertyType.idPropTypeTachStart)
+                        handledProps.add(CustomPropertyType.idPropTypeTachEnd)
+                    }
+
+                    val szBlock = formattedTimeForLabel(
+                        R.string.autoBlock,
+                        le.propertyWithID(CustomPropertyType.idPropTypeBlockOut)?.dateValue,
+                        le.propertyWithID(CustomPropertyType.idPropTypeBlockIn)?.dateValue
+                    )
+                    if (szBlock.isNotEmpty()) {
+                        sb.append(szBlock)
+                        handledProps.add(CustomPropertyType.idPropTypeBlockOut)
+                        handledProps.add(CustomPropertyType.idPropTypeBlockIn)
+                    }
+
                     sb.append(
                         formattedTimeForLabel(
                             R.string.autoEngine,
@@ -256,7 +282,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     )
 
                     for (fp in le.rgCustomProperties) {
-                        if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn || fp.idPropType == CustomPropertyType.idPropFlightNum)
+                        if (handledProps.contains(fp.idPropType))
                             continue
                         sb.append(fp.format(DlgDatePicker.fUseLocalTime, true, this.context) + " ")
                     }

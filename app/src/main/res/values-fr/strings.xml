@@ -107,6 +107,8 @@
     <string name="lblFlightEnd">Fin du vol</string>
     <string name="lblTachStart">Démarrage du tachymètre</string>
     <string name="lblTachEnd">Fin tachymètre</string>
+    <string name="lblElapsedTach">Tachymètre</string>
+    <string name="lblElapsedHobbs">Horamètre</string>
     <string name="lblBlockOut">Hors bloc</string>
     <string name="lblBlockIn">Sur bloc</string>
     <string name="lblProperties">Éditer les propriétés</string>

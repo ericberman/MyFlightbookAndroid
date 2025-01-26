@@ -107,6 +107,8 @@
     <string name="lblFlightEnd">Flug Ende</string>
     <string name="lblTachStart">Start Tacho</string>
     <string name="lblTachEnd">Ende Tacho</string>
+    <string name="lblElapsedTach">Tacho</string>
+    <string name="lblElapsedHobbs">Hobbs</string>
     <string name="lblBlockOut">Block Out</string>
     <string name="lblBlockIn">Block In</string>
     <string name="lblProperties">Bearbeite Flug Daten…</string>
