@@ -34,6 +34,7 @@ import org.ksoap2.serialization.KvmSerializable
 import org.ksoap2.serialization.PropertyInfo
 import org.ksoap2.serialization.SoapObject
 import java.io.Serializable
+import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -83,11 +84,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
         if (isDefaultValue()) return ""
         when (mCpt?.cptType) {
             CFPPropertyType.cfpInteger -> return String.format(Locale.getDefault(), "%d", intValue)
-            CFPPropertyType.cfpCurrency -> return String.format(
-                Locale.getDefault(),
-                "%.1f",
-                decValue
-            )
+            CFPPropertyType.cfpCurrency -> return NumberFormat.getCurrencyInstance(Locale.getDefault()).format(decValue)
             CFPPropertyType.cfpDecimal -> return if (DecimalEdit.DefaultHHMM) doubleToHHMM(decValue) else String.format(
                 Locale.getDefault(),
                 "%.1f",
