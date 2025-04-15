@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.net.NetworkCapabilities
 import java.lang.Exception
-import java.lang.NullPointerException
 import java.util.*
 
 open class MFBSoap internal constructor() {
@@ -90,16 +89,8 @@ open class MFBSoap internal constructor() {
             androidHttpTransport.call(NAMESPACE + mMethodname, envelope, headerList)
             o = envelope.response
         } catch (e: Exception) {
-            var szFault = e.message
-            if (szFault == null) szFault =
-                c.getString(R.string.errorSoapError) else if (szFault.contains(MFBConstants.szFaultSeparator)) {
-                szFault =
-                    szFault.substring(szFault.lastIndexOf(MFBConstants.szFaultSeparator) + MFBConstants.szFaultSeparator.length)
-                        .replace("System.Exception: ", "")
-                val iStartStackTrace = szFault.indexOf("\n ")
-                if (iStartStackTrace > 0) szFault = szFault.substring(0, iStartStackTrace)
-            }
-            lastError = szFault
+            val rFault = Regex("^(.*-->\\s*)?(MyFlightbook\\..*Exception:)?(?<err>[^\\n]+).*")
+            lastError = (rFault.find(e.message ?: c.getString(R.string.errorSoapError)) ?.groups?.get("err")?.value ?: e.message ?: c.getString(R.string.errorSoapError)).trim()
             o = null
         }
 
