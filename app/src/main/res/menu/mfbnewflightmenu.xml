@@ -34,6 +34,10 @@
         android:title="@string/menuChooseTemplate"
         android:titleCondensed="@string/menuChooseTemplateShort" />
     <item
+        android:id="@+id/menuCheckFlight"
+        android:title="@string/menuCheckFlight"
+        android:titleCondensed="@string/menuCheckFlight" />
+    <item
         android:id="@+id/btnSavePending"
         android:title="@string/menuSavePending"
         android:titleCondensed="@string/menuSavePendingShort"

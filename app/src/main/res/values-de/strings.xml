@@ -299,6 +299,8 @@
 
     <string name="txtFlightQueued">Der Flug wurde zum späteren Hochladen gespeichert. Du kannst ihn unter letzte Flüge finden.</string>
     <string name="txtRepeatFlightComplete">Der Flug wurde erstellt. Du kannst ihn unter "letzte Flüge" bearbeiten.</string>
+    <string name="txtCheckFlightNoIssues">Es wurden keine Probleme gefunden!</string>
+    <string name="txtCheckFlightPossibleIssues">Mögliche Probleme</string>
     <string name="txtSuccess">Erfolg</string>
     <string name="txtSavedFlight">Dein Flug wurde auf MyFlightbook.com gespeichert</string>
     <string name="txtAwaitingUpload"> (ERWARTE UPLOAD)</string>
@@ -376,6 +378,7 @@
     <string name="menuRepeatFlight">Flug wiederholen</string>
     <string name="menuRepeatReverseFlight">Wiederholen und Flug umkehren</string>
     <string name="menuRepeatShort">Wiederholen</string>
+    <string name="menuCheckFlight">Flug prüfen</string>
     <string name="menuReverseShort">Umkehren</string>
     <string name="menuSendFlight">Flug zu anderem Piloten senden</string>
     <string name="menuSendFlightShort">Senden</string>

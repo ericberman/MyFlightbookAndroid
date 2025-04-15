@@ -507,6 +507,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     }
                     R.id.menuSendFlight -> sendFlight()
                     R.id.menuShareFlight -> shareFlight()
+                    R.id.menuCheckFlight -> checkFlight()
                     R.id.btnAutoFill -> {
                         assert(mle != null)
                         fromView()
@@ -887,6 +888,30 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         startActivity(Intent.createChooser(intent, getString(R.string.menuShareFlight)))
     }
 
+    private fun checkFlight() {
+        if (mle == null || !isOnline(requireContext())) {
+            return
+        }
+        fromView()
+
+        lifecycleScope.launch {
+            doAsync<MFBSoap, Array<String>>(
+                requireActivity(),
+                CommitFlightSvc(),
+                null,
+                { s -> (s as CommitFlightSvc).checkFlight(AuthToken.m_szAuthToken, mle!!, requireContext()) },
+                { _, result ->
+                    mle!!.rgIssues = result!!
+                    if (mle!!.rgIssues.isEmpty()) {
+                        alert(requireContext(), "", getString(R.string.txtCheckFlightNoIssues))
+                    }
+                    toView()
+                }
+            )
+        }
+    }
+
+
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val menuID = item.itemId
         return if (menuID == R.id.menuAddComment || menuID == R.id.menuDeleteImage || menuID == R.id.menuViewImage) onImageContextItemSelected(
@@ -1162,6 +1187,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     private fun resetFlight(fCarryHobbs: Boolean) {
         // start up a new flight with the same aircraft ID and public setting.
         // first, validate that the aircraft is still OK for the user
+        if (mle == null) {
+            mle = LogbookEntry()
+        }
         val hobbsEnd = mle!!.hobbsEnd
         val cfpTachEnd = mle!!.propertyWithID((idPropTypeTachEnd))
         val cfpMeterEnd = mle!!.propertyWithID(idPropTypeFlightMeterEnd)
@@ -1308,7 +1336,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     override fun toView() {
-        if (view == null) return
+        if (view == null || mle == null) return
         setStringForField(R.id.txtComments, mle!!.szComments)
         setStringForField(R.id.txtRoute, mle!!.szRoute)
         setIntForField(R.id.txtApproaches, mle!!.cApproaches)
@@ -1447,6 +1475,11 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         setUpPropertiesForFlight()
         updateElapsedTime()
         updatePausePlayButtonState()
+
+        val issues = mle!!.rgIssues
+        val hasIssues = !issues.isEmpty()
+        findViewById(R.id.checkFlightIssuesHeader)!!.visibility = if (hasIssues) View.VISIBLE else View.GONE
+        (findViewById(R.id.checkFlightIssuesBody) as TextView?)!!.text = if (hasIssues) issues.joinToString("\r\n\r\n * ", " * ") else ""
     }
 
     override fun fromView() {

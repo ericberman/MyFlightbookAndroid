@@ -12,6 +12,10 @@
         android:titleCondensed="@string/menuSavePendingShort"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menuCheckFlight"
+        android:title="@string/menuCheckFlight"
+        android:titleCondensed="@string/menuCheckFlight" />
+    <item
         android:id="@+id/btnDeleteFlight"
         android:icon="@drawable/ic_action_discard"
         android:title="@string/menuDeleteFlight"

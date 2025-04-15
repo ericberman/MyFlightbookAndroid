@@ -951,6 +951,17 @@
                 android:drawablePadding="3dip"
                 android:text="@string/lblMyFlightbook" />
         </LinearLayout>
-    </LinearLayout>
 
+    <!-- Check Flights Issues -->
+    <TextView
+        style="@style/DividerBar"
+        android:text="@string/txtCheckFlightPossibleIssues"
+        android:id="@+id/checkFlightIssuesHeader"
+        android:visibility="gone" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dip"
+        android:id="@+id/checkFlightIssuesBody" />
+    </LinearLayout>
 </ScrollView>

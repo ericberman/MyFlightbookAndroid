@@ -171,6 +171,10 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     @JvmField
     var mFlightColorHex: String? = null
 
+    @JvmField
+    var rgIssues: Array<String> = arrayOf()
+
+
     private fun init() {
         szUser = AuthToken.m_szEmail
         cNightLandings = 0

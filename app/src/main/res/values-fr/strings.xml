@@ -300,6 +300,8 @@
 
     <string name="txtFlightQueued">Le vol a été sauvegardé pour un téléchargement ultérieur. Vous le trouverez dans Vols Récents.</string>
     <string name="txtRepeatFlightComplete">Le vol a été créé. Vous pouvez le modifier dans les vols récents.</string>
+    <string name="txtCheckFlightNoIssues">Aucun problème n\'a été trouvé!</string>
+    <string name="txtCheckFlightPossibleIssues">Problèmes possibles</string>
     <string name="txtSuccess">Succès</string>
     <string name="txtSavedFlight">Votre vol a été enregistré sur MyFlightbook.com</string>
     <string name="txtAwaitingUpload">(En attente de téléchargement)</string>
@@ -377,6 +379,7 @@
     <string name="menuRepeatFlight">Répéter ce vol</string>
     <string name="menuRepeatReverseFlight">Répéter et inverser ce vol</string>
     <string name="menuRepeatShort">Répéter</string>
+    <string name="menuCheckFlight">Vérifier le vol</string>
     <string name="menuReverseShort">Inverser</string>
     <string name="menuSendFlight">Envoyer à un autre pilote</string>
     <string name="menuSendFlightShort">Envoyer</string>

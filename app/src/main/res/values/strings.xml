@@ -300,6 +300,8 @@
 
     <string name="txtFlightQueued">Flight has been saved for uploading later.  You can find it in Recent flights.</string>
     <string name="txtRepeatFlightComplete">Flight has been created. You can edit it in recent flights.</string>
+    <string name="txtCheckFlightNoIssues">No issues were found!</string>
+    <string name="txtCheckFlightPossibleIssues">Possible Issues</string>
     <string name="txtSuccess">Success</string>
     <string name="txtSavedFlight">Your flight has been saved on MyFlightbook.com</string>
     <string name="txtAwaitingUpload"> (AWAITING UPLOAD)</string>
@@ -377,6 +379,7 @@
     <string name="menuRepeatFlight">Repeat Flight</string>
     <string name="menuRepeatReverseFlight">Repeat and Reverse Flight</string>
     <string name="menuRepeatShort">Repeat</string>
+    <string name="menuCheckFlight">Check Flight</string>
     <string name="menuReverseShort">Reverse</string>
     <string name="menuSendFlight">Send flight to another pilot</string>
     <string name="menuSendFlightShort">Send</string>
