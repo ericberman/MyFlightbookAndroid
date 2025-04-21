@@ -45,6 +45,8 @@ import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -214,6 +216,11 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         NightModePref = locPref!!.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         AppCompatDelegate.setDefaultNightMode(NightModePref)
         setContentView(R.layout.main)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tab_layout)) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
         appResources = resources
         appFilesPath = filesDir.absolutePath
 
