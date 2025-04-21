@@ -437,6 +437,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:width="100dip"
+                        android:layout_span="2"
                         android:id="@+id/txtMaintNotes"
                         android:hint="@string/lblMaintNotesHint"
                         android:inputType="textCapSentences|textAutoCorrect"
