@@ -506,7 +506,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                 val id = item.itemId
                 if (id == R.id.refreshRecents) refreshRecentFlights(true) else if (id == R.id.findFlights) {
                     if (isOnline(context)) {
-                        val i = Intent(activity, FlightQueryActivity::class.java)
+                        val i = FragmentHostActivity.createIntent<ActFlightQuery>(requireContext(), Bundle())
                         i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery)
                         mQueryLauncher!!.launch(i)
                     } else alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
@@ -537,6 +537,8 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     else
                         @Suppress("DEPRECATION")
                         result.data!!.getSerializableExtra(ActFlightQuery.QUERY_TO_EDIT) as FlightQuery?
+                invalidate()
+                refreshRecentFlights(true)
             }
         }
         val srl: SwipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
@@ -613,7 +615,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                 // into the MFBUtil cache and retrieve it on the other end
                 val key = UUID.randomUUID().toString()
                 putCacheForKey(key, mRgle!![position])
-                val i = Intent(activity, EditFlightActivity::class.java)
+                val i = FragmentHostActivity.createIntent<ActNewFlight>(requireContext(), Bundle())
                 i.putExtra(VIEWEXISTINGFLIGHT, key)
                 startActivity(i)
             }

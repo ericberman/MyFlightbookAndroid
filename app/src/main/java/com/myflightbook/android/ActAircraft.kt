@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -264,14 +264,16 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
         if (mAircraftrows == null || position < 0 || position >= mAircraftrows!!.size || mAircraftrows!![position].rowType == RowType.HEADER_ITEM) return
-        val i = Intent(activity, EditAircraftActivity::class.java)
         val ac = mAircraftrows!![position].aircraftItem
+        val i = FragmentHostActivity.createIntent<ActEditAircraft>(requireContext(), Bundle())
         i.putExtra(ActEditAircraft.AIRCRAFTID, ac!!.aircraftID)
+
         mNewAircraftLauncher!!.launch(i)
     }
 
     private fun addAircraft() {
-        mNewAircraftLauncher!!.launch(Intent(activity, NewAircraftActivity::class.java))
+        val i = FragmentHostActivity.createIntent<ActNewAircraft>(requireContext(), Bundle())
+        mNewAircraftLauncher!!.launch(i)
     }
 
     private fun refreshAircraft() {

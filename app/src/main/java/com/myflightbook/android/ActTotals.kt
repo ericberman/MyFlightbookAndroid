@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
                 val id = item.itemId
                 if (id == R.id.menuRefresh) refresh(true) else if (id == R.id.findFlights) {
                     if (isOnline(context)) {
-                        val i = Intent(activity, FlightQueryActivity::class.java)
+                        val i = FragmentHostActivity.createIntent<ActFlightQuery>(requireContext(), Bundle())
                         i.putExtra(ActFlightQuery.QUERY_TO_EDIT, currentQuery)
                         mQueryLauncher!!.launch(i)
                     } else alert(context, getString(R.string.txtError), getString(R.string.errNoInternet))
@@ -192,9 +192,9 @@ class ActTotals : ListFragment(), Invalidatable, OnItemClickListener {
         // disable click on total when offline.
         if (!isOnline(context)) return
         val fq = mTotalsRows!![position]!!.totalItem!!.query ?: return
-        val i = Intent(activity, RecentFlightsActivity::class.java)
         val b = Bundle()
         b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq)
+        val i = FragmentHostActivity.createIntent<ActRecentsWS>(requireContext(), b)
         i.putExtras(b)
         startActivity(i)
     }

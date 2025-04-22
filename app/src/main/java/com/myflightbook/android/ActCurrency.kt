@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -148,7 +147,7 @@ class ActCurrency : ActMFBForm(), Invalidatable {
                     when (csi.currencyGroup) {
                         CurrencyGroups.None -> {}
                         CurrencyGroups.Aircraft -> {
-                            val i = Intent(activity, EditAircraftActivity::class.java)
+                            val i = FragmentHostActivity.createIntent<ActEditAircraft>(requireContext(), Bundle())
                             i.putExtra(
                                 ActEditAircraft.AIRCRAFTID,
                                 csi.associatedResourceID
@@ -167,16 +166,16 @@ class ActCurrency : ActMFBForm(), Invalidatable {
                         CurrencyGroups.Certificates -> redirectTo("CERTIFICATES")
                         CurrencyGroups.FlightReview -> redirectTo("FLIGHTREVIEW")
                         CurrencyGroups.FlightExperience -> if (csi.query != null) {
-                            val i = Intent(activity, RecentFlightsActivity::class.java)
                             val b = Bundle()
                             b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, csi.query)
+                            val i = FragmentHostActivity.createIntent<ActRecentsWS>(requireContext(), b)
                             i.putExtras(b)
                             startActivity(i)
                         }
                         CurrencyGroups.CustomCurrency -> if (csi.query == null) redirectTo("CUSTOMCURRENCY") else {
-                            val i = Intent(activity, RecentFlightsActivity::class.java)
                             val b = Bundle()
                             b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, csi.query)
+                            val i = FragmentHostActivity.createIntent<ActRecentsWS>(requireContext(), b)
                             i.putExtras(b)
                             startActivity(i)
                         }

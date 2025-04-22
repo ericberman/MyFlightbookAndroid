@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import model.DecimalEdit
 import model.DecimalEdit.Companion.stringForMode
 import model.DecimalEdit.EditMode
@@ -43,6 +45,11 @@ class ActTimeCalc : AppCompatActivity(), View.OnClickListener {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.calctime)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_root)) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
         (findViewById<View>(R.id.decSegmentStart) as DecimalEdit).forceHHMM = true
         (findViewById<View>(R.id.decSegmentEnd) as DecimalEdit).forceHHMM = true
         (findViewById<View>(R.id.decSegmentStart) as DecimalEdit).setMode(EditMode.HHMM)

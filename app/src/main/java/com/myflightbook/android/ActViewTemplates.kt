@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@
 package com.myflightbook.android
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Context
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,6 +32,7 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.fragment.app.ListFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -135,13 +137,7 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         val i = requireActivity().intent
         try {
-            val b = i.extras!!
-            mActivetemplates =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                    b.getSerializable(ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
-                else
-                    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-                    b.getSerializable(ACTIVE_PROPERTYTEMPLATES) as HashSet<PropertyTemplate?>?
+            mActivetemplates = i.getBundleExtra(FragmentHostActivity.EXTRA_FRAGMENT_ARGS)?.getSerializable(ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
         } catch (ex: ClassCastException) {
             Log.e(MFBConstants.LOG_TAG, ex.message!!)
         }
@@ -157,6 +153,19 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
             )
         )
         if (rgpt == null || rgpt.isEmpty()) refreshPropertyTypes()
+
+        val a = requireActivity()
+        a.onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            val mIntent = Intent()
+            val b = Bundle()
+            b.putSerializable(
+                ACTIVE_PROPERTYTEMPLATES,
+                mActivetemplates
+            )
+            mIntent.putExtras(b)
+            a.setResult(RESULT_OK, mIntent)
+            a.finish()
+        }
     }
 
     override fun onResume() {

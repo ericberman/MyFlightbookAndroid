@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,9 +131,9 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
                         val fq = FlightQuery()
                         fq.init()
                         fq.aircraftList = if (mAc == null) arrayOf() else arrayOf(mAc!!)
-                        val i = Intent(activity, RecentFlightsActivity::class.java)
                         val b = Bundle()
                         b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq)
+                        val i = FragmentHostActivity.createIntent<ActRecentsWS>(requireContext(), b)
                         i.putExtras(b)
                         startActivity(i)
                     } else MFBUtil.alert(

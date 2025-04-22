@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,20 +22,27 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import model.MFBConstants
 import android.widget.VideoView
-import android.net.Uri
 import android.util.Log
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import java.io.File
+import androidx.core.net.toUri
 
 class ActLocalVideo : AppCompatActivity() {
     private var szTempFile: String? = ""
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.localvideo)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_root)) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
         val szURL = this.intent.getStringExtra(MFBConstants.intentViewURL)
         szTempFile = this.intent.getStringExtra(MFBConstants.intentViewTempFile)
         val video = findViewById<VideoView>(R.id.video)
         // Load and start the movie
-        video.setVideoURI(Uri.parse(szURL))
+        video.setVideoURI(szURL?.toUri())
         video.start()
     }
 

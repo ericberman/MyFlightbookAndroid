@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -110,9 +112,9 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
                     )
                 )
                 fq.airportList = Airport.splitCodes(szAirports.toString())
-                val i = Intent(this@ActFlightMap, RecentFlightsActivity::class.java)
                 val b = Bundle()
                 b.putSerializable(ActFlightQuery.QUERY_TO_EDIT, fq)
+                val i = FragmentHostActivity.createIntent<ActRecentsWS>(this, b)
                 i.putExtras(b)
                 this@ActFlightMap.startActivity(i)
                 dlg.dismiss()
@@ -279,7 +281,7 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         }
         mLlb = try {
             llb.build()
-        } catch (ex: IllegalStateException) {
+        } catch (_ : IllegalStateException) {
             null
         }
         if (mFhashadlayout && !fNoResize) autoZoom()
@@ -374,6 +376,11 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.flightmap)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_root)) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
 
         // get the map - this will set mGMap in onMapReady
         val mf = supportFragmentManager.findFragmentById(R.id.mfbMap) as SupportMapFragment?

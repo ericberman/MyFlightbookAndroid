@@ -448,7 +448,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                                 requireActivity(),
                                 authRedirWithParams(String.format(Locale.US, "d=SignEntry&idFlight=%d", mle!!.idFlight), context)
                             )
-                        } catch (ignored: UnsupportedEncodingException) {
+                        } catch (_: UnsupportedEncodingException) {
                         }
                     }
                     R.id.btnDeleteFlight -> AlertDialog.Builder(
@@ -480,10 +480,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     R.id.menuTakeVideo -> takeVideoClicked()
                     R.id.menuChoosePicture -> choosePictureClicked()
                     R.id.menuChooseTemplate -> {
-                        val i = Intent(requireActivity(), ViewTemplatesActivity::class.java)
-                        val b = Bundle()
-                        b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
-                        i.putExtras(b)
+                        val i = FragmentHostActivity.createIntent<ActViewTemplates>(requireContext(), Bundle().apply {
+                            putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
+                        })
                         mTemplateLauncher!!.launch(i)
                     }
                     R.id.menuRepeatFlight, R.id.menuReverseFlight -> {
@@ -1029,7 +1028,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             R.id.btnAppendNearest -> appendNearest()
             R.id.btnAddAircraft -> mAddAircraftLauncher!!.launch(
                 Intent(
-                    activity, NewAircraftActivity::class.java
+                    FragmentHostActivity.createIntent<ActNewAircraft>(requireContext(), Bundle())
                 )
             )
             R.id.btnAddApproach -> {

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package com.myflightbook.android
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -27,6 +28,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
 import android.widget.*
+import androidx.activity.addCallback
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
@@ -228,7 +230,15 @@ class ActFlightQuery : ActMFBForm(), View.OnClickListener, DateTimeUpdate {
         setUpChecklists()
         setExpandCollapseState()
 
-        val menuHost: MenuHost = requireActivity()
+        val a = requireActivity()
+        requireActivity().onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            val mIntent = Intent()
+            mIntent.putExtra(QUERY_TO_EDIT, getCurrentQuery())
+            a.setResult(RESULT_OK, mIntent)
+            finish()
+        }
+
+        val menuHost: MenuHost = a
 
         // Add menu items without using the Fragment Menu APIs
         // Note how we can tie the MenuProvider to the viewLifecycleOwner
