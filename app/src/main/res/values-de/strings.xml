@@ -216,7 +216,8 @@
     <string name="lblNewEngine">Neues Triebwerk:</string>
     <string name="lblMaintNotes">Notizen:</string>
     <string name="lblMaintNotesHint">z.B., Ort/Typ/Fehler des VOR-Checks</string>
-    <string name="lblAircraftPrefsHeader">Automatisch ausfüllen für Flüge mit diesem Flugzeug</string>
+    <string name="lblCustomDeadlines">Délais personnalisés</string>
+    <string name="lblAircraftPrefsHeader">Benutzerdefinierte Fristen</string>
     <string name="lblShowAircraft">Zeige dieses Flugzeug für neue Flüge</string>
     <string name="lblRoleNone">Nicht automatisch ausfüllen</string>
     <string name="lblRolePIC">Gesamt-Zeit automatisch als PIC-Zeit, wenn leer</string>

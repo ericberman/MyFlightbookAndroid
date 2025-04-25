@@ -217,6 +217,7 @@
     <string name="lblNewEngine">New Engine:</string>
     <string name="lblMaintNotes">Notes:</string>
     <string name="lblMaintNotesHint">E.g., location/type/error of VOR check</string>
+    <string name="lblCustomDeadlines">Custom Deadlines</string>
     <string name="lblAircraftPrefsHeader">Crossfill for new flights in this aircraft</string>
     <string name="lblShowAircraft">Show this aircraft for new flights</string>
     <string name="lblRoleNone">Do not crossfill</string>

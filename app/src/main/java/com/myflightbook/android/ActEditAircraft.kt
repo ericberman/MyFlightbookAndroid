@@ -162,6 +162,7 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
         addListener(R.id.acPrefsHeader)
         addListener(R.id.acNotesHeader)
         addListener(R.id.txtACMaintenance)
+        addListener(R.id.btnCustomDeadlines)
         addListener(R.id.txtImageHeader)
         val i = requireActivity().intent
         val idAircraft = i.getIntExtra(AIRCRAFTID, 0)
@@ -356,6 +357,8 @@ class ActEditAircraft : ActMFBForm(), View.OnClickListener, DateTimeUpdate, Gall
                     mAc!!.registrationDue
                 ), this, DlgDatePicker.DatePickMode.LOCALDATENULLABLE
             )
+        } else if (id == R.id.btnCustomDeadlines) {
+            ActWebView.viewURL(requireActivity(), MFBConstants.authRedirWithParams("d=DEADLINEEDIT&id=${mAc!!.aircraftID}", context))
         } else if (id == R.id.ckHideAircraftFromSelection) mAc!!.hideFromSelection =
             !checkState(id) else if (id == R.id.rbRoleNone) mAc!!.roleForPilot =
             PilotRole.None else if (id == R.id.rbRolePIC) mAc!!.roleForPilot =
