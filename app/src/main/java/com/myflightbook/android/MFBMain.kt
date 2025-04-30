@@ -251,7 +251,8 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         Log.v(MFBConstants.LOG_TAG, "onCreate: set custom handler and send error reports")
         val ceh = CustomExceptionHandler(
             cacheDir.absolutePath,
-            String.format(MFBConstants.urlCrashReport, MFBConstants.szIP)
+            String.format(MFBConstants.urlCrashReport, MFBConstants.szIP),
+            AuthToken.APPTOKEN
         )
         Thread.setDefaultUncaughtExceptionHandler(ceh)
         ceh.sendPendingReports()

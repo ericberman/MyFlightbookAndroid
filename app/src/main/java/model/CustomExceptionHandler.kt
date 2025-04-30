@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,13 +21,14 @@ package model
 import android.util.Log
 import com.myflightbook.android.MFBMain
 import com.myflightbook.android.webservices.AuthToken
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
-import java.nio.charset.StandardCharsets
 import java.util.*
 
-class CustomExceptionHandler(private val localPath: String?, private val url: String) :
+class CustomExceptionHandler(private val localPath: String?, private val url: String, private val appkey : String) :
     Thread.UncaughtExceptionHandler {
     private val defaultUEH: Thread.UncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()!!
     override fun uncaughtException(t: Thread, e: Throwable) {
@@ -99,7 +100,7 @@ $result${e.message}${e.localizedMessage}"""
                             sb.append('\n')
                         }
                         br.close()
-                        sendToServer(sb.toString(), f.name)
+                        sendToServer(sb.toString())
                         if (!f.delete()) Log.e(
                             MFBConstants.LOG_TAG,
                             "Delete of error report failed"
@@ -112,77 +113,32 @@ $result${e.message}${e.localizedMessage}"""
         }.start()
     }
 
-    private fun sendToServer(stacktrace: String, filename: String) {
+    private fun sendToServer(stacktrace: String) {
         if (MFBConstants.fIsDebug) return
-        val szBoundary = "EXCEPTONBOUNDARY"
-        val szBoundaryDivider = String.format("--%s\r\n", szBoundary)
-        var urlConnection: HttpURLConnection? = null
-        var out: OutputStream? = null
-        val `in`: InputStream
+        var response : Response? = null
         try {
-            urlConnection = URL(url).openConnection() as HttpURLConnection
-            urlConnection.doOutput = true
-            urlConnection.setChunkedStreamingMode(0)
-            urlConnection.requestMethod = "POST"
-            urlConnection.setRequestProperty(
-                "Content-Type",
-                String.format("multipart/form-data; boundary=%s", szBoundary)
-            )
-            out = BufferedOutputStream(urlConnection.outputStream)
-            out.write(szBoundaryDivider.toByteArray(StandardCharsets.UTF_8))
-            out.write(
-                "Content-Disposition: form-data; name=\"filename\"\r\n\r\n".toByteArray(
-                    StandardCharsets.UTF_8
-                )
-            )
-            out.write(
-                String.format("%s\r\n%s", filename, szBoundaryDivider).toByteArray(
-                    StandardCharsets.UTF_8
-                )
-            )
-            out.write(
-                "Content-Disposition: form-data; name=\"stacktrace\"\r\n\r\n".toByteArray(
-                    StandardCharsets.UTF_8
-                )
-            )
-            out.write(
-                String.format("%s\r\n%s", stacktrace, szBoundaryDivider).toByteArray(
-                    StandardCharsets.UTF_8
-                )
-            )
-            out.write(
-                String.format("\r\n\r\n--%s--\r\n", szBoundary).toByteArray(StandardCharsets.UTF_8)
-            )
-            out.flush()
-            `in` = BufferedInputStream(urlConnection.inputStream)
-            val status = urlConnection.responseCode
-            if (status != HttpURLConnection.HTTP_OK) throw Exception(
-                String.format(
-                    Locale.US,
-                    "Bad response - status = %d",
-                    status
-                )
-            )
-            val rgResponse = ByteArray(1024)
-            if (`in`.read(rgResponse) == 0) Log.e(
-                MFBConstants.LOG_TAG,
-                "No bytes read from the response to uploading error report!"
-            )
-            val sz = String(rgResponse, StandardCharsets.UTF_8)
+            val client = OkHttpClient()
+            val requestBody = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("szAppToken", appkey)
+                .addFormDataPart("stacktrace", stacktrace)
+                .build()
+
+            val request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+
+            response = client.newCall(request).execute()
+            if (!response.isSuccessful) throw IOException("Unexpected response: ${response.message()}")
+
+            val sz = response?.body()?.string() ?: ""
+
             if (!sz.contains("OK")) throw Exception(sz)
         } catch (ex: Exception) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex))
         } finally {
-            if (out != null) try {
-                out.close()
-            } catch (e: IOException) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-            }
-            if (urlConnection != null) try {
-                urlConnection.disconnect()
-            } catch (ex: Exception) {
-                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(ex))
-            }
+            response?.body()?.close()
         }
     }
 

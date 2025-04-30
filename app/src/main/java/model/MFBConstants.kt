@@ -90,7 +90,7 @@ object MFBConstants {
     const val urlPrivacy = "https://%s/logbook/mvc/pub/Privacy?naked=1&%s"
     const val urlTandC = "https://%s/logbook/mvc/pub/TandC?naked=1&%s"
     const val urlFacebook = "https://www.facebook.com/pages/MyFlightbook/145794653106"
-    const val urlCrashReport = "https://%s/logbook/public/CrashReport.aspx"
+    const val urlCrashReport = "https://%s/logbook/mvc/pub/CrashReport"
     private const val urlNoNight = "night=no"
     private const val urlNight = "night=yes"
     private const val urlAuthRedirBase =
