@@ -94,7 +94,7 @@ object MFBConstants {
     private const val urlNoNight = "night=no"
     private const val urlNight = "night=yes"
     private const val urlAuthRedirBase =
-        "https://%s/logbook/public/authredir.aspx?u=%s&p=%s&naked=%s&%s"
+        "https://%s/logbook/mvc/auth/authredir?u=%s&p=%s&naked=%s&%s"
 
     // Formatting strings
     const val TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss'Z'"
