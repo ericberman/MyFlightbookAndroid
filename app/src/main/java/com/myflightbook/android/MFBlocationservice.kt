@@ -20,7 +20,7 @@ import model.MFBConstants
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2018-2022 MyFlightbook, LLC
+    Copyright (C) 2018-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class MFBlocationservice : Service(), LocationListener {
         override fun onLocationAvailability(availability: LocationAvailability) {}
         override fun onLocationResult(result: LocationResult) {
             val lst = result.locations
-            if (lst.size == 0) {
+            if (lst.isEmpty()) {
                 if (result.lastLocation != null)
                     onLocationChanged(result.lastLocation!!)
             } else {
@@ -112,7 +112,7 @@ class MFBlocationservice : Service(), LocationListener {
         startInForeground()
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startInForeground()
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
