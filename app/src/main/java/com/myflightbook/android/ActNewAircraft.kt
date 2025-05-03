@@ -64,7 +64,7 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
 
     internal class AutoCompleteAdapter(context: Context, resource: Int) :
         ArrayAdapter<Aircraft?>(context, resource) {
-        private val mMatchingAircraft: MutableList<Aircraft>
+        private val mMatchingAircraft: MutableList<Aircraft> = ArrayList()
         fun setData(list: List<Aircraft>?) {
             mMatchingAircraft.clear()
             mMatchingAircraft.addAll(list!!)
@@ -98,12 +98,8 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
                     ac.modelID,
                     AvailableMakesAndModels
                 ).also { mm = it } == null
-            ) tv.text = ac.modelDescription else if (mm != null) tv.text = mm!!.description
+            ) tv.text = ac.modelDescription else if (mm != null) tv.text = mm.description
             return v
-        }
-
-        init {
-            mMatchingAircraft = ArrayList()
         }
     }
 
@@ -357,7 +353,7 @@ class ActNewAircraft : ActMFBForm(), View.OnClickListener, AdapterView.OnItemSel
     }
 
     override fun onItemSelected(
-        arg0: AdapterView<*>?, arg1: View, arg2: Int,
+        arg0: AdapterView<*>?, arg1: View?, arg2: Int,
         arg3: Long
     ) {
         saveLastTail()
