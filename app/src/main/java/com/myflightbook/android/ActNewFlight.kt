@@ -480,9 +480,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     R.id.menuTakeVideo -> takeVideoClicked()
                     R.id.menuChoosePicture -> choosePictureClicked()
                     R.id.menuChooseTemplate -> {
-                        val i = FragmentHostActivity.createIntent<ActViewTemplates>(requireContext(), Bundle().apply {
-                            putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
-                        })
+                        val b = Bundle()
+                        b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
+                        val i = FragmentHostActivity.createIntent<ActViewTemplates>(requireActivity(), b)
+                        i.putExtras(b)
                         mTemplateLauncher!!.launch(i)
                     }
                     R.id.menuRepeatFlight, R.id.menuReverseFlight -> {

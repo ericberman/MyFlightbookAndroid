@@ -22,6 +22,7 @@ import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -137,7 +138,12 @@ class ActViewTemplates : ListFragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         val i = requireActivity().intent
         try {
-            mActivetemplates = i.getBundleExtra(FragmentHostActivity.EXTRA_FRAGMENT_ARGS)?.getSerializable(ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mActivetemplates = i.getSerializableExtra(ACTIVE_PROPERTYTEMPLATES, HashSet<PropertyTemplate?>()::class.java)
+            } else {
+                @Suppress("DEPRECATION", "UNCHECKED_CAST")
+                mActivetemplates = i.getSerializableExtra(ACTIVE_PROPERTYTEMPLATES) as? HashSet<PropertyTemplate?>? ?: hashSetOf()
+            }
         } catch (ex: ClassCastException) {
             Log.e(MFBConstants.LOG_TAG, ex.message!!)
         }
