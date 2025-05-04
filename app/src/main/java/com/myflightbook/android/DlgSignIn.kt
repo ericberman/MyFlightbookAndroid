@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 package com.myflightbook.android
 
-import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
@@ -31,7 +30,6 @@ import com.myflightbook.android.webservices.AuthToken
 import com.myflightbook.android.webservices.CustomPropertyTypesSvc
 import com.myflightbook.android.webservices.MFBSoap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import model.AuthResult
 
@@ -82,6 +80,7 @@ internal class DlgSignIn(private val mCallingActivity: FragmentActivity) : Dialo
                         findViewById<View>(R.id.layout2FA).visibility = View.VISIBLE
                         findViewById<View>(R.id.layoutCredentials).visibility = View.GONE
                         findViewById<View>(R.id.txtWarning).visibility = View.GONE
+                        findViewById<View>(R.id.txt2FA).requestFocus()
                     } else {
                         if (result!!.authStatus === AuthResult.AuthStatus.Success) {
                             MFBMain.invalidateAll()
@@ -94,7 +93,7 @@ internal class DlgSignIn(private val mCallingActivity: FragmentActivity) : Dialo
         }
     }
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         findViewById<View>(R.id.btnSubmit).setOnClickListener(this)
         findViewById<View>(R.id.btnCancel).setOnClickListener(this)
     }
