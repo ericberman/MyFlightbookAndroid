@@ -77,7 +77,7 @@ class ActAddApproach : AppCompatActivity() {
         adapter.setDropDownViewResource(R.layout.samplequestion)
         s.adapter = adapter
         s.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
                 approachSuffix = ApproachDescription.ApproachSuffixes[i]
                 approachDescription.approachName = approachBase + approachSuffix
             }
@@ -119,7 +119,7 @@ class ActAddApproach : AppCompatActivity() {
         adapter.setDropDownViewResource(R.layout.samplequestion)
         s.adapter = adapter
         s.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
                 runwaySuffix = ApproachDescription.RunwayModifiers[i]
                 approachDescription.runwayName = runwayBase + runwaySuffix
             }
