@@ -900,12 +900,16 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 CommitFlightSvc(),
                 null,
                 { s -> (s as CommitFlightSvc).checkFlight(AuthToken.m_szAuthToken, mle!!, requireContext()) },
-                { _, result ->
-                    mle!!.rgIssues = result!!
-                    if (mle!!.rgIssues.isEmpty()) {
-                        alert(requireContext(), "", getString(R.string.txtCheckFlightNoIssues))
+                { svc, result ->
+                    if (svc.lastError.isEmpty()) {
+                        mle!!.rgIssues = result!!
+                        if (mle!!.rgIssues.isEmpty()) {
+                            alert(requireContext(), "", getString(R.string.txtCheckFlightNoIssues))
+                        }
+                        toView()
+                    } else {
+                        alert(requireContext(), getString(R.string.txtError), svc.lastError)
                     }
-                    toView()
                 }
             )
         }
