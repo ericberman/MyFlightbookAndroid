@@ -44,6 +44,8 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.core.app.ShareCompat.IntentBuilder
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.myflightbook.android.ActMFBForm.GallerySource
@@ -413,6 +415,14 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            v.setPadding(0, statusBarHeight, 0, imeHeight)
+            insets
+        }
 
         // The usage of an interface lets you inject your own implementation
         val menuHost: MenuHost = requireActivity()
