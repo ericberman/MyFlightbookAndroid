@@ -30,6 +30,7 @@ import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.util.Log
 import java.lang.Exception
 import java.util.*
 
@@ -94,9 +95,13 @@ open class MFBSoap internal constructor() {
             o = null
         }
 
-        // Un-comment one or the other lines above - if debug is true - to view raw XML:
-//        String sRequestDump = androidHttpTransport.requestDump;
-//        String sResponseDump = androidHttpTransport.responseDump;
+        if (MFBConstants.fIsDebug) {
+            val sRequestDump = androidHttpTransport.requestDump;
+            val sResponseDump = androidHttpTransport.responseDump;
+            Log.i(MFBConstants.LOG_TAG, mRequest?.name ?: "(Unknown method)")
+            Log.i(MFBConstants.LOG_TAG, "request: " + sRequestDump)
+            Log.i(MFBConstants.LOG_TAG, "response: " + sResponseDump)
+        }
         return o
     }
 
