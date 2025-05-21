@@ -420,7 +420,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
 
-            v.setPadding(0, statusBarHeight, 0, imeHeight)
+            v.setPadding(0, 0, 0, imeHeight)
             insets
         }
 
@@ -904,12 +904,13 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         }
         fromView()
 
+        val cfs = CheckFlightSvc()
         lifecycleScope.launch {
             doAsync<MFBSoap, Array<String>>(
                 requireActivity(),
-                CommitFlightSvc(),
+                cfs,
                 null,
-                { s -> (s as CommitFlightSvc).checkFlight(AuthToken.m_szAuthToken, mle!!, requireContext()) },
+                { s -> (s as CheckFlightSvc).checkFlight(AuthToken.m_szAuthToken, mle!!, requireContext()) },
                 { svc, result ->
                     if (svc.lastError.isEmpty()) {
                         mle!!.rgIssues = result!!
