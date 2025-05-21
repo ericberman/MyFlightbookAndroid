@@ -31,7 +31,6 @@ import org.ksoap2.serialization.SoapSerializationEnvelope
 class CommitFlightSvc : MFBSoap() {
     override fun addMappings(e: SoapSerializationEnvelope) {
         e.addMapping(NAMESPACE, "CommitFlightWithOptionsResult", LogbookEntry::class.java)
-        e.addMapping(NAMESPACE, "le", LogbookEntry::class.java)
         e.addMapping(NAMESPACE, "LogbookEntry", LogbookEntry::class.java)
         e.addMapping(NAMESPACE, "CustomFlightProperty", FlightProperty::class.java)
         e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo::class.java)
@@ -40,29 +39,6 @@ class CommitFlightSvc : MFBSoap() {
         val md = MarshalDouble()
         mdt.register(e)
         md.register(e)
-    }
-
-    fun checkFlight(szAuthToken: String?, le: LogbookEntry, c: Context) : Array<String> {
-        val request = setMethod("CheckFlight")
-        request.addProperty("szAuthUserToken", szAuthToken)
-        val piLe = PropertyInfo()
-        piLe.name = "le"
-        piLe.type = "LogbookEntry"
-        piLe.value = le
-        piLe.namespace = NAMESPACE
-        request.addProperty(piLe)
-
-        val result : ArrayList<String> = ArrayList()
-        val r = invoke(c) as SoapObject?
-        if (r != null) {
-            try {
-                for (i in 0 until r.propertyCount)
-                    result.add(r.getProperty(i).toString())
-            } catch (e: Exception) {
-                lastError += e.message
-            }
-        }
-        return result.toTypedArray()
     }
 
     fun fCommitFlightForUser(szAuthToken: String?, le: LogbookEntry, c: Context): Boolean {
