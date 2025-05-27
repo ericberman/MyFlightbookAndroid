@@ -914,10 +914,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 { svc, result ->
                     if (svc.lastError.isEmpty()) {
                         mle!!.rgIssues = result!!
+                        toView()
                         if (mle!!.rgIssues.isEmpty()) {
                             alert(requireContext(), "", getString(R.string.txtCheckFlightNoIssues))
+                        } else {
+                            (findViewById(R.id.newFlightScrollView) as? ScrollView)!!.fullScroll(View.FOCUS_DOWN)
                         }
-                        toView()
                     } else {
                         alert(requireContext(), getString(R.string.txtError), svc.lastError)
                     }

@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mfb="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
+    android:id="@+id/newFlightScrollView"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
