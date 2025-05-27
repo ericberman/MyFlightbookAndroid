@@ -10,8 +10,8 @@ android {
         applicationId "com.myflightbook.android"
         minSdk 28
         targetSdk 35
-        versionCode 188
-        versionName "2025.05.05 - Private"
+        versionCode 191
+        versionName "2025.05.27"
     }
 
     buildTypes {
@@ -67,7 +67,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.16.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.exifinterface:exifinterface:1.4.1'
-    implementation 'androidx.fragment:fragment-ktx:1.8.6'
+    implementation 'androidx.fragment:fragment-ktx:1.8.7'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
