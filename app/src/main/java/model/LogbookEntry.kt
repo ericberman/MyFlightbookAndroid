@@ -739,14 +739,14 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                 pi.type = PropertyInfo.VECTOR_CLASS
                 pi.name = "CustomProperties"
                 pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.OBJECT_CLASS
+                pi.elementType.type = FlightProperty::class.java
                 pi.elementType.name = "CustomFlightProperty"
             }
             FlightProp.PIDExistingImages -> {
                 pi.type = PropertyInfo.VECTOR_CLASS
                 pi.name = "FlightImages"
                 pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.OBJECT_CLASS
+                pi.elementType.type = MFBImageInfo::class.java
                 pi.elementType.name = "MFBImageInfo"
             }
             FlightProp.PIDSend -> {

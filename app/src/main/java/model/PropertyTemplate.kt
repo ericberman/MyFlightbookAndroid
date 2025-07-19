@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,77 +131,22 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
             TemplatePropID.PIDTemplateID -> {
                 pi.type = PropertyInfo.INTEGER_CLASS
                 pi.name = "ID"
-                pi.type = PropertyInfo.STRING_CLASS
-                pi.name = "Name"
-                pi.type = PropertyInfo.STRING_CLASS
-                pi.name = "Description"
-                pi.type = PropertyInfo.INTEGER_CLASS
-                pi.name = "GroupAsInt"
-                pi.type = PropertyInfo.STRING_CLASS
-                pi.name = "GroupDisplayName"
-                pi.type = PropertyInfo.VECTOR_CLASS
-                pi.name = "PropertyTypes"
-                pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.INTEGER_CLASS
-                pi.elementType.name = "integer"
-                pi.type = PropertyInfo.BOOLEAN_CLASS
-                pi.name = "IsDefault"
-            }
+                }
             TemplatePropID.PIDTemplateName -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "Name"
-                pi.type = PropertyInfo.STRING_CLASS
-                pi.name = "Description"
-                pi.type = PropertyInfo.INTEGER_CLASS
-                pi.name = "GroupAsInt"
-                pi.type = PropertyInfo.STRING_CLASS
-                pi.name = "GroupDisplayName"
-                pi.type = PropertyInfo.VECTOR_CLASS
-                pi.name = "PropertyTypes"
-                pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.INTEGER_CLASS
-                pi.elementType.name = "integer"
-                pi.type = PropertyInfo.BOOLEAN_CLASS
-                pi.name = "IsDefault"
             }
             TemplatePropID.PIDTemplateDescription -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "Description"
-                pi.type = PropertyInfo.INTEGER_CLASS
-                pi.name = "GroupAsInt"
-                pi.type = PropertyInfo.STRING_CLASS
-                pi.name = "GroupDisplayName"
-                pi.type = PropertyInfo.VECTOR_CLASS
-                pi.name = "PropertyTypes"
-                pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.INTEGER_CLASS
-                pi.elementType.name = "integer"
-                pi.type = PropertyInfo.BOOLEAN_CLASS
-                pi.name = "IsDefault"
             }
             TemplatePropID.PIDTemplateGroupAsInt -> {
                 pi.type = PropertyInfo.INTEGER_CLASS
                 pi.name = "GroupAsInt"
-                pi.type = PropertyInfo.STRING_CLASS
-                pi.name = "GroupDisplayName"
-                pi.type = PropertyInfo.VECTOR_CLASS
-                pi.name = "PropertyTypes"
-                pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.INTEGER_CLASS
-                pi.elementType.name = "integer"
-                pi.type = PropertyInfo.BOOLEAN_CLASS
-                pi.name = "IsDefault"
             }
             TemplatePropID.PIDTemplateGroupDisplayName -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "GroupDisplayName"
-                pi.type = PropertyInfo.VECTOR_CLASS
-                pi.name = "PropertyTypes"
-                pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.INTEGER_CLASS
-                pi.elementType.name = "integer"
-                pi.type = PropertyInfo.BOOLEAN_CLASS
-                pi.name = "IsDefault"
             }
             TemplatePropID.PIDTemplatePropertyTypes -> {
                 pi.type = PropertyInfo.VECTOR_CLASS
@@ -209,8 +154,6 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
                 pi.elementType = PropertyInfo()
                 pi.elementType.type = PropertyInfo.INTEGER_CLASS
                 pi.elementType.name = "integer"
-                pi.type = PropertyInfo.BOOLEAN_CLASS
-                pi.name = "IsDefault"
             }
             TemplatePropID.PIDTemplateDefault -> {
                 pi.type = PropertyInfo.BOOLEAN_CLASS
@@ -279,6 +222,7 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
     }
 
     companion object {
+        @Suppress("UNUSED")
         private const val serialVersionUID = 1L
         @Suppress("UNUSED")
         private const val ID_NEW = -1
