@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ import model.DecimalEdit.EditMode
 import model.MFBImageInfo.PictureDestination
 import java.io.*
 import java.util.*
+import androidx.core.content.edit
 
 /*
  * Helper class for dealing with forms.
@@ -196,13 +197,13 @@ import java.util.*
                     if (inputStream != null) {
                         try {
                             inputStream.close()
-                        } catch (ignored: IOException) {
+                        } catch (_: IOException) {
                         }
                     }
                     if (o != null) {
                         try {
                             o.close()
-                        } catch (ignored: IOException) {
+                        } catch (_: IOException) {
                         }
                     }
                 }
@@ -243,9 +244,13 @@ import java.util.*
                 chooseImageCompleted(it)
         }
 
-        mChooseImagesPhotoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-            if (it != null)
-                chooseImageCompleted(it)
+        mChooseImagesPhotoPicker = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) {
+            uris ->
+            if (uris.isNotEmpty()) {
+                for (uri in uris) {
+                    chooseImageCompleted(uri)
+                }
+            }
         }
 
         mChooseImageLauncher = registerForActivityResult(
@@ -276,9 +281,9 @@ import java.util.*
                         mTempfilepath =
                             fTemp.absolutePath // need to save this for when the picture comes back
                         val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
-                        val ed = prefs.edit()
-                        ed.putString(keyTempFileInProgress, mTempfilepath)
-                        ed.apply()
+                        prefs.edit {
+                            putString(keyTempFileInProgress, mTempfilepath)
+                        }
                         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                         val uriImage = FileProvider.getUriForFile(
                             requireContext(),
@@ -320,9 +325,9 @@ import java.util.*
                         mTempfilepath =
                             fTemp.absolutePath // need to save this for when the picture comes back
                         val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
-                        val ed = prefs.edit()
-                        ed.putString(keyTempFileInProgress, mTempfilepath)
-                        ed.apply()
+                        prefs.edit {
+                            putString(keyTempFileInProgress, mTempfilepath)
+                        }
                         val uriImage = FileProvider.getUriForFile(
                             requireContext(),
                             BuildConfig.APPLICATION_ID + ".provider",
