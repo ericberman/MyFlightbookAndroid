@@ -40,7 +40,7 @@ object MFBConstants {
 
     // DB Versioning
     const val DBVersionMain = 36
-    const val DBVersionAirports = 57
+    const val DBVersionAirports = 58
 
     // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
     // To read it: PRAGMA user_version
