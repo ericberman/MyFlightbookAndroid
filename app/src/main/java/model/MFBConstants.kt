@@ -78,9 +78,6 @@ object MFBConstants {
     // Number of supposedly valid GPS samples to ignore after a wake-up
     const val BOGUS_SAMPLE_COUNT = 1
 
-    // Soap constants
-    const val szFaultSeparator = "--->"
-
     // intents
     const val intentViewURL = "com.myflightbook.android.URL"
     const val intentViewTempFile = "com.myflightbook.android.TempFile"
@@ -121,7 +118,7 @@ object MFBConstants {
                 if (fNaked) "1" else "0",
                 if (fUseNight) nightParam(c) else urlNoNight
             ) + if (szParams.isEmpty()) "" else "&$szParams"
-        } catch (e: UnsupportedEncodingException) {
+        } catch (_: UnsupportedEncodingException) {
             ""
         }
     }

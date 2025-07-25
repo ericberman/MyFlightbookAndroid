@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -76,31 +76,31 @@ open class LatLong : SoapableObject, KvmSerializable, Serializable {
     }
 
     override fun getProperty(arg0: Int): Any {
-        return when (FPProp.values()[arg0]) {
+        return when (FPProp.entries[arg0]) {
             FPProp.PIDLat -> latitude
             FPProp.PIDLng -> longitude
         }
     }
 
     override fun getPropertyCount(): Int {
-        return FPProp.values().size
+        return FPProp.entries.size
     }
 
     override fun getPropertyInfo(i: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (FPProp.values()[i]) {
+        when (FPProp.entries[i]) {
             FPProp.PIDLat -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "Latitude"
             }
             FPProp.PIDLng -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "Longitude"
             }
         }
     }
 
     override fun setProperty(arg0: Int, arg1: Any) {
-        val f = FPProp.values()[arg0]
+        val f = FPProp.entries[arg0]
         val sz = arg1.toString()
         when (f) {
             FPProp.PIDLat -> latitude = sz.toDouble()
@@ -137,7 +137,7 @@ open class LatLong : SoapableObject, KvmSerializable, Serializable {
                             .compareTo("E", ignoreCase = true) == 0
                     ) 1 else -1
                     if (ll.isValid()) ll else null
-                } catch (ex: Exception) {
+                } catch (_: Exception) {
                     null
                 }
             } else null

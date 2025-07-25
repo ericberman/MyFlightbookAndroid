@@ -38,6 +38,7 @@ import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.database.sqlite.transaction
 
 class FlightProperty : SoapableObject, KvmSerializable, Serializable {
     private enum class FPProp {
@@ -155,7 +156,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
     }
 
     override fun getProperty(arg0: Int): Any {
-        return when (FPProp.values()[arg0]) {
+        return when (FPProp.entries[arg0]) {
             FPProp.PIDPropId -> idProp
             FPProp.PIDFlightID -> idFlight
             FPProp.PIDPropTypeId -> idPropType
@@ -168,11 +169,11 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
     }
 
     override fun getPropertyCount(): Int {
-        return FPProp.values().size
+        return FPProp.entries.size
     }
 
     override fun getPropertyInfo(arg0: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (FPProp.values()[arg0]) {
+        when (FPProp.entries[arg0]) {
             FPProp.PIDPropId -> {
                 pi.type = PropertyInfo.INTEGER_CLASS
                 pi.name = "PropID"
@@ -194,11 +195,11 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
                 pi.name = "BoolValue"
             }
             FPProp.PIDDecValue -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "DecValue"
             }
             FPProp.PIDDateValue -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "DateValue"
             }
             FPProp.PIDStringValue -> {
@@ -209,7 +210,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
     }
 
     override fun setProperty(arg0: Int, arg1: Any) {
-        val f = FPProp.values()[arg0]
+        val f = FPProp.entries[arg0]
         val sz = arg1.toString()
         when (f) {
             FPProp.PIDPropId -> idProp = sz.toInt()
@@ -235,7 +236,7 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
         decValue = c.getDouble(c.getColumnIndexOrThrow("DecValue"))
         dateValue = try {
             df.parse(c.getString(c.getColumnIndexOrThrow("DateValue")))
-        } catch (e: ParseException) {
+        } catch (_: ParseException) {
             null
         }
         stringValue = c.getString(c.getColumnIndexOrThrow("StringValue"))
@@ -371,20 +372,22 @@ class FlightProperty : SoapableObject, KvmSerializable, Serializable {
                     )
 
                     // I've read that multiple inserts are much faster inside a transaction.
-                    db.beginTransaction()
-                    try {
-                        for (fp in rgfp) {
-                            fp.idFlight = idFlight.toInt()
-                            val cv = ContentValues()
-                            fp.toContentValues(cv)
-                            val l = db.insertOrThrow(TABLENAME, null, cv)
-                            if (l < 0) throw Exception("Error inserting flightproperty")
+                    db.transaction {
+                        try {
+                            for (fp in rgfp) {
+                                fp.idFlight = idFlight.toInt()
+                                val cv = ContentValues()
+                                fp.toContentValues(cv)
+                                val l = insertOrThrow(TABLENAME, null, cv)
+                                if (l < 0) throw Exception("Error inserting flightproperty")
+                            }
+                        } catch (ex: Exception) {
+                            Log.v(
+                                MFBConstants.LOG_TAG,
+                                "Error rewriting properties - " + ex.message
+                            )
+                        } finally {
                         }
-                        db.setTransactionSuccessful()
-                    } catch (ex: Exception) {
-                        Log.v(MFBConstants.LOG_TAG, "Error rewriting properties - " + ex.message)
-                    } finally {
-                        db.endTransaction()
                     }
                 } catch (e: Exception) {
                     Log.v(MFBConstants.LOG_TAG, "Error rewriting properties - " + e.message)

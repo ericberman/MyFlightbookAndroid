@@ -480,11 +480,11 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
 
     // serialization methods
     override fun getPropertyCount(): Int {
-        return FlightProp.values().size
+        return FlightProp.entries.size
     }
 
     override fun getProperty(i: Int): Any {
-        return when (FlightProp.values()[i]) {
+        return when (FlightProp.entries[i]) {
             FlightProp.PIDAircraft -> idAircraft
             FlightProp.PIDcAppNP -> cApproachNonPrecision
             FlightProp.PIDcAppPrecision -> cApproachPrecision
@@ -533,7 +533,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     }
 
     override fun setProperty(i: Int, value: Any) {
-        val fp = FlightProp.values()[i]
+        val fp = FlightProp.entries[i]
         val sz = value.toString()
         when (fp) {
             FlightProp.PIDAircraft -> idAircraft = sz.toInt()
@@ -582,7 +582,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     }
 
     override fun getPropertyInfo(i: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (FlightProp.values()[i]) {
+        when (FlightProp.entries[i]) {
             FlightProp.PIDAircraft -> {
                 pi.type = PropertyInfo.INTEGER_CLASS
                 pi.name = "AircraftID"
@@ -616,67 +616,67 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                 pi.name = "Landings"
             }
             FlightProp.PIDdCFI -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "CFI"
             }
             FlightProp.PIDdDual -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "Dual"
             }
             FlightProp.PIDdGrnd -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "GroundSim"
             }
             FlightProp.PIDdHobbsEnd -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "HobbsEnd"
             }
             FlightProp.PIDdHobbsStart -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "HobbsStart"
             }
             FlightProp.PIDdIMC -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "IMC"
             }
             FlightProp.PIDdNight -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "Nighttime"
             }
             FlightProp.PIDdPIC -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "PIC"
             }
             FlightProp.PIDdSIC -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "SIC"
             }
             FlightProp.PIDdSimulatedIFR -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "SimulatedIFR"
             }
             FlightProp.PIDdTotal -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "TotalFlightTime"
             }
             FlightProp.PIDdtEEnd -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "EngineEnd"
             }
             FlightProp.PIDdtEStart -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "EngineStart"
             }
             FlightProp.PIDdtFEnd -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "FlightEnd"
             }
             FlightProp.PIDdtFStart -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "FlightStart"
             }
             FlightProp.PIDdXC -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "CrossCountry"
             }
             FlightProp.PIDfHasData -> {
@@ -688,7 +688,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                 pi.name = "fHoldingProcedures"
             }
             FlightProp.PIDFlightDate -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "Date"
             }
             FlightProp.PIDFlightId -> {
@@ -808,7 +808,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         szError = ""
         try {
             idFlight = so.getProperty("FlightID").toString().toInt()
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
         }
         szUser = so.getProperty("User").toString()
         idAircraft = so.getProperty("AircraftID").toString().toInt()
@@ -858,14 +858,14 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         shareLink = so.getPropertySafelyAsString("SocialMediaLink")
         mFlightColorHex = try {
             readNullableString(so, "FlightColorHex")
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
             ""
         }
 
         // FlightData is not always present.
         try {
             szFlightData = readNullableString(so, "FlightData")
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
         }
         val szSigState = so.getPropertySafelyAsString("CFISignatureState")
         signatureStatus =
@@ -879,7 +879,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             signatureCFIName = so.getPropertySafelyAsString("CFIName")
             signatureHasDigitizedSig =
                 java.lang.Boolean.parseBoolean(so.getProperty("HasDigitizedSig").toString())
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
         }
         val props = so.getPropertySafely("CustomProperties") as SoapObject
         val cProps = props.propertyCount
@@ -1047,7 +1047,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                         fromCursor(c)
                     } else throw Exception("Query for flight from db failed!")
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 Log.e(MFBConstants.LOG_TAG, "Requested stored flight failed to load - resetting")
                 idLocalDB = -1
             }
@@ -1146,7 +1146,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         val nf = NumberFormat.getInstance(Locale.getDefault())
         rate = try {
             Objects.requireNonNull(nf.parse(Objects.requireNonNull(m.group(1)))).toDouble()
-        } catch (e: ParseException) {
+        } catch (_: ParseException) {
             return
         }
         if (rate == 0.0) return

@@ -30,6 +30,7 @@ class CheckFlightSvc : MFBSoap() {
 
     override fun addMappings(e: SoapSerializationEnvelope) {
         e.addMapping(NAMESPACE, "LogbookEntry", LogbookEntry::class.java)
+        e.addMapping(NAMESPACE, "PendingFlight", PendingFlight::class.java)
         e.addMapping(NAMESPACE, "CustomFlightProperty", FlightProperty::class.java)
         e.addMapping(NAMESPACE, "MFBImageInfo", MFBImageInfo::class.java)
         e.addMapping(NAMESPACE, "LatLong", LatLong::class.java)

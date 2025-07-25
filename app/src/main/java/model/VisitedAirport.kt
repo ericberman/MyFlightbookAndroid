@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class VisitedAirport(so: SoapObject) : SoapableObject(), KvmSerializable,
         code = so.getProperty("Code").toString()
         aliases = try {
             so.getPropertyAsString("Aliases")
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             ""
         }
         earliestDate =
@@ -62,7 +62,7 @@ class VisitedAirport(so: SoapObject) : SoapableObject(), KvmSerializable,
     }
 
     override fun getProperty(i: Int): Any {
-        return when (VisitedAirportProp.values()[i]) {
+        return when (VisitedAirportProp.entries[i]) {
             VisitedAirportProp.PIDCode -> code
             VisitedAirportProp.PIDAliases -> aliases!!
             VisitedAirportProp.PIDEarliestDate -> earliestDate
@@ -73,11 +73,11 @@ class VisitedAirport(so: SoapObject) : SoapableObject(), KvmSerializable,
     }
 
     override fun getPropertyCount(): Int {
-        return VisitedAirportProp.values().size
+        return VisitedAirportProp.entries.size
     }
 
     override fun getPropertyInfo(i: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (VisitedAirportProp.values()[i]) {
+        when (VisitedAirportProp.entries[i]) {
             VisitedAirportProp.PIDCode -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "Code"
@@ -87,11 +87,11 @@ class VisitedAirport(so: SoapObject) : SoapableObject(), KvmSerializable,
                 pi.name = "Aliases"
             }
             VisitedAirportProp.PIDEarliestDate -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "EarliestVisitDate"
             }
             VisitedAirportProp.PIDLatestDate -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "LatestVisitDate"
             }
             VisitedAirportProp.PIDNumVisits -> {
@@ -99,7 +99,7 @@ class VisitedAirport(so: SoapObject) : SoapableObject(), KvmSerializable,
                 pi.name = "NumberOfVisits"
             }
             VisitedAirportProp.PIDAirport -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Airport::class.java
                 pi.name = "Airport"
             }
         }
@@ -111,6 +111,7 @@ class VisitedAirport(so: SoapObject) : SoapableObject(), KvmSerializable,
     }
 
     companion object {
+        @Suppress("UNUSED")
         private const val serialVersionUID = 1L
         @JvmStatic
         fun toRoute(rgva: Array<VisitedAirport>): String {

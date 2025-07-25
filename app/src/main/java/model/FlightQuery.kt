@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -374,7 +374,7 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
     }
 
     override fun getProperty(i: Int): Any {
-        when (FlightQueryProp.values()[i]) {
+        when (FlightQueryProp.entries[i]) {
             FlightQueryProp.PIDDateRange -> return dateRange.toString()
             FlightQueryProp.PIDDateMin -> return dateMin!!
             FlightQueryProp.PIDDateMax -> return dateMax!!
@@ -426,21 +426,21 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
     }
 
     override fun getPropertyCount(): Int {
-        return FlightQueryProp.values().size
+        return FlightQueryProp.entries.size
     }
 
     override fun getPropertyInfo(i: Int, arg1: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (FlightQueryProp.values()[i]) {
+        when (FlightQueryProp.entries[i]) {
             FlightQueryProp.PIDDateRange -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "DateRange"
             }
             FlightQueryProp.PIDDateMin -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "DateMin"
             }
             FlightQueryProp.PIDDateMax -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "DateMax"
             }
             FlightQueryProp.PIDGeneralText -> {
@@ -451,7 +451,7 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
                 pi.type = PropertyInfo.VECTOR_CLASS
                 pi.name = "AircraftList"
                 pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.OBJECT_CLASS
+                pi.elementType.type = Aircraft::class.java
                 pi.elementType.name = "Aircraft"
             }
             FlightQueryProp.PIDAirportList -> {
@@ -465,7 +465,7 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
                 pi.type = PropertyInfo.VECTOR_CLASS
                 pi.name = "MakeList"
                 pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.OBJECT_CLASS
+                pi.elementType.type = MakeModel::class.java
                 pi.elementType.name = "MakeModel"
             }
             FlightQueryProp.PIDModelName -> {
@@ -483,14 +483,14 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
                 pi.type = PropertyInfo.VECTOR_CLASS
                 pi.name = "CatClasses"
                 pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.OBJECT_CLASS
+                pi.elementType.type = CategoryClass::class.java
                 pi.elementType.name = "CategoryClass"
             }
             FlightQueryProp.PIDProperties -> {
                 pi.type = PropertyInfo.VECTOR_CLASS
                 pi.name = "PropertyTypes"
                 pi.elementType = PropertyInfo()
-                pi.elementType.type = PropertyInfo.OBJECT_CLASS
+                pi.elementType.type = CustomPropertyType::class.java
                 pi.elementType.name = "CustomPropertyType"
             }
             FlightQueryProp.PIDFlightDistance -> {
@@ -643,6 +643,7 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
     override fun setProperty(i: Int, value: Any) {}
 
     companion object {
+        @Suppress("UNUSED")
         private const val serialVersionUID = 4L
         @Suppress("UNUSED")
         fun dateRangeToString(dr: DateRanges?): String {

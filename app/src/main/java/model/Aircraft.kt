@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -244,11 +244,11 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
 
     // serialization methods
     override fun getPropertyCount(): Int {
-        return AircraftProp.values().size
+        return AircraftProp.entries.size
     }
 
     override fun getProperty(i: Int): Any? {
-        return when (AircraftProp.values()[i]) {
+        return when (AircraftProp.entries[i]) {
             AircraftProp.PIDTailNumber -> tailNumber
             AircraftProp.PIDAircratID -> aircraftID
             AircraftProp.PIDModelID -> modelID
@@ -281,7 +281,7 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
     }
 
     override fun setProperty(i: Int, value: Any) {
-        val ap = AircraftProp.values()[i]
+        val ap = AircraftProp.entries[i]
         val sz = value.toString()
         when (ap) {
             AircraftProp.PIDTailNumber -> tailNumber = sz
@@ -327,7 +327,7 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
     }
 
     override fun getPropertyInfo(i: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (AircraftProp.values()[i]) {
+        when (AircraftProp.entries[i]) {
             AircraftProp.PIDTailNumber -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "TailNumber"
@@ -357,43 +357,43 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
                 pi.name = "InstanceTypeID"
             }
             AircraftProp.PIDLastVOR -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "LastVOR"
             }
             AircraftProp.PIDLastAltimeter -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "LastAltimeter"
             }
             AircraftProp.PIDLastTransponder -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "LastTransponder"
             }
             AircraftProp.PIDLastELT -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "LastELT"
             }
             AircraftProp.PIDLastStatic -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "LastStatic"
             }
             AircraftProp.PIDLastAnnual -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "LastAnnual"
             }
             AircraftProp.PIDRegistrationDue -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "RegistrationDue"
             }
             AircraftProp.PIDLast100 -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "Last100"
             }
             AircraftProp.PIDLastOil -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "LastOilChange"
             }
             AircraftProp.PIDLastEngine -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "LastNewEngine"
             }
             AircraftProp.PIDMaintNotes -> {
@@ -438,7 +438,7 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
                 pi.name = "IsGlass"
             }
             AircraftProp.PIDGlassUpgradeDate -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Date::class.java
                 pi.name = "GlassUpgradeDate"
             }
             AircraftProp.PIDAvionicsTechnologyUpgrade -> {
@@ -518,6 +518,7 @@ class Aircraft : SoapableObject, KvmSerializable, Serializable, ThumbnailedItem 
     } // endregion
 
     companion object {
+        @Suppress("UNUSED")
         private const val serialVersionUID = 2L
         @JvmField
         val rgidInstanceTypes = intArrayOf(

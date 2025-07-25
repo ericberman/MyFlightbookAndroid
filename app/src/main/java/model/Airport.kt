@@ -103,7 +103,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
         }
 
     override fun getProperty(i: Int): Any {
-        return when (AirportProp.values()[i]) {
+        return when (AirportProp.entries[i]) {
             AirportProp.PIDAirportID -> airportID
             AirportProp.PIDFacilityName -> facilityName
             AirportProp.PIDType -> facilityType
@@ -116,11 +116,11 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
     }
 
     override fun getPropertyCount(): Int {
-        return AirportProp.values().size
+        return AirportProp.entries.size
     }
 
     override fun getPropertyInfo(i: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (AirportProp.values()[i]) {
+        when (AirportProp.entries[i]) {
             AirportProp.PIDAirportID -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "Code"
@@ -134,15 +134,15 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
                 pi.name = "FacilityTypeCode"
             }
             AirportProp.PIDLatitude -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "Latitude"
             }
             AirportProp.PIDLongitude -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "Longitude"
             }
             AirportProp.PIDDistance -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = Double::class.java
                 pi.name = "DistanceFromPosition"
             }
             AirportProp.PIDAdmin1 -> {
@@ -170,6 +170,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
     }
 
     companion object {
+        @Suppress("UNUSED")
         private const val serialVersionUID = 1L
         @JvmField
         var fPrefIncludeHeliports = false

@@ -49,6 +49,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
+import androidx.core.graphics.createBitmap
 
 class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
     // for serialization
@@ -199,13 +200,13 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                 // Get each one individually so that the associated image file gets deleted too.
                 rgIds = LongArray(c.count)
                 var i = 0
-                while (c.moveToNext()) rgIds!![i++] = c.getLong(0)
+                while (c.moveToNext()) rgIds[i++] = c.getLong(0)
             }
         } catch (e: Exception) {
             Log.e(MFBConstants.LOG_TAG, "Error deleting pending images: " + e.message)
         }
         if (rgIds != null) {
-            for (idImg in rgIds!!) {
+            for (idImg in rgIds) {
                 val mfbii = MFBImageInfo(idImg)
                 mfbii.deleteFromDB()
             }
@@ -315,7 +316,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         thumbnailFile = c.getString(c.getColumnIndexOrThrow("ThumbnailFile"))
         mURLThumbnail = c.getString(c.getColumnIndexOrThrow("URLThumbnail"))
         mURLFullImage = c.getString(c.getColumnIndexOrThrow("URLFullImage"))
-        imageType = ImageFileType.values()[c.getInt(c.getColumnIndexOrThrow("ImageType"))]
+        imageType = ImageFileType.entries.toTypedArray()[c.getInt(c.getColumnIndexOrThrow("ImageType"))]
     }
 
     private fun fromDB(fGetThumb: Boolean, fGetFullImage: Boolean) {
@@ -409,7 +410,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
             var ei: ExifInterface? = null
             try {
                 ei = ExifInterface(fTemp.absolutePath)
-            } catch (ignored: IOException) {
+            } catch (_: IOException) {
             }
 
             // Geotag it, if necessary, and get rotation.
@@ -647,11 +648,11 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
      * Serialization
 	 */
     override fun getPropertyCount(): Int {
-        return FPProp.values().size
+        return FPProp.entries.size
     }
 
     override fun getProperty(arg0: Int): Any? {
-        return when (FPProp.values()[arg0]) {
+        return when (FPProp.entries[arg0]) {
             FPProp.PIDComment -> comment
             FPProp.PIDVirtualPath -> virtualPath
             FPProp.PIDThumbnailFile -> thumbnailFile
@@ -667,7 +668,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
     }
 
     override fun getPropertyInfo(arg0: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (FPProp.values()[arg0]) {
+        when (FPProp.entries[arg0]) {
             FPProp.PIDComment -> {
                 pi.type = PropertyInfo.STRING_CLASS
                 pi.name = "Comment"
@@ -705,7 +706,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
                 pi.name = "HeightThumbnail"
             }
             FPProp.PIDLocation -> {
-                pi.type = PropertyInfo.OBJECT_CLASS
+                pi.type = LatLong::class.java
                 pi.name = "Location"
             }
             FPProp.PIDImageType -> {
@@ -716,7 +717,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
     }
 
     override fun setProperty(arg0: Int, arg1: Any) {
-        val f = FPProp.values()[arg0]
+        val f = FPProp.entries[arg0]
         val sz = arg1.toString()
         when (f) {
             FPProp.PIDComment -> comment = sz
@@ -847,6 +848,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
     }
 
     companion object {
+        @Suppress("UNUSED")
         private const val serialVersionUID = 1L
         private const val TH_WIDTH = 150
         private const val TH_HEIGHT = 120
@@ -988,7 +990,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
             val hScaled = (hSrc * resizeRatio).toInt()
             val rectSrc = Rect(0, 0, wSrc, hSrc)
             val rectDst = Rect(0, 0, wScaled, hScaled)
-            val output = Bitmap.createBitmap(wScaled, hScaled, Bitmap.Config.ARGB_8888)
+            val output = createBitmap(wScaled, hScaled)
             val canvas = Canvas(output)
             val borderSizePx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, borderDips.toFloat(),
