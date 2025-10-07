@@ -45,6 +45,7 @@ import androidx.fragment.app.ListFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.myflightbook.android.ActMFBForm.Companion.doAsync
 import com.myflightbook.android.MFBMain.Invalidatable
 import com.myflightbook.android.webservices.*
 import com.myflightbook.android.webservices.AuthToken.Companion.isValid
@@ -463,6 +464,30 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     mRgle = result
                     m_fIsRefreshing = false
                     populateList()
+
+                    // Issue #328 - validate aircraft
+                    val svc = AircraftSvc()
+                    val rgac = svc.cachedAircraft
+                    for (f in mRgle ?: arrayOf()) {
+                        if (rgac.find { it.aircraftID == f.idAircraft } == null) {
+                            svc.flushCache()
+                            lifecycleScope.launch {
+                                doAsync<AircraftSvc, Array<Aircraft>?>(
+                                    requireActivity(),
+                                    svc,
+                                    getString(R.string.prgAircraft),
+                                    {
+                                        s -> s.getAircraftForUser(AuthToken.m_szAuthToken, requireContext())
+                                    },
+                                    {
+                                        s, result ->
+                                        if (result == null)
+                                            alert(requireActivity(),getString(R.string.txtError), s.lastError)
+                                    }
+                                )
+                            }
+                        }
+                    }
 
                     // Turn off the swipe refresh layout here because, unlike most other refreshable screens,
                     // this one doesn't show a progress indicator (because of continuous scroll)
