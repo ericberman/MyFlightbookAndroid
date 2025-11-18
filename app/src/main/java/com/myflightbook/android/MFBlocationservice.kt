@@ -77,6 +77,7 @@ class MFBlocationservice : Service(), LocationListener {
 
     override fun onCreate() {
         super.onCreate()
+        startInForeground()
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -109,7 +110,6 @@ class MFBlocationservice : Service(), LocationListener {
                     ) else Log.e(MFBConstants.LOG_TAG, "No location!")
                 }
         }
-        startInForeground()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
