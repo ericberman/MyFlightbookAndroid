@@ -29,14 +29,10 @@ import androidx.core.view.WindowInsetsCompat
 import model.Airport
 import model.ApproachDescription
 import model.DecimalEdit
+import model.setSelectionByValue
 import java.util.*
 
 class ActAddApproach : AppCompatActivity() {
-    private val approachDescription = ApproachDescription()
-    private var approachBase = ""
-    private var approachSuffix = ""
-    private var runwayBase = ""
-    private var runwaySuffix = ""
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.addapproach)
@@ -66,6 +62,7 @@ class ActAddApproach : AppCompatActivity() {
                 approachDescription.approachName = approachBase + approachSuffix
             }
         }
+        s.setSelectionByValue(approachBase)
 
         // Then the approach suffix spinner
         s = findViewById(R.id.spnApproachSuffix)
@@ -87,6 +84,7 @@ class ActAddApproach : AppCompatActivity() {
                 approachDescription.approachName = approachBase + approachSuffix
             }
         }
+        s.setSelectionByValue(approachSuffix)
 
         // Runway spinner...
         s = findViewById(R.id.spnApproachRunway)
@@ -108,6 +106,7 @@ class ActAddApproach : AppCompatActivity() {
                 approachDescription.runwayName = runwayBase + runwaySuffix
             }
         }
+        s.setSelectionByValue(runwayBase)
 
         // And Runway suffix spinner.
         s = findViewById(R.id.spnApproachRunwaySuffix)
@@ -129,6 +128,8 @@ class ActAddApproach : AppCompatActivity() {
                 approachDescription.runwayName = runwayBase + runwaySuffix
             }
         }
+        s.setSelectionByValue(runwaySuffix)
+
         var szAirports = intent.getStringExtra(AIRPORTSFORAPPROACHES)
         if (szAirports == null) szAirports = ""
         var rgAirports = Airport.splitCodes(szAirports)
@@ -182,5 +183,18 @@ class ActAddApproach : AppCompatActivity() {
         const val AIRPORTSFORAPPROACHES = "com.myflightbook.android.AirportsForApproaches"
         const val APPROACHDESCRIPTIONRESULT = "com.myflightbook.android.ApproachDescriptionResult"
         const val APPROACHADDTOTOTALSRESULT = "com.myflightbook.android.ApproachAddToTotalsResult"
+
+        private val approachDescription = ApproachDescription()
+        private var approachBase = ""
+        private var approachSuffix = ""
+        private var runwayBase = ""
+        private var runwaySuffix = ""
+
+        fun clearApproaches() {
+            approachBase = ""
+            approachSuffix = ""
+            runwayBase = ""
+            runwaySuffix = ""
+        }
     }
 }

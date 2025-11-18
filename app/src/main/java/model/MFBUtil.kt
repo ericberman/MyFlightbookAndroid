@@ -23,6 +23,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.util.Base64
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import com.myflightbook.android.DlgProgress
 import com.myflightbook.android.R
@@ -37,6 +39,18 @@ import java.time.ZoneOffset
 import java.util.*
 import kotlin.math.abs
 
+fun Spinner.setSelectionByValue(value: String) {
+    val adapter = this.adapter
+    if (adapter is ArrayAdapter<*>) {
+        @Suppress("UNCHECKED_CAST")
+        val stringAdapter = adapter as? ArrayAdapter<String>
+        val position = stringAdapter?.getPosition(value)
+        if (position != null && position >= 0) {
+            this.setSelection(position)
+        }
+    }
+}
+
 object MFBUtil {
     @JvmStatic
     // region Alerts
@@ -49,7 +63,7 @@ object MFBUtil {
         val alert = builder.create()
         try {
             alert.show()
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
         }
     }
 

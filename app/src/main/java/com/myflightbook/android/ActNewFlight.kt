@@ -1243,6 +1243,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         dtPauseTime = 0
         dtTimeOfLastPause = 0
         accumulatedNight = 0.0
+        ActAddApproach.clearApproaches()
     }
 
     private fun submitFlight(forceQueued: Boolean) {
