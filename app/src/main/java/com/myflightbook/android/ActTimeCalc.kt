@@ -136,7 +136,7 @@ class ActTimeCalc : AppCompatActivity(), View.OnClickListener {
                 if (sb.isNotEmpty()) sb.append(" + ")
                 sb.append(stringForMode(d, mode))
             }
-            if (mValues.size > 0) sb.append(" = ").append(stringForMode(computedTotal(), mode))
+            if (mValues.isNotEmpty()) sb.append(" = ").append(stringForMode(computedTotal(), mode))
             return sb.toString()
         }
 

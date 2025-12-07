@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import model.MFBLocation.FlightEvents
 import model.MFBLocation.GPSQuality
 import java.util.*
 import kotlin.math.roundToInt
+import androidx.core.content.edit
 
 class MFBFlightListener : FlightEvents {
     private var mLenewflight: LogbookEntry? = null
@@ -184,9 +185,9 @@ class MFBFlightListener : FlightEvents {
             return
         if (mLenewflight != null && mLenewflight!!.isNewFlight()) {
             val mPrefs = a.getPreferences(Activity.MODE_PRIVATE)
-            val ed = mPrefs.edit()
-            ed.putLong(keyInProgressId, mLenewflight!!.idLocalDB)
-            ed.apply()
+            mPrefs.edit {
+                putLong(KEY_INPROGRESS_ID, mLenewflight!!.idLocalDB)
+            }
         }
     }
 
@@ -211,10 +212,10 @@ class MFBFlightListener : FlightEvents {
     }
 
     companion object {
-        private const val keyInProgressId = "idFlightInProgress"
+        private const val KEY_INPROGRESS_ID = "idFlightInProgress"
         private fun getInProgressFlightId(a: Activity): Long {
             val mPrefs = a.getPreferences(Activity.MODE_PRIVATE)
-            return mPrefs.getLong(keyInProgressId, LogbookEntry.ID_NEW_FLIGHT.toLong())
+            return mPrefs.getLong(KEY_INPROGRESS_ID, LogbookEntry.ID_NEW_FLIGHT.toLong())
         }
     }
 }

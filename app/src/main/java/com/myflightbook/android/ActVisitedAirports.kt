@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -179,7 +179,7 @@ class ActVisitedAirports : ExpandableListFragment(), Invalidatable {
                 continue
 
             // get the first letter for this property as the grouping key
-            val szKey = va.airport!!.facilityName.substring(0, 1).uppercase(Locale.getDefault())
+            val szKey = va.airport!!.facilityName[0].uppercase(Locale.getDefault())
             if (szKey.compareTo(szKeyLast) != 0) {
                 alKeys.add(szKey)
                 szKeyLast = szKey

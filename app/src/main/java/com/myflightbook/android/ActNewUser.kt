@@ -150,10 +150,10 @@ class ActNewUser : AppCompatActivity(), View.OnClickListener {
         } else if (id == R.id.btnViewPrivacy) {
             val i = Intent(v.context, ActWebView::class.java)
             i.putExtra(
-                MFBConstants.intentViewURL,
+                MFBConstants.INTENT_VIEW_URL,
                 String.format(
                     Locale.US,
-                    MFBConstants.urlPrivacy,
+                    MFBConstants.URI_PRIVACY,
                     MFBConstants.szIP,
                     nightParam(this)
                 )
@@ -162,8 +162,8 @@ class ActNewUser : AppCompatActivity(), View.OnClickListener {
         } else if (id == R.id.btnViewTandC) {
             val i = Intent(v.context, ActWebView::class.java)
             i.putExtra(
-                MFBConstants.intentViewURL,
-                String.format(Locale.US, MFBConstants.urlTandC, MFBConstants.szIP, nightParam(this))
+                MFBConstants.INTENT_VIEW_URL,
+                String.format(Locale.US, MFBConstants.URI_TERMS_AND_CONDITIONS, MFBConstants.szIP, nightParam(this))
             )
             activityLauncher!!.launch(i)
         }

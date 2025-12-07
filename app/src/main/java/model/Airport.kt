@@ -174,18 +174,18 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
         private const val serialVersionUID = 1L
         @JvmField
         var fPrefIncludeHeliports = false
-        private const val szNavaidPrefix = "@"
-        private const val USAirportPrefix = "K"
-        private const val minNavaidCodeLength = 2
-        private const val minAirportCodeLength = 3
-        private const val maxCodeLength = 6 // because of navaids, now allow up to 5 letters.
-        private const val szRegAdHocFix =
-            "$szNavaidPrefix\\b\\d{1,2}(?:[.,]\\d*)?[NS]\\d{1,3}(?:[.,]\\d*)?[EW]\\b" // Must have a digit on the left side of the decimal
+        private const val NAVAID_PREFIX = "@"
+        private const val US_AIRPORT_PREFIX = "K"
+        private const val MIN_NAVAID_CODE_LENGTH = 2
+        private const val MIN_AIRPORT_CODE_LENGTH = 3
+        private const val MAX_CODE_LENGTH = 6 // because of navaids, now allow up to 5 letters.
+        private const val REGEX_ADHOC_FIX =
+            "$NAVAID_PREFIX\\b\\d{1,2}(?:[.,]\\d*)?[NS]\\d{1,3}(?:[.,]\\d*)?[EW]\\b" // Must have a digit on the left side of the decimal
         private val szRegexAirports = String.format(
-            Locale.US, "((?:%s)|(?:@?\\b[A-Z0-9]{%d,%d}\\b))", szRegAdHocFix,
-            minNavaidCodeLength.coerceAtMost(minAirportCodeLength), maxCodeLength
+            Locale.US, "((?:%s)|(?:@?\\b[A-Z0-9]{%d,%d}\\b))", REGEX_ADHOC_FIX,
+            MIN_NAVAID_CODE_LENGTH.coerceAtMost(MIN_AIRPORT_CODE_LENGTH), MAX_CODE_LENGTH
         )
-        private const val szRegexAirportSearch = "!?@?[a-zA-Z0-9]+!?"
+        private const val REGEX_AIRPORT_SEARCH = "!?@?[a-zA-Z0-9]+!?"
 
         /// <summary>
         /// Does this look like a US airport?
@@ -193,7 +193,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
         /// <param name="szcode">The code</param>
         /// <returns>True if it looks like a US airport</returns>
         private fun isUSAirport(szcode: String): Boolean {
-            return szcode.length == 4 && szcode.startsWith(USAirportPrefix)
+            return szcode.length == 4 && szcode.startsWith(US_AIRPORT_PREFIX)
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
         }
 
         fun splitCodesSearch(szRoute: String): Array<String> {
-            val p = Pattern.compile(szRegexAirportSearch, Pattern.CASE_INSENSITIVE)
+            val p = Pattern.compile(REGEX_AIRPORT_SEARCH, Pattern.CASE_INSENSITIVE)
             val m = p.matcher(szRoute.uppercase(Locale.getDefault()))
             val lst = ArrayList<String>()
             while (m.find()) lst.add(m.group(0)!!)
@@ -227,7 +227,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
             val ap = Airport()
             ap.latitude = ll.latitude
             ap.longitude = ll.longitude
-            ap.airportID = sz.replace(szNavaidPrefix, "")
+            ap.airportID = sz.replace(NAVAID_PREFIX, "")
             ap.distance = 0.0
             ap.facilityName = ll.toString()
             ap.facilityType = "FX"
@@ -243,7 +243,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
             val rgCodes = splitCodes(szRoute)
             val lstResults: MutableList<Airport> = ArrayList()
             val sb = StringBuilder()
-            val pAdHoc = Pattern.compile(szRegAdHocFix, Pattern.CASE_INSENSITIVE)
+            val pAdHoc = Pattern.compile(REGEX_ADHOC_FIX, Pattern.CASE_INSENSITIVE)
             for (scode in rgCodes) {
                 var s = scode
                 if (pAdHoc.matcher(s).matches()) {
@@ -252,7 +252,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
                     continue
                 }
                 if (sb.isNotEmpty()) sb.append(", ")
-                if (s.startsWith(szNavaidPrefix)) s = s.substring(szNavaidPrefix.length)
+                if (s.startsWith(NAVAID_PREFIX)) s = s.substring(NAVAID_PREFIX.length)
                 sb.append("'").append(s).append("'")
                 if (isUSAirport(s)) sb.append(", '").append(prefixConvenienceAliasForUS(s)).append("'")
             }
@@ -270,7 +270,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
             for (ap in rgap) {
                 if (ap != null) {
                     if (ap.isPort()) hm[ap.airportID] = ap else {
-                        val szKey = szNavaidPrefix + ap.airportID
+                        val szKey = NAVAID_PREFIX + ap.airportID
                         val ap2 = hm[szKey]
                         if (ap2 == null || ap.navaidPriority() < ap2.navaidPriority()) hm[szKey] =
                             ap
@@ -281,7 +281,7 @@ class Airport : SoapableObject(), KvmSerializable, Serializable, Comparable<Airp
                 var ap = hm[szCode]
 
                 // If null, might be a navaid - check for the @ prefix
-                if (ap == null) ap = hm[szNavaidPrefix + szCode]
+                if (ap == null) ap = hm[NAVAID_PREFIX + szCode]
 
                 // Finally, check for K-hack (Kxxx vs. xxx)
                 if (ap == null) ap = hm[prefixConvenienceAliasForUS(szCode)]

@@ -35,6 +35,7 @@ import org.ksoap2.serialization.SoapObject
 import org.ksoap2.serialization.SoapSerializationEnvelope
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.database.sqlite.transaction
 
 class AircraftSvc : MFBSoap() {
     override fun addMappings(e: SoapSerializationEnvelope) {
@@ -74,7 +75,7 @@ class AircraftSvc : MFBSoap() {
                     val cLastOil = c.getColumnIndexOrThrow(COL_LASTOIL)
                     val cLastEngine = c.getColumnIndexOrThrow(COL_LASTENGINE)
                     val cHideSelection = c.getColumnIndexOrThrow(COL_HIDEFROMSELECTION)
-                    val cCopyPICName = c.getColumnIndexOrThrow(COL_COPYPICName)
+                    val cCopyPICName = c.getColumnIndexOrThrow(COL_COPYPICNAME)
                     val cRoleForPilot = c.getColumnIndexOrThrow(COL_ROLEFORPILOT)
                     val cPublicNotes = c.getColumnIndexOrThrow(COL_PUBLICNOTES)
                     val cPrivateNotes = c.getColumnIndexOrThrow(COL_PRIVATENOTES)
@@ -101,7 +102,7 @@ class AircraftSvc : MFBSoap() {
                             ac.mDefaultImage = c.getString(cDefaultImage)
                             ac.hideFromSelection = c.getInt(cHideSelection) != 0
                             ac.copyPICNameWithCrossfill = c.getInt(cCopyPICName) != 0
-                            ac.roleForPilot = PilotRole.values()[c.getInt(cRoleForPilot)]
+                            ac.roleForPilot = PilotRole.entries[c.getInt(cRoleForPilot)]
                             ac.lastVOR = df.parse(c.getString(cLastVOR))
                             ac.lastAltimeter = df.parse(c.getString(cLastAltimeter))
                             ac.lastTransponder = df.parse(c.getString(cLastTransponder))
@@ -117,7 +118,7 @@ class AircraftSvc : MFBSoap() {
                             ac.glassUpgradeDate =
                                 if (szGlassUpgrade == null) null else df.parse(szGlassUpgrade)
                             ac.avionicsTechnologyUpgrade =
-                                Aircraft.AvionicsTechnologyType.values()[c.getInt(
+                                Aircraft.AvionicsTechnologyType.entries[c.getInt(
                                     cAvionicsUpgradeType
                                 )]
                             val szTemplateIDs = c.getString(cDefaultTemplateIDs)
@@ -154,8 +155,7 @@ class AircraftSvc : MFBSoap() {
         val db = MFBMain.mDBHelper!!.writableDatabase
         try {
             // I've read that multiple inserts are much faster inside a transaction.
-            db.beginTransaction()
-            try {
+            db.transaction {
                 val df = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                 for (ac in rgac) {
                     val cv = ContentValues()
@@ -168,25 +168,47 @@ class AircraftSvc : MFBSoap() {
                     cv.put(COL_MODELDESCRIPTION, ac.modelDescription)
                     cv.put(COL_MODELNAME, ac.modelCommonName)
                     cv.put(COL_TAILNUM, ac.tailNumber)
-                    cv.put(COL_LASTVOR, if (ac.lastVOR == null) null else df.format(ac.lastVOR!!))
-                    cv.put(COL_LASTALTIMETER, if (ac.lastAltimeter == null) null else df.format(ac.lastAltimeter!!))
-                    cv.put(COL_LASTTRANSPONDER, if (ac.lastTransponder == null) null else df.format(ac.lastTransponder!!))
-                    cv.put(COL_LASTELT, if (ac.lastELT == null) null else df.format(ac.lastELT!!))
-                    cv.put(COL_LASTSTATIC, if (ac.lastStatic == null) null else df.format(ac.lastStatic!!))
-                    cv.put(COL_LASTANNUAL, if (ac.lastAnnual == null) null else df.format(ac.lastAnnual!!))
-                    cv.put(COL_REGISTRATIONDUE, if (ac.registrationDue == null) null else df.format(ac.registrationDue!!))
+                    cv.put(
+                        COL_LASTVOR,
+                        if (ac.lastVOR == null) null else df.format(ac.lastVOR!!)
+                    )
+                    cv.put(
+                        COL_LASTALTIMETER,
+                        if (ac.lastAltimeter == null) null else df.format(ac.lastAltimeter!!)
+                    )
+                    cv.put(
+                        COL_LASTTRANSPONDER,
+                        if (ac.lastTransponder == null) null else df.format(ac.lastTransponder!!)
+                    )
+                    cv.put(
+                        COL_LASTELT,
+                        if (ac.lastELT == null) null else df.format(ac.lastELT!!)
+                    )
+                    cv.put(
+                        COL_LASTSTATIC,
+                        if (ac.lastStatic == null) null else df.format(ac.lastStatic!!)
+                    )
+                    cv.put(
+                        COL_LASTANNUAL,
+                        if (ac.lastAnnual == null) null else df.format(ac.lastAnnual!!)
+                    )
+                    cv.put(
+                        COL_REGISTRATIONDUE,
+                        if (ac.registrationDue == null) null else df.format(ac.registrationDue!!)
+                    )
                     cv.put(COL_LAST100, ac.last100)
                     cv.put(COL_LASTOIL, ac.lastOil)
                     cv.put(COL_LASTENGINE, ac.lastEngine)
                     cv.put(COL_HIDEFROMSELECTION, ac.hideFromSelection)
-                    cv.put(COL_COPYPICName, ac.copyPICNameWithCrossfill)
+                    cv.put(COL_COPYPICNAME, ac.copyPICNameWithCrossfill)
                     cv.put(COL_ROLEFORPILOT, ac.roleForPilot.ordinal)
                     cv.put(COL_PUBLICNOTES, ac.publicNotes)
                     cv.put(COL_PRIVATENOTES, ac.privateNotes)
                     cv.put(COL_DEFAULTIMAGE, ac.mDefaultImage)
                     cv.put(COL_ISGLASS, ac.isGlass)
                     cv.put(
-                        COL_GLASSUPGRADEDATE, if (ac.glassUpgradeDate == null) null else df.format(
+                        COL_GLASSUPGRADEDATE,
+                        if (ac.glassUpgradeDate == null) null else df.format(
                             ac.glassUpgradeDate!!
                         )
                     )
@@ -195,16 +217,10 @@ class AircraftSvc : MFBSoap() {
                     for (idTemplate in ac.defaultTemplates) al.add(idTemplate.toString())
                     val szTemplateIDs = TextUtils.join(" ", al)
                     cv.put(COL_DEFAULTTEMPLATEIDS, szTemplateIDs)
-                    val l = db.insertOrThrow(TABLENAME, null, cv)
+                    val l = insertOrThrow(TABLENAME, null, cv)
                     if (l < 0) throw Error("Error inserting aircraft")
                 }
-                db.setTransactionSuccessful()
                 fResult = true
-            } catch (ex: Exception) {
-                this.lastError = ex.message ?: ""
-                Log.e("MFAndroid", "Error updating aircraft cache: " + ex.message)
-            } finally {
-                db.endTransaction()
             }
             // Now the aircraft are saved - save the images.
             // First, delete any existing aircraft images.
@@ -380,7 +396,7 @@ class AircraftSvc : MFBSoap() {
         private const val COL_LASTOIL = "LastOilChange"
         private const val COL_LASTENGINE = "LastNewEngine"
         private const val COL_HIDEFROMSELECTION = "HideFromSelection"
-        private const val COL_COPYPICName = "CopyPICName"
+        private const val COL_COPYPICNAME = "CopyPICName"
         private const val COL_ROLEFORPILOT = "RoleForPilot"
         private const val COL_PUBLICNOTES = "PublicNotes"
         private const val COL_PRIVATENOTES = "PrivateNotes"

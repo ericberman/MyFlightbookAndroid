@@ -69,12 +69,12 @@ import model.Aircraft.Companion.getHighWaterTachForAircraft
 import model.Airport.Companion.appendCodeToRoute
 import model.Airport.Companion.appendNearestToRoute
 import model.CustomPropertyType.Companion.getPinnedProperties
-import model.CustomPropertyType.Companion.idPropTypeFlightMeterEnd
-import model.CustomPropertyType.Companion.idPropTypeFlightMeterStart
-import model.CustomPropertyType.Companion.idPropTypeFuelAtEnd
-import model.CustomPropertyType.Companion.idPropTypeFuelAtStart
-import model.CustomPropertyType.Companion.idPropTypeTachEnd
-import model.CustomPropertyType.Companion.idPropTypeTachStart
+import model.CustomPropertyType.Companion.ID_PROP_TYPE_FLIGHT_METER_END
+import model.CustomPropertyType.Companion.ID_PROP_TYPE_FLIGHT_METER_START
+import model.CustomPropertyType.Companion.ID_PROP_TYPE_FUEL_AT_END
+import model.CustomPropertyType.Companion.ID_PROP_TYPE_FUEL_AT_START
+import model.CustomPropertyType.Companion.ID_PROP_TYPE_TACH_END
+import model.CustomPropertyType.Companion.ID_PROP_TYPE_TACH_START
 import model.CustomPropertyType.Companion.isPinnedProperty
 import model.DecimalEdit.CrossFillDelegate
 import model.FlightProperty.Companion.crossProduct
@@ -109,6 +109,7 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
+import androidx.core.content.edit
 
 class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegate, DateTimeUpdate,
     PropertyEdit.PropertyListener, GallerySource, CrossFillDelegate, Invalidatable {
@@ -633,7 +634,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             mle = MFBMain.newFlightListener?.getInProgressFlight(requireActivity())
             MFBMain.registerNotifyResetAll(this)
             val pref = requireActivity().getPreferences(Context.MODE_PRIVATE)
-            val fExpandCockpit = pref.getBoolean(m_KeyShowInCockpit, true)
+            val fExpandCockpit = pref.getBoolean(M_KEY_SHOW_IN_THE_COCKPIT, true)
             setExpandedState(
                 (findViewById(R.id.txtViewInTheCockpit) as TextView?)!!,
                 findViewById(R.id.sectInTheCockpit)!!,
@@ -691,7 +692,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 ac
             )
         }
-        if (lst.size == 0) return mRgac
+        if (lst.isEmpty()) return mRgac
         if (lst.size != mRgac!!.size) {    // some aircraft are filtered
             // Issue #202 - add a "Show all Aircraft" option
             val ac = Aircraft()
@@ -820,10 +821,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     private fun restoreState() {
         try {
             val mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
-            fPaused = mPrefs.getBoolean(m_KeysIsPaused, false)
-            dtPauseTime = mPrefs.getLong(m_KeysPausedTime, 0)
-            dtTimeOfLastPause = mPrefs.getLong(m_KeysTimeOfLastPause, 0)
-            accumulatedNight = mPrefs.getFloat(m_KeysAccumulatedNight, 0.0.toFloat()).toDouble()
+            fPaused = mPrefs.getBoolean(M_KEYS_IS_PAUSED, false)
+            dtPauseTime = mPrefs.getLong(K_KEYS_PAUSED_TIME, 0)
+            dtTimeOfLastPause = mPrefs.getLong(M_KEYS_TIME_OF_LAST_PAUSE, 0)
+            accumulatedNight = mPrefs.getFloat(M_KEYS_ACCUMULATED_NIGHT, 0.0.toFloat()).toDouble()
         } catch (e: Exception) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
         }
@@ -833,12 +834,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        val ed = requireActivity().getPreferences(Activity.MODE_PRIVATE).edit()
-        ed.putBoolean(m_KeysIsPaused, fPaused)
-        ed.putLong(m_KeysPausedTime, dtPauseTime)
-        ed.putLong(m_KeysTimeOfLastPause, dtTimeOfLastPause)
-        ed.putFloat(m_KeysAccumulatedNight, accumulatedNight.toFloat())
-        ed.apply()
+        requireActivity().getPreferences(Activity.MODE_PRIVATE).edit {
+            putBoolean(M_KEYS_IS_PAUSED, fPaused)
+            putLong(K_KEYS_PAUSED_TIME, dtPauseTime)
+            putLong(M_KEYS_TIME_OF_LAST_PAUSE, dtTimeOfLastPause)
+            putFloat(M_KEYS_ACCUMULATED_NIGHT, accumulatedNight.toFloat())
+        }
     }
 
     override fun saveCurrentFlight() {
@@ -994,18 +995,18 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 } else setDateTime(id, mle!!.dtEngineEnd, this, DlgDatePicker.DatePickMode.UTCDATETIME)
             }
             R.id.btnBlockOut -> {
-                val dtBlockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
+                val dtBlockOut = mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT)
                 if (dtBlockOut == null) {
-                    mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockOut, nowWith0Seconds())
+                    mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT, nowWith0Seconds())
                     resetDateOfFlight()
                 }
                 else
                     setDateTime(id, dtBlockOut, this, DlgDatePicker.DatePickMode.UTCDATETIME)
             }
             R.id.btnBlockIn -> {
-                val dtBlockIn = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockIn)
+                val dtBlockIn = mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)
                 if (dtBlockIn == null)
-                    mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, nowWith0Seconds())
+                    mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN, nowWith0Seconds())
                 else
                     setDateTime(id, dtBlockIn, this, DlgDatePicker.DatePickMode.UTCDATETIME)
             }
@@ -1077,9 +1078,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 val target = findViewById(R.id.sectInTheCockpit)
                 val fExpandCockpit = target!!.visibility != View.VISIBLE
                 if (mle != null && mle!!.isNewFlight()) {
-                    val e = requireActivity().getPreferences(Context.MODE_PRIVATE).edit()
-                    e.putBoolean(m_KeyShowInCockpit, fExpandCockpit)
-                    e.apply()
+                    requireActivity().getPreferences(Context.MODE_PRIVATE).edit {
+                        putBoolean(M_KEY_SHOW_IN_THE_COCKPIT, fExpandCockpit)
+                    }
                 }
                 setExpandedState((v as TextView), target, fExpandCockpit)
             }
@@ -1152,12 +1153,12 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 showRecordingIndicator()
             }
             R.id.btnBlockOut -> {
-                handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockOut, dt2))
+                handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT, dt2))
                 resetDateOfFlight()
                 fBlockChanged = true
             }
             R.id.btnBlockIn -> {
-                handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, dt2))
+                handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN, dt2))
                 fBlockChanged = true
             }
             R.id.btnFlightStartSet -> {
@@ -1208,9 +1209,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             mle = LogbookEntry()
         }
         val hobbsEnd = mle!!.hobbsEnd
-        val cfpTachEnd = mle!!.propertyWithID((idPropTypeTachEnd))
-        val cfpMeterEnd = mle!!.propertyWithID(idPropTypeFlightMeterEnd)
-        val cfpFuelEnd = mle!!.propertyWithID(idPropTypeFuelAtEnd)
+        val cfpTachEnd = mle!!.propertyWithID((ID_PROP_TYPE_TACH_END))
+        val cfpMeterEnd = mle!!.propertyWithID(ID_PROP_TYPE_FLIGHT_METER_END)
+        val cfpFuelEnd = mle!!.propertyWithID(ID_PROP_TYPE_FUEL_AT_END)
         val leNew = LogbookEntry(validateAircraftID(mle!!.idAircraft), mle!!.fPublic)
         leNew.dtFlight = getNullLocalDate() // When *resetting* a flight, use a null date per issue #294
         if (fCarryHobbs) leNew.hobbsStart = hobbsEnd
@@ -1224,13 +1225,13 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         // Add the property here, after savecurrentflight, so that we have a local db id for the flight.
         if (fCarryHobbs) {
             if (cfpTachEnd != null) {
-                leNew.addOrSetPropertyDouble(idPropTypeTachStart, cfpTachEnd.decValue)
+                leNew.addOrSetPropertyDouble(ID_PROP_TYPE_TACH_START, cfpTachEnd.decValue)
             }
             if (cfpMeterEnd != null) {
-                leNew.addOrSetPropertyDouble(idPropTypeFlightMeterStart, cfpMeterEnd.decValue)
+                leNew.addOrSetPropertyDouble(ID_PROP_TYPE_FLIGHT_METER_START, cfpMeterEnd.decValue)
             }
             if (cfpFuelEnd != null) {
-                leNew.addOrSetPropertyDouble(idPropTypeFuelAtStart, cfpFuelEnd.decValue)
+                leNew.addOrSetPropertyDouble(ID_PROP_TYPE_FUEL_AT_START, cfpFuelEnd.decValue)
             }
             toView()
         }
@@ -1366,10 +1367,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         setDateOfFlight()
 
         // Engine/Flight dates
-        val tachStart = mle!!.propDoubleForID(idPropTypeTachStart)
-        val tachEnd = mle!!.propDoubleForID(idPropTypeTachEnd)
-        val blockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
-        val blockIn = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockIn)
+        val tachStart = mle!!.propDoubleForID(ID_PROP_TYPE_TACH_START)
+        val tachEnd = mle!!.propDoubleForID(ID_PROP_TYPE_TACH_END)
+        val blockOut = mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT)
+        val blockIn = mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)
 
         setUTCDateForField(R.id.btnEngineStartSet, mle!!.dtEngineStart)
         setUTCDateForField(R.id.btnEngineEndSet, mle!!.dtEngineEnd)
@@ -1528,8 +1529,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
         // But tach, if shown, isn't coming from props, so load it here.
         if (fShowTach) {
-            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(idPropTypeTachStart, doubleFromField(R.id.txtTachStart)))
-            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(idPropTypeTachEnd, doubleFromField(R.id.txtTachEnd)))
+            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(ID_PROP_TYPE_TACH_START, doubleFromField(R.id.txtTachStart)))
+            handlePotentiallyDefaultedProperty(mle!!.addOrSetPropertyDouble(ID_PROP_TYPE_TACH_END, doubleFromField(R.id.txtTachEnd)))
         }
 
         // checkboxes
@@ -1583,7 +1584,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             if (mle!!.isKnownFlightStart && mle!!.dtFlightStart < dt) dt =
                 mle!!.dtFlightStart
 
-            val dtBlockOut = mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)
+            val dtBlockOut = mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT)
             if (dtBlockOut != null && !isNullDate(dtBlockOut) && dtBlockOut < dt)
                 dt = dtBlockOut
             mle!!.dtFlight = MFBUtil.localDateTimeToLocalDate(dt)
@@ -1598,7 +1599,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         if (MFBLocation.fPrefAutoDetect) appendNearest()
         getMainLocation()?.isRecording = true // will respect preference
         showRecordingIndicator()
-        if (MFBConstants.fFakeGPS) {
+        if (MFBConstants.FAKE_GPS) {
             getMainLocation()!!.stopListening(requireContext())
             getMainLocation()?.isRecording = true // will respect preference
             val gpss = GPSSim(getMainLocation()!!)
@@ -1772,7 +1773,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     override fun blockIn() {
         if (!mle!!.isKnownBlockIn) {
-            mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, nowWith0Seconds())
+            mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN, nowWith0Seconds())
             resetDateOfFlight()
             toView()
         }
@@ -1780,7 +1781,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     override fun blockOut() {
         if (!mle!!.isKnownBlockOut) {
-            mle!!.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockOut, nowWith0Seconds())
+            mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT, nowWith0Seconds())
             resetDateOfFlight()
             toView()
         }
@@ -1812,8 +1813,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     if (!mle!!.isKnownEngineEnd) Date().time - mle!!.dtEngineStart.time else mle!!.dtEngineEnd.time - mle!!.dtEngineStart.time
             }
             if (mle!!.isKnownBlockOut) {
-                dtBlock = (if (mle!!.isKnownBlockIn) mle!!.propDateForID(CustomPropertyType.idPropTypeBlockIn)!!.time else Date().time) -
-                        mle!!.propDateForID(CustomPropertyType.idPropTypeBlockOut)!!.time
+                dtBlock = (if (mle!!.isKnownBlockIn) mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)!!.time else Date().time) -
+                        mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT)!!.time
             }
 
             // if totals mode is FLIGHT TIME, then elapsed time is based on flight time if/when it is known.
@@ -1927,14 +1928,14 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
         // Handle block Out having been specified by viewprops
         var fHadBlockOut = false
-        for (fp in mle!!.rgCustomProperties) if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut) {
+        for (fp in mle!!.rgCustomProperties) if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT) {
             fHadBlockOut = true
             break
         }
         mle!!.syncProperties()
         val pinnedProps = getPinnedProperties(
             requireActivity().getSharedPreferences(
-                CustomPropertyType.prefSharedPinnedProps,
+                CustomPropertyType.PREF_SHARED_PINNED_PROPS,
                 Activity.MODE_PRIVATE
             )
         )
@@ -1948,7 +1949,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         for (fp in rgProps) {
             // should never happen, but does - not sure why
             if (fp.getCustomPropertyType() == null) fp.refreshPropType()
-            if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut && !fp.isDefaultValue()) fHasBlockOutAdded =
+            if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT && !fp.isDefaultValue()) fHasBlockOutAdded =
                 true
 
             // Don't show any properties that are:
@@ -1957,9 +1958,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             val fIsPinned = isPinnedProperty(pinnedProps, fp.idPropType)
             if (!fIsPinned && !templateProps.contains(fp.idPropType) && fp.isDefaultValue()) continue
 
-            if (fShowTach && (fp.idPropType == idPropTypeTachStart || fp.idPropType == idPropTypeTachEnd))
+            if (fShowTach && (fp.idPropType == ID_PROP_TYPE_TACH_START || fp.idPropType == ID_PROP_TYPE_TACH_END))
                 continue
-            if (fShowBlock && (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn))
+            if (fShowBlock && (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT || fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_IN))
                 continue
 
             val tr = l.inflate(R.layout.cpttableitem, tl, false) as TableRow
@@ -2039,7 +2040,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             }
         }
         if (MFBLocation.fPrefAutoFillTime === AutoFillOptions.BlockTime &&
-            (fp.idPropType == CustomPropertyType.idPropTypeBlockOut || fp.idPropType == CustomPropertyType.idPropTypeBlockIn)
+            (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT || fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)
         ) doAutoTotals()
     }
 
@@ -2063,7 +2064,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         val ptAnon = anonTemplate
         val ptSim = simTemplate
         val ac = getAircraftById(mle!!.idAircraft, mRgac)
-        if (ac != null && ac.defaultTemplates.size > 0) mActivetemplates!!.addAll(
+        if (ac != null && ac.defaultTemplates.isNotEmpty()) mActivetemplates!!.addAll(
             listOf(
                 *templatesWithIDs(
                     ac.defaultTemplates
@@ -2094,13 +2095,13 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         var accumulatedNight = 0.0
 
         // pause/play state
-        private const val m_KeysIsPaused = "flightIsPaused"
-        private const val m_KeysPausedTime = "totalPauseTime"
-        private const val m_KeysTimeOfLastPause = "timeOfLastPause"
-        private const val m_KeysAccumulatedNight = "accumulatedNight"
+        private const val M_KEYS_IS_PAUSED = "flightIsPaused"
+        private const val K_KEYS_PAUSED_TIME = "totalPauseTime"
+        private const val M_KEYS_TIME_OF_LAST_PAUSE = "timeOfLastPause"
+        private const val M_KEYS_ACCUMULATED_NIGHT = "accumulatedNight"
 
         // Expand state of "in the cockpit"
-        private const val m_KeyShowInCockpit = "inTheCockpit"
+        private const val M_KEY_SHOW_IN_THE_COCKPIT = "inTheCockpit"
 
         // Display options
         var fShowTach = false
@@ -2109,10 +2110,10 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         var fShowBlock = false
         var fShowFlight = true
 
-        const val prefKeyShowTach = "cockpitShowTach"
-        const val prefKeyShowHobbs = "cockpitShowHobbs"
-        const val prefKeyShowEngine = "cockpitShowEngine"
-        const val prefKeyShowBlock = "cockpitShowBlock"
-        const val prefKeyShowFlight = "cockpitShowFlight"
+        const val PREF_KEY_SHOW_TACH = "cockpitShowTach"
+        const val PREF_KEY_SHOW_HOBBS = "cockpitShowHobbs"
+        const val PREF_KEY_SHOW_ENGINE = "cockpitShowEngine"
+        const val PREF_KEY_SHOW_BLOCK = "cockpitShowBlock"
+        const val PREF_KEY_SHOW_FLIGHT = "cockpitShowFlight"
     }
 }

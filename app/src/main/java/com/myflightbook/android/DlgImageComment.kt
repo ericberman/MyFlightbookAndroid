@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@ import kotlinx.coroutines.launch
 import model.MFBImageInfo
 
 internal class DlgImageComment(
-    private val m_Context: Context,
-    private val m_mfbii: MFBImageInfo?,
-    private val m_delegate: AnnotationUpdate?,
+    private val mContext: Context,
+    private val mMfbii: MFBImageInfo?,
+    private val mDelegate: AnnotationUpdate?,
     private val scope : LifecycleCoroutineScope
 ) : Dialog(
-    m_Context, R.style.MFBDialog
+    mContext, R.style.MFBDialog
 ), View.OnClickListener {
     internal interface AnnotationUpdate {
         fun updateAnnotation(mfbii: MFBImageInfo?)
@@ -51,28 +51,28 @@ internal class DlgImageComment(
         b.setOnClickListener(this)
         b = findViewById(R.id.btnCancel)
         b.setOnClickListener(this)
-        if (m_mfbii != null) {
+        if (mMfbii != null) {
             val imgview = findViewById<ImageView>(R.id.imgPreview)
             scope.launch(Dispatchers.IO) {
-                m_mfbii.loadImageForImageView(true, imgview)
+                mMfbii.loadImageForImageView(true, imgview)
             }
             val e = findViewById<EditText>(R.id.txtComment)
-            e.setText(m_mfbii.comment)
+            e.setText(mMfbii.comment)
         }
     }
 
     override fun onClick(v: View) {
         val id = v.id
         if (id == R.id.btnOK) {
-            m_mfbii!!.comment = (findViewById<View>(R.id.txtComment) as EditText).text.toString()
+            mMfbii!!.comment = (findViewById<View>(R.id.txtComment) as EditText).text.toString()
             // Note that an image can be BOTH on the server AND local (Aircraft images).
-            if (m_mfbii.isLocal()) m_mfbii.toDB()
-            if (m_mfbii.isOnServer()) {
+            if (mMfbii.isLocal()) mMfbii.toDB()
+            if (mMfbii.isOnServer()) {
                 val `is` = ImagesSvc()
-                `is`.updateImageAnnotation(AuthToken.m_szAuthToken, m_mfbii, m_Context)
+                `is`.updateImageAnnotation(AuthToken.m_szAuthToken, mMfbii, mContext)
             }
         } // else if (id == R.id.btnCancel) { }
-        m_delegate?.updateAnnotation(m_mfbii)
+        mDelegate?.updateAnnotation(mMfbii)
         dismiss()
     }
 }

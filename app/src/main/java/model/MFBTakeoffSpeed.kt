@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@ package model
 import java.text.DecimalFormat
 
 object MFBTakeoffSpeed {
-    private const val TOSpeedBreak = 50
-    private const val TOLandingSpreadHigh = 15
-    private const val TOLandingSpreadLow = 10
+    private const val TAKEOFF_SPEED_BREAK = 50
+    private const val TAKEOFF_LANDING_SPREAD_HIGH = 15
+    private const val TAKEOFF_LANDING_SPREAD_LOW = 10
     private val rgTOSpeeds = intArrayOf(20, 40, 55, 70, 85, 100)
-    const val DefaultTakeOffIndex = 3 // 70kts
-    private var m_iTakeOffSpeed = DefaultTakeOffIndex
+    const val DEFAULT_TAKEOFF_INDEX = 3 // 70kts
+    private var m_iTakeOffSpeed = DEFAULT_TAKEOFF_INDEX
 
     // get/set the N'th takeoff speed.
     @JvmStatic
@@ -48,7 +48,7 @@ object MFBTakeoffSpeed {
     /// </summary>
     @JvmStatic
     val landingSpeed: Int
-        get() = takeOffspeed - if (takeOffspeed >= TOSpeedBreak) TOLandingSpreadHigh else TOLandingSpreadLow
+        get() = takeOffspeed - if (takeOffspeed >= TAKEOFF_SPEED_BREAK) TAKEOFF_LANDING_SPREAD_HIGH else TAKEOFF_LANDING_SPREAD_LOW
 
     @JvmStatic
     fun getDisplaySpeeds(): ArrayList<String> {

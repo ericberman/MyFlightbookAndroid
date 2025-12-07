@@ -21,11 +21,9 @@ package com.myflightbook.android
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.*
@@ -69,6 +67,8 @@ import model.MFBUtil.alert
 import model.MFBUtil.putCacheForKey
 import java.util.*
 import java.util.regex.Pattern
+import androidx.core.text.htmlEncode
+import androidx.core.graphics.toColorInt
 
 class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCacheCompleted,
     Invalidatable {
@@ -186,15 +186,13 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             }
 
             val txtHeader = v.findViewById<TextView>(R.id.txtFlightHeader)
-            val flightNum = le.propertyWithID(CustomPropertyType.idPropFlightNum)
+            val flightNum = le.propertyWithID(CustomPropertyType.ID_PROP_TYPE_FLIGHT_NUM)
             val szHeaderHTML = String.format(
                 Locale.getDefault(),
                 "<strong><big>%s %s %s %s</big></strong>%s <i><strong><font color='gray'>%s</font></strong></i>",
-                TextUtils.htmlEncode(
-                    DateFormat.getDateFormat(this.context).format(
-                        MFBUtil.localDateToLocalDateTime(le.dtFlight)
-                    )
-                ),
+                DateFormat.getDateFormat(this.context).format(
+                    MFBUtil.localDateToLocalDateTime(le.dtFlight)
+                ).htmlEncode(),
                 if (flightNum == null) "" else String.format(Locale.getDefault(), " <strong>%s</strong>", flightNum.stringValue),
                 when {
                     fIsAwaitingUpload -> getString(R.string.txtAwaitingUpload)
@@ -203,21 +201,19 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     )
                     else -> ""
                 },
-                TextUtils.htmlEncode(szTailNumber.trim { it <= ' ' }),
-                TextUtils.htmlEncode(
-                    if (ac == null) "" else String.format(
-                        Locale.getDefault(),
-                        " (%s)",
-                        ac.modelDescription
-                    )
-                ),
-                TextUtils.htmlEncode(le.szRoute.trim { it <= ' ' })
+                szTailNumber.trim { it <= ' ' }.htmlEncode(),
+                if (ac == null) "" else String.format(
+                    Locale.getDefault(),
+                    " (%s)",
+                    ac.modelDescription
+                ).htmlEncode(),
+                le.szRoute.trim { it <= ' ' }.htmlEncode()
             )
             txtHeader.text = HtmlCompat.fromHtml(szHeaderHTML, HtmlCompat.FROM_HTML_MODE_LEGACY)
             val pBold = Pattern.compile("(\\*)([^*_\\r\\n]*)(\\*)", Pattern.CASE_INSENSITIVE)
             val pItalic = Pattern.compile("(_)([^*_\\r\\n]*)_", Pattern.CASE_INSENSITIVE)
             var szComments =
-                pBold.matcher(TextUtils.htmlEncode(le.szComments)).replaceAll("<strong>$2</strong>")
+                pBold.matcher(le.szComments.htmlEncode()).replaceAll("<strong>$2</strong>")
             szComments = pItalic.matcher(szComments).replaceAll("<em>$2</em>")
             val txtComments = v.findViewById<TextView>(R.id.txtComments)
             txtComments.visibility = if (szComments.isEmpty()) View.GONE else View.VISIBLE
@@ -243,28 +239,28 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
                     if (szHobbs.isNotEmpty())
                         sb.append(szHobbs)
 
-                    val handledProps = hashSetOf(CustomPropertyType.idPropFlightNum)
+                    val handledProps = hashSetOf(CustomPropertyType.ID_PROP_TYPE_FLIGHT_NUM)
 
                     val szTach = formattedTimeForLabel(
                         R.string.lblElapsedTach,
-                        le.propertyWithID(CustomPropertyType.idPropTypeTachStart)?.decValue ?: 0.0,
-                        le.propertyWithID(CustomPropertyType.idPropTypeTachEnd)?.decValue ?: 0.0
+                        le.propertyWithID(CustomPropertyType.ID_PROP_TYPE_TACH_START)?.decValue ?: 0.0,
+                        le.propertyWithID(CustomPropertyType.ID_PROP_TYPE_TACH_END)?.decValue ?: 0.0
                     )
                     if (szTach.isNotEmpty()) {
                         sb.append(szTach)
-                        handledProps.add(CustomPropertyType.idPropTypeTachStart)
-                        handledProps.add(CustomPropertyType.idPropTypeTachEnd)
+                        handledProps.add(CustomPropertyType.ID_PROP_TYPE_TACH_START)
+                        handledProps.add(CustomPropertyType.ID_PROP_TYPE_TACH_END)
                     }
 
                     val szBlock = formattedTimeForLabel(
                         R.string.autoBlock,
-                        le.propertyWithID(CustomPropertyType.idPropTypeBlockOut)?.dateValue,
-                        le.propertyWithID(CustomPropertyType.idPropTypeBlockIn)?.dateValue
+                        le.propertyWithID(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT)?.dateValue,
+                        le.propertyWithID(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)?.dateValue
                     )
                     if (szBlock.isNotEmpty()) {
                         sb.append(szBlock)
-                        handledProps.add(CustomPropertyType.idPropTypeBlockOut)
-                        handledProps.add(CustomPropertyType.idPropTypeBlockIn)
+                        handledProps.add(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT)
+                        handledProps.add(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)
                     }
 
                     sb.append(
@@ -304,7 +300,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             val isColored = ((le.mFlightColorHex ?: "").isNotEmpty())
 
             val backColor = if (isColored)
-                Color.parseColor("#" + le.mFlightColorHex)
+                ("#" + le.mFlightColorHex).toColorInt()
             else ContextCompat.getColor(
                 context,
                 if (fIsAwaitingUpload || fIsPendingFlight) R.color.pendingBackground else R.color.colorBackground
@@ -336,7 +332,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
         var mFerrorsfound = false
 
         lifecycleScope.launch {
-            ActMFBForm.doAsync<MFBSoap, Boolean?>(
+            doAsync<MFBSoap, Boolean?>(
                 act,
                 MFBSoap(),
                 "",  // actual status will be filled in below, but don't pass null because we want to show status
@@ -395,7 +391,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
              - fForcePending is true, PendingFlight without a PendingID: call CreatePendingFlight.  Shouldn't happen, but no big deal if it does
              - fForcePending is true, PendingFlight with a PendingID: call UpdatePendingFlight
          */
-        val pf = if (le is PendingFlight) le else null
+        val pf = le as? PendingFlight
         return if (le!!.fForcePending) {
             check(!le.isExistingFlight()) { "Attempt to save an existing flight as a pending flight" }
             if (pf == null || pf.getPendingID().isEmpty()) {
@@ -431,7 +427,7 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
     private fun refreshFlights(fClearCache : Boolean = false) {
         val act = requireActivity()
         lifecycleScope.launch {
-            ActMFBForm.doAsync<RecentFlightsSvc, Array<LogbookEntry>?>(
+            doAsync<RecentFlightsSvc, Array<LogbookEntry>?>(
                 act,
                 RecentFlightsSvc(),
                 null,

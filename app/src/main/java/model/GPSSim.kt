@@ -41,7 +41,7 @@ import java.io.InputStreamReader
 import java.util.*
 import kotlin.math.roundToInt
 
-class GPSSim(private val m_ll: LocationListener) {
+class GPSSim(private val mLl: LocationListener) {
     suspend fun feedEvents() {
         for (l in m_rgSamples) {
             val mLoc = Location("MFB")
@@ -52,7 +52,7 @@ class GPSSim(private val m_ll: LocationListener) {
             mLoc.speed =
                 (l.speed / MFBConstants.MPS_TO_KNOTS).toFloat() // locsample is in Knots, need to go back to MPS
             mLoc.time = l.timeStamp.time
-            withContext(Dispatchers.Main) { m_ll.onLocationChanged(mLoc) }
+            withContext(Dispatchers.Main) { mLl.onLocationChanged(mLoc) }
             delay(100)
         }
     }
@@ -60,7 +60,7 @@ class GPSSim(private val m_ll: LocationListener) {
     companion object {
         private val m_rgSamples = initSamples()
         private fun initSamples(): Array<LocSample> {
-            return if (MFBConstants.fFakeGPS) arrayOf(
+            return if (MFBConstants.FAKE_GPS) arrayOf(
                 LocSample(47.90491116, -122.28549564, 565, 60.0, 5.0, "2010-10-27T10:10:01Z"),
                 LocSample(47.9036539, -122.28545994, 570, 72.5, 5.0, "2010-10-27T10:10:05Z"),
                 LocSample(47.9025957, -122.28543169, 573, 78.2, 10.0, "2010-10-27T10:10:08Z"),
@@ -1222,7 +1222,7 @@ class GPSSim(private val m_ll: LocationListener) {
             val accumulatedNight = ActNewFlight.accumulatedNight
             ActNewFlight.accumulatedNight = 0.0
             for (l in rgsamples) {
-                gpsSim.m_ll.onLocationChanged(l.location)
+                gpsSim.mLl.onLocationChanged(l.location)
             }
             ActNewFlight.accumulatedNight = accumulatedNight
         }
@@ -1235,8 +1235,8 @@ class GPSSim(private val m_ll: LocationListener) {
             val fAutodetectSave = MFBLocation.fPrefAutoDetect
             MFBLocation.fPrefAutoDetect = true
             var rgcoords: Array<LocSample>? = null
-            val cfpBlockOut = le.propertyWithID(CustomPropertyType.idPropTypeBlockOut)
-            val cfpBlockIn = le.propertyWithID(CustomPropertyType.idPropTypeBlockIn)
+            val cfpBlockOut = le.propertyWithID(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT)
+            val cfpBlockIn = le.propertyWithID(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)
             var dtBlockOut = cfpBlockOut?.dateValue
             var dtBlockIn = cfpBlockIn?.dateValue
 
@@ -1298,7 +1298,7 @@ class GPSSim(private val m_ll: LocationListener) {
                 le.cNightLandings = 0
                 le.cFullStopLandings = 0
                 le.cLandings = 0
-                le.removePropertyWithID(CustomPropertyType.idPropTypeNightTakeOff)
+                le.removePropertyWithID(CustomPropertyType.ID_PROP_TYPE_NIGHT_TAKEOFF)
                 autoFillFromTelemetry(rgcoords, le)
 
                 // close off engine end if we don't have one that we saved.
@@ -1307,7 +1307,7 @@ class GPSSim(private val m_ll: LocationListener) {
                     dtEngineSaved // restore engine end.  If synthetic path, this will be overwritten below anyhow.
                 // Issue #317 - restore any block-in as well.
                 if (dBlockIn != null)
-                    le.addOrSetPropertyDate(CustomPropertyType.idPropTypeBlockIn, dBlockIn)
+                    le.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN, dBlockIn)
             }
             if (fSyntheticPath) {
                 le.szFlightData = ""

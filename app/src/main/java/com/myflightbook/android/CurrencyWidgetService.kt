@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2022 MyFlightbook, LLC
+    Copyright (C) 2019-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ import com.myflightbook.android.webservices.CurrencySvc
 import model.CurrencyStatusItem
 import model.MFBUtil.deserializeFromString
 import model.MFBUtil.serializeToString
+import androidx.core.content.edit
 
 class CurrencyWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
@@ -42,7 +43,6 @@ class CurrencyWidgetService : RemoteViewsService() {
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 internal class CurrencyRemoteViewsFactory(private val mContext: Context, intent: Intent?) :
     RemoteViewsFactory {
     private var mCurrencyItems: List<CurrencyStatusItem> = ArrayList()
@@ -50,8 +50,8 @@ internal class CurrencyRemoteViewsFactory(private val mContext: Context, intent:
         // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
-        val prefs = mContext.getSharedPreferences(prefCurrency, Activity.MODE_PRIVATE)
-        val szTotals = prefs.getString(prefCurrencyLast, null)
+        val prefs = mContext.getSharedPreferences(PREF_CURRENCY, Activity.MODE_PRIVATE)
+        val szTotals = prefs.getString(PREF_CURRENCY_LAST, null)
         if (szTotals != null) {
             val rgcsi = deserializeFromString<Array<CurrencyStatusItem>>(szTotals) ?: arrayOf()
             mCurrencyItems = listOf(*rgcsi)
@@ -135,14 +135,14 @@ internal class CurrencyRemoteViewsFactory(private val mContext: Context, intent:
         val cs = CurrencySvc()
         val rgcsi = cs.getCurrencyForUser(AuthToken.m_szAuthToken, mContext)
         mCurrencyItems = listOf(*rgcsi)
-        val prefs = mContext.getSharedPreferences(prefCurrency, Activity.MODE_PRIVATE)
-        val ed = prefs.edit()
-        ed.putString(prefCurrencyLast, serializeToString(rgcsi))
-        ed.apply()
+        val prefs = mContext.getSharedPreferences(PREF_CURRENCY, Activity.MODE_PRIVATE)
+        prefs.edit {
+            putString(PREF_CURRENCY_LAST, serializeToString(rgcsi))
+        }
     }
 
     companion object {
-        private const val prefCurrency = "prefCurrencyWidget"
-        private const val prefCurrencyLast = "prefCurrencyWidgetLast"
+        private const val PREF_CURRENCY = "prefCurrencyWidget"
+        private const val PREF_CURRENCY_LAST = "prefCurrencyWidgetLast"
     }
 }

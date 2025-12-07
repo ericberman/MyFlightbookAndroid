@@ -26,6 +26,7 @@ import org.ksoap2.serialization.PropertyInfo
 import org.ksoap2.serialization.SoapObject
 import java.io.Serializable
 import java.util.*
+import androidx.core.content.edit
 
 class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTemplate>, Serializable,
     KvmSerializable {
@@ -111,7 +112,7 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
     }
 
     override fun getProperty(arg0: Int): Any {
-        return when (TemplatePropID.values()[arg0]) {
+        return when (TemplatePropID.entries[arg0]) {
             TemplatePropID.PIDTemplateID -> id
             TemplatePropID.PIDTemplateName -> name
             TemplatePropID.PIDTemplateDescription -> description
@@ -123,11 +124,11 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
     }
 
     override fun getPropertyCount(): Int {
-        return TemplatePropID.values().size
+        return TemplatePropID.entries.size
     }
 
     override fun getPropertyInfo(arg0: Int, arg1: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (TemplatePropID.values()[arg0]) {
+        when (TemplatePropID.entries[arg0]) {
             TemplatePropID.PIDTemplateID -> {
                 pi.type = PropertyInfo.INTEGER_CLASS
                 pi.name = "ID"
@@ -163,7 +164,7 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
     }
 
     override fun setProperty(arg0: Int, arg1: Any) {
-        val pid = TemplatePropID.values()[arg0]
+        val pid = TemplatePropID.entries[arg0]
         val sz = arg1.toString()
         when (pid) {
             TemplatePropID.PIDTemplateID -> {
@@ -237,16 +238,16 @@ class PropertyTemplate(so: SoapObject) : SoapableObject(), Comparable<PropertyTe
 
         // endregion
         // region Retrieving/persistance
-        private const val prefSharedTemplates = "prefsSharedTemplates"
+        private const val PREF_SHARED_TEMPLATES = "prefsSharedTemplates"
         fun saveSharedTemplates(pref: SharedPreferences) {
-            val e = pref.edit()
-            e.putString(prefSharedTemplates, serializeToString(sharedTemplates))
-            e.apply()
+            pref.edit {
+                putString(PREF_SHARED_TEMPLATES, serializeToString(sharedTemplates))
+            }
         }
 
         @JvmStatic
         fun getSharedTemplates(pref: SharedPreferences): Array<PropertyTemplate>? {
-            val s = pref.getString(prefSharedTemplates, "")
+            val s = pref.getString(PREF_SHARED_TEMPLATES, "")
             sharedTemplates = deserializeFromString<Array<PropertyTemplate>>(s)
             return sharedTemplates
         }

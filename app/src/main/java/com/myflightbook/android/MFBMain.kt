@@ -73,6 +73,7 @@ import model.MFBUtil.alert
 import model.Telemetry.Companion.telemetryFromURL
 import java.io.IOException
 import java.util.*
+import androidx.core.content.edit
 
 class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
     interface Invalidatable {
@@ -86,7 +87,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
     class MFBTabAdapter(f: FragmentActivity?) : FragmentStateAdapter(f!!) {
         // Return a NEW fragment instance in createFragment(int)
         override fun createFragment(position: Int): Fragment {
-            return when (MFBTab.values()[position]) {
+            return when (MFBTab.entries[position]) {
                 MFBTab.NewFlight -> ActNewFlight()
                 MFBTab.Aircraft -> ActAircraft()
                 MFBTab.Recent -> ActRecentsWS()
@@ -151,19 +152,19 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         // set up the sqlite db
         mDBHelper = DataBaseHelper(
             this, DataBaseHelper.DB_NAME_MAIN,
-            MFBConstants.DBVersionMain
+            MFBConstants.DB_VERSION_MAIN
         )
         try {
             mDBHelper!!.createDataBase()
 
             // force any upgrade.
             db = mDBHelper!!.writableDatabase
-        } catch (ioe: Error) {
+        } catch (_: Error) {
             alert(
                 this, getString(R.string.txtError),
                 getString(R.string.errMainDBFailure)
             )
-        } catch (ex: SQLiteReadOnlyDatabaseException) {
+        } catch (_: SQLiteReadOnlyDatabaseException) {
             // shouldn't happen, but does due to lollipop bug
             if (fRetryOnFailure) initDB(false)
         } finally {
@@ -172,18 +173,18 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         }
         mDBHelperAirports = DataBaseHelper(
             this,
-            DataBaseHelper.DB_NAME_AIRPORTS, MFBConstants.DBVersionAirports
+            DataBaseHelper.DB_NAME_AIRPORTS, MFBConstants.DB_VERSION_AIRPORTS
         )
         try {
             mDBHelperAirports!!.createDataBase()
             // force any upgrade.
             db = mDBHelperAirports!!.writableDatabase
-        } catch (ioe: Error) {
+        } catch (_: Error) {
             alert(
                 this, getString(R.string.txtError),
                 getString(R.string.errAirportDBFailure)
             )
-        } catch (ex: SQLiteReadOnlyDatabaseException) {
+        } catch (_: SQLiteReadOnlyDatabaseException) {
             // shouldn't happen, but does due to lollipop bug
             if (fRetryOnFailure) initDB(false)
         } finally {
@@ -213,7 +214,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         if (nightMode != Configuration.UI_MODE_NIGHT_NO) WebView(this)
         Log.v(MFBConstants.LOG_TAG, "onCreate: set night pref")
         val locPref = mPrefs
-        NightModePref = locPref!!.getInt(m_KeysNightMode, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        NightModePref = locPref!!.getInt(M_KEYS_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         AppCompatDelegate.setDefaultNightMode(NightModePref)
         setContentView(R.layout.main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tab_layout)) { view, insets ->
@@ -233,11 +234,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
                     packageManager.getPackageInfo(packageName, 0)
             versionName = packageInfo.versionName ?: "Unknown"
             versionCode =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                    packageInfo.longVersionCode
-                else
-                    @Suppress("DEPRECATION")
-                    packageInfo.versionCode.toLong()
+                packageInfo.longVersionCode
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
         }
@@ -251,7 +248,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         Log.v(MFBConstants.LOG_TAG, "onCreate: set custom handler and send error reports")
         val ceh = CustomExceptionHandler(
             cacheDir.absolutePath,
-            String.format(MFBConstants.urlCrashReport, MFBConstants.szIP),
+            String.format(MFBConstants.URI_CRASH_REPORT, MFBConstants.szIP),
             AuthToken.APPTOKEN
         )
         Thread.setDefaultUncaughtExceptionHandler(ceh)
@@ -260,7 +257,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
 
         val vp = findViewById<ViewPager2>(R.id.pager)
         mViewPager = vp
-        vp.offscreenPageLimit = MFBTab.values().size
+        vp.offscreenPageLimit = MFBTab.entries.size
         vp.adapter = MFBTabAdapter(this)
         vp.isUserInputEnabled = false
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
@@ -268,7 +265,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
             tabLayout,
             vp
         ) { tab: TabLayout.Tab, position: Int ->
-            when (MFBTab.values()[position]) {
+            when (MFBTab.entries[position]) {
                 MFBTab.NewFlight -> {
                     tab.setContentDescription(R.string.tabNewFlight)
                     tab.setText(R.string.tabNewFlight)
@@ -313,7 +310,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
             tab.tabLabelVisibility = TabLayout.TAB_LABEL_VISIBILITY_LABELED
         }.attach()
         val auth = AuthToken()
-        if (!auth.hasValidCache() || mLastTabIndex < 0 || mLastTabIndex >= MFBTab.values().size) vp.currentItem =
+        if (!auth.hasValidCache() || mLastTabIndex < 0 || mLastTabIndex >= MFBTab.entries.size) vp.currentItem =
             MFBTab.Options.ordinal else vp.currentItem = mLastTabIndex
         Log.v(MFBConstants.LOG_TAG, "onCreate: vacuum database")
         // Periodically (every 7 days) vacuum (compact) the database.
@@ -620,58 +617,58 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
 
     private fun restoreState() {
         try {
-            AuthToken.m_szAuthToken = mPrefs!!.getString(m_KeyszAuthToken, "")
-            AuthToken.m_szEmail = mPrefs!!.getString(m_KeyszUser, "")!!
-            AuthToken.m_szPass = mPrefs!!.getString(m_KeyszPass, "")!!
-            MFBLocation.fPrefAutoDetect = mPrefs!!.getBoolean(m_KeysfAutoDetect, false)
-            MFBLocation.fPrefRecordFlight = mPrefs!!.getBoolean(m_KeysfRecord, false)
-            MFBLocation.fPrefRecordFlightHighRes = mPrefs!!.getBoolean(m_KeysfRecordHighRes, false)
-            MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.values()[mPrefs!!.getInt(
-                m_KeysAutoHobbs, 0
+            AuthToken.m_szAuthToken = mPrefs!!.getString(M_KEY_SZAUTHTOKEN, "")
+            AuthToken.m_szEmail = mPrefs!!.getString(M_KEY_SZUSER, "")!!
+            AuthToken.m_szPass = mPrefs!!.getString(M_KEY_SZPASS, "")!!
+            MFBLocation.fPrefAutoDetect = mPrefs!!.getBoolean(M_KEYS_FAUTODETECT, false)
+            MFBLocation.fPrefRecordFlight = mPrefs!!.getBoolean(M_KEY_FRECORDFLIGHT, false)
+            MFBLocation.fPrefRecordFlightHighRes = mPrefs!!.getBoolean(M_KEY_FRECORDHIRES, false)
+            MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.entries[mPrefs!!.getInt(
+                M_KEYS_AUTOHOBBS, 0
             )]
-            MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.values()[mPrefs!!.getInt(
-                m_KeysAutoTime, 0
+            MFBLocation.fPrefAutoFillTime = MFBLocation.AutoFillOptions.entries[mPrefs!!.getInt(
+                M_KEYS_AUTOTIME, 0
             )]
-            MFBLocation.fPrefRoundNearestTenth = mPrefs!!.getBoolean(m_KeysfRoundToTenth, false)
+            MFBLocation.fPrefRoundNearestTenth = mPrefs!!.getBoolean(M_KEYS_FROUND_TO_TENTH, false)
             MFBLocation.IsFlying =
-                MFBLocation.IsFlying || mPrefs!!.getBoolean(m_KeysIsFlying, false)
+                MFBLocation.IsFlying || mPrefs!!.getBoolean(M_KEYS_IS_FLYING, false)
             MFBLocation.IsRecording = MFBLocation.IsRecording || mPrefs!!.getBoolean(
-                m_KeysIsRecording, false
+                M_KEYS_IS_RECORDING, false
             )
-            MFBLocation.HasPendingLanding = mPrefs!!.getBoolean(m_KeysHasPendingFSLanding, false)
-            MFBLocation.NightPref = MFBLocation.NightCriteria.values()[mPrefs!!.getInt(
-                m_KeysNightFlightOption, MFBLocation.NightCriteria.EndOfCivilTwilight.ordinal
+            MFBLocation.HasPendingLanding = mPrefs!!.getBoolean(M_KEYS_HAS_PENDING_FS_LANDING, false)
+            MFBLocation.NightPref = MFBLocation.NightCriteria.entries[mPrefs!!.getInt(
+                M_KEYS_NIGHT_FLIGHT_OPTION, MFBLocation.NightCriteria.EndOfCivilTwilight.ordinal
             )]
             MFBLocation.NightLandingPref =
-                MFBLocation.NightLandingCriteria.values()[mPrefs!!.getInt(
-                    m_KeysNightLandingOption, MFBLocation.NightLandingCriteria.SunsetPlus60.ordinal
+                MFBLocation.NightLandingCriteria.entries[mPrefs!!.getInt(
+                    M_KEYS_NIGHT_LANDING_OPTION, MFBLocation.NightLandingCriteria.SunsetPlus60.ordinal
                 )]
-            Airport.fPrefIncludeHeliports = mPrefs!!.getBoolean(m_KeysfHeliports, false)
-            DecimalEdit.DefaultHHMM = mPrefs!!.getBoolean(m_KeysUseHHMM, false)
-            DlgDatePicker.fUseLocalTime = mPrefs!!.getBoolean(m_KeysUseLocal, false)
-            ActRecentsWS.fShowFlightImages = mPrefs!!.getBoolean(m_KeysShowFlightImages, true)
-            ActRecentsWS.flightDetail = ActRecentsWS.FlightDetail.values()[mPrefs!!.getInt(
-                m_KeysShowFlightTimes, 0
+            Airport.fPrefIncludeHeliports = mPrefs!!.getBoolean(M_KEYS_FHELIPORTS, false)
+            DecimalEdit.DefaultHHMM = mPrefs!!.getBoolean(M_KEYS_FUSEHHMM, false)
+            DlgDatePicker.fUseLocalTime = mPrefs!!.getBoolean(M_KEYS_FUSELOCAL, false)
+            ActRecentsWS.fShowFlightImages = mPrefs!!.getBoolean(M_KEYS_SHOW_FLIGHT_IMAGES, true)
+            ActRecentsWS.flightDetail = ActRecentsWS.FlightDetail.entries[mPrefs!!.getInt(
+                M_KEYS_SHOW_FLIGHT_TIMES, 0
             )]
             ActOptions.speedUnits =
-                ActOptions.SpeedUnits.values()[mPrefs!!.getInt(m_KeysSpeedUnits, 0)]
-            ActOptions.altitudeUnits = ActOptions.AltitudeUnits.values()[mPrefs!!.getInt(
-                m_KeysAltUnits, 0
+                ActOptions.SpeedUnits.entries[mPrefs!!.getInt(M_KEYS_SPEED_UNITS, 0)]
+            ActOptions.altitudeUnits = ActOptions.AltitudeUnits.entries[mPrefs!!.getInt(
+                M_KEYS_ALT_UNITS, 0
             )]
 
-            ActFlightMap.RouteColor = mPrefs!!.getInt(m_KeysRouteColor, Color.BLUE)
-            ActFlightMap.PathColor = mPrefs!!.getInt(m_KeysPathColor, Color.RED)
-            ActFlightMap.MapType = mPrefs!!.getInt(m_KeysMapType, GoogleMap.MAP_TYPE_SATELLITE)
+            ActFlightMap.RouteColor = mPrefs!!.getInt(M_KEYS_ROUTE_COLOR, Color.BLUE)
+            ActFlightMap.PathColor = mPrefs!!.getInt(M_KEYS_PATH_COLOR, Color.RED)
+            ActFlightMap.MapType = mPrefs!!.getInt(M_KEYS_MAP_TYPE, GoogleMap.MAP_TYPE_SATELLITE)
 
-            ActNewFlight.fShowTach = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowTach, false)
-            ActNewFlight.fShowHobbs = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowHobbs, true)
-            ActNewFlight.fShowEngine = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowEngine, true)
-            ActNewFlight.fShowBlock = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowBlock, false)
-            ActNewFlight.fShowFlight = mPrefs!!.getBoolean(ActNewFlight.prefKeyShowFlight, true)
+            ActNewFlight.fShowTach = mPrefs!!.getBoolean(ActNewFlight.PREF_KEY_SHOW_TACH, false)
+            ActNewFlight.fShowHobbs = mPrefs!!.getBoolean(ActNewFlight.PREF_KEY_SHOW_HOBBS, true)
+            ActNewFlight.fShowEngine = mPrefs!!.getBoolean(ActNewFlight.PREF_KEY_SHOW_ENGINE, true)
+            ActNewFlight.fShowBlock = mPrefs!!.getBoolean(ActNewFlight.PREF_KEY_SHOW_BLOCK, false)
+            ActNewFlight.fShowFlight = mPrefs!!.getBoolean(ActNewFlight.PREF_KEY_SHOW_FLIGHT, true)
 
-            mLastTabIndex = mPrefs!!.getInt(m_KeysLastTab, 0)
-            mLastVacuum = mPrefs!!.getLong(m_TimeOfLastVacuum, Date().time)
-            takeOffSpeedIndex = mPrefs!!.getInt(m_KeysTOSpeed, MFBTakeoffSpeed.DefaultTakeOffIndex)
+            mLastTabIndex = mPrefs!!.getInt(M_KEYS_LAST_TAB, 0)
+            mLastVacuum = mPrefs!!.getLong(M_TIME_OF_LAST_VACUUM, Date().time)
+            takeOffSpeedIndex = mPrefs!!.getInt(M_KEYS_TO_SPEED, MFBTakeoffSpeed.DEFAULT_TAKEOFF_INDEX)
         } catch (e: Exception) {
             Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
         }
@@ -681,44 +678,44 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        val ed = mPrefs!!.edit()
-        ed.putString(m_KeyszAuthToken, AuthToken.m_szAuthToken)
-        ed.putString(m_KeyszUser, AuthToken.m_szEmail)
-        ed.putString(m_KeyszPass, AuthToken.m_szPass)
-        ed.putBoolean(m_KeysfAutoDetect, MFBLocation.fPrefAutoDetect)
-        ed.putBoolean(m_KeysfRecord, MFBLocation.fPrefRecordFlight)
-        ed.putBoolean(m_KeysfRecordHighRes, MFBLocation.fPrefRecordFlightHighRes)
-        ed.putInt(m_KeysAutoHobbs, MFBLocation.fPrefAutoFillHobbs.ordinal)
-        ed.putInt(m_KeysAutoTime, MFBLocation.fPrefAutoFillTime.ordinal)
-        ed.putBoolean(m_KeysfRoundToTenth, MFBLocation.fPrefRoundNearestTenth)
-        ed.putBoolean(m_KeysIsFlying, MFBLocation.IsFlying)
-        ed.putBoolean(m_KeysIsRecording, MFBLocation.IsRecording)
-        ed.putBoolean(m_KeysHasPendingFSLanding, MFBLocation.HasPendingLanding)
-        ed.putInt(m_KeysNightFlightOption, MFBLocation.NightPref.ordinal)
-        ed.putInt(m_KeysNightLandingOption, MFBLocation.NightLandingPref.ordinal)
-        ed.putBoolean(m_KeysfHeliports, Airport.fPrefIncludeHeliports)
-        ed.putBoolean(m_KeysUseHHMM, DecimalEdit.DefaultHHMM)
-        ed.putBoolean(m_KeysUseLocal, DlgDatePicker.fUseLocalTime)
-        ed.putInt(m_KeysNightMode, NightModePref)
-        ed.putBoolean(m_KeysShowFlightImages, ActRecentsWS.fShowFlightImages)
-        ed.putInt(m_KeysShowFlightTimes, ActRecentsWS.flightDetail.ordinal)
-        ed.putInt(m_KeysAltUnits, ActOptions.altitudeUnits.ordinal)
-        ed.putInt(m_KeysSpeedUnits, ActOptions.speedUnits.ordinal)
-        ed.putInt(m_KeysLastTab, mViewPager!!.currentItem.also { mLastTabIndex = it })
-        ed.putLong(m_TimeOfLastVacuum, mLastVacuum)
-        ed.putInt(m_KeysTOSpeed, takeOffSpeedIndex)
+        mPrefs!!.edit {
+            putString(M_KEY_SZAUTHTOKEN, AuthToken.m_szAuthToken)
+            putString(M_KEY_SZUSER, AuthToken.m_szEmail)
+            putString(M_KEY_SZPASS, AuthToken.m_szPass)
+            putBoolean(M_KEYS_FAUTODETECT, MFBLocation.fPrefAutoDetect)
+            putBoolean(M_KEY_FRECORDFLIGHT, MFBLocation.fPrefRecordFlight)
+            putBoolean(M_KEY_FRECORDHIRES, MFBLocation.fPrefRecordFlightHighRes)
+            putInt(M_KEYS_AUTOHOBBS, MFBLocation.fPrefAutoFillHobbs.ordinal)
+            putInt(M_KEYS_AUTOTIME, MFBLocation.fPrefAutoFillTime.ordinal)
+            putBoolean(M_KEYS_FROUND_TO_TENTH, MFBLocation.fPrefRoundNearestTenth)
+            putBoolean(M_KEYS_IS_FLYING, MFBLocation.IsFlying)
+            putBoolean(M_KEYS_IS_RECORDING, MFBLocation.IsRecording)
+            putBoolean(M_KEYS_HAS_PENDING_FS_LANDING, MFBLocation.HasPendingLanding)
+            putInt(M_KEYS_NIGHT_FLIGHT_OPTION, MFBLocation.NightPref.ordinal)
+            putInt(M_KEYS_NIGHT_LANDING_OPTION, MFBLocation.NightLandingPref.ordinal)
+            putBoolean(M_KEYS_FHELIPORTS, Airport.fPrefIncludeHeliports)
+            putBoolean(M_KEYS_FUSEHHMM, DecimalEdit.DefaultHHMM)
+            putBoolean(M_KEYS_FUSELOCAL, DlgDatePicker.fUseLocalTime)
+            putInt(M_KEYS_NIGHT_MODE, NightModePref)
+            putBoolean(M_KEYS_SHOW_FLIGHT_IMAGES, ActRecentsWS.fShowFlightImages)
+            putInt(M_KEYS_SHOW_FLIGHT_TIMES, ActRecentsWS.flightDetail.ordinal)
+            putInt(M_KEYS_ALT_UNITS, ActOptions.altitudeUnits.ordinal)
+            putInt(M_KEYS_SPEED_UNITS, ActOptions.speedUnits.ordinal)
+            putInt(M_KEYS_LAST_TAB, mViewPager!!.currentItem.also { mLastTabIndex = it })
+            putLong(M_TIME_OF_LAST_VACUUM, mLastVacuum)
+            putInt(M_KEYS_TO_SPEED, takeOffSpeedIndex)
 
-        ed.putInt(m_KeysRouteColor, ActFlightMap.RouteColor)
-        ed.putInt(m_KeysPathColor, ActFlightMap.PathColor)
-        ed.putInt(m_KeysMapType, ActFlightMap.MapType)
+            putInt(M_KEYS_ROUTE_COLOR, ActFlightMap.RouteColor)
+            putInt(M_KEYS_PATH_COLOR, ActFlightMap.PathColor)
+            putInt(M_KEYS_MAP_TYPE, ActFlightMap.MapType)
 
-        ed.putBoolean(ActNewFlight.prefKeyShowTach, ActNewFlight.fShowTach)
-        ed.putBoolean(ActNewFlight.prefKeyShowHobbs, ActNewFlight.fShowHobbs)
-        ed.putBoolean(ActNewFlight.prefKeyShowEngine, ActNewFlight.fShowEngine)
-        ed.putBoolean(ActNewFlight.prefKeyShowBlock, ActNewFlight.fShowBlock)
-        ed.putBoolean(ActNewFlight.prefKeyShowFlight, ActNewFlight.fShowFlight)
+            putBoolean(ActNewFlight.PREF_KEY_SHOW_TACH, ActNewFlight.fShowTach)
+            putBoolean(ActNewFlight.PREF_KEY_SHOW_HOBBS, ActNewFlight.fShowHobbs)
+            putBoolean(ActNewFlight.PREF_KEY_SHOW_ENGINE, ActNewFlight.fShowEngine)
+            putBoolean(ActNewFlight.PREF_KEY_SHOW_BLOCK, ActNewFlight.fShowBlock)
+            putBoolean(ActNewFlight.PREF_KEY_SHOW_FLIGHT, ActNewFlight.fShowFlight)
 
-        ed.apply()
+        }
     }
 
     public override fun onSaveInstanceState(outState: Bundle) {
@@ -736,35 +733,35 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         private val rgNotifyResetAll = ArrayList<Invalidatable>()
 
         // preferences keys.
-        private const val m_KeyszUser = "username"
-        private const val m_KeyszPass = "password"
-        private const val m_KeyszAuthToken = "authtoken"
-        private const val m_KeysfRecord = "recordflight"
-        private const val m_KeysfRecordHighRes = "recordFlightHighRes"
-        private const val m_KeysfAutoDetect = "autodetect"
-        private const val m_KeysfHeliports = "heliports"
-        private const val m_KeysfRoundToTenth = "roundnearesttenth"
-        private const val m_KeysAutoHobbs = "autohobbs"
-        private const val m_KeysAutoTime = "autotime"
-        private const val m_KeysUseHHMM = "UseHHMM"
-        private const val m_KeysUseLocal = "UseLocalTime"
-        private const val m_KeysLastTab = "lastTab3"
-        private const val m_KeysShowFlightImages = "showFlightImages"
-        private const val m_KeysShowFlightTimes = "showFlightTimes2"
-        private const val m_KeysSpeedUnits = "speedUnits"
-        private const val m_KeysAltUnits = "altUnits"
-        private const val m_KeysIsFlying = "isFlying"
-        private const val m_KeysIsRecording = "isRecording"
-        private const val m_KeysHasPendingFSLanding = "hasPendingLanding"
-        private const val m_KeysTOSpeed = "takeoffspeed"
-        private const val m_KeysNightFlightOption = "nightFlightOption"
-        private const val m_KeysNightLandingOption = "nightLandingOption"
-        private const val m_KeysNightMode = "nightModeOption"
-        private const val m_KeysRouteColor = "routeColor"
-        private const val m_KeysPathColor = "pathColor"
-        private const val m_KeysMapType = "mapType"
+        private const val M_KEY_SZUSER = "username"
+        private const val M_KEY_SZPASS = "password"
+        private const val M_KEY_SZAUTHTOKEN = "authtoken"
+        private const val M_KEY_FRECORDFLIGHT = "recordflight"
+        private const val M_KEY_FRECORDHIRES = "recordFlightHighRes"
+        private const val M_KEYS_FAUTODETECT = "autodetect"
+        private const val M_KEYS_FHELIPORTS = "heliports"
+        private const val M_KEYS_FROUND_TO_TENTH = "roundnearesttenth"
+        private const val M_KEYS_AUTOHOBBS = "autohobbs"
+        private const val M_KEYS_AUTOTIME = "autotime"
+        private const val M_KEYS_FUSEHHMM = "UseHHMM"
+        private const val M_KEYS_FUSELOCAL = "UseLocalTime"
+        private const val M_KEYS_LAST_TAB = "lastTab3"
+        private const val M_KEYS_SHOW_FLIGHT_IMAGES = "showFlightImages"
+        private const val M_KEYS_SHOW_FLIGHT_TIMES = "showFlightTimes2"
+        private const val M_KEYS_SPEED_UNITS = "speedUnits"
+        private const val M_KEYS_ALT_UNITS = "altUnits"
+        private const val M_KEYS_IS_FLYING = "isFlying"
+        private const val M_KEYS_IS_RECORDING = "isRecording"
+        private const val M_KEYS_HAS_PENDING_FS_LANDING = "hasPendingLanding"
+        private const val M_KEYS_TO_SPEED = "takeoffspeed"
+        private const val M_KEYS_NIGHT_FLIGHT_OPTION = "nightFlightOption"
+        private const val M_KEYS_NIGHT_LANDING_OPTION = "nightLandingOption"
+        private const val M_KEYS_NIGHT_MODE = "nightModeOption"
+        private const val M_KEYS_ROUTE_COLOR = "routeColor"
+        private const val M_KEYS_PATH_COLOR = "pathColor"
+        private const val M_KEYS_MAP_TYPE = "mapType"
         var NightModePref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        private const val m_TimeOfLastVacuum = "LastVacuum"
+        private const val M_TIME_OF_LAST_VACUUM = "LastVacuum"
         var mDBHelper: DataBaseHelper? = null
         var mDBHelperAirports: DataBaseHelper? = null
         private var m_FlightEventListener: MFBFlightListener? = null
@@ -796,7 +793,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
                 // then hide the button if this is not a new flight.
                 Class.forName("com.google.android.gms.maps.MapFragment")
                 true
-            } catch (ex: Exception) {
+            } catch (_: Exception) {
                 false
             }
         }

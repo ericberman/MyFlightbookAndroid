@@ -152,7 +152,7 @@ open class ExpandableListFragment : Fragment(), OnCreateContextMenuListener, OnC
      * @param position The position of the view in the list
      * @param id The row id of the item that was clicked
      */
-    @Suppress("EmptyMethod", "UNUSED_PARAMETER")
+    @Suppress("EmptyMethod")
     private fun onListItemClick(l: ExpandableListView?, v: View, position: Int, id: Long) {}
 
     /**

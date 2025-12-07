@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import org.ksoap2.serialization.PropertyInfo
 import org.ksoap2.serialization.SoapObject
 import java.io.Serializable
 import java.util.*
+import androidx.core.content.edit
 
 @Suppress("EnumEntryName")
 class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Serializable,
@@ -79,14 +80,14 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         if (szSortKey.isEmpty()) szSortKey = szTitle
         szFormatString = c.getString(c.getColumnIndexOrThrow(COL_FORMATSTRING))
         szDescription = c.getString(c.getColumnIndexOrThrow(COL_DESCRIPTION))
-        cptType = CFPPropertyType.values()[c.getInt(
+        cptType = CFPPropertyType.entries[c.getInt(
             c.getColumnIndexOrThrow(
                 COL_TYPE
             )
         )]
         cptFlag = c.getInt(c.getColumnIndexOrThrow(COL_FLAGS))
         isFavorite = c.getInt(c.getColumnIndexOrThrow(COL_ISFAVORITE)) != 0
-        val szPreviousValues = c.getString(c.getColumnIndexOrThrow(COL_PreviousValues))
+        val szPreviousValues = c.getString(c.getColumnIndexOrThrow(COL_PREVIOUS_VALUES))
         previousValues = szPreviousValues?.split("\t")?.toTypedArray() ?: arrayOf()
     }
 
@@ -100,7 +101,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         cv.put(COL_FLAGS, cptFlag)
         cv.put(COL_ISFAVORITE, isFavorite)
         val szConcatValues = TextUtils.join("\t", previousValues)
-        cv.put(COL_PreviousValues, szConcatValues)
+        cv.put(COL_PREVIOUS_VALUES, szConcatValues)
     }
 
     override fun toProperties(so: SoapObject) {
@@ -134,7 +135,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
     }
 
     override fun getProperty(arg0: Int): Any {
-        return when (CPTPropID.values()[arg0]) {
+        return when (CPTPropID.entries[arg0]) {
             CPTPropID.PIDIDPropType -> idPropType
             CPTPropID.PIDTitle -> szTitle
             CPTPropID.PIDSortKey -> szSortKey
@@ -148,11 +149,11 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
     }
 
     override fun getPropertyCount(): Int {
-        return CPTPropID.values().size
+        return CPTPropID.entries.size
     }
 
     override fun getPropertyInfo(arg0: Int, arg1: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (CPTPropID.values()[arg0]) {
+        when (CPTPropID.entries[arg0]) {
             CPTPropID.PIDFavorite -> {
                 pi.type = PropertyInfo.BOOLEAN_CLASS
                 pi.name = "IsFavorite"
@@ -196,7 +197,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
     }
 
     override fun setProperty(arg0: Int, arg1: Any) {
-        val pid = CPTPropID.values()[arg0]
+        val pid = CPTPropID.entries[arg0]
         val sz = arg1.toString()
         @Suppress("UNCHECKED_CAST")
         when (pid) {
@@ -228,24 +229,24 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         private const val serialVersionUID = 1L
 
         // known custom property types
-        const val idPropTypeNightTakeOff = 73
-        const val idPropTypeTachStart = 95
-        const val idPropTypeTachEnd = 96
-        const val idPropFlightNum = 156
-        const val idPropTypeBlockOut = 187
-        const val idPropTypeBlockIn = 186
-        const val idPropTypeApproachDesc = 267
-        const val idPropTypeFlightCost = 415
-        const val idPropTypeFlightMeterStart = 666
-        const val idPropTypeFlightMeterEnd = 667
-        const val idPropTypeLessonStart = 668
-        const val idPropTypeLessonEnd = 669
-        const val idPropTypeGroundInstructionGiven = 198
-        const val idPropTypeGroundInstructionReceived = 158
-        const val idPropTypeFuelAtStart = 622
-        const val idPropTypeFuelAtEnd = 72
-        const val idPropTypeFuelConsumed = 71
-        const val idPropTypeFuelBurnRate = 381
+        const val ID_PROP_TYPE_NIGHT_TAKEOFF = 73
+        const val ID_PROP_TYPE_TACH_START = 95
+        const val ID_PROP_TYPE_TACH_END = 96
+        const val ID_PROP_TYPE_FLIGHT_NUM = 156
+        const val ID_PROP_TYPE_BLOCK_OUT = 187
+        const val ID_PROP_TYPE_BLOCK_IN = 186
+        const val ID_PROP_TYPE_APPROACH_DESCRIPTION = 267
+        const val ID_PROP_TYPE_FLIGHT_COST = 415
+        const val ID_PROP_TYPE_FLIGHT_METER_START = 666
+        const val ID_PROP_TYPE_FLIGHT_METER_END = 667
+        const val ID_PROP_TYPE_LESSON_START = 668
+        const val ID_PROP_TYPE_LESSON_END = 669
+        const val ID_PROP_TYPE_GROUND_INSTRUCTION_GIVEN = 198
+        const val ID_PROP_TYPE_GROUND_INSTRUCTION_RECEIVED = 158
+        const val ID_PROP_TYPE_FUEL_AT_START = 622
+        const val ID_PROP_TYPE_FUEL_AT_END = 72
+        const val ID_PROP_TYPE_FUEL_CONSUMED = 71
+        const val ID_PROP_TYPE_FUEL_BURN_RATE = 381
 
         // DB Column names
         private const val COL_IDPROPTYPE = "idPropType"
@@ -256,7 +257,7 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         private const val COL_FLAGS = "Flags"
         private const val COL_ISFAVORITE = "IsFavorite"
         private const val COL_DESCRIPTION = "Description"
-        private const val COL_PreviousValues = "PreviousValues"
+        private const val COL_PREVIOUS_VALUES = "PreviousValues"
         @JvmStatic
         fun cptFromId(id: Int, rgcpt: Array<CustomPropertyType>): CustomPropertyType? {
             for (cpt in rgcpt) {
@@ -266,11 +267,11 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         }
 
         //region Pinned properties
-        const val prefSharedPinnedProps = "prefsSharedPinnedProps"
-        private const val prefKeyPinnedProperties = "keyPinnedProperties"
+        const val PREF_SHARED_PINNED_PROPS = "prefsSharedPinnedProps"
+        private const val PREF_KEY_PINNED_PROPS = "keyPinnedProperties"
         @JvmStatic
         fun getPinnedProperties(pref: SharedPreferences): HashSet<Int> {
-            val stringVals = pref.getStringSet(prefKeyPinnedProperties, HashSet())
+            val stringVals = pref.getStringSet(PREF_KEY_PINNED_PROPS, HashSet())
             val result = HashSet<Int>()
             for (s in Objects.requireNonNull(stringVals)) result.add(s.toInt())
             return result
@@ -288,28 +289,28 @@ class CustomPropertyType : SoapableObject, Comparable<CustomPropertyType>, Seria
         @JvmStatic
         fun setPinnedProperty(pref: SharedPreferences, id: Int) {
             val stringVals = pref.getStringSet(
-                prefKeyPinnedProperties,
+                PREF_KEY_PINNED_PROPS,
                 HashSet()
             )!!
             val newSet = HashSet(stringVals)
             newSet.add(String.format(Locale.US, "%d", id))
-            val e = pref.edit()
-            e.putStringSet(prefKeyPinnedProperties, newSet)
-            e.apply()
+            pref.edit {
+                putStringSet(PREF_KEY_PINNED_PROPS, newSet)
+            }
         }
 
         @JvmStatic
         fun removePinnedProperty(pref: SharedPreferences, id: Int) {
-            val stringVals = pref.getStringSet(prefKeyPinnedProperties, HashSet())
+            val stringVals = pref.getStringSet(PREF_KEY_PINNED_PROPS, HashSet())
             val sRemove = String.format(Locale.US, "%d", id)
             if (!Objects.requireNonNull(stringVals).contains(sRemove)) return
 
             // Can't modify the returned set; need to create a new one.
             val newSet = HashSet(stringVals!!)
             newSet.remove(sRemove)
-            val e = pref.edit()
-            e.putStringSet(prefKeyPinnedProperties, newSet)
-            e.apply()
+            pref.edit {
+                putStringSet(PREF_KEY_PINNED_PROPS, newSet)
+            }
         } //endregion
     }
 }

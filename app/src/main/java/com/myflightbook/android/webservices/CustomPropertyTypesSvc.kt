@@ -29,6 +29,7 @@ import model.DBCache.DBCacheStatus
 import model.MFBConstants
 import model.PropertyTemplate
 import org.ksoap2.serialization.SoapObject
+import androidx.core.database.sqlite.transaction
 
 class CustomPropertyTypesSvc : MFBSoap() {
     private fun updateCache(rgcpt: Array<CustomPropertyType>) {
@@ -42,20 +43,19 @@ class CustomPropertyTypesSvc : MFBSoap() {
         try {
             // I've read that multiple inserts are much faster inside a
             // transaction.
-            db.beginTransaction()
-            try {
-                for (cpt in rgcpt) {
-                    val cv = ContentValues()
-                    cpt.toContentValues(cv)
-                    val l = db.insertOrThrow(TABLENAME, null, cv)
-                    if (l < 0) throw Error("Error inserting CustomPropertyType")
+            db.transaction {
+                try {
+                    for (cpt in rgcpt) {
+                        val cv = ContentValues()
+                        cpt.toContentValues(cv)
+                        val l = insertOrThrow(TABLENAME, null, cv)
+                        if (l < 0) throw Error("Error inserting CustomPropertyType")
+                    }
+                    fResult = true
+                } catch (ex: Exception) {
+                    lastError = ex.message!!
+                } finally {
                 }
-                db.setTransactionSuccessful()
-                fResult = true
-            } catch (ex: Exception) {
-                lastError = ex.message!!
-            } finally {
-                db.endTransaction()
             }
         } catch (e: Exception) {
             lastError = e.message!!

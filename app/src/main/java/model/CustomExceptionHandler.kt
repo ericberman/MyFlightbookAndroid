@@ -114,7 +114,7 @@ $result${e.message}${e.localizedMessage}"""
     }
 
     private fun sendToServer(stacktrace: String) {
-        if (MFBConstants.fIsDebug) return
+        if (MFBConstants.IS_DEBUG) return
         var response : Response? = null
         try {
             val client = OkHttpClient()

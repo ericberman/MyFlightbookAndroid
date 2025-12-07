@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022
+    Copyright (C) 2017-2025
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToLong
+import androidx.core.content.withStyledAttributes
 
 class DecimalEdit : AppCompatEditText, OnLongClickListener {
     interface CrossFillDelegate {
@@ -60,14 +61,14 @@ class DecimalEdit : AppCompatEditText, OnLongClickListener {
     }
 
     private fun initFromAttributes(context: Context, attrs: AttributeSet?) {
-        val arr = context.obtainStyledAttributes(attrs, R.styleable.DecimalEdit)
-        val editmode: CharSequence? = arr.getString(R.styleable.DecimalEdit_EditMode)
-        if (editmode != null) {
-            val szVal = editmode.toString()
-            val em = EditMode.valueOf(szVal)
-            setMode(em)
+        context.withStyledAttributes(attrs, R.styleable.DecimalEdit) {
+            val editmode: CharSequence? = getString(R.styleable.DecimalEdit_EditMode)
+            if (editmode != null) {
+                val szVal = editmode.toString()
+                val em = EditMode.valueOf(szVal)
+                setMode(em)
+            }
         }
-        arr.recycle()
     }
 
     fun setDelegate(d: CrossFillDelegate?) {
@@ -113,7 +114,7 @@ class DecimalEdit : AppCompatEditText, OnLongClickListener {
     var intValue: Int
         get() = if (text!!.isEmpty()) 0 else try {
             text.toString().toInt()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
         set(d) {
@@ -178,7 +179,7 @@ class DecimalEdit : AppCompatEditText, OnLongClickListener {
                     val format = NumberFormat.getInstance(Locale.getDefault())
                     Objects.requireNonNull(format.parse(sz)).toDouble()
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 0.0
             }
         }

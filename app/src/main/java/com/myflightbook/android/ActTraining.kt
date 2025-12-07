@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class ActTraining : ListFragment(), OnItemClickListener {
         TrainingItem(R.string.lblStudents, "students"),
         TrainingItem(R.string.lblInstructors, "instructors"),
         TrainingItem(R.string.lblReqSigs, "reqsigs"),
-        TrainingItem(R.string.lblEndorsements, endorseItem),
+        TrainingItem(R.string.lblEndorsements, ENDORSE_ITEM),
         TrainingItem(R.string.lbl8710, "8710"),
         TrainingItem(R.string.lblModelRollup, "ModelRollup"),
         TrainingItem(R.string.lblTimeRollup, "TimeRollup"),
@@ -56,9 +56,9 @@ class ActTraining : ListFragment(), OnItemClickListener {
 
     private inner class TrainingAdapter(
         c: Context?,
-        private val m_rgti: Array<TrainingItem>?
+        private val mRgti: Array<TrainingItem>?
     ) : ArrayAdapter<TrainingItem?>(
-        c!!, R.layout.trainingitem, m_rgti!!
+        c!!, R.layout.trainingitem, mRgti!!
     ) {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var v = convertView
@@ -67,8 +67,8 @@ class ActTraining : ListFragment(), OnItemClickListener {
                     (requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
                 v = vi.inflate(R.layout.trainingitem, parent, false)
             }
-            if (m_rgti == null) return v!!
-            val ti = m_rgti[position]
+            if (mRgti == null) return v!!
+            val ti = mRgti[position]
             val tvti = v!!.findViewById<TextView>(R.id.txtTrainingItem)
             tvti.text = this@ActTraining.getString(ti.idTitle)
             return v
@@ -152,6 +152,6 @@ class ActTraining : ListFragment(), OnItemClickListener {
     }
 
     companion object {
-        private const val endorseItem = "endorse"
+        private const val ENDORSE_ITEM = "endorse"
     }
 }

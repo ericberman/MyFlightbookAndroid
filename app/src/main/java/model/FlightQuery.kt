@@ -105,7 +105,6 @@ open class FlightQuery : SoapableObject(), KvmSerializable, Serializable {
     var isTailwheel = false
     var isMotorglider = false
     var isMultiEngineHeli = false
-    @Suppress("MemberVisibilityCanBePrivate")
     var queryName = ""
     var aircraftInstanceTypes = AircraftInstanceRestriction.AllAircraft
     var engineType = EngineTypeRestriction.AllEngines

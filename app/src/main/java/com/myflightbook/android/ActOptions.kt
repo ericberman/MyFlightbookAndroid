@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2024 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -58,6 +57,7 @@ import model.MFBTakeoffSpeed.takeOffSpeedIndex
 import model.MFBUtil.alert
 import java.text.DateFormat
 import java.util.*
+import androidx.core.net.toUri
 
 
 class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedListener {
@@ -427,7 +427,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
 
         t = findViewById(R.id.txtCopyright) as TextView
         t.text = String.format(Locale.getDefault(), "%s %s %s", getString(R.string.lblCopyright), MFBMain.versionName,
-        if (MFBConstants.fIsDebug) " - DEBUG (" + MFBConstants.szIP + ")" else "")
+        if (MFBConstants.IS_DEBUG) " - DEBUG (" + MFBConstants.szIP + ")" else "")
 
         updateMapColors()
     }
@@ -442,12 +442,12 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         val i = sp.selectedItemPosition
         val spid = sp.id
         if (spid == R.id.spnAutoHobbs) MFBLocation.fPrefAutoFillHobbs =
-            MFBLocation.AutoFillOptions.values()[i] else if (spid == R.id.spnAutoTime) MFBLocation.fPrefAutoFillTime =
-            MFBLocation.AutoFillOptions.values()[i] else if (spid == R.id.spnTOSpeed) takeOffSpeedIndex =
+            MFBLocation.AutoFillOptions.entries[i] else if (spid == R.id.spnAutoTime) MFBLocation.fPrefAutoFillTime =
+            MFBLocation.AutoFillOptions.entries[i] else if (spid == R.id.spnTOSpeed) takeOffSpeedIndex =
             i else if (spid == R.id.spnNightDef) MFBLocation.NightPref =
-            MFBLocation.NightCriteria.values()[i] else if (spid == R.id.spnNightLandingDef) MFBLocation.NightLandingPref =
-            MFBLocation.NightLandingCriteria.values()[i] else if (spid == R.id.spnFlightDetail) ActRecentsWS.flightDetail =
-            FlightDetail.values()[i] else if (spid == R.id.spnNightMode) {
+            MFBLocation.NightCriteria.entries[i] else if (spid == R.id.spnNightLandingDef) MFBLocation.NightLandingPref =
+            MFBLocation.NightLandingCriteria.entries[i] else if (spid == R.id.spnFlightDetail) ActRecentsWS.flightDetail =
+            FlightDetail.entries[i] else if (spid == R.id.spnNightMode) {
             if (MFBMain.NightModePref != i) {
                 MFBMain.NightModePref = i
                 AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref)
@@ -456,8 +456,8 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
                 }
             }
         } else if (spid == R.id.spnAltUnits) altitudeUnits =
-            AltitudeUnits.values()[i] else if (spid == R.id.spnSpeedUnits) speedUnits =
-            SpeedUnits.values()[i]
+            AltitudeUnits.entries[i] else if (spid == R.id.spnSpeedUnits) speedUnits =
+            SpeedUnits.entries[i]
         else if (spid == R.id.spnMapStyle) {
             ActFlightMap.MapType = pos + 1
         }
@@ -470,7 +470,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
     }
 
     private fun viewFacebook() {
-        val i = Intent(Intent.ACTION_VIEW, Uri.parse(MFBConstants.urlFacebook))
+        val i = Intent(Intent.ACTION_VIEW, MFBConstants.URI_FACEBOOK.toUri())
         startActivity(i)
     }
 
@@ -576,13 +576,13 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             R.id.btnContact -> contactUs()
             R.id.btnFacebook -> viewFacebook()
             R.id.btnCleanUp -> cleanUp()
-            R.id.btnSupport -> MFBUtil.alert(this, getString(R.string.btnSupport), getString(R.string.lblDonateOnMFB))
+            R.id.btnSupport -> alert(this, getString(R.string.btnSupport), getString(R.string.lblDonateOnMFB))
             R.id.btnAdditionalOptions -> {
                 val i = Intent(Intent.ACTION_VIEW)
-                i.setData(Uri.parse(authRedirWithParams(
+                i.data = authRedirWithParams(
                     "d=profile",
                     context, fNaked = false
-                )))
+                ).toUri()
                 startActivity(i)
             }
             R.id.btnManageAccount -> viewPreferences(authRedirWithParams("d=account", context))

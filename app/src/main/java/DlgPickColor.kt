@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2023 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ internal class DlgPickColor (mCallingActivity: FragmentActivity, private val inC
             })
         }
 
-        val btnOK = findViewById(R.id.btnOK) as Button?
+        val btnOK: Button? = findViewById(R.id.btnOK)
         btnOK!!.setOnClickListener { dismiss() }
     }
 

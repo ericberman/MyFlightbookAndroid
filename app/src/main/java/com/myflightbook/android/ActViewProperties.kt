@@ -296,8 +296,7 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
 
             // get the section for this property
             val szKey =
-                if (fp.getCustomPropertyType()!!.isFavorite) getString(R.string.lblPreviouslyUsed) else fp.labelString()
-                    .substring(0, 1).uppercase(
+                if (fp.getCustomPropertyType()!!.isFavorite) getString(R.string.lblPreviouslyUsed) else fp.labelString()[0].uppercase(
                         Locale.getDefault()
                     )
             if (szKey.compareTo(szKeyLast!!) != 0) {

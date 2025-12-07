@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@ package model
 
 import java.util.*
 
-class TemplateGroup private constructor(Group: Int, GroupName: String) : Comparable<TemplateGroup> {
-    private var group = Group
+class TemplateGroup private constructor(group: Int, groupName: String) : Comparable<TemplateGroup> {
+    private var group = group
     @JvmField
-    var groupDisplayName = GroupName
+    var groupDisplayName = groupName
     @JvmField
     var templates = ArrayList<PropertyTemplate>()
 
@@ -32,7 +32,7 @@ class TemplateGroup private constructor(Group: Int, GroupName: String) : Compara
     }
 
     override fun compareTo(other: TemplateGroup): Int {
-        return if (group == PropertyTemplate.GROUP_AUTO) if (other.group == 0) 0 else -1 else groupDisplayName.compareTo(
+        return if (this@TemplateGroup.group == PropertyTemplate.GROUP_AUTO) if (other.group == 0) 0 else -1 else groupDisplayName.compareTo(
             other.groupDisplayName
         )
     }

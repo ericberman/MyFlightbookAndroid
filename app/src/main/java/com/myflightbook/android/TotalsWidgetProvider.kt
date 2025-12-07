@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2023 MyFlightbook, LLC
+    Copyright (C) 2019-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,9 +59,7 @@ class TotalsWidgetProvider : AppWidgetProvider() {
             rv.setRemoteAdapter(android.R.id.list, intent)
 
             val baseIntent = Intent(context, MFBMain::class.java).setAction(MFBMain.ACTION_VIEW_TOTALS)
-            baseIntent.setPackage(context.packageName).setComponent(
-                ComponentName(context, MFBMain::class.java)
-            )
+            baseIntent.setPackage(context.packageName).component = ComponentName(context, MFBMain::class.java)
             
             val pendingIntent: PendingIntent = PendingIntent.getActivity(
                 /* context = */ context,
@@ -80,6 +78,6 @@ class TotalsWidgetProvider : AppWidgetProvider() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
     }
     companion object {
-        val WIDGET_IDS_KEY = "totalsproviderwidgetids"
+        const val WIDGET_IDS_KEY = "totalsproviderwidgetids"
     }
 }

@@ -228,7 +228,7 @@ import androidx.core.content.edit
         super.onCreate(savedInstanceState)
         // need to restore this here because OnResume may come after the onActivityResult call
         val mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
-        mTempfilepath = mPrefs.getString(keyTempFileInProgress, "")
+        mTempfilepath = mPrefs.getString(KEY_TEMP_FILE_IN_PROGRESS, "")
 
         // Set up launchers for camera and gallery
 //        val chooseImageLauncher = registerForActivityResult(
@@ -282,7 +282,7 @@ import androidx.core.content.edit
                             fTemp.absolutePath // need to save this for when the picture comes back
                         val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
                         prefs.edit {
-                            putString(keyTempFileInProgress, mTempfilepath)
+                            putString(KEY_TEMP_FILE_IN_PROGRESS, mTempfilepath)
                         }
                         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                         val uriImage = FileProvider.getUriForFile(
@@ -326,7 +326,7 @@ import androidx.core.content.edit
                             fTemp.absolutePath // need to save this for when the picture comes back
                         val prefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)
                         prefs.edit {
-                            putString(keyTempFileInProgress, mTempfilepath)
+                            putString(KEY_TEMP_FILE_IN_PROGRESS, mTempfilepath)
                         }
                         val uriImage = FileProvider.getUriForFile(
                             requireContext(),
@@ -436,7 +436,7 @@ import androidx.core.content.edit
             try {
                 // TableRow tr = new TableRow(this);
                 val tr = l.inflate(R.layout.imageitem, tl, false) as TableRow
-                tr.id = MFBImageInfo.idImageGalleryIdBase + i++
+                tr.id = MFBImageInfo.ID_IMAGE_GALLERY_BASE + i++
                 val iv = tr.findViewById<ImageView>(R.id.imageItemView)
                 (tr.findViewById<View>(R.id.imageItemComment) as TextView).text = mfbii.comment
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -635,7 +635,7 @@ import androidx.core.content.edit
     } //endregion
 
     companion object {
-        private const val keyTempFileInProgress = "uriFileInProgress"
+        private const val KEY_TEMP_FILE_IN_PROGRESS = "uriFileInProgress"
         private const val CAMERA_PERMISSION_IMAGE = 83
         private const val CAMERA_PERMISSION_VIDEO = 84
         private const val GALLERY_PERMISSION = 85

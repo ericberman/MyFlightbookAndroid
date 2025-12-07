@@ -159,10 +159,10 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
         val bmap = MFBImageInfo.getRoundedCornerBitmap(
             mfbii.bitmapFromThumb()!!,
             Color.LTGRAY,
-            RadiusImage,
-            BorderImage,
-            DimensionImageOverlay,
-            DimensionImageOverlay,
+            RADIUS_IMAGE,
+            BORDER_IMAGE,
+            DIMENSION_IMAGE_OVERLAY,
+            DIMENSION_IMAGE_OVERLAY,
             this@ActFlightMap
         )
         if (!mfbii.hasGeoTag())
@@ -558,9 +558,9 @@ class ActFlightMap : AppCompatActivity(), OnMapReadyCallback, View.OnClickListen
     // endregion
 
     companion object {
-        private const val DimensionImageOverlay = 60
-        private const val RadiusImage = 10
-        private const val BorderImage = 3
+        private const val DIMENSION_IMAGE_OVERLAY = 60
+        private const val RADIUS_IMAGE = 10
+        private const val BORDER_IMAGE = 3
         private const val ZOOM_LEVEL_AIRPORT = 13
         private const val ZOOM_LEVEL_AREA = 8
 

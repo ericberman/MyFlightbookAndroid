@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ import kotlinx.coroutines.launch
 import model.MFBImageInfo.ImageCacheCompleted
 
 class LazyThumbnailLoader(
-    private val m_rgItems: Array<ThumbnailedItem>?,
-    private val m_li: BaseAdapter,
+    private val mRgitems: Array<ThumbnailedItem>?,
+    private val mLi: BaseAdapter,
     private val scope : LifecycleCoroutineScope
 ) : ImageCacheCompleted {
     interface ThumbnailedItem {
@@ -34,10 +34,10 @@ class LazyThumbnailLoader(
     }
 
     fun start() {
-        if (m_rgItems == null)
+        if (mRgitems == null)
             return
 
-        for (ti in m_rgItems) {
+        for (ti in mRgitems) {
             val delegate = this
             scope.launch(Dispatchers.IO) {
                 val mfbii = ti.defaultImage
@@ -52,6 +52,6 @@ class LazyThumbnailLoader(
     }
 
     override fun imgCompleted(sender: MFBImageInfo?) {
-        m_li.notifyDataSetChanged()
+        mLi.notifyDataSetChanged()
     }
 }

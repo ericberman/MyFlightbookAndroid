@@ -38,6 +38,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import model.MFBConstants
 import java.io.File
+import androidx.core.net.toUri
 
 class ActWebView : AppCompatActivity() {
     private var szTempFile: String? = ""
@@ -58,8 +59,8 @@ class ActWebView : AppCompatActivity() {
         val btnBack = findViewById<Button>(R.id.btnWebBack)
         val btnForward = findViewById<Button>(R.id.btnWebForward)
         val btnRefresh = findViewById<Button>(R.id.btnWebRefresh)
-        val szURL = this.intent.getStringExtra(MFBConstants.intentViewURL)
-        szTempFile = this.intent.getStringExtra(MFBConstants.intentViewTempFile)
+        val szURL = this.intent.getStringExtra(MFBConstants.INTENT_VIEW_URL)
+        szTempFile = this.intent.getStringExtra(MFBConstants.INTENT_VIEW_TEMPFILE)
         mFileChooser = registerForActivityResult(
             StartActivityForResult()
         ) { result: ActivityResult ->
@@ -101,7 +102,7 @@ class ActWebView : AppCompatActivity() {
                 val intent = fileChooserParams.createIntent()
                 try {
                     mFileChooser!!.launch(intent)
-                } catch (e: ActivityNotFoundException) {
+                } catch (_: ActivityNotFoundException) {
                     uploadMessage = null
                     Toast.makeText(
                         this@ActWebView.applicationContext,
@@ -155,7 +156,7 @@ class ActWebView : AppCompatActivity() {
                     ignoreCase = true
                 ) == 0 || mimetype.compareTo("application/pdf", ignoreCase = true) == 0
             ) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                startActivity(Intent(Intent.ACTION_VIEW, url?.toUri()))
                 finish()
             }
         }
@@ -177,17 +178,17 @@ class ActWebView : AppCompatActivity() {
         fun viewTempFile(a: Activity, f: File) {
             val i = Intent(a, ActWebView::class.java)
             i.putExtra(
-                MFBConstants.intentViewURL,
+                MFBConstants.INTENT_VIEW_URL,
                 FileProvider.getUriForFile(a, BuildConfig.APPLICATION_ID + ".provider", f)
                     .toString()
             )
-            i.putExtra(MFBConstants.intentViewTempFile, f.absolutePath)
+            i.putExtra(MFBConstants.INTENT_VIEW_TEMPFILE, f.absolutePath)
             a.startActivity(i)
         }
 
         fun viewURL(a: Activity, szURL: String?) {
             val i = Intent(a, ActWebView::class.java)
-            i.putExtra(MFBConstants.intentViewURL, szURL)
+            i.putExtra(MFBConstants.INTENT_VIEW_URL, szURL)
             a.startActivity(i)
         }
     }

@@ -87,19 +87,19 @@ class ActAircraft : ListFragment(), OnItemClickListener, Invalidatable {
                 svc: AircraftSvc, result : Array<Aircraft>? ->
 
                 val rgac = result ?: arrayOf()
-                if (rgac.isEmpty())
+                if (rgac.isEmpty()) {
                     MFBUtil.alert(
                         requireContext(),
                         getString(R.string.txtError),
                         svc.lastError.ifEmpty { getString(R.string.errNoAircraftFound) }
                     )
-                else {
+                } else {
                     val lstFavorite = ArrayList<Aircraft>()
                     val lstArchived = ArrayList<Aircraft>()
                     for (ac in rgac) {
                         if (ac.hideFromSelection) lstArchived.add(ac) else lstFavorite.add(ac)
                     }
-                    mFhasheaders = lstArchived.size > 0 && lstFavorite.size > 0
+                    mFhasheaders = lstArchived.isNotEmpty() && lstFavorite.isNotEmpty()
                     val arRows = ArrayList<AircraftRowItem>()
                     if (mFhasheaders) arRows.add(AircraftRowItem(getString(R.string.lblFrequentlyUsedAircraft)))
                     for (ac in lstFavorite) arRows.add(AircraftRowItem(ac))

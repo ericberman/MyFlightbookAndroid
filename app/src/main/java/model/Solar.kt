@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,18 +24,18 @@ internal object Solar {
     /// <summary>
     /// Calculate the UTC Time of sunrise for the given day at the given location on earth
     /// </summary>
-    /// <param name="JD">Julian day</param>
+    /// <param name="julianDate">Julian day</param>
     /// <param name="latitude">Latitude of observer</param>
     /// <param name="longitude">Longitude of observer</param>
     /// <returns>Time in minutes from zero Z</returns>
-    fun calcSunriseUTC(JD: Double, latitude: Double, longitude: Double): Double {
-        val t = calcTimeJulianCent(JD)
+    fun calcSunriseUTC(julianDate: Double, latitude: Double, longitude: Double): Double {
+        val t = calcTimeJulianCent(julianDate)
 
         // *** Find the time of solar noon at the location, and use
         //     that declination. This is better than start of the
         //     Julian day
         val noonmin = calcSolNoonUTC(t, longitude)
-        val tnoon = calcTimeJulianCent(JD + noonmin / 1440.0)
+        val tnoon = calcTimeJulianCent(julianDate + noonmin / 1440.0)
 
         // *** First pass to approximate sunrise (using solar noon)
         var eqTime = calcEquationOfTime(tnoon)
@@ -59,18 +59,18 @@ internal object Solar {
     /// <summary>
     /// calculate the Universal Coordinated Time (UTC) of sunset for the given day at the given location on earth
     /// </summary>
-    /// <param name="JD">Julian Day</param>
+    /// <param name="julianDate">Julian Day</param>
     /// <param name="latitude">latitude of observer in degrees</param>
     /// <param name="longitude">longitude of observer in degrees</param>
     /// <returns>time in minutes from zero Z</returns>
-    fun calcSunsetUTC(JD: Double, latitude: Double, longitude: Double): Double {
-        val t = calcTimeJulianCent(JD)
+    fun calcSunsetUTC(julianDate: Double, latitude: Double, longitude: Double): Double {
+        val t = calcTimeJulianCent(julianDate)
 
         // *** Find the time of solar noon at the location, and use
         //     that declination. This is better than start of the
         //     Julian day
         val noonmin = calcSolNoonUTC(t, longitude)
-        val tnoon = calcTimeJulianCent(JD + noonmin / 1440.0)
+        val tnoon = calcTimeJulianCent(julianDate + noonmin / 1440.0)
 
         // First calculates sunrise and approx length of day
         var eqTime = calcEquationOfTime(tnoon)
@@ -132,10 +132,10 @@ internal object Solar {
     /// <param name="lat">The Latitude, in degrees</param>
     /// <param name="lon">The Longitude, in degrees</param>
     /// <param name="minutes">Minutes into the day (UTC)</param>
-    /// <param name="JD">The Julian Date</param>
+    /// <param name="julianDate">The Julian Date</param>
     /// <returns>Angle of the sun, in degrees</returns>
-    fun calcSolarAngle(lat: Double, lon: Double, JD: Double, minutes: Double): Double {
-        val julianCentury = calcTimeJulianCent(JD + minutes / 1440.0)
+    fun calcSolarAngle(lat: Double, lon: Double, julianDate: Double, minutes: Double): Double {
+        val julianCentury = calcTimeJulianCent(julianDate + minutes / 1440.0)
         val sunDeclinationRad = degToRad(calcSunDeclination(julianCentury))
         val latRad = degToRad(lat)
         val eqOfTime = calcEquationOfTime(julianCentury)

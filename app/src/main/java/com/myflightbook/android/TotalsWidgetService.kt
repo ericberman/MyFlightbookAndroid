@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2019-2022 MyFlightbook, LLC
+    Copyright (C) 2019-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ import model.Totals
 import model.Totals.NumType
 import java.text.DecimalFormat
 import java.util.*
+import androidx.core.content.edit
 
 class TotalsWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
@@ -45,15 +46,15 @@ class TotalsWidgetService : RemoteViewsService() {
     }
 }
 
-internal class TotalsRemoteViewsFactory(private val mContext: Context, @Suppress("UNUSED_PARAMETER") intent: Intent?) :
+internal class TotalsRemoteViewsFactory(private val mContext: Context, intent: Intent?) :
     RemoteViewsFactory {
     private var mTotalsItmes: List<Totals> = ArrayList()
     override fun onCreate() {
         // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
-        val prefs = mContext.getSharedPreferences(prefTotals, Activity.MODE_PRIVATE)
-        val szTotals = prefs.getString(prefTotalsLast, null)
+        val prefs = mContext.getSharedPreferences(PREF_TOTALS, Activity.MODE_PRIVATE)
+        val szTotals = prefs.getString(PREF_TOTALS_LAST, null)
         if (szTotals != null) {
             val rgti = deserializeFromString<Array<Totals>>(szTotals) ?: arrayOf()
             mTotalsItmes = listOf(*rgti)
@@ -140,14 +141,14 @@ internal class TotalsRemoteViewsFactory(private val mContext: Context, @Suppress
         val ts = TotalsSvc()
         val rgti = ts.getTotalsForUser(AuthToken.m_szAuthToken, FlightQuery(), mContext)
         mTotalsItmes = listOf(*rgti)
-        val prefs = mContext.getSharedPreferences(prefTotals, Activity.MODE_PRIVATE)
-        val ed = prefs.edit()
-        ed.putString(prefTotalsLast, serializeToString(rgti))
-        ed.apply()
+        val prefs = mContext.getSharedPreferences(PREF_TOTALS, Activity.MODE_PRIVATE)
+        prefs.edit {
+            putString(PREF_TOTALS_LAST, serializeToString(rgti))
+        }
     }
 
     companion object {
-        private const val prefTotals = "prefTotalsWidget"
-        private const val prefTotalsLast = "prefTotalsWidgetLast"
+        private const val PREF_TOTALS = "prefTotalsWidget"
+        private const val PREF_TOTALS_LAST = "prefTotalsWidgetLast"
     }
 }

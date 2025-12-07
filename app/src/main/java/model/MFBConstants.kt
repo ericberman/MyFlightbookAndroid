@@ -26,29 +26,29 @@ import java.net.URLEncoder
 import java.util.*
 
 object MFBConstants {
-    const val fIsDebug = false // Set to true to use one of the debug servers specified below
-    const val fFakeGPS = false // Set to true to simulate GPS when hitting "Engine Start"
-    private const val fDebugLocal =
+    const val IS_DEBUG = false // Set to true to use one of the debug servers specified below
+    const val FAKE_GPS = false // Set to true to simulate GPS when hitting "Engine Start"
+    private const val DEBUG_LOCAL =
         false // If debug, this specifies a local (IP-based or LocalHost based) debug server, thus suppressing https
-    private const val szIPDebug = "developer.myflightbook.com"
-    private const val szIPDebugRoam = "staging.myflightbook.com"    // Note that you can use 10.0.2.2 to reference the host's localhost.
-    private const val szIPRelease = "myflightbook.com"
+    private const val IP_DEBUG = "developer.myflightbook.com"
+    private const val IP_DEBUG_ROAM = "staging.myflightbook.com"    // Note that you can use 10.0.2.2 to reference the host's localhost.
+    private const val IP_RELEASE = "myflightbook.com"
 
     // Configuration constants
     @JvmField
-    val szIP = if (fIsDebug) if (fDebugLocal) szIPDebug else szIPDebugRoam else szIPRelease
+    val szIP = if (IS_DEBUG) if (DEBUG_LOCAL) IP_DEBUG else IP_DEBUG_ROAM else IP_RELEASE
 
     // DB Versioning
-    const val DBVersionMain = 36
-    const val DBVersionAirports = 58
+    const val DB_VERSION_MAIN = 36
+    const val DB_VERSION_AIRPORTS = 58
 
     // To set the DB version in Sqlite: PRAGMA user_version = x.  BE SURE TO DO THIS OR ELSE COPY DATABASE WILL NOT WORK
     // To read it: PRAGMA user_version
     // images
-    const val szURL_FlightPicture = "/logbook/public/uploadpicture.aspx"
-    const val szURL_AircraftPicture = "/logbook/public/uploadairplanepicture.aspx?id=1"
-    const val szIMG_KEY_Flight = "idFlight"
-    const val szIMG_KEY_Aircraft = "txtAircraft"
+    const val URL_FLIGHT_PICTURE = "/logbook/public/uploadpicture.aspx"
+    const val URL_AIRPLANE_PICTURE = "/logbook/public/uploadairplanepicture.aspx?id=1"
+    const val IMG_KEY_FLIGHT = "idFlight"
+    const val IMG_KEY_AIRCRAFT = "txtAircraft"
     const val MPS_TO_KNOTS = 1.94384449
     const val MPS_TO_MPH = 2.23694
     const val MPS_TO_KPH = 3.6000059687997
@@ -67,10 +67,10 @@ object MFBConstants {
     const val FULL_STOP_SPEED = 5 // 5kts or less is full stop
     @JvmField
     val MIN_SAMPLE_RATE_TAXI =
-        if (fIsDebug) MIN_SAMPLE_RATE_TAXI_DEBUG else MIN_SAMPLE_RATE_TAXI_RELEASE
+        if (IS_DEBUG) MIN_SAMPLE_RATE_TAXI_DEBUG else MIN_SAMPLE_RATE_TAXI_RELEASE
     @JvmField
     val MIN_SAMPLE_RATE_AIRBORNE =
-        if (fIsDebug) MIN_SAMPLE_RATE_AIRBORNE_DEBUG else MIN_SAMPLE_RATE_AIRBORNE_RELEASE
+        if (IS_DEBUG) MIN_SAMPLE_RATE_AIRBORNE_DEBUG else MIN_SAMPLE_RATE_AIRBORNE_RELEASE
 
     // minimum horizontal accuracy for us not to throw things out.
     const val MIN_ACCURACY = 50.0f
@@ -79,18 +79,18 @@ object MFBConstants {
     const val BOGUS_SAMPLE_COUNT = 1
 
     // intents
-    const val intentViewURL = "com.myflightbook.android.URL"
-    const val intentViewTempFile = "com.myflightbook.android.TempFile"
+    const val INTENT_VIEW_URL = "com.myflightbook.android.URL"
+    const val INTENT_VIEW_TEMPFILE = "com.myflightbook.android.TempFile"
 
     // URLs
     // TODO: These need to be branded and, in some cases, URLencoded.
-    const val urlPrivacy = "https://%s/logbook/mvc/pub/Privacy?naked=1&%s"
-    const val urlTandC = "https://%s/logbook/mvc/pub/TandC?naked=1&%s"
-    const val urlFacebook = "https://www.facebook.com/pages/MyFlightbook/145794653106"
-    const val urlCrashReport = "https://%s/logbook/mvc/pub/CrashReport"
-    private const val urlNoNight = "night=no"
-    private const val urlNight = "night=yes"
-    private const val urlAuthRedirBase =
+    const val URI_PRIVACY = "https://%s/logbook/mvc/pub/Privacy?naked=1&%s"
+    const val URI_TERMS_AND_CONDITIONS = "https://%s/logbook/mvc/pub/TandC?naked=1&%s"
+    const val URI_FACEBOOK = "https://www.facebook.com/pages/MyFlightbook/145794653106"
+    const val URI_CRASH_REPORT = "https://%s/logbook/mvc/pub/CrashReport"
+    private const val URL_PARAM_NO_NIGHT = "night=no"
+    private const val URL_PARAM_NIGHT = "night=yes"
+    private const val URL_AUTH_REDIR_BASE =
         "https://%s/logbook/mvc/auth/authredir?u=%s&p=%s&naked=%s&%s"
 
     // Formatting strings
@@ -100,9 +100,9 @@ object MFBConstants {
     // Utilities
     @JvmStatic
     fun nightParam(c: Context?): String {
-        if (c == null) return urlNoNight
+        if (c == null) return URL_PARAM_NO_NIGHT
         val currentNightMode = c.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) urlNight else urlNoNight
+        return if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) URL_PARAM_NIGHT else URL_PARAM_NO_NIGHT
     }
 
     @JvmStatic
@@ -111,12 +111,12 @@ object MFBConstants {
         return if (szParams == null) "" else try {
             String.format(
                 Locale.US,
-                urlAuthRedirBase,
+                URL_AUTH_REDIR_BASE,
                 szIP,
                 URLEncoder.encode(AuthToken.m_szEmail, "UTF-8"),
                 URLEncoder.encode(AuthToken.m_szPass, "UTF-8"),
                 if (fNaked) "1" else "0",
-                if (fUseNight) nightParam(c) else urlNoNight
+                if (fUseNight) nightParam(c) else URL_PARAM_NO_NIGHT
             ) + if (szParams.isEmpty()) "" else "&$szParams"
         } catch (_: UnsupportedEncodingException) {
             ""

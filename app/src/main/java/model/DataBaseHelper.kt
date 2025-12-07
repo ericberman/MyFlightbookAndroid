@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@ import java.io.*
 
 // thanks to http://www.reigndesign.com/blog/using-your-own-sqlite-database-in-android-applications/
 // for the code here.  IMPORTANT: Follow code at top for create/insert and _id
-class DataBaseHelper(context: Context, private val m_DBName: String, dbVersion: Int) :
-    SQLiteOpenHelper(context, m_DBName, null, dbVersion) {
+class DataBaseHelper(context: Context, private val mDbname: String, dbVersion: Int) :
+    SQLiteOpenHelper(context, mDbname, null, dbVersion) {
     private var myDataBase: SQLiteDatabase? = null
-    private val mDBFileName: String = context.getDatabasePath(m_DBName).absolutePath
+    private val mDBFileName: String = context.getDatabasePath(mDbname).absolutePath
     private val mFilesDir: String = context.filesDir.path
     private val mAssetManager: AssetManager = context.assets
 
@@ -109,7 +109,7 @@ class DataBaseHelper(context: Context, private val m_DBName: String, dbVersion: 
         try {
             // now put the pieces of the DB together (see above)
             val szAsset =
-                if (m_DBName.compareTo(DB_NAME_MAIN) == 0) szDBNameMain else szDBNameAirports
+                if (mDbname.compareTo(DB_NAME_MAIN) == 0) SZ_DB_NAME_MAIN else SZ_DB_NAME_AIRPORTS
             myInput = mAssetManager.open(szAsset)
             // transfer bytes from the inputfile to the outputfile
             val buffer = ByteArray(1024)
@@ -150,7 +150,7 @@ class DataBaseHelper(context: Context, private val m_DBName: String, dbVersion: 
 
     override fun onCreate(db: SQLiteDatabase) {}
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (m_DBName.compareTo(DB_NAME_MAIN) == 0) {
+        if (mDbname.compareTo(DB_NAME_MAIN) == 0) {
             Log.e(
                 MFBConstants.LOG_TAG,
                 String.format("Upgrading main DB from %d to %d", oldVersion, newVersion)
@@ -184,8 +184,8 @@ class DataBaseHelper(context: Context, private val m_DBName: String, dbVersion: 
         // private static String DB_PATH = "/data/data/com.myflightbook.android/databases/";
         const val DB_NAME_MAIN = "mfbAndroid.sqlite"
         const val DB_NAME_AIRPORTS = "mfbAirports.sqlite"
-        private const val szDBNameMain = "mfbAndroid.sqlite"
-        private const val szDBNameAirports = "mfbAirport.sqlite"
+        private const val SZ_DB_NAME_MAIN = "mfbAndroid.sqlite"
+        private const val SZ_DB_NAME_AIRPORTS = "mfbAirport.sqlite"
     }
 
 }

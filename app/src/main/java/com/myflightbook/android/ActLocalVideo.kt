@@ -38,8 +38,8 @@ class ActLocalVideo : AppCompatActivity() {
             view.setPadding(0, statusBarHeight, 0, 0)
             insets
         }
-        val szURL = this.intent.getStringExtra(MFBConstants.intentViewURL)
-        szTempFile = this.intent.getStringExtra(MFBConstants.intentViewTempFile)
+        val szURL = this.intent.getStringExtra(MFBConstants.INTENT_VIEW_URL)
+        szTempFile = this.intent.getStringExtra(MFBConstants.INTENT_VIEW_TEMPFILE)
         val video = findViewById<VideoView>(R.id.video)
         // Load and start the movie
         video.setVideoURI(szURL?.toUri())

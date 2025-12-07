@@ -85,8 +85,8 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         FlightImage, AircraftImage
     }
 
-    private var mSzurl = MFBConstants.szURL_FlightPicture
-    private var mKeyname = MFBConstants.szIMG_KEY_Flight
+    private var mSzurl = MFBConstants.URL_FLIGHT_PICTURE
+    private var mKeyname = MFBConstants.IMG_KEY_FLIGHT
     private var mKey = ""
 
     interface ImageCacheCompleted {
@@ -173,12 +173,12 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         mPd = pd
         when (pd) {
             PictureDestination.FlightImage -> {
-                mSzurl = MFBConstants.szURL_FlightPicture
-                mKeyname = MFBConstants.szIMG_KEY_Flight
+                mSzurl = MFBConstants.URL_FLIGHT_PICTURE
+                mKeyname = MFBConstants.IMG_KEY_FLIGHT
             }
             PictureDestination.AircraftImage -> {
-                mSzurl = MFBConstants.szURL_AircraftPicture
-                mKeyname = MFBConstants.szIMG_KEY_Aircraft
+                mSzurl = MFBConstants.URL_AIRPLANE_PICTURE
+                mKeyname = MFBConstants.IMG_KEY_AIRCRAFT
             }
         }
     }
@@ -854,7 +854,7 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
         private const val TH_HEIGHT = 120
         private const val EXTENSION_IMG = ".jpg"
         private const val EXTENSION_VID = ".3gp"
-        const val idImageGalleryIdBase = -2000
+        const val ID_IMAGE_GALLERY_BASE = -2000
         const val TABLENAME = "PicturesToPost"
         @JvmStatic
         fun getLocalImagesForId(id: Long, pd: PictureDestination): Array<MFBImageInfo> {
@@ -951,9 +951,9 @@ class MFBImageInfo : SoapableObject, KvmSerializable, Serializable {
             }
         }
 
-        private fun resizeRatio(maxHeight: Int, maxWidth: Int, Height: Int, Width: Int): Float {
-            val ratioX = maxWidth.toFloat() / Width.toFloat()
-            val ratioY = maxHeight.toFloat() / Height.toFloat()
+        private fun resizeRatio(maxHeight: Int, maxWidth: Int, height: Int, width: Int): Float {
+            val ratioX = maxWidth.toFloat() / width.toFloat()
+            val ratioY = maxHeight.toFloat() / height.toFloat()
             var minRatio = 1.0f
             if (ratioX < 1.0 || ratioY < 1.0) {
                 minRatio = ratioX.coerceAtMost(ratioY)

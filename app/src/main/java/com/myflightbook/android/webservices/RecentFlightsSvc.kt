@@ -94,11 +94,11 @@ class RecentFlightsSvc : MFBSoap() {
             Aircraft.updateHobbsForAircraft(le.hobbsEnd, le.idAircraft)
             if (le.rgCustomProperties.isNotEmpty()) {
                 for (fp in le.rgCustomProperties) {
-                    if (fp.idPropType == CustomPropertyType.idPropTypeTachEnd) {
+                    if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_TACH_END) {
                         Aircraft.updateTachForAircraft(fp.decValue, le.idAircraft)
                         break
                     }
-                    if (fp.idPropType == CustomPropertyType.idPropTypeFlightMeterEnd) {
+                    if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_FLIGHT_METER_END) {
                         Aircraft.updateFlightMeterForAircraft(fp.decValue, le.idAircraft)
                         break
                     }

@@ -80,7 +80,7 @@ open class MFBSoap internal constructor() {
         envelope.setOutputSoapObject(mRequest)
         val url = "https://" + MFBConstants.szIP + "/logbook/public/webservice.asmx"
         val androidHttpTransport = HttpTransportSE(url)
-        androidHttpTransport.debug = MFBConstants.fIsDebug
+        androidHttpTransport.debug = MFBConstants.IS_DEBUG
         try {
             val headerList: MutableList<HeaderProperty?> = ArrayList()
             val l = Locale.getDefault()
@@ -95,12 +95,12 @@ open class MFBSoap internal constructor() {
             o = null
         }
 
-        if (MFBConstants.fIsDebug) {
+        if (MFBConstants.IS_DEBUG) {
             val sRequestDump = androidHttpTransport.requestDump;
             val sResponseDump = androidHttpTransport.responseDump;
             Log.i(MFBConstants.LOG_TAG, mRequest?.name ?: "(Unknown method)")
-            Log.i(MFBConstants.LOG_TAG, "request: " + sRequestDump)
-            Log.i(MFBConstants.LOG_TAG, "response: " + sResponseDump)
+            Log.i(MFBConstants.LOG_TAG, "request: $sRequestDump")
+            Log.i(MFBConstants.LOG_TAG, "response: $sResponseDump")
         }
         return o
     }

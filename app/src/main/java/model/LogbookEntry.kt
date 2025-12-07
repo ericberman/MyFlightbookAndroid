@@ -347,10 +347,10 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         get() = !isNullDate(dtFlightEnd)
 
     val isKnownBlockOut: Boolean
-        get() = !isNullDate(propDateForID(CustomPropertyType.idPropTypeBlockOut))
+        get() = !isNullDate(propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT))
 
     val isKnownBlockIn: Boolean
-        get() = !isNullDate(propDateForID(CustomPropertyType.idPropTypeBlockIn))
+        get() = !isNullDate(propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN))
 
     private val isKnownEngineTime: Boolean
         get() = isKnownEngineStart && isKnownEngineEnd
@@ -369,7 +369,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     val isEmptyFlight: Boolean
         get() {
             val fHasAtMostTachStart =
-                rgCustomProperties.isEmpty() || rgCustomProperties.size == 1 && rgCustomProperties[0].idPropType == CustomPropertyType.idPropTypeTachStart
+                rgCustomProperties.isEmpty() || rgCustomProperties.size == 1 && rgCustomProperties[0].idPropType == CustomPropertyType.ID_PROP_TYPE_TACH_START
             return idFlight == ID_NEW_FLIGHT && szComments.isEmpty() && szRoute.isEmpty() && cApproaches == 0 && cLandings == 0 && cFullStopLandings == 0 && cNightLandings == 0 &&
                     !fHold && hobbsEnd == 0.0 && decNight == 0.0 && decSimulatedIFR == 0.0 && decIMC == 0.0 && decXC == 0.0 && decDual == 0.0 && decGrndSim == 0.0 && decCFI == 0.0 && decSIC == 0.0 && decPIC == 0.0 && decTotal == 0.0 &&
                     fHasAtMostTachStart
@@ -426,7 +426,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
 
         // find the nighttime takeoff property
         for (fp in rgfpAll) {
-            if (fp.idPropType == CustomPropertyType.idPropTypeNightTakeOff) {
+            if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_NIGHT_TAKEOFF) {
                 // increment it, distill the properties, and save 'em to the db.
                 fp.intValue++
                 val rgfpUpdated = distillList(rgfpAll)
@@ -468,7 +468,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
 
         // find the nighttime takeoff property
         for (fp in rgfpAll) {
-            if (fp.idPropType == CustomPropertyType.idPropTypeApproachDesc) {
+            if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_APPROACH_DESCRIPTION) {
                 fp.stringValue = (fp.stringValue + " " + szApproachDesc).trim { it <= ' ' }
                 val rgfpUpdated = distillList(rgfpAll)
                 rewritePropertiesForFlight(idLocalDB, rgfpUpdated)
@@ -1107,11 +1107,11 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
                 var blockOut: Long = 0
                 var blockIn: Long = 0
                 for (fp in rgCustomProperties) {
-                    if (fp.idPropType == CustomPropertyType.idPropTypeBlockIn) blockIn =
+                    if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_IN) blockIn =
                         MFBUtil.removeSeconds(
                             fp.dateValue!!
                         ).time
-                    if (fp.idPropType == CustomPropertyType.idPropTypeBlockOut) blockOut =
+                    if (fp.idPropType == CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT) blockOut =
                         MFBUtil.removeSeconds(
                             fp.dateValue!!
                         ).time
@@ -1150,24 +1150,24 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             return
         }
         if (rate == 0.0) return
-        val fpTachStart = propertyWithID(CustomPropertyType.idPropTypeTachStart)
-        val fpTachEnd = propertyWithID(CustomPropertyType.idPropTypeTachEnd)
+        val fpTachStart = propertyWithID(CustomPropertyType.ID_PROP_TYPE_TACH_START)
+        val fpTachEnd = propertyWithID(CustomPropertyType.ID_PROP_TYPE_TACH_END)
         val tachStart: Double = fpTachStart?.decValue ?: 0.0
         val tachEnd: Double = fpTachEnd?.decValue ?: 0.0
         val time =
             if (hobbsEnd > hobbsStart && hobbsStart > 0) hobbsEnd - hobbsStart else if (tachEnd > tachStart && tachStart > 0) tachEnd - tachStart else decTotal
         val cost = rate * time
-        if (cost > 0) addOrSetPropertyDouble(CustomPropertyType.idPropTypeFlightCost, cost)
+        if (cost > 0) addOrSetPropertyDouble(CustomPropertyType.ID_PROP_TYPE_FLIGHT_COST, cost)
     }
 
     private fun autoFillFuel() {
-        val fpFuelAtStart = propertyWithID(CustomPropertyType.idPropTypeFuelAtStart)
-        val fpFuelAtEnd = propertyWithID(CustomPropertyType.idPropTypeFuelAtEnd)
+        val fpFuelAtStart = propertyWithID(CustomPropertyType.ID_PROP_TYPE_FUEL_AT_START)
+        val fpFuelAtEnd = propertyWithID(CustomPropertyType.ID_PROP_TYPE_FUEL_AT_END)
         val fuelConsumed = (fpFuelAtStart?.decValue ?: 0.0) - (fpFuelAtEnd?.decValue ?: 0.0)
         if (fuelConsumed > 0) {
-            addOrSetPropertyDouble(CustomPropertyType.idPropTypeFuelConsumed, fuelConsumed)
+            addOrSetPropertyDouble(CustomPropertyType.ID_PROP_TYPE_FUEL_CONSUMED, fuelConsumed)
             if (decTotal > 0)
-                addOrSetPropertyDouble(CustomPropertyType.idPropTypeFuelBurnRate, fuelConsumed / decTotal)
+                addOrSetPropertyDouble(CustomPropertyType.ID_PROP_TYPE_FUEL_BURN_RATE, fuelConsumed / decTotal)
         }
     }
 
@@ -1176,8 +1176,8 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         val dual = decDual
         val cfi = decCFI
         if (dual > 0 && cfi == 0.0 || cfi > 0 && dual == 0.0) {
-            val fpLessonStart = propertyWithID(CustomPropertyType.idPropTypeLessonStart)
-            val fpLessonEnd = propertyWithID(CustomPropertyType.idPropTypeLessonEnd)
+            val fpLessonStart = propertyWithID(CustomPropertyType.ID_PROP_TYPE_LESSON_START)
+            val fpLessonEnd = propertyWithID(CustomPropertyType.ID_PROP_TYPE_LESSON_END)
             if (fpLessonEnd == null || fpLessonStart == null || fpLessonEnd.dateValue!! <= fpLessonStart.dateValue
             ) return
             val tsLesson =
@@ -1191,7 +1191,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
             val tsNonGround = tsFlight.coerceAtLeast(tsEngine).coerceAtLeast(0.0)
             val groundHours = (tsLesson - tsNonGround) / MFBConstants.MS_PER_HOUR
             val idPropTarget =
-                if (dual > 0) CustomPropertyType.idPropTypeGroundInstructionReceived else CustomPropertyType.idPropTypeGroundInstructionGiven
+                if (dual > 0) CustomPropertyType.ID_PROP_TYPE_GROUND_INSTRUCTION_RECEIVED else CustomPropertyType.ID_PROP_TYPE_GROUND_INSTRUCTION_GIVEN
             if (groundHours > 0) addOrSetPropertyDouble(idPropTarget, groundHours)
         }
     }
@@ -1203,9 +1203,9 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
     }
 
     fun xfillValueForProperty(cpt : CustomPropertyType) :Double {
-        if (cpt.idPropType == CustomPropertyType.idPropTypeTachStart)
+        if (cpt.idPropType == CustomPropertyType.ID_PROP_TYPE_TACH_START)
             return Aircraft.getHighWaterTachForAircraft(idAircraft)
-        if (cpt.idPropType == CustomPropertyType.idPropTypeFlightMeterStart)
+        if (cpt.idPropType == CustomPropertyType.ID_PROP_TYPE_FLIGHT_METER_START)
             return Aircraft.getHighWaterMeterForAircraft(idAircraft)
         if (cpt.isTime())
             return decTotal
