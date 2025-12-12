@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2025 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,17 +24,13 @@ import org.ksoap2.serialization.SoapObject
 import org.ksoap2.serialization.SoapPrimitive
 import model.DBCache.DBCacheStatus
 import model.AuthResult
+import model.PackAndGo
 import java.lang.Exception
 
 /**
  * @author ericbe
  */
 class AuthToken : MFBSoap() {
-    fun flushCache() {
-        val dbc = DBCache()
-        dbc.flushCache(TABLE_AUTH, false)
-    }
-
     private fun hasCredentials(): Boolean {
         return m_szEmail.isNotEmpty() && m_szPass.isNotEmpty()
     }
@@ -129,9 +125,22 @@ class AuthToken : MFBSoap() {
         private const val TABLE_AUTH = "Authentications"
         @JvmField
         var APPTOKEN = ""
+        @JvmField
+        var isDeniedAgeGate = false
         @JvmStatic
         fun isValid(): Boolean {
             return m_szAuthToken!!.isNotEmpty() // need to check for expiration too
+        }
+        @JvmStatic
+        fun signOut() {
+            m_szPass = ""
+            m_szEmail = m_szPass
+            m_szAuthToken = m_szEmail
+            flushCache()
+        }
+        fun flushCache() {
+            val dbc = DBCache()
+            dbc.flushCache(TABLE_AUTH, false)
         }
     }
 }

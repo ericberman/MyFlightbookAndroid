@@ -65,7 +65,7 @@ internal class DlgSignIn(private val mCallingActivity: FragmentActivity) : Dialo
         val d = this
         val at = AuthToken()
         // make sure we don't use any existing credentials!!
-        at.flushCache()
+        AuthToken.flushCache()
         // Also flush any cached aircraft when we change users
         AircraftSvc().flushCache()
 

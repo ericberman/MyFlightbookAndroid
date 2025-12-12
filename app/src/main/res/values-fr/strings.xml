@@ -24,7 +24,7 @@
     <string name="signInPrompt">Vous devez avoir un compte sur MyFlightbook.com pour utiliser MyFlightbook sur Android.</string>
     <string name="statusNotSignedIn">Vous n\'êtes pas identifié. Merci de vous identifier ou de créer un compte.</string>
     <string name="statusSignedIn">Vous êtes connecté en tant que : %s.</string>
-    <string name="szSignIn">Se connecter…</string>
+    <string name="invalidAgeGate">Selon le Google Play Store, vous devez avoir au moins 16 ans ou avoir l\'autorisation parentale pour utiliser cette application.</string>    <string name="szSignIn">Se connecter…</string>
     <string name="szSignOut">Déconnexion</string>
     <string name="lblForgotPassword">Mot de passe oublié ? Réinitialisez-le sur MyFlightbook.com</string>
     <string name="createuser">Créez un compte…</string>
