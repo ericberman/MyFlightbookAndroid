@@ -59,7 +59,6 @@ import java.text.DateFormat
 import java.util.*
 import androidx.core.net.toUri
 
-
 class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedListener {
     enum class AltitudeUnits {
         Feet, Meters
@@ -254,10 +253,10 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             findViewById(R.id.headerPackAndGo)!!.visibility = View.VISIBLE
             findViewById(R.id.sectPackAndGo)!!.visibility = View.VISIBLE
         } else {
-            t!!.text = this.getString(R.string.statusNotSignedIn)
-            bSignIn!!.visibility = View.VISIBLE
+            t!!.text = this.getString(if (AuthToken.isDeniedAgeGate) R.string.invalidAgeGate else R.string.statusNotSignedIn)
+            bSignIn!!.visibility = if (AuthToken.isDeniedAgeGate) View.GONE else View.VISIBLE
             bSignOut!!.visibility = View.GONE
-            bCreateAccount!!.visibility = View.VISIBLE
+            bCreateAccount!!.visibility = if (AuthToken.isDeniedAgeGate) View.GONE else View.VISIBLE
             lblWhyAccount!!.visibility = View.VISIBLE
             findViewById(R.id.headerPackAndGo)!!.visibility = View.GONE
             findViewById(R.id.sectPackAndGo)!!.visibility = View.GONE
@@ -543,10 +542,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
                 d.show()
             }
             R.id.btnSignOut -> {
-                AuthToken.m_szPass = ""
-                AuthToken.m_szEmail = AuthToken.m_szPass
-                AuthToken.m_szAuthToken = AuthToken.m_szEmail
-                AuthToken().flushCache()
+                AuthToken.signOut()
                 PackAndGo(requireContext()).clearPackedData()
                 MFBMain.invalidateAll()
                 updateStatus()

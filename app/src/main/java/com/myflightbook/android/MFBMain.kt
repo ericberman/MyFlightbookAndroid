@@ -74,6 +74,12 @@ import model.Telemetry.Companion.telemetryFromURL
 import java.io.IOException
 import java.util.*
 import androidx.core.content.edit
+import com.google.android.play.agesignals.AgeSignalsManager
+import com.google.android.play.agesignals.AgeSignalsManagerFactory
+import com.google.android.play.agesignals.AgeSignalsRequest
+import com.google.android.play.agesignals.AgeSignalsResult
+import com.google.android.play.agesignals.model.AgeSignalsVerificationStatus
+import com.google.android.play.agesignals.testing.FakeAgeSignalsManager
 
 class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
     interface Invalidatable {
@@ -330,7 +336,51 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         Log.v(MFBConstants.LOG_TAG, "onCreate: set up GPS")
         // Set up the GPS service, but don't start it until OnResume
         if (getMainLocation() == null) setMainLocation(MFBLocation(this, false))
+        Log.v(MFBConstants.LOG_TAG, "onCreate: set up age signals")
+        setUpAgeSignals()
         Log.v(MFBConstants.LOG_TAG, "onCreate: finished")
+    }
+
+    private fun setUpAgeSignals() {
+
+        // Create an instance of a manager
+        var ageSignalsManager : AgeSignalsManager
+
+        if (MFBConstants.IS_DEBUG) {
+            ageSignalsManager = FakeAgeSignalsManager()
+            val fakeSupervisedUser =
+                AgeSignalsResult.builder()
+                    .setUserStatus(AgeSignalsVerificationStatus.SUPERVISED_APPROVAL_DENIED)
+                    .setAgeLower(13)
+                    .setAgeUpper(17)
+                    .setInstallId("fake_install_id")
+                    .build()
+            ageSignalsManager.setNextAgeSignalsResult(fakeSupervisedUser)
+        } else {
+            ageSignalsManager = AgeSignalsManagerFactory.create(getApplicationContext())
+        }
+
+        // Request an age signals check
+        ageSignalsManager
+            .checkAgeSignals(AgeSignalsRequest.builder().build())
+            .addOnSuccessListener { ageSignalsResult ->
+                // Store the install ID for later...
+                val installId = ageSignalsResult.installId()
+
+                val status = ageSignalsResult.userStatus()
+                if (status == AgeSignalsVerificationStatus.SUPERVISED_APPROVAL_DENIED ||
+                    ((status == AgeSignalsVerificationStatus.SUPERVISED || status == AgeSignalsVerificationStatus.SUPERVISED_APPROVAL_PENDING) &&
+                    (ageSignalsResult.ageLower() ?: 18) < 16)) {
+                    AuthToken.signOut()
+                    PackAndGo(getApplicationContext()).clearPackedData()
+                    invalidateAll()
+                    AuthToken.isDeniedAgeGate = true
+                    mViewPager?.currentItem = MFBTab.Options.ordinal
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+            }
     }
 
     override fun onMapsSdkInitialized(renderer: Renderer) {

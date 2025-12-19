@@ -62,6 +62,7 @@ android {
 dependencies {
     // JARs
     implementation files('libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar')
+    implementation 'com.google.android.play:age-signals:0.0.2'
 
     // Kotlin
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'

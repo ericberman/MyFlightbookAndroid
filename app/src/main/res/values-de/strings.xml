@@ -24,7 +24,7 @@
     <string name="signInPrompt">Du benötigst einen Account bei MyFlightbook.com, um MyFlightbook für Android zu nutzen.</string>
     <string name="statusNotSignedIn">Du bist nicht angemeldet. Bitte melde dich an oder erstelle einen Account.</string>
     <string name="statusSignedIn">Du bist als %s angemeldet.</string>
-    <string name="szSignIn">Anmelden…</string>
+    <string name="invalidAgeGate">Laut Google Play Store müssen Sie mindestens 16 Jahre alt sein oder die Erlaubnis Ihrer Eltern haben, um diese App nutzen zu können.</string>    <string name="szSignIn">Anmelden…</string>
     <string name="szSignOut">Abmelden</string>
     <string name="lblForgotPassword">Passwort vergessen? Du kannst es auf MyFlighbook.com zurücksetzen</string>
     <string name="createuser">Account erstellen…</string>
