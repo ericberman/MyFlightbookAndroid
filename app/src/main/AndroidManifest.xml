@@ -6,6 +6,11 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -172,6 +177,7 @@
         </provider>
 
         <service android:name=".MFBlocationservice" android:foregroundServiceType="location" />
+        <service android:name="model.SimulatorGPSService" android:foregroundServiceType="connectedDevice" android:exported="false" />
         <service android:name=".CurrencyWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service android:name=".TotalsWidgetService" android:permission="android.permission.BIND_REMOTEVIEWS" />
 

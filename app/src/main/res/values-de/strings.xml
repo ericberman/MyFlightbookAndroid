@@ -32,6 +32,8 @@
     <string name="lblOptRecord">Flugweg aufzeichnen</string>
     <string name="lblOptRecordHiRes">Aufzeichnen in hoher Auflösung</string>
     <string name="lblOptRecordHiResDesc">Langsamer im upload/download, aber funktioniert besser mit Apps wie CloudAhoy</string>
+    <string name="lblUseSimGPS">Verwenden Sie den vom Simulator bereitgestellten Standort</string>
+    <string name="lblUseSimGPSDesc">Einige Simulatoren wie X-Plane können Ihre Position simulieren; dies hat Vorrang vor dem GPS.</string>
     <string name="lblOptIncludeHeliports">Inklusive Heliports</string>
     <string name="lblOptRoundNearestTenth">Verwende nächstes zehntel einer Stunde</string>
     <string name="lblOptUseHHMM">Gib Zeiten im Format HH:MM ein</string>

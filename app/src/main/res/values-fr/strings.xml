@@ -32,6 +32,8 @@
     <string name="lblOptRecord">Enregistrer la trace</string>
     <string name="lblOptRecordHiRes">Enregistrer en haute résolution</string>
     <string name="lblOptRecordHiResDesc">Plus lent, mais fonctionne mieux avec des applications comme CloudAhoy</string>
+    <string name="lblUseSimGPS">Utiliser l\'emplacement fourni par le simulateur</string>
+    <string name="lblUseSimGPSDesc">Certains simulateurs, comme X-Plane, peuvent simuler votre position ; cela remplace les données GPS</string>
     <string name="lblOptIncludeHeliports">Inclure les héliports</string>
     <string name="lblOptRoundNearestTenth">Utiliser le dixième d\'heure le plus proche</string>
     <string name="lblOptUseHHMM">Entrer les durées au format HH:MM</string>

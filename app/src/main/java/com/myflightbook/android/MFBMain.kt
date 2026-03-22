@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -673,6 +673,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
             MFBLocation.fPrefAutoDetect = mPrefs!!.getBoolean(M_KEYS_FAUTODETECT, false)
             MFBLocation.fPrefRecordFlight = mPrefs!!.getBoolean(M_KEY_FRECORDFLIGHT, false)
             MFBLocation.fPrefRecordFlightHighRes = mPrefs!!.getBoolean(M_KEY_FRECORDHIRES, false)
+            MFBLocation.fPrefUseSimulatorGPSService = mPrefs!!.getBoolean(M_KEY_USESIMGPS, false)
             MFBLocation.fPrefAutoFillHobbs = MFBLocation.AutoFillOptions.entries[mPrefs!!.getInt(
                 M_KEYS_AUTOHOBBS, 0
             )]
@@ -735,6 +736,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
             putBoolean(M_KEYS_FAUTODETECT, MFBLocation.fPrefAutoDetect)
             putBoolean(M_KEY_FRECORDFLIGHT, MFBLocation.fPrefRecordFlight)
             putBoolean(M_KEY_FRECORDHIRES, MFBLocation.fPrefRecordFlightHighRes)
+            putBoolean(M_KEY_USESIMGPS, MFBLocation.fPrefUseSimulatorGPSService)
             putInt(M_KEYS_AUTOHOBBS, MFBLocation.fPrefAutoFillHobbs.ordinal)
             putInt(M_KEYS_AUTOTIME, MFBLocation.fPrefAutoFillTime.ordinal)
             putBoolean(M_KEYS_FROUND_TO_TENTH, MFBLocation.fPrefRoundNearestTenth)
@@ -788,6 +790,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         private const val M_KEY_SZAUTHTOKEN = "authtoken"
         private const val M_KEY_FRECORDFLIGHT = "recordflight"
         private const val M_KEY_FRECORDHIRES = "recordFlightHighRes"
+        private const val M_KEY_USESIMGPS = "useSimulatorGPS"
         private const val M_KEYS_FAUTODETECT = "autodetect"
         private const val M_KEYS_FHELIPORTS = "heliports"
         private const val M_KEYS_FROUND_TO_TENTH = "roundnearesttenth"

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,10 +25,11 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcelable
 import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.myflightbook.android.ActNewFlight
 import com.myflightbook.android.MFBMain
 import com.myflightbook.android.MFBlocationservice
@@ -40,6 +41,8 @@ class MFBLocation : LocationListener {
     enum class GPSQuality {
         Unknown, Poor, Good, Excellent
     }
+
+    enum class GPSSource { HARDWARE, SIMULATOR }
 
     interface FlightEvents {
         fun takeoffDetected(l: Location, fIsNight: Boolean)
@@ -93,6 +96,21 @@ class MFBLocation : LocationListener {
         }
     }
 
+    var gpsSource: GPSSource = if (fPrefUseSimulatorGPSService) GPSSource.SIMULATOR else GPSSource.HARDWARE
+
+    fun setGPSSource(c: Context, source: GPSSource) {
+        fPrefUseSimulatorGPSService = source == GPSSource.SIMULATOR
+        if (isListening) {
+            stopActiveService(c, gpsSource)  // stop the CURRENT source before changing
+            gpsSource = source
+            Handler(Looper.getMainLooper()).postDelayed({
+                startActiveService(c)
+            }, 500)
+        } else {
+            gpsSource = source
+        }
+    }
+
     private fun fCheckPermissions(c: Context?): Boolean {
         return c != null && ContextCompat.checkSelfPermission(
             c,
@@ -101,47 +119,74 @@ class MFBLocation : LocationListener {
     }
 
     fun startListening(c: Context?) {
-        if (!isListening && hasGPS(c) && !MFBConstants.FAKE_GPS) {
-            if (c == null || !fCheckPermissions(c)) return
-            try {
-                LocalBroadcastManager.getInstance(c).registerReceiver(
-                    mReceiver!!,
-                    IntentFilter(MFBlocationservice.ACTION_LOCATION_BROADCAST)
-                )
-                Log.w(
-                    MFBConstants.LOG_TAG,
-                    String.format(
-                        "Start Listening, Isrecording = %s",
-                        if (IsRecording) "Yes" else "No"
-                    )
-                )
+        if (isListening || c == null || MFBConstants.FAKE_GPS)
+            return
 
-                // start background service
-                // We only have 5 seconds from startForegroundService to calling startForeground, so let's build the Notification here first.
-                val i = Intent(c, MFBlocationservice::class.java)
-                c.startForegroundService(i)
-                isListening = true
-            } catch (ex: IllegalArgumentException) {
-                MFBUtil.alert(
-                    c,
-                    c.getString(R.string.errNoGPSTitle),
-                    c.getString(R.string.errCantUseGPS) + ex.message
+        if (gpsSource == GPSSource.HARDWARE) {
+            if (!fCheckPermissions(c)) return
+        }
+
+        try {
+            registerReceiver(c)
+            startActiveService(c)
+            isListening = true
+            Log.w(
+                MFBConstants.LOG_TAG,
+                String.format(
+                    "Start Listening, Isrecording = %s",
+                    if (IsRecording) "Yes" else "No"
                 )
-            } catch (ignored: SecurityException) {
-            }
+            )
+        } catch (ex: IllegalArgumentException) {
+            MFBUtil.alert(
+                c,
+                c.getString(R.string.errNoGPSTitle),
+                c.getString(R.string.errCantUseGPS) + ex.message
+            )
+        } catch (_: SecurityException) {
         }
     }
 
     fun stopListening(c: Context) {
-        if (isListening && hasGPS(c)) {
-            if (!fCheckPermissions(c)) return
-            try {
-                LocalBroadcastManager.getInstance(c).unregisterReceiver(mReceiver!!)
-                c.stopService(Intent(c, MFBlocationservice::class.java))
-                isListening = false
-            } catch (ignored: SecurityException) {
-            }
+        if (!isListening) return
+        try { unregisterReceiver(c) } catch (_: Exception) {}
+        stopActiveService(c)
+        isListening = false
+    }
+
+    // ---- private helpers ----
+
+    private fun startActiveService(c: Context?) {
+        c ?: return
+        val intent = when (gpsSource) {
+            GPSSource.HARDWARE   -> Intent(c, MFBlocationservice::class.java)
+            GPSSource.SIMULATOR  -> SimulatorGPSService.startIntent(c)
         }
+        c.startForegroundService(intent)
+    }
+
+    private fun stopActiveService(c: Context?, sourceToStop: GPSSource = gpsSource) {
+        c ?: return
+        val intent = when (sourceToStop) {
+            GPSSource.HARDWARE  -> Intent(c, MFBlocationservice::class.java)
+            GPSSource.SIMULATOR -> SimulatorGPSService.startIntent(c)
+        }
+        c.stopService(intent)
+    }
+
+    private fun registerReceiver(c: Context) {
+        // Covers broadcasts from BOTH services — same action string, same receiver
+        val filter = IntentFilter().apply {
+            addAction(MFBlocationservice.ACTION_LOCATION_BROADCAST)
+        }
+        ContextCompat.registerReceiver(
+            c, mReceiver!!, filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED   // replaces LocalBroadcastManager
+        )
+    }
+
+    private fun unregisterReceiver(c: Context) {
+        try { c.unregisterReceiver(mReceiver!!) } catch (_: Exception) {}
     }
 
     constructor(c: Context, fStartNow: Boolean) : super() {
@@ -168,7 +213,7 @@ class MFBLocation : LocationListener {
         val db = MFBMain.mDBHelper!!.writableDatabase
         try {
             db.delete("FlightTrack", null, null)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Log.e(MFBConstants.LOG_TAG, "Unable to clear track in ResetFlightData")
         }
         IsRecording = false
@@ -230,7 +275,7 @@ class MFBLocation : LocationListener {
             return
         if (IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_AIRBORNE ||
             !IsFlying && dt < MFBConstants.MIN_SAMPLE_RATE_TAXI
-        ) fValidTime = fPrefRecordFlightHighRes // i.e., false unless we are recording high res./
+        ) fValidTime = fPrefRecordFlightHighRes // i.e., false unless we are recording high-res./
         if (!mFisenabled) return
 
         // only do detection/recording with quality samples
@@ -249,7 +294,7 @@ class MFBLocation : LocationListener {
                 if (NightLandingPref == NightLandingCriteria.Night) fIsNightForFlight else sst.isFAANight!!
             if (previousLoc != null && fPreviousLocWasNight && fIsNightForFlight && fPrefAutoDetect) {
                 val t = (newLoc.time - previousLoc!!.time) / 3600000.0
-                if (t < .5 && mListener != null) // limit of half an hour between samples for night time
+                if (t < .5 && mListener != null) // limit of half an hour between samples for nighttime
                     mListener!!.addNightTime(t)
             }
             fPreviousLocWasNight = fIsNightForFlight
@@ -298,7 +343,7 @@ class MFBLocation : LocationListener {
                     loc.toContentValues(cv)
                     val l = db.insert("FlightTrack", null, cv)
                     if (l < 0) throw Exception("Error saving to flight track")
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     Log.e(MFBConstants.LOG_TAG, "Unable to save to flight track")
                 }
             }
@@ -328,6 +373,8 @@ class MFBLocation : LocationListener {
         var fPrefRecordFlight = false
         @JvmField
         var fPrefRecordFlightHighRes = false
+        @JvmField
+        var fPrefUseSimulatorGPSService = false
         @JvmField
         var fPrefAutoDetect = false
         @JvmField

@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -294,6 +294,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         initCheckbox(R.id.ckAutodetect, MFBLocation.fPrefAutoDetect, fHasGPS)
         initCheckbox(R.id.ckRecord, MFBLocation.fPrefRecordFlight, fHasGPS)
         initCheckbox(R.id.ckRecordHighRes, MFBLocation.fPrefRecordFlightHighRes, fHasGPS)
+        initCheckbox(R.id.ckUseSimGPS, MFBLocation.fPrefUseSimulatorGPSService, fHasGPS)
         initCheckbox(R.id.ckHeliports, Airport.fPrefIncludeHeliports, fHasGPS)
         initCheckbox(R.id.ckUseHHMM, DecimalEdit.DefaultHHMM)
         initCheckbox(R.id.ckUseLocalTime, DlgDatePicker.fUseLocalTime)
@@ -559,6 +560,11 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             }
             R.id.ckRecordHighRes -> MFBLocation.fPrefRecordFlightHighRes =
                 (v as CheckBox).isChecked
+            R.id.ckUseSimGPS -> {
+                MFBLocation.fPrefUseSimulatorGPSService =
+                    (v as CheckBox).isChecked
+                MFBLocation.getMainLocation()?.setGPSSource(requireContext(), if (MFBLocation.fPrefUseSimulatorGPSService) MFBLocation.GPSSource.SIMULATOR else MFBLocation.GPSSource.HARDWARE)
+            }
             R.id.ckHeliports -> Airport.fPrefIncludeHeliports =
                 (v as CheckBox).isChecked   
             R.id.ckUseHHMM -> DecimalEdit.DefaultHHMM =

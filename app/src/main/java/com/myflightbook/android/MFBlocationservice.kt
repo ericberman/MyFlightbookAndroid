@@ -1,26 +1,7 @@
-package com.myflightbook.android
-
-import android.Manifest
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
-import android.os.IBinder
-import android.os.Looper
-import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
-import model.MFBConstants
-
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2018-2025 MyFlightbook, LLC
+    Copyright (C) 2018-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +16,25 @@ import model.MFBConstants
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+package com.myflightbook.android
+
+import android.Manifest
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.os.IBinder
+import android.os.Looper
+import android.util.Log
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
+import model.MFBConstants
+
 // Background location service, modeled on the code sample at http://devdeeds.com/android-location-tracking-in-background-service/; thanks!!
 class MFBlocationservice : Service(), LocationListener {
     internal inner class MFBLocationCallback : LocationCallback() {
@@ -114,9 +114,7 @@ class MFBlocationservice : Service(), LocationListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startInForeground()
-
-        //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -132,9 +130,11 @@ class MFBlocationservice : Service(), LocationListener {
 
     //to get the location change
     override fun onLocationChanged(location: Location) {
-        val intent = Intent(ACTION_LOCATION_BROADCAST)
-        intent.putExtra(EXTRA_LOCATION, location)
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        val intent = Intent(ACTION_LOCATION_BROADCAST).apply {
+            putExtra(EXTRA_LOCATION, location)
+            setPackage(packageName)
+        }
+        sendBroadcast(intent)
     }
 
     companion object {

@@ -32,6 +32,8 @@
     <string name="lblOptAutoDetect">Autodetect Takeoffs and Landings</string>
     <string name="lblOptRecord">Record flight path</string>
     <string name="lblOptRecordHiRes">Record High Resolution</string>
+    <string name="lblUseSimGPS">Use Simulator Provided Location</string>
+    <string name="lblUseSimGPSDesc">Some simulators like X-Plane can simulate your position; this overrides a GPS</string>
     <string name="lblOptRecordHiResDesc">Slower to upload/download, but works better with apps like CloudAhoy</string>
     <string name="lblOptIncludeHeliports">Include heliports</string>
     <string name="lblOptRoundNearestTenth">Use nearest tenth of an hour</string>

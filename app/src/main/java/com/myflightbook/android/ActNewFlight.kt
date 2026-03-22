@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -110,6 +110,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 import androidx.core.content.edit
+import model.XPlaneDataParser
 
 class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegate, DateTimeUpdate,
     PropertyEdit.PropertyListener, GallerySource, CrossFillDelegate, Invalidatable {
@@ -418,7 +419,6 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         super.onViewCreated(view, savedInstanceState)
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
 
             v.setPadding(0, 0, 0, imeHeight)
@@ -1694,7 +1694,8 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
             else -> R.string.lblGPSUnknown
         }
         if (loc != null) {
-            txtQuality!!.text = res.getString(idSzQuality)
+            txtQuality!!.text = if ((loc.provider ?: "").compareTo(XPlaneDataParser.xPlaneDataProvider) == 0) "🛜" else res.getString(idSzQuality)
+
             txtSpeed!!.text = displaySpeed(loc.speed.toDouble())
             txtAltitude!!.text = displayAlt(loc.altitude)
             val lat = loc.latitude
@@ -1922,7 +1923,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     private fun setUpPropertiesForFlight() {
         val a: Activity = requireActivity()
         val l = a.layoutInflater
-        val tl = findViewById(R.id.tblPinnedProperties) as TableLayout? ?: return
+        val tl = findViewById(R.id.tblPinnedProperties) as? TableLayout? ?: return
         tl.removeAllViews()
         if (mle == null) return
 
