@@ -247,7 +247,6 @@ class SimulatorGPSService : Service() {
 
     private fun broadcastLocation(location: Location) {
         val now = System.currentTimeMillis()
-        Log.i(MFBConstants.LOG_TAG, "onBroadcast: Broadcast location, time = $now, lastBroadcastTime = $lastBroadcastTime")
         if (now - lastBroadcastTime < 500) return
         lastBroadcastTime = now
 
