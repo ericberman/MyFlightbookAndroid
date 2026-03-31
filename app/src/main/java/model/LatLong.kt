@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,11 +19,14 @@
 package model
 
 import android.location.Location
+import android.nfc.FormatException
 import com.google.android.gms.maps.model.LatLng
 import org.ksoap2.serialization.KvmSerializable
 import org.ksoap2.serialization.PropertyInfo
 import org.ksoap2.serialization.SoapObject
 import java.io.Serializable
+import java.text.NumberFormat
+import java.text.ParsePosition
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.abs
@@ -119,6 +122,18 @@ open class LatLong : SoapableObject, KvmSerializable, Serializable {
     }
 
     companion object {
+        fun convertStringToDoubleLocalized(localizedString: String, locale: Locale = Locale.getDefault()): Double {
+            val format = NumberFormat.getNumberInstance(locale)
+            val position = ParsePosition(0)
+            val number = format.parse(localizedString, position)
+
+            // Check if the entire string was parsed and parsing was successful
+            if (position.index == localizedString.length && number != null) {
+                return number.toDouble()
+            }
+            throw FormatException("Invalid number format: $localizedString")
+        }
+
         fun fromString(sz: String): LatLong? {
             val p = Pattern.compile(
                 "@?([^a-zA-Z]+)([NS]) *([^a-zA-Z]+)([EW])",
@@ -128,12 +143,10 @@ open class LatLong : SoapableObject, KvmSerializable, Serializable {
             return if (m.find()) {
                 try {
                     val ll = LatLong()
-                    ll.latitude = Objects.requireNonNull(m.group(1))
-                        .toDouble() * if (Objects.requireNonNull(m.group(2))
+                    ll.latitude = convertStringToDoubleLocalized(Objects.requireNonNull(m.group(1))) * if (Objects.requireNonNull(m.group(2))
                             .compareTo("N", ignoreCase = true) == 0
                     ) 1 else -1
-                    ll.longitude = Objects.requireNonNull(m.group(3))
-                        .toDouble() * if (Objects.requireNonNull(m.group(4))
+                    ll.longitude = convertStringToDoubleLocalized(Objects.requireNonNull(m.group(3))) * if (Objects.requireNonNull(m.group(4))
                             .compareTo("E", ignoreCase = true) == 0
                     ) 1 else -1
                     if (ll.isValid()) ll else null
