@@ -41,7 +41,6 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.core.app.ShareCompat.IntentBuilder
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
@@ -866,22 +865,14 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
     }
 
     private fun sendFlight() {
-        if (mle == null || mle!!.sendLink.isEmpty()) {
-            alert(this, getString(R.string.txtError), getString(R.string.errCantSend))
+        if (mle == null || mle!!.shareLink.isEmpty()) {
+            alert(this, getString(R.string.txtError), getString(R.string.errCantShare))
             return
         }
-        IntentBuilder(requireActivity())
-            .setType("message/rfc822")
-            .setSubject(getString(R.string.sendFlightSubject))
-            .setText(
-                String.format(
-                    Locale.getDefault(),
-                    getString(R.string.sendFlightBody),
-                    mle!!.sendLink
-                )
-            )
-            .setChooserTitle(getString(R.string.menuSendFlight))
-            .startChooser()
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, mle!!.sendLink)
+        startActivity(Intent.createChooser(intent, getString(R.string.menuShareFlight)))
     }
 
     private fun shareFlight() {
