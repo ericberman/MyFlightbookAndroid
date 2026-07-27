@@ -74,11 +74,13 @@ import model.Telemetry.Companion.telemetryFromURL
 import java.io.IOException
 import java.util.*
 import androidx.core.content.edit
+import com.google.android.play.agesignals.AgeSignalsAccessRequest
 import com.google.android.play.agesignals.AgeSignalsManager
 import com.google.android.play.agesignals.AgeSignalsManagerFactory
 import com.google.android.play.agesignals.AgeSignalsRequest
 import com.google.android.play.agesignals.AgeSignalsResult
-import com.google.android.play.agesignals.model.AgeSignalsVerificationStatus
+import com.google.android.play.agesignals.model.AgeSignalsStatus
+import com.google.android.play.agesignals.model.SignificantChangeStatus
 import com.google.android.play.agesignals.testing.FakeAgeSignalsManager
 
 class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
@@ -350,33 +352,51 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
             ageSignalsManager = FakeAgeSignalsManager()
             val fakeSupervisedUser =
                 AgeSignalsResult.builder()
-                    .setUserStatus(AgeSignalsVerificationStatus.SUPERVISED_APPROVAL_DENIED)
+                    // 1. Updated status field name and enum mapping
+                    .setSignificantChangeStatus(SignificantChangeStatus.DECLINED)
                     .setAgeLower(13)
                     .setAgeUpper(17)
                     .setInstallId("fake_install_id")
                     .build()
             ageSignalsManager.setNextAgeSignalsResult(fakeSupervisedUser)
         } else {
-            ageSignalsManager = AgeSignalsManagerFactory.create(getApplicationContext())
+            ageSignalsManager = AgeSignalsManagerFactory.create(applicationContext)
         }
 
-        // Request an age signals check
+        // 2. Request explicit access before checking signals
         ageSignalsManager
-            .checkAgeSignals(AgeSignalsRequest.builder().build())
-            .addOnSuccessListener { ageSignalsResult ->
-                // Store the install ID for later...
-                val installId = ageSignalsResult.installId()
+            .requestAgeSignalsAccess(
+                AgeSignalsAccessRequest.builder().setActivity(this).build()
+            ) // 'this' refers to your current Activity
+            .addOnSuccessListener { accessResult ->
+                // Only proceed to check age signals if status is SHARED
+                if (accessResult.ageSignalsStatus() == AgeSignalsStatus.SHARED) {
 
-                val status = ageSignalsResult.userStatus()
-                if (status == AgeSignalsVerificationStatus.SUPERVISED_APPROVAL_DENIED ||
-                    ((status == AgeSignalsVerificationStatus.SUPERVISED || status == AgeSignalsVerificationStatus.SUPERVISED_APPROVAL_PENDING) &&
-                    (ageSignalsResult.ageLower() ?: 18) < 16)) {
-                    AuthToken.signOut()
-                    PackAndGo(getApplicationContext()).clearPackedData()
-                    invalidateAll()
-                    AuthToken.isDeniedAgeGate = true
-                    mViewPager?.currentItem = MFBTab.Options.ordinal
+                    ageSignalsManager
+                        .checkAgeSignals(AgeSignalsRequest.builder().build())
+                        .addOnSuccessListener { ageSignalsResult ->
+                            // 3. Evaluate results using the new significantChangeStatus enum
+                            val status = ageSignalsResult.significantChangeStatus()
+                            val lowerAge = ageSignalsResult.ageLower() ?: 18
+
+                            if (status == SignificantChangeStatus.DECLINED ||
+                                ((status == SignificantChangeStatus.PENDING) && lowerAge < 16)) {
+
+                                AuthToken.signOut()
+                                PackAndGo(applicationContext).clearPackedData()
+                                invalidateAll()
+                                AuthToken.isDeniedAgeGate = true
+                                mViewPager?.currentItem = MFBTab.Options.ordinal
+                            }
+                        }
                 }
+                /*
+                else if (accessResult.ageSignalsStatus() == AgeSignalsStatus.VERIFICATION_REQUIRED) {
+                    // Optional: The user needs to verify their age directly in the Play Store app
+                } else {
+                    // Status is NOT_SHARED: Handle fallback restrictions for unshared ages
+                }
+                 */
             }
             .addOnFailureListener { e ->
                 Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
