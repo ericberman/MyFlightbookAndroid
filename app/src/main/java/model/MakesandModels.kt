@@ -18,6 +18,8 @@
  */
 package model
 
+import android.text.Html
+import androidx.core.text.HtmlCompat
 import org.ksoap2.serialization.SoapObject
 
 class MakesandModels(so: SoapObject) : SoapableObject() {
@@ -46,7 +48,7 @@ class MakesandModels(so: SoapObject) : SoapableObject() {
     }
 
     override fun fromProperties(so: SoapObject) {
-        description = so.getProperty(mKEYDESCRIPTION).toString()
+        description = Html.fromHtml(readNullableString(so, mKEYDESCRIPTION), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
         modelId = so.getProperty(mKEYMODELID).toString().toInt()
     }
 

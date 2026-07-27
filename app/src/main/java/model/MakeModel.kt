@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,24 +44,24 @@ class MakeModel : SoapableObject(), KvmSerializable, Serializable, Comparable<Ma
     }
 
     public override fun fromProperties(so: SoapObject) {
-        description = so.getProperty(keyDescription).toString()
+        description = readNullableString(so, keyDescription)
         makeModelId = so.getProperty(keyModelID).toString().toInt()
     }
 
     // serialization methods
     override fun getPropertyCount(): Int {
-        return MakeModelProp.values().size
+        return MakeModelProp.entries.size
     }
 
     override fun getProperty(i: Int): Any {
-        return when (MakeModelProp.values()[i]) {
+        return when (MakeModelProp.entries[i]) {
             MakeModelProp.PIDMakeModelID -> makeModelId
             MakeModelProp.PIDModelName -> description
         }
     }
 
     override fun setProperty(i: Int, value: Any) {
-        val mmp = MakeModelProp.values()[i]
+        val mmp = MakeModelProp.entries[i]
         val sz = value.toString()
         when (mmp) {
             MakeModelProp.PIDMakeModelID -> makeModelId = sz.toInt()
@@ -70,7 +70,7 @@ class MakeModel : SoapableObject(), KvmSerializable, Serializable, Comparable<Ma
     }
 
     override fun getPropertyInfo(i: Int, h: Hashtable<*, *>?, pi: PropertyInfo) {
-        when (MakeModelProp.values()[i]) {
+        when (MakeModelProp.entries[i]) {
             MakeModelProp.PIDMakeModelID -> {
                 pi.type = PropertyInfo.INTEGER_CLASS
                 pi.name = "MakeModelID"
