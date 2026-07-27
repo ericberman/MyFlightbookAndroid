@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,11 +30,13 @@ import com.myflightbook.android.DlgProgress
 import com.myflightbook.android.R
 import com.myflightbook.android.webservices.UTCDate.getUTCCalendar
 import com.myflightbook.android.webservices.UTCDate.getUTCTimeZone
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import java.io.*
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.todayIn
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import java.time.ZoneOffset
 import java.util.*
 import kotlin.math.abs
@@ -133,7 +135,7 @@ object MFBUtil {
     // I.e., if the local date is May 7 2025, this produces 2025-05-07T00:00Z
     fun localDateToUtcDateTime(dtLocal : LocalDate) : Date {
         val c = getUTCCalendar()
-        c[dtLocal.year, dtLocal.month.value - 1, dtLocal.dayOfMonth, 0, 0] = 0
+        c[dtLocal.year, dtLocal.month.number - 1, dtLocal.day, 0, 0] = 0
         return c.time
     }
 
@@ -142,6 +144,7 @@ object MFBUtil {
         return localDateFromUTCDate(localDateToUtcDateTime(dtLocal))!!
     }
 
+    @OptIn(ExperimentalTime::class)
     fun localToday() : LocalDate {
         return Clock.System.todayIn(TimeZone.currentSystemDefault())
     }
