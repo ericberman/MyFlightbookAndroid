@@ -46,6 +46,7 @@ object MFBConstants {
     // To read it: PRAGMA user_version
     // images
     const val URL_FLIGHT_PICTURE = "/logbook/public/uploadpicture.aspx"
+    const val URL_SCAN_FLIGHT_DECK = "/Logbook/mvc/Image/ScanFlightDeckImage"
     const val URL_AIRPLANE_PICTURE = "/logbook/public/uploadairplanepicture.aspx?id=1"
     const val IMG_KEY_FLIGHT = "idFlight"
     const val IMG_KEY_AIRCRAFT = "txtAircraft"

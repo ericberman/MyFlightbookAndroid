@@ -12,6 +12,12 @@
         android:titleCondensed="@string/menuSavePendingShort"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menuScanFlightDeck"
+        android:icon="@drawable/ic_action_camera"
+        android:title="@string/menuScanFlightDeck"
+        android:titleCondensed="@string/menuScanFlightDeckShort"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menuCheckFlight"
         android:title="@string/menuCheckFlight"
         android:titleCondensed="@string/menuCheckFlight" />

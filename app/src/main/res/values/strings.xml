@@ -276,6 +276,7 @@
     <string name="prgCPT">Updating list of available properties…</string>
     <string name="prgDeleteProp">Deleting Property…</string>
     <string name="prgUploadingImages">Uploading image %1$d of %2$d</string>
+    <string name="prgScanningFlightDeck">Scanning flight deck display…</string>
     <string name="prgUpdatingAircraft">Updating Aircraft…</string>
     <string name="prgDeletingAircraft">Deleting…</string>
     <string name="emptyWaterMarkInt">0</string>
@@ -338,6 +339,7 @@
     <string name="errNoGoogleMaps">This feature requires Google Play services, which are not installed.</string>
     <string name="errCantShare">There is nothing in this flight that can be shared.</string>
     <string name="errCantSend">This flight cannot be sent.</string>
+    <string name="errNoScanImage">No image was captured to scan.</string>
 
     <string name="sendFlightSubject">Add this flight to your logbook</string>
     <string name="sendFlightBody">I am sending you this flight from my logbook so that you can add it to yours.\n\nPlease go to %s to add it.\n\nYou will have the chance to review the flight and make any changes before the flight is saved.</string>
@@ -416,6 +418,8 @@
     <string name="menuTakeVideoShort">Video</string>
     <string name="menuChoosePicture">Choose a picture</string>
     <string name="menuChoosePictureShort">Photos</string>
+    <string name="menuScanFlightDeck">Scan Flight Deck Display</string>
+    <string name="menuScanFlightDeckShort">Scan</string>
     <string name="menuSignFlight">Sign</string>
     <string name="menuDeleteAircraft">Delete Aircraft</string>
     <string name="menuDeleteAircraftShort">Delete</string>

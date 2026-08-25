@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2022 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,15 @@ class PendingFlight : LogbookEntry {
 
     override fun fromProperties(so: SoapObject) {
         super.fromProperties(so)
-        mPendingID = so.getProperty("PendingID").toString()
+        // Not every SOAP response this gets called against is PendingFlight-shaped - e.g.
+        // InitFlightFromFlightDeckScan's WSDL declares its return type as plain LogbookEntry, so a
+        // response from it never has a "PendingID" property at all, even when the SoapObject we're
+        // handed value/fromProperties on is a PendingFlight instance. so.getProperty() throws
+        // "Unknown Property" when a key is simply absent (as opposed to present-but-empty), so use
+        // the safe accessor here and leave mPendingID as it was when the response doesn't carry one,
+        // rather than throwing away everything super.fromProperties(so) just populated.
+        val szPendingID = so.getPropertySafelyAsString("PendingID")
+        if (szPendingID.isNotEmpty()) mPendingID = szPendingID
     }
 
     override fun toProperties(so: SoapObject) {

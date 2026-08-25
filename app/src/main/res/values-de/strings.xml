@@ -24,7 +24,8 @@
     <string name="signInPrompt">Du benötigst einen Account bei MyFlightbook.com, um MyFlightbook für Android zu nutzen.</string>
     <string name="statusNotSignedIn">Du bist nicht angemeldet. Bitte melde dich an oder erstelle einen Account.</string>
     <string name="statusSignedIn">Du bist als %s angemeldet.</string>
-    <string name="invalidAgeGate">Laut Google Play Store müssen Sie mindestens 16 Jahre alt sein oder die Erlaubnis Ihrer Eltern haben, um diese App nutzen zu können.</string>    <string name="szSignIn">Anmelden…</string>
+    <string name="invalidAgeGate">Laut Google Play Store müssen Sie mindestens 16 Jahre alt sein oder die Erlaubnis Ihrer Eltern haben, um diese App nutzen zu können.</string>
+    <string name="szSignIn">Anmelden…</string>
     <string name="szSignOut">Abmelden</string>
     <string name="lblForgotPassword">Passwort vergessen? Du kannst es auf MyFlighbook.com zurücksetzen</string>
     <string name="createuser">Account erstellen…</string>
@@ -174,7 +175,8 @@
     <string name="lblFAQ">FAQ</string>
     <string name="lblSupportDescript">MyFlightbook ist und bleibt kostenlos.  Aber wenn Du es wertvoll findest, freuen wir uns über Deine Unterstützung.</string>
     <string name="btnSupport">Unterstütze MyFlightbook</string>
-    <string name="lblDonateOnMFB">Aufgrund der Google Play-Richtlinien kann ich hier keinen direkten Link bereitstellen. Bitte öffnen Sie einen Browser, gehen Sie zu MyFlightbook.com und wählen Sie „Spenden“ auf der Registerkarte „Profil“.</string>    <string name="lblAdditionalOptions">Weitere Einstellungen</string>
+    <string name="lblDonateOnMFB">Aufgrund der Google Play-Richtlinien kann ich hier keinen direkten Link bereitstellen. Bitte öffnen Sie einen Browser, gehen Sie zu MyFlightbook.com und wählen Sie „Spenden“ auf der Registerkarte „Profil“.</string>
+    <string name="lblAdditionalOptions">Weitere Einstellungen</string>
     <string name="lblAdditionalOptionsText">Zusätzliche Funktionen und Einstellungen für Dein Konto findest Du auf MyFlightbook.com</string>
     <string name="lblGoToMyFlightbookOptions">Gehe zu MyFlightbook.com</string>
     <string name="lblManageAccount">Mein Konto verwalten</string>
@@ -274,6 +276,7 @@
     <string name="prgCPT">Aktualisiere Liste verfügbarer Eigenschaften…</string>
     <string name="prgDeleteProp">Lösche Eigenschaft…</string>
     <string name="prgUploadingImages">Bild %1$d vom %2$d hochladen</string>
+    <string name="prgScanningFlightDeck">Scanne Flugdeck-Anzeige…</string>
     <string name="prgUpdatingAircraft">Flugzeug aktualisieren…</string>
     <string name="prgDeletingAircraft">Löschen…</string>
     <string name="emptyWaterMarkInt">0</string>
@@ -336,6 +339,7 @@
     <string name="errNoGoogleMaps">Diese Funktion erfordert Google Play-Dienste, die nicht installiert sind.</string>
     <string name="errCantShare">Auf diesem Flug gibt es nichts, was man mit anderen teilen könnte..</string>
     <string name="errCantSend">Dieser Flug kann nicht gesendet werden.</string>
+    <string name="errNoScanImage">Es wurde kein Bild zum Scannen aufgenommen.</string>
 
     <string name="sendFlightSubject">Füge diesen Flug zu deinem Logbuch hinzu</string>
     <string name="sendFlightBody">Ich sende Ihnen diesen Flug aus meinem Logbuch, damit Sie ihn Ihrem Logbuch hinzufügen können.\n\nBitte gehen Sie zu %s, um ihn hinzuzufügen.\n\nSie werden die Möglichkeit haben, den Flug zu überprüfen und Änderungen vorzunehmen, bevor der Flug gespeichert wird.</string>
@@ -414,6 +418,8 @@
     <string name="menuTakeVideoShort">Video</string>
     <string name="menuChoosePicture">Foto auswählen</string>
     <string name="menuChoosePictureShort">Fotos</string>
+    <string name="menuScanFlightDeck">Flugdeckanzeige abtasten</string>
+    <string name="menuScanFlightDeckShort">Abtasten</string>
     <string name="menuSignFlight">Unterschreiben</string>
     <string name="menuDeleteAircraft">Flugzeug löschen</string>
     <string name="menuDeleteAircraftShort">Löschen</string>

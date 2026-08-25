@@ -114,6 +114,7 @@ import model.XPlaneDataParser
 class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegate, DateTimeUpdate,
     PropertyEdit.PropertyListener, GallerySource, CrossFillDelegate, Invalidatable {
     private var mRgac: Array<Aircraft>? = null
+    private var mScanningFlightDeck = false
     private var mle: LogbookEntry? = null
     private var mActivetemplates: HashSet<PropertyTemplate?>? = HashSet()
     private var needsDefaultTemplates = true
@@ -489,6 +490,7 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                     R.id.menuTakePicture -> takePictureClicked()
                     R.id.menuTakeVideo -> takeVideoClicked()
                     R.id.menuChoosePicture -> choosePictureClicked()
+                    R.id.menuScanFlightDeck -> scanFlightDeckClicked()
                     R.id.menuChooseTemplate -> {
                         val b = Bundle()
                         b.putSerializable(ActViewTemplates.ACTIVE_PROPERTYTEMPLATES, mActivetemplates)
@@ -959,6 +961,20 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
         choosePicture()
     }
 
+    private fun scanFlightDeckClicked() {
+        val items = arrayOf(getString(R.string.menuTakePicture), getString(R.string.menuChoosePicture))
+        AlertDialog.Builder(requireActivity(), R.style.MFBDialog)
+            .setTitle(R.string.menuScanFlightDeck)
+            .setItems(items) { _, which ->
+                mScanningFlightDeck = true
+                saveCurrentFlight()
+                // choosePictureSingle(), not choosePicture() - a scan is exactly one image.
+                if (which == 0) takePicture() else choosePictureSingle()
+            }
+            .setNegativeButton(R.string.lblCancel, null)
+            .show()
+    }
+
     private fun setDateOfFlight() {
         val b = findViewById(R.id.btnFlightSet) as TextView?
         b!!.text = if (isNullDate(mle?.dtFlight)) getString(R.string.lblToday) else mle!!.dtFlight.toJavaLocalDate().format(
@@ -1093,15 +1109,86 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
 
     //region Image support
     override fun chooseImageCompleted(data : android.net.Uri?) {
-        addGalleryImage(data)
+        if (mScanningFlightDeck) {
+            mScanningFlightDeck = false
+            scanFlightDeckImage(data, null)
+        } else
+            addGalleryImage(data)
     }
 
     override fun takePictureCompleted(result: ActivityResult?) {
-        addCameraImage(mTempfilepath, false)
+        if (mScanningFlightDeck) {
+            mScanningFlightDeck = false
+            scanFlightDeckImage(null, mTempfilepath)
+        } else
+            addCameraImage(mTempfilepath, false)
     }
 
     override fun takeVideoCompleted(result: ActivityResult?) {
         addCameraImage(mTempfilepath, true)
+    }
+
+    override fun pictureSelectionCancelled() {
+        // Covers backing out of the camera or the photo picker after choosing "Take Picture" or
+        // "Choose Picture" from the scan action sheet - without this, mScanningFlightDeck would
+        // stay stuck true, and the NEXT ordinary "Take a picture"/"Choose a picture" (unrelated to
+        // scanning) would get misrouted into the scan flow instead of attached to the gallery.
+        mScanningFlightDeck = false
+    }
+
+    // Reads the picked/captured image (gallery Uri OR camera file path - exactly
+    // one of the two is non-null), posts it to ScanFlightDeckImage, and - on a
+    // successful scan - forwards the opaque parsedResults JSON to
+    // InitFlightFromFlightDeckScan to merge the scanned data onto mle.  Mirrors
+    // the iOS flow: action sheet -> multipart POST -> opaque {success, error,
+    // parsedResults} envelope.
+    //
+    // FlightDeckScanSvc is passed to doAsync as the "service", so a failure at
+    // either step (lastError set on the fresh instance) is alerted
+    // automatically by doAsync itself, the same way every other SOAP call in
+    // this file reports errors - no manual alert() needed here.
+    private fun scanFlightDeckImage(uri: android.net.Uri?, szFilename: String?) {
+        lifecycleScope.launch {
+            doAsync<FlightDeckScanSvc, LogbookEntry?>(
+                requireActivity(),
+                FlightDeckScanSvc(),
+                getString(R.string.prgScanningFlightDeck),
+                { svc ->
+                    val bytes = try {
+                        if (uri != null)
+                            requireActivity().contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                        else if (!szFilename.isNullOrEmpty())
+                            java.io.File(szFilename).readBytes()
+                        else null
+                    } catch (ex: Exception) {
+                        Log.e(MFBConstants.LOG_TAG, "Error reading flight deck scan image: " + ex.message)
+                        null
+                    }
+                    if (bytes == null) {
+                        svc.lastError = getString(R.string.errNoScanImage)
+                        null
+                    } else {
+                        val scanResult = svc.scanFlightDeckImage(bytes)
+                        if (!scanResult.success || scanResult.parsedResults.isNullOrEmpty()) {
+                            svc.lastError = scanResult.error?.ifEmpty { null } ?: getString(R.string.errNoScanImage)
+                            null
+                        } else {
+                            val merged = svc.initFromScannedResult(
+                                AuthToken.m_szAuthToken, mle!!, scanResult.parsedResults, requireActivity()
+                            )
+                            if (svc.lastError.isNotEmpty()) null else merged
+                        }
+                    }
+                },
+                { _, result ->
+                    if (result != null) {
+                        setLogbookEntry(result)
+                        setUpPropertiesForFlight()
+                        toView()
+                    }
+                }
+            )
+        }
     }
 
     //endregion

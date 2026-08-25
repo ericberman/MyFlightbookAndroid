@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -78,6 +78,8 @@ import androidx.core.content.edit
 
     private var mChooseImagesPhotoPicker : ActivityResultLauncher<PickVisualMediaRequest>? = null
     private var mChooseImageLauncher: ActivityResultLauncher<Array<String>?>? = null
+    private var mChooseSingleImagePhotoPicker: ActivityResultLauncher<PickVisualMediaRequest>? = null
+    private var mChooseSingleImageLauncher: ActivityResultLauncher<Array<String>?>? = null
     private var mChooseImagesWithPermissions : ActivityResultLauncher<String>? = null
     private var mTakePictureLauncher: ActivityResultLauncher<Array<String>?>? = null
     private var mTakeVideoLauncher: ActivityResultLauncher<Array<String>?>? = null
@@ -242,6 +244,8 @@ import androidx.core.content.edit
         mChooseImagesWithPermissions = registerForActivityResult(ActivityResultContracts.GetContent()) {
             if (it != null)
                 chooseImageCompleted(it)
+            else
+                pictureSelectionCancelled()
         }
 
         mChooseImagesPhotoPicker = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) {
@@ -250,7 +254,8 @@ import androidx.core.content.edit
                 for (uri in uris) {
                     chooseImageCompleted(uri)
                 }
-            }
+            } else
+                pictureSelectionCancelled()
         }
 
         mChooseImageLauncher = registerForActivityResult(
@@ -260,12 +265,27 @@ import androidx.core.content.edit
                 mChooseImagesPhotoPicker!!.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
             }
         }
+
+        // Single-selection counterpart to the pickers above - e.g. for flight deck scanning,
+        // where exactly one still image is wanted rather than a multi-select gallery attach.
+        mChooseSingleImagePhotoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+            uri ->
+            if (uri != null) chooseImageCompleted(uri) else pictureSelectionCancelled()
+        }
+
+        mChooseSingleImageLauncher = registerForActivityResult(
+            RequestMultiplePermissions()
+        ) { result: Map<String, Boolean>? ->
+            if (checkAllTrue(result)) {
+                mChooseSingleImagePhotoPicker!!.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
+        }
         val takePictureLauncher = registerForActivityResult(
             StartActivityForResult()
         ) { result: ActivityResult? ->
             if (result != null && result.resultCode == Activity.RESULT_OK) takePictureCompleted(
                 result
-            )
+            ) else pictureSelectionCancelled()
         }
         mTakePictureLauncher = registerForActivityResult(
             RequestMultiplePermissions()
@@ -429,7 +449,7 @@ import androidx.core.content.edit
             if (rgMfbii.isEmpty()) View.GONE else View.VISIBLE
         val a: Activity = requireActivity()
         val l = a.layoutInflater
-        val tl = findViewById(idGallery) as TableLayout? ?: return
+        val tl = findViewById(idGallery) as? TableLayout? ?: return
         tl.removeAllViews()
         var i = 0
         for (mfbii in rgMfbii) {
@@ -554,6 +574,12 @@ import androidx.core.content.edit
         mChooseImageLauncher!!.launch(emptyArray())
     }
 
+    // Same as choosePicture(), but restricted to a single still image - for flows (like flight
+    // deck scanning) where multi-select doesn't make sense.
+    fun choosePictureSingle() {
+        mChooseSingleImageLauncher!!.launch(emptyArray())
+    }
+
     fun takePicture() {
         mTakePictureLauncher!!.launch(getRequiredPermissions(CAMERA_PERMISSION_IMAGE))
     }
@@ -571,6 +597,15 @@ import androidx.core.content.edit
     }
 
     protected open fun takeVideoCompleted(result: ActivityResult?) {
+        // Override in calling subclass
+    }
+
+    // Fires when the user backs out of the camera or a picture/photo picker without selecting
+    // anything - i.e. every case above where chooseImageCompleted()/takePictureCompleted() would
+    // NOT otherwise get called. Override in calling subclass for anything that needs to unwind
+    // state set up before the picker/camera was launched (e.g. a flag marking that the pending
+    // selection was for a special-purpose flow, not the default "attach to gallery" one).
+    protected open fun pictureSelectionCancelled() {
         // Override in calling subclass
     }
 

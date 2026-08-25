@@ -24,7 +24,8 @@
     <string name="signInPrompt">Vous devez avoir un compte sur MyFlightbook.com pour utiliser MyFlightbook sur Android.</string>
     <string name="statusNotSignedIn">Vous n\'êtes pas identifié. Merci de vous identifier ou de créer un compte.</string>
     <string name="statusSignedIn">Vous êtes connecté en tant que : %s.</string>
-    <string name="invalidAgeGate">Selon le Google Play Store, vous devez avoir au moins 16 ans ou avoir l\'autorisation parentale pour utiliser cette application.</string>    <string name="szSignIn">Se connecter…</string>
+    <string name="invalidAgeGate">Selon le Google Play Store, vous devez avoir au moins 16 ans ou avoir l\'autorisation parentale pour utiliser cette application.</string>
+    <string name="szSignIn">Se connecter…</string>
     <string name="szSignOut">Déconnexion</string>
     <string name="lblForgotPassword">Mot de passe oublié ? Réinitialisez-le sur MyFlightbook.com</string>
     <string name="createuser">Créez un compte…</string>
@@ -275,6 +276,7 @@
     <string name="prgCPT">Mise à jour de la liste des propriétés de vol disponibles…</string>
     <string name="prgDeleteProp">Suppression de propriété de vol…</string>
     <string name="prgUploadingImages">Téléchargement de l\'image %1$d sur %2$d</string>
+    <string name="prgScanningFlightDeck">Balayage de l\'affichage du poste de pilotage…</string>
     <string name="prgUpdatingAircraft">Mise à jour de l\'aéronef…</string>
     <string name="prgDeletingAircraft">Supprimer</string>
     <string name="emptyWaterMarkInt">0</string>
@@ -337,6 +339,7 @@
     <string name="errNoGoogleMaps">Cette fonction nécessite les services de Google Play, qui ne sont pas installés.</string>
     <string name="errCantShare">Il n\'y a rien dans ce vol qui puisse être partagé.</string>
     <string name="errCantSend">Ce vol ne peut pas être envoyé.</string>
+    <string name="errNoScanImage">Aucune image n\'a été capturée pour la numérisation.</string>
 
     <string name="sendFlightSubject">Ajouter ce vol à votre journal de bord</string>
     <string name="sendFlightBody">Je vous envoie ce vol de mon journal de bord pour que vous puissiez l\'ajouter au vôtre.\n\nS\'il vous plaît visitez %s.\n\nVous aurez la possibilité d\'examiner le vol et de faire des changements avant que le vol ne soit enregistré.</string>
@@ -415,6 +418,8 @@
     <string name="menuTakeVideoShort">Vidéo</string>
     <string name="menuChoosePicture">Choisissez une photo</string>
     <string name="menuChoosePictureShort">Photo</string>
+    <string name="menuScanFlightDeck">Balayer l\'affichage du poste de pilotage</string>
+    <string name="menuScanFlightDeckShort">Balayage</string>
     <string name="menuSignFlight">Signer</string>
     <string name="menuDeleteAircraft">Supprimer l\'aéronef</string>
     <string name="menuDeleteAircraftShort">Supprimer</string>
