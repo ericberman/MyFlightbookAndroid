@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
                 { s-> s.deletePropertyForFlight(AuthToken.m_szAuthToken, idExisting, fp.idProp, act) },
                 { _, _ ->
                     val alNew = ArrayList<FlightProperty>()
-                    for (fp2 in mrgfpIn) if (fp2.idProp != fp.idProp) alNew.add(fp)
+                    for (fp2 in mrgfpIn) if (fp2.idProp != fp.idProp) alNew.add(fp2)
                     mrgfpIn = alNew.toTypedArray()
                 }
             )
