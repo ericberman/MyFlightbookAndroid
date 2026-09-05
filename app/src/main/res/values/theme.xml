@@ -65,10 +65,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionBarTheme">@style/MFBActionBarThemeOverlay</item>
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
-        <item name="android:background">@color/colorBackground</item>
         <item name="android:windowBackground">@color/colorBackground</item>
         <item name="android:colorBackground">@color/colorBackground</item>
+    </style>
+
+    <style name="MFBActionBarThemeOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorPrimary">@color/colorBackground</item>
     </style>
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
