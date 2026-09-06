@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -173,7 +173,12 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
             true
         }
         findViewById<View>(R.id.imgAboutProp).setOnClickListener {
-            Snackbar.make(context, this, fp.descriptionString(), Snackbar.LENGTH_SHORT).setTextMaxLines(4).setTextColor(context.getColor(R.color.textColorPrimary)).setBackgroundTint(context.getColor(R.color.colorBackground)).show()
+            Snackbar.make(context, this, fp.descriptionString(), Snackbar.LENGTH_SHORT)
+                .setAnchorView(this)
+                .setTextMaxLines(4)
+                .setTextColor(context.getColor(R.color.textColorPrimary))
+                .setBackgroundTint(context.getColor(R.color.colorBackground))
+                .show()
         }
         val txtStringVal = mTxtstringval
         val txtNumericField = mTxtnumericfield
