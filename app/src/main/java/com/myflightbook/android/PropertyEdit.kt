@@ -99,6 +99,18 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
         }
     }
 
+    private fun finishEditing(view: View) {
+        // ListView temporarily takes focus while laying out its children, including
+        // when switching keyboards. Keep the editor focusable and its input setup
+        // intact until ListView restores focus. The caller still saves the value,
+        // even if the row ends up scrolled off screen instead of regaining focus.
+        if (!view.isTemporarilyDetached) {
+            view.isFocusable = false
+            updateForProperty()
+        }
+        notifyDelegate()
+    }
+
     private fun handlePinClick() {
         val pref = context.getSharedPreferences(
             CustomPropertyType.PREF_SHARED_PINNED_PROPS,
@@ -176,17 +188,13 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
                         txtNumericField.intValue
                     else -> {}
                 }
-                view.isFocusable = false
-                updateForProperty()
-                notifyDelegate()
+                finishEditing(view)
             }
         }
         txtStringVal?.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
                 flightProperty!!.stringValue = txtStringVal.text.toString()
-                view.isFocusable = false
-                updateForProperty()
-                notifyDelegate()
+                finishEditing(view)
             }
         }
         ck?.setOnCheckedChangeListener { _: CompoundButton?, fChecked: Boolean ->
