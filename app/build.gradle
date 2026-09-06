@@ -13,7 +13,7 @@ android {
         applicationId "com.myflightbook.android"
         minSdk 26
         targetSdk 37
-        versionCode 202
+        versionCode 203
         versionName "2027.09.06"
     }
 
