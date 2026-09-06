@@ -12,9 +12,9 @@ android {
     defaultConfig {
         applicationId "com.myflightbook.android"
         minSdk 26
-        targetSdk 36
+        targetSdk 37
         versionCode 202
-        versionName "2027.08.25"
+        versionName "2027.09.06"
     }
 
     buildTypes {
