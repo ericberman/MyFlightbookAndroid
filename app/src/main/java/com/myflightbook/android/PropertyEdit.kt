@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,6 +99,18 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
         }
     }
 
+    private fun finishEditing(view: View) {
+        // ListView temporarily takes focus while laying out its children, including
+        // when switching keyboards. Keep the editor focusable and its input setup
+        // intact until ListView restores focus. The caller still saves the value,
+        // even if the row ends up scrolled off screen instead of regaining focus.
+        if (!view.isTemporarilyDetached) {
+            view.isFocusable = false
+            updateForProperty()
+        }
+        notifyDelegate()
+    }
+
     private fun handlePinClick() {
         val pref = context.getSharedPreferences(
             CustomPropertyType.PREF_SHARED_PINNED_PROPS,
@@ -161,7 +173,12 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
             true
         }
         findViewById<View>(R.id.imgAboutProp).setOnClickListener {
-            Snackbar.make(context, this, fp.descriptionString(), Snackbar.LENGTH_SHORT).setTextMaxLines(4).setTextColor(context.getColor(R.color.textColorPrimary)).setBackgroundTint(context.getColor(R.color.colorBackground)).show()
+            Snackbar.make(context, this, fp.descriptionString(), Snackbar.LENGTH_SHORT)
+                .setAnchorView(this)
+                .setTextMaxLines(4)
+                .setTextColor(context.getColor(R.color.textColorPrimary))
+                .setBackgroundTint(context.getColor(R.color.colorBackground))
+                .show()
         }
         val txtStringVal = mTxtstringval
         val txtNumericField = mTxtnumericfield
@@ -176,17 +193,13 @@ class PropertyEdit : LinearLayout, DateTimeUpdate {
                         txtNumericField.intValue
                     else -> {}
                 }
-                view.isFocusable = false
-                updateForProperty()
-                notifyDelegate()
+                finishEditing(view)
             }
         }
         txtStringVal?.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
                 flightProperty!!.stringValue = txtStringVal.text.toString()
-                view.isFocusable = false
-                updateForProperty()
-                notifyDelegate()
+                finishEditing(view)
             }
         }
         ck?.setOnCheckedChangeListener { _: CompoundButton?, fChecked: Boolean ->

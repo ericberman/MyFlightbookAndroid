@@ -29,8 +29,6 @@ import android.view.*
 import android.widget.BaseExpandableListAdapter
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.myflightbook.android.webservices.AuthToken
@@ -133,7 +131,10 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
         }
 
         override fun hasStableIds(): Boolean {
-            return false
+            // Property type IDs and group positions are fixed for this adapter;
+            // filtering creates a new adapter. Stable IDs let ListView preserve
+            // the focused editor when a keyboard resize invalidates the layout.
+            return true
         }
 
         override fun getGroupView(
@@ -210,12 +211,7 @@ class ActViewProperties : FixedExpandableListActivity(), PropertyEdit.PropertyLi
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.expandablelist)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_root)) { view, insets ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            view.setPadding(0, statusBarHeight, 0, 0)
-            insets
-        }
+        setContentView(R.layout.expandablepropertylist)
         val tvSearch = findViewById<TextView>(R.id.txtSearchProp)
         tvSearch.setHint(R.string.hintSearchProperties)
         tvSearch.addTextChangedListener(object : TextWatcher {
