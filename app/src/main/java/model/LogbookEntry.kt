@@ -821,7 +821,7 @@ open class LogbookEntry : SoapableObject, KvmSerializable, Serializable, Thumbna
         cLandings = so.getProperty("Landings").toString().toInt()
         cApproaches = so.getProperty("Approaches").toString().toInt()
         val szPrecApproaches = so.getPropertySafelyAsString("PrecisionApproaches")
-        val szNonPrecApproaches = so.getPropertySafelyAsString("PrecisionApproaches")
+        val szNonPrecApproaches = so.getPropertySafelyAsString("NonPrecisionApproaches")
         cApproachPrecision = if (szPrecApproaches.isNotEmpty()) szPrecApproaches.toInt() else 0
         cApproachNonPrecision =
             if (szNonPrecApproaches.isNotEmpty()) szNonPrecApproaches.toInt() else 0
