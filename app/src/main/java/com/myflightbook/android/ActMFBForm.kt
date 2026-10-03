@@ -23,6 +23,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -214,6 +215,10 @@ import androidx.core.content.edit
         }
     }
 
+    private fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
+
     private fun checkAllTrue(map: Map<String, Boolean>?): Boolean {
         if (map == null) return false
         var fAllGranted = true
@@ -288,7 +293,11 @@ import androidx.core.content.edit
         mTakePictureLauncher = registerForActivityResult(
             RequestMultiplePermissions()
         ) { result: Map<String, Boolean>? ->
-            if (checkAllTrue(result)) {
+            // Don't rely on the result map alone: RequestMultiplePermissions returns an EMPTY map if the request is
+            // cancelled (e.g., a second tap while the permission dialog is up, or a configuration change), and
+            // checkAllTrue() treats empty as success.  Launching IMAGE/VIDEO_CAPTURE without CAMERA, when CAMERA is
+            // declared in the manifest, throws SecurityException.
+            if (checkAllTrue(result) && hasCameraPermission()) {
                 lifecycleScope.launch {
                     try {
                         val fTemp =
@@ -318,6 +327,14 @@ import androidx.core.content.edit
                             getString(R.string.txtError),
                             getString(R.string.errNoCamera)
                         )
+                    } catch (e: SecurityException) {
+                        // Permission revoked between the check above and the launch (e.g., a one-time grant expiring)
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+                        MFBUtil.alert(
+                            requireActivity(),
+                            getString(R.string.txtError),
+                            getString(R.string.errNoCamera)
+                        )
                     }
                 }
             }
@@ -332,7 +349,11 @@ import androidx.core.content.edit
         mTakeVideoLauncher = registerForActivityResult(
             RequestMultiplePermissions()
         ) { result: Map<String, Boolean>? ->
-            if (checkAllTrue(result)) {
+            // Don't rely on the result map alone: RequestMultiplePermissions returns an EMPTY map if the request is
+            // cancelled (e.g., a second tap while the permission dialog is up, or a configuration change), and
+            // checkAllTrue() treats empty as success.  Launching IMAGE/VIDEO_CAPTURE without CAMERA, when CAMERA is
+            // declared in the manifest, throws SecurityException.
+            if (checkAllTrue(result) && hasCameraPermission()) {
                 lifecycleScope.launch {
                     try {
                         val fTemp =
@@ -356,6 +377,14 @@ import androidx.core.content.edit
                         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
                         takeVideoLauncher.launch(intent)
                     } catch (e: IOException) {
+                        Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+                        MFBUtil.alert(
+                            requireActivity(),
+                            getString(R.string.txtError),
+                            getString(R.string.errNoCamera)
+                        )
+                    } catch (e: SecurityException) {
+                        // Permission revoked between the check above and the launch (e.g., a one-time grant expiring)
                         Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
                         MFBUtil.alert(
                             requireActivity(),
