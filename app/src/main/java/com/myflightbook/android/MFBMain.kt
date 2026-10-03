@@ -218,10 +218,8 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         // see https://stackoverflow.com/questions/44035654/broken-colors-in-daynight-theme-after-loading-admob-firebase-ad
         val nightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if (nightMode != Configuration.UI_MODE_NIGHT_NO) WebView(this)
-        Log.v(MFBConstants.LOG_TAG, "onCreate: set night pref")
-        val locPref = mPrefs
-        NightModePref = locPref!!.getInt(M_KEYS_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        AppCompatDelegate.setDefaultNightMode(NightModePref)
+        // Night mode is set once in MFBApplication.onCreate, before any activity exists.  Setting it here (after
+        // super.onCreate) could recreate this activity mid-restore and corrupt ViewPager2/fragment state.
         setContentView(R.layout.main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tab_layout)) { view, insets ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -825,7 +823,7 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         private const val M_KEYS_TO_SPEED = "takeoffspeed"
         private const val M_KEYS_NIGHT_FLIGHT_OPTION = "nightFlightOption"
         private const val M_KEYS_NIGHT_LANDING_OPTION = "nightLandingOption"
-        private const val M_KEYS_NIGHT_MODE = "nightModeOption"
+        internal const val M_KEYS_NIGHT_MODE = "nightModeOption"
         private const val M_KEYS_ROUTE_COLOR = "routeColor"
         private const val M_KEYS_PATH_COLOR = "pathColor"
         private const val M_KEYS_MAP_TYPE = "mapType"

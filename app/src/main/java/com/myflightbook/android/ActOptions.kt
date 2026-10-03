@@ -365,7 +365,7 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             )
         )
         sp!!.adapter = adapter
-        sp.setSelection(MFBMain.NightModePref)
+        sp.setSelection(nightModeToSpinnerIndex(MFBMain.NightModePref))
         sp.onItemSelectedListener = this
         sp.setPromptId(R.string.lblAutoFillOptions)
         sp = findViewById(R.id.spnNightLandingDef) as Spinner?
@@ -437,6 +437,23 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
         updateStatus()
     }
 
+    // Night mode spinner positions: Automatic (follow system), Off, On
+    private fun spinnerIndexToNightMode(i: Int): Int {
+        return when (i) {
+            1 -> AppCompatDelegate.MODE_NIGHT_NO
+            2 -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+    }
+
+    private fun nightModeToSpinnerIndex(mode: Int): Int {
+        return when (mode) {
+            AppCompatDelegate.MODE_NIGHT_NO -> 1
+            AppCompatDelegate.MODE_NIGHT_YES -> 2
+            else -> 0
+        }
+    }
+
     override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
         val sp = parent as Spinner
         val i = sp.selectedItemPosition
@@ -448,12 +465,12 @@ class ActOptions : ActMFBForm(), OnClickListener, AdapterView.OnItemSelectedList
             MFBLocation.NightCriteria.entries[i] else if (spid == R.id.spnNightLandingDef) MFBLocation.NightLandingPref =
             MFBLocation.NightLandingCriteria.entries[i] else if (spid == R.id.spnFlightDetail) ActRecentsWS.flightDetail =
             FlightDetail.entries[i] else if (spid == R.id.spnNightMode) {
-            if (MFBMain.NightModePref != i) {
-                MFBMain.NightModePref = i
-                AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref)
-                if (activity != null) {
-                    requireActivity().recreate()
-                }
+            // Map the spinner position to an AppCompat night mode (they are NOT the same values).
+            // setDefaultNightMode recreates running activities itself when the mode changes, so no explicit recreate().
+            val newMode = spinnerIndexToNightMode(i)
+            if (MFBMain.NightModePref != newMode) {
+                MFBMain.NightModePref = newMode
+                AppCompatDelegate.setDefaultNightMode(newMode)
             }
         } else if (spid == R.id.spnAltUnits) altitudeUnits =
             AltitudeUnits.entries[i] else if (spid == R.id.spnSpeedUnits) speedUnits =

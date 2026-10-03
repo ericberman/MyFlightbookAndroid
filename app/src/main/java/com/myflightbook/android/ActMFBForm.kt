@@ -42,7 +42,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -226,7 +225,6 @@ import androidx.core.content.edit
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref)
         super.onCreate(savedInstanceState)
         // need to restore this here because OnResume may come after the onActivityResult call
         val mPrefs = requireActivity().getPreferences(Activity.MODE_PRIVATE)

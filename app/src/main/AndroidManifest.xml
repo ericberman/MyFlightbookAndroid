@@ -31,7 +31,7 @@
         android:required="true" />
 
     <application
-        android:name="android.app.Application"
+        android:name=".MFBApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_app"
         android:roundIcon="@mipmap/ic_app_round"
