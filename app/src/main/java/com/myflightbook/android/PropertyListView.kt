@@ -21,6 +21,7 @@ package com.myflightbook.android
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ExpandableListView
 
@@ -79,6 +80,17 @@ class PropertyListView(context: Context, attrs: AttributeSet?) : ExpandableListV
         // Wait until focus/resize layout has finished, and coalesce repeated requests.
         removeCallbacks(revealFocusedProperty)
         post(revealFocusedProperty)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        return try {
+            super.dispatchTouchEvent(ev)
+        } catch (ex: NullPointerException) {
+            // Framework bug: Editor's cursor-drag magnifier can NPE in Magnifier.getPosition() when the
+            // EditText's window surface is invalid (e.g., row mid-relayout during an IME resize).
+            // Swallow only that specific failure; rethrow anything else.
+            if (ex.stackTrace.any { it.className == "android.widget.Magnifier" }) true else throw ex
+        }
     }
 
     override fun onDetachedFromWindow() {
