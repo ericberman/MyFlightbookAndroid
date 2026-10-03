@@ -68,12 +68,14 @@
             <EditText
                 android:id="@+id/txtComments"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.8"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
                 android:hint="@string/lblComments"
                 android:importantForAutofill="no"
                 android:inputType="text|textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine"
-                android:minLines="2"
+                android:minLines="1"
+                android:maxLines="5"
+                android:scrollbars="vertical"
                 android:nextFocusDown="@+id/txtRoute"
                 android:nextFocusUp="@+id/spnAircraft"
                 android:text="" />
