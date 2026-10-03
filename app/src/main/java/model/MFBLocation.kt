@@ -128,7 +128,10 @@ class MFBLocation : LocationListener {
 
         try {
             registerReceiver(c)
-            startActiveService(c)
+            if (!startActiveService(c)) {
+                unregisterReceiver(c)
+                return
+            }
             isListening = true
             Log.w(
                 MFBConstants.LOG_TAG,
@@ -156,13 +159,35 @@ class MFBLocation : LocationListener {
 
     // ---- private helpers ----
 
-    private fun startActiveService(c: Context?) {
-        c ?: return
+    // Returns true if the service was started.
+    // We only ever start GPS while our UI is in the foreground, so a plain startService() is allowed; the service then
+    // promotes itself via startForeground() in onCreate/onStartCommand.  This deliberately avoids startForegroundService(),
+    // whose contract ("call startForeground() within N seconds or crash") is also violated if stopService() is called
+    // before the service's onCreate() runs - e.g., the user leaves the app right after GPS starts - which was the source
+    // of the long-standing ForegroundServiceDidNotStartInTimeException crashes.
+    // Once promoted, the service is a full foreground service and continues to receive location updates in the background.
+    private fun startActiveService(c: Context?): Boolean {
+        c ?: return false
         val intent = when (gpsSource) {
             GPSSource.HARDWARE   -> Intent(c, MFBlocationservice::class.java)
             GPSSource.SIMULATOR  -> SimulatorGPSService.startIntent(c)
         }
-        c.startForegroundService(intent)
+        return try {
+            c.startService(intent)
+            true
+        } catch (ex: IllegalStateException) {
+            // App is in the background, where services can't be started.
+            Log.w(MFBConstants.LOG_TAG, "Unable to start GPS service: " + ex.message)
+            false
+        }
+    }
+
+    // Called by the GPS service if it could not promote itself to the foreground (e.g., the app went to the background
+    // between startService() and the service's onCreate()), in which case it has stopped itself.  Reset our state so that
+    // the next startListening() (e.g., on resume) restarts it.  (The receiver stays registered on the original context;
+    // registerReceiver() unregisters it before re-registering.)
+    fun onServiceStartFailed() {
+        isListening = false
     }
 
     private fun stopActiveService(c: Context?, sourceToStop: GPSSource = gpsSource) {
@@ -175,6 +200,7 @@ class MFBLocation : LocationListener {
     }
 
     private fun registerReceiver(c: Context) {
+        unregisterReceiver(c)   // in case of a prior registration that wasn't cleaned up; avoids double-registration
         // Covers broadcasts from BOTH services — same action string, same receiver
         val filter = IntentFilter().apply {
             addAction(MFBlocationservice.ACTION_LOCATION_BROADCAST)

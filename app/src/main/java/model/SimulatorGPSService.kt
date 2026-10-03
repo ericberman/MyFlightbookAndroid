@@ -33,7 +33,7 @@ import java.net.DatagramSocket
  *
  * Lifecycle
  * ---------
- *   Start:  context.startForegroundService(SimulatorGPSService.startIntent(context))
+ *   Start:  context.startService(SimulatorGPSService.startIntent(context))  (from the foreground; service promotes itself)
  *   Stop:   context.startService(SimulatorGPSService.stopIntent(context))
  *           — or —
  *           context.stopService(SimulatorGPSService.startIntent(context))
@@ -110,8 +110,17 @@ class SimulatorGPSService : Service() {
             return START_NOT_STICKY
         }
 
-        // Promote to foreground immediately — required before doing any real work
-        startForeground(NOTIFICATION_ID, buildNotification())
+        // Promote to foreground immediately — required before doing any real work.
+        // We're started with startService() while the app is in the foreground; if the app has since gone to the
+        // background, promotion isn't allowed, so stop rather than crash.  See MFBLocation.startActiveService.
+        try {
+            startForeground(NOTIFICATION_ID, buildNotification())
+        } catch (ex: Exception) {
+            Log.w(TAG, "Unable to start in foreground: " + ex.message)
+            MFBLocation.getMainLocation()?.onServiceStartFailed()
+            stopSelf()
+            return START_NOT_STICKY
+        }
 
         Log.i(TAG, "Starting UDP listeners")
         startSocketListener(PORT_XPLANE)

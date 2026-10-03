@@ -26,14 +26,17 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.location.Location
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ServiceCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import model.MFBConstants
+import model.MFBLocation
 
 // Background location service, modeled on the code sample at http://devdeeds.com/android-location-tracking-in-background-service/; thanks!!
 class MFBlocationservice : Service(), LocationListener {
@@ -57,7 +60,10 @@ class MFBlocationservice : Service(), LocationListener {
         .build()
     private val mLocationCallback: LocationCallback = MFBLocationCallback()
     private var mFusedLocationProvider: FusedLocationProviderClient? = null
-    private fun startInForeground() {
+    // Promote to a foreground service.  Returns false (and stops the service) if that isn't allowed, which can happen
+    // if the app went to the background between startService() and now:
+    // ForegroundServiceStartNotAllowedException (Android 12+) or SecurityException for location type (Android 14+).
+    private fun startInForeground(): Boolean {
         val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val nc = NotificationChannel(
             "mfbGPSChannelDefault1",
@@ -72,12 +78,21 @@ class MFBlocationservice : Service(), LocationListener {
             .setContentTitle(getString(R.string.app_name))
             .setSmallIcon(R.drawable.ic_gps_notification)
             .build()
-        this.startForeground(NOTIFICATION_ID, n)
+        return try {
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+            true
+        } catch (ex: Exception) {
+            Log.w(MFBConstants.LOG_TAG, "Unable to start location service in foreground: " + ex.message)
+            MFBLocation.getMainLocation()?.onServiceStartFailed()
+            stopSelf()
+            false
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
-        startInForeground()
+        if (!startInForeground())
+            return
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -98,16 +113,12 @@ class MFBlocationservice : Service(), LocationListener {
         // initialize with last known location.
         if (minitialLoc == null) {
             mFusedLocationProvider!!.lastLocation
-                .addOnSuccessListener { location: Location? ->
+                .addOnCompleteListener { task: Task<Location> ->
+                    val location : Location? = if (task.isSuccessful) task.result else null
                     if (location != null) {
                         minitialLoc = location
                         onLocationChanged(location)
-                    }
-                }
-                .addOnCompleteListener { task: Task<Location> ->
-                    if (task.isSuccessful && task.result != null) onLocationChanged(
-                        task.result
-                    ) else Log.e(MFBConstants.LOG_TAG, "No location!")
+                    } else Log.e(MFBConstants.LOG_TAG, "No location!")
                 }
         }
     }

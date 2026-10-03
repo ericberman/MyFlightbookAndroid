@@ -38,8 +38,6 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
@@ -655,12 +653,10 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         // c) else, just go to the options tab to sign in from there.
         refreshAuthToken(AuthToken())
         Log.v(MFBConstants.LOG_TAG, "onResume: start listening to GPS")
-        // This is a hack, but we get a lot of crashes about too much time between startForegroundService being
-        // called and startForeground being called.
-        // Problem is, other tabs' OnResume may not have been called yet, so let's delay this by a few
-        // seconds so that all the other startup tasks are done before we call startForegroundService.
-        // Note that ActNewFlight will initialize the GPS as needed, so this call will be a no-op at that point.
-        Handler(Looper.getMainLooper()).postDelayed({ resumeGPS() }, 3000)
+        // GPS service is now started with startService() (see MFBLocation.startActiveService), so there's no
+        // startForeground() deadline to race and no need to delay this.
+        // Note that ActNewFlight will initialize the GPS as needed, so this call may be a no-op.
+        resumeGPS()
         Log.v(MFBConstants.LOG_TAG, "onResume: finished")
     }
 
