@@ -274,10 +274,9 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 {
                     url ->
                     try {
-                        val str = URL(url).openStream()
-                        BitmapFactory.decodeStream(str)
+                        URL(url).openStream().use { BitmapFactory.decodeStream(it) }
                     } catch (e: Exception) {
-                        Log.e(MFBConstants.LOG_TAG, e.message!!)
+                        Log.e(MFBConstants.LOG_TAG, e.message ?: "(No Message)")
                         null
                     }
                 },
