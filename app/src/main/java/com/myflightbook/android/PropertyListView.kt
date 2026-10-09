@@ -49,18 +49,12 @@ class PropertyListView(context: Context, attrs: AttributeSet?) : ExpandableListV
         scheduleReveal()
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        // The new bounds are already set, but the old children are still attached.
-        // Move the focused row into the smaller viewport before ListView lays out
-        // and recycles children. Its deferred focus restoration is too late if the
-        // editor has already left the visible rows and disconnected from the IME.
-        if (h < oldh) revealFocusedProperty.run()
-        super.onSizeChanged(w, h, oldw, oldh)
-    }
-
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         // Focus may already be set when the keyboard changes the available height.
+        // Don't scroll synchronously from onSizeChanged: that runs inside layout(),
+        // before layoutChildren, and scrolling there adds/detaches rows mid-pass,
+        // which led to an NPE in AbsListView.RecycleBin.addScrapView. Defer instead.
         if (changed) scheduleReveal()
     }
 
