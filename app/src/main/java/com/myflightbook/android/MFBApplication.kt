@@ -19,7 +19,11 @@
 
 package com.myflightbook.android
 
+import android.app.Activity
 import android.app.Application
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
 
 class MFBApplication : Application() {
@@ -38,5 +42,26 @@ class MFBApplication : Application() {
             else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
         AppCompatDelegate.setDefaultNightMode(MFBMain.NightModePref)
+
+        // Draw every activity edge-to-edge on every Android version. Android 15+ (targetSdk 35+) forces
+        // edge-to-edge regardless, so this makes older versions match and keeps layout behavior consistent.
+        // onActivityCreated runs inside the activity's super.onCreate(), i.e., before its setContentView().
+        // Screens keep their content clear of the system bars via padForSystemBars() or fitsSystemWindows.
+        // enableEdgeToEdge() builds the window's decor view, which locks in the activity's *current* theme.
+        // MFBMain starts with the splash theme and only switches to MFBTheme in installSplashScreen(), after
+        // super.onCreate(), so it calls enableEdgeToEdge() itself; doing it here would freeze the splash theme
+        // (extra title bar, wrong background).
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                if (activity is MFBMain) return
+                (activity as? ComponentActivity)?.enableEdgeToEdge()
+            }
+            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityResumed(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivityStopped(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+        })
     }
 }

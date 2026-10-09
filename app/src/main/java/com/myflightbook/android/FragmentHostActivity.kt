@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 
 class FragmentHostActivity : AppCompatActivity() {
@@ -39,9 +38,6 @@ class FragmentHostActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Set early to avoid edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragmenthost2) // <- your FrameLayout container
 

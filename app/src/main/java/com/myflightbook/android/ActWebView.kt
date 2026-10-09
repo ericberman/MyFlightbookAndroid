@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,13 +29,12 @@ import android.webkit.*
 import android.webkit.WebChromeClient.FileChooserParams
 import android.widget.Button
 import android.widget.Toast
+import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import model.MFBConstants
 import java.io.File
 import androidx.core.net.toUri
@@ -51,11 +50,7 @@ class ActWebView : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.webview)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_root)) { view, insets ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            view.setPadding(0, statusBarHeight, 0, 0)
-            insets
-        }
+        findViewById<View>(R.id.layout_root).padForSystemBars()
         val btnBack = findViewById<Button>(R.id.btnWebBack)
         val btnForward = findViewById<Button>(R.id.btnWebForward)
         val btnRefresh = findViewById<Button>(R.id.btnWebRefresh)

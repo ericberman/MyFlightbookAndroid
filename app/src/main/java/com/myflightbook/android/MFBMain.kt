@@ -40,6 +40,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -205,6 +206,8 @@ class MFBMain : AppCompatActivity(), OnMapsSdkInitializedCallback {
         Log.v(MFBConstants.LOG_TAG, "onCreate: about to install splash screen")
 
         installSplashScreen()
+        // Must come after installSplashScreen(), which switches from the splash theme to MFBTheme. See MFBApplication.
+        enableEdgeToEdge()
 
         Log.v(MFBConstants.LOG_TAG, "onCreate: start listening network")
         // Start listening to network change events
