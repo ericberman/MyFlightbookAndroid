@@ -1006,14 +1006,20 @@ class ActNewFlight : ActMFBForm(), View.OnClickListener, ListenerFragmentDelegat
                 if (dtBlockOut == null) {
                     mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_OUT, nowWith0Seconds())
                     resetDateOfFlight()
+                    engineStart()
                 }
                 else
                     setDateTime(id, dtBlockOut, this, DlgDatePicker.DatePickMode.UTCDATETIME)
             }
             R.id.btnBlockIn -> {
                 val dtBlockIn = mle!!.propDateForID(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN)
-                if (dtBlockIn == null)
-                    mle!!.addOrSetPropertyDate(CustomPropertyType.ID_PROP_TYPE_BLOCK_IN, nowWith0Seconds())
+                if (dtBlockIn == null) {
+                    mle!!.addOrSetPropertyDate(
+                        CustomPropertyType.ID_PROP_TYPE_BLOCK_IN,
+                        nowWith0Seconds()
+                    )
+                    engineStop()
+                }
                 else
                     setDateTime(id, dtBlockIn, this, DlgDatePicker.DatePickMode.UTCDATETIME)
             }
