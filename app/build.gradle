@@ -24,7 +24,8 @@ android {
             debuggable true
         }
         release {
-            minifyEnabled false
+            // R8: shrink + optimize; see proguard-rules.pro (keeps our names readable in crash reports)
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
