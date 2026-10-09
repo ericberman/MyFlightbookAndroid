@@ -12,13 +12,28 @@
 -keepnames class model.** { *; }
 
 # --- ksoap2 (web services) -------------------------------------------------------
-# The bundled jar (ksoap2 + kxml2 + xmlpull) is reflection-heavy and ships no rules.
+# libs/ksoap2-android-assembly-3.6.2-jar-with-dependencies.jar bundles ksoap2, kxml2, kobjects,
+# and an old OkHttp 3 + Okio (which CustomExceptionHandler also uses). It's reflection-heavy and
+# ships no rules, so keep all of it as-is.
+# NOTE: org/xmlpull/** was removed from that jar: Android provides org.xmlpull.v1 itself (the
+# platform copy always wins at runtime), and R8 fails the build on the duplicate. If the jar is
+# ever replaced, strip org/xmlpull/ from the new one too.
 -keep class org.ksoap2.** { *; }
 -keep class org.kxml2.** { *; }
--keep class org.xmlpull.** { *; }
+-keep class org.kobjects.** { *; }
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
 -dontwarn org.ksoap2.**
 -dontwarn org.kxml2.**
+-dontwarn org.kobjects.**
 -dontwarn org.xmlpull.**
+-dontwarn okhttp3.**
+-dontwarn okio.**
+# Optional platforms referenced by old OkHttp, not present on Android.
+-dontwarn org.eclipse.jetty.**
+-dontwarn org.conscrypt.**
+-dontwarn javax.annotation.**
+-dontwarn org.codehaus.mojo.animal_sniffer.**
 
 # SoapSerializationEnvelope.addMapping() creates objects with Class.newInstance(),
 # so mapped model classes need their no-arg constructors.
