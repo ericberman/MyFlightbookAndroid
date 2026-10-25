@@ -44,3 +44,4 @@ local.properties
 /app/release
 /app/debug/app-debug.apk
 /app/debug/output-metadata.json
+app/debug/app-debug.aab
