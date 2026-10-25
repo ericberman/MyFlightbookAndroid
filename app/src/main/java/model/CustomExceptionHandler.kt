@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 package model
 
+import android.content.Context
 import android.util.Log
 import com.myflightbook.android.MFBMain
 import com.myflightbook.android.webservices.AuthToken
@@ -32,54 +33,10 @@ class CustomExceptionHandler(private val localPath: String?, private val url: St
     Thread.UncaughtExceptionHandler {
     private val defaultUEH: Thread.UncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()!!
     override fun uncaughtException(t: Thread, e: Throwable) {
-        val dt = Date()
-        val result: Writer = StringWriter()
-        val printWriter = PrintWriter(result)
-        e.printStackTrace(printWriter)
-        var szUsername = "(unknown user)"
-        if (AuthToken.m_szEmail.isNotEmpty()) szUsername =
-            AuthToken.m_szEmail
-        val szVersion = String.format(
-            Locale.getDefault(),
-            "Version %s (%d)\r\n\r\n",
-            MFBMain.versionName,
-            MFBMain.versionCode
-        )
-        val stacktrace = """$szVersion$szUsername       
-
-$result${e.message}${e.localizedMessage}"""
-        printWriter.close()
-        val c: Calendar = GregorianCalendar()
-        c.time = dt
-        val filename = String.format(
-            Locale.getDefault(),
-            "%d%d%d%d%d%d.stacktrace",
-            c[Calendar.YEAR],
-            c[Calendar.MONTH],
-            c[Calendar.DATE],
-            c[Calendar.HOUR_OF_DAY],
-            c[Calendar.MINUTE],
-            c[Calendar.SECOND]
-        )
         if (localPath != null) {
-            writeToFile(stacktrace, filename)
+            writeReport(localPath, formatReport(e), timestampFilename(""))
         }
         defaultUEH.uncaughtException(t, e)
-    }
-
-    private fun writeToFile(stacktrace: String, filename: String) {
-        try {
-            val bos = BufferedWriter(
-                FileWriter(
-                    "$localPath/$filename"
-                )
-            )
-            bos.write(stacktrace)
-            bos.flush()
-            bos.close()
-        } catch (e: Exception) {
-            Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
-        }
     }
 
     fun sendPendingReports() {
@@ -89,9 +46,11 @@ $result${e.message}${e.localizedMessage}"""
             val files = dir.listFiles()
 
             if (files != null) {
-                val sb = StringBuilder()
                 for (f in files) {
                     if (!f.name.endsWith(".stacktrace")) continue
+                    // One report per file (this used to be shared across files, so each email
+                    // repeated every earlier report from the same batch).
+                    val sb = StringBuilder()
                     try {
                         val br = BufferedReader(FileReader(f))
                         var line: String?
@@ -142,4 +101,57 @@ $result${e.message}${e.localizedMessage}"""
         }
     }
 
+
+    companion object {
+        private fun formatReport(e: Throwable, prefix: String = ""): String {
+            val result: Writer = StringWriter()
+            PrintWriter(result).use { e.printStackTrace(it) }
+            val szUsername = AuthToken.m_szEmail.ifEmpty { "(unknown user)" }
+            val szVersion = String.format(
+                Locale.getDefault(),
+                "Version %s (%d)\r\n\r\n",
+                MFBMain.versionName,
+                MFBMain.versionCode
+            )
+            return """$prefix$szVersion$szUsername       
+
+$result${e.message}${e.localizedMessage}"""
+        }
+
+        private fun timestampFilename(suffix: String): String {
+            val c: Calendar = GregorianCalendar()
+            c.time = Date()
+            return String.format(
+                Locale.getDefault(),
+                "%d%d%d%d%d%d%s.stacktrace",
+                c[Calendar.YEAR],
+                c[Calendar.MONTH],
+                c[Calendar.DATE],
+                c[Calendar.HOUR_OF_DAY],
+                c[Calendar.MINUTE],
+                c[Calendar.SECOND],
+                suffix
+            )
+        }
+
+        private fun writeReport(dir: String, stacktrace: String, filename: String) {
+            try {
+                BufferedWriter(FileWriter("$dir/$filename")).use { it.write(stacktrace) }
+            } catch (e: Exception) {
+                Log.e(MFBConstants.LOG_TAG, Log.getStackTraceString(e))
+            }
+        }
+
+        /**
+         * Saves a report for a problem the app recovered from, without crashing. It's sent with the
+         * crash reports the next time the app starts (MFBMain calls sendPendingReports()).
+         */
+        fun reportNonFatal(context: Context, e: Throwable) {
+            writeReport(
+                context.cacheDir.absolutePath,
+                formatReport(e, "NON-FATAL (app recovered, no crash)\r\n\r\n"),
+                timestampFilename("-nf" + (System.currentTimeMillis() % 1000))
+            )
+        }
+    }
 }
