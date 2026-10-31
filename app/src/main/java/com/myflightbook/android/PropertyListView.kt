@@ -62,6 +62,14 @@ class PropertyListView(context: Context, attrs: AttributeSet?) : ExpandableListV
     }
 
     override fun requestChildRectangleOnScreen(child: View, rectangle: Rect, immediate: Boolean): Boolean {
+        // Issue #350: ListView.layoutChildren() counts its rows, then calls requestFocus(). If that
+        // gives focus to an editor in a row, View.onFocusChanged() asks to scroll it on screen, and
+        // ListView scrolls immediately - detaching rows while layoutChildren() is about to walk the
+        // count it took. That's the RecycleBin NPE. Never scroll mid-layout; reveal it afterwards.
+        if (inLayoutChildren) {
+            scheduleReveal()
+            return false
+        }
         val target = if (child is PropertyEdit &&
             child.height <= height - listPaddingTop - listPaddingBottom) {
             Rect(0, 0, child.width, child.height)
