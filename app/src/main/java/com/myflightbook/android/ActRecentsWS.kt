@@ -1,7 +1,7 @@
 /*
 	MyFlightbook for Android - provides native access to MyFlightbook
 	pilot's logbook
-    Copyright (C) 2017-2025 MyFlightbook, LLC
+    Copyright (C) 2017-2026 MyFlightbook, LLC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -594,6 +594,9 @@ class ActRecentsWS : ListFragment(), AdapterView.OnItemSelectedListener, ImageCa
             }
         } else {
             mRgle = queuedAndUnsubmittedFlights
+            // Issue #353 - if offline, turn off the swiperefresh progress which could otherwise be left spinning forever
+            val srl: SwipeRefreshLayout = requireView().findViewById(R.id.swiperefresh)
+            srl.isRefreshing = false
             val p = PackAndGo(requireContext())
             val dtLastPack = p.lastFlightsPackDate()
             if (dtLastPack != null) {
