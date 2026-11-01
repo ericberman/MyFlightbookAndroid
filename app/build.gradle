@@ -13,8 +13,8 @@ android {
         applicationId "com.myflightbook.android"
         minSdk 28
         targetSdk 37
-        versionCode 208
-        versionName "2026.10.25"
+        versionCode 209
+        versionName "2026.11.01"
     }
 
     bundle {
@@ -22,7 +22,7 @@ android {
             enableSplit false
         }
     }
-    
+
     buildTypes {
         debug {
             // applicationIdSuffix that is not empty changes the package name and breaks maps.
@@ -90,7 +90,7 @@ dependencies {
 
     // Play services
     implementation 'com.google.android.gms:play-services-location:21.4.0'
-    implementation 'com.google.android.gms:play-services-maps:20.0.0'
+    implementation 'com.google.android.gms:play-services-maps:20.1.0'
 
     // color picker
     implementation 'com.github.madrapps:pikolo:2.0.2'
