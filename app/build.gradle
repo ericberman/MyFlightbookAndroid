@@ -17,6 +17,12 @@ android {
         versionName "2026.10.25"
     }
 
+    bundle {
+        density {
+            enableSplit false
+        }
+    }
+    
     buildTypes {
         debug {
             // applicationIdSuffix that is not empty changes the package name and breaks maps.
